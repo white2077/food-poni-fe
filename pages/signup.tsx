@@ -4,21 +4,13 @@ import Image from 'next/image'
 import {useEffect, useState} from "react";
 import {Button, Flex} from "antd";
 
-export interface IPost {
-    id: number;
-    title: string;
-    content: string;
-    image: string;
-    date: string;
-}
-
-const Home: NextPage = () => {
+const SignUp: NextPage = () => {
 
     return (
         <div>
-            Home
+            Sign Up Page
         </div>
     );
 }
 
-export default Home
+export default SignUp
