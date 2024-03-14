@@ -1,8 +1,9 @@
-import {Badge, Card, Divider, Flex, List, Radio} from 'antd';
+import {Badge, Card, Col, Divider, Flex, List, Radio, Row} from 'antd';
 import type {NextPage} from 'next'
 import React, {useEffect, useState} from 'react'
 import {StarFilled, StarOutlined} from "@ant-design/icons";
 import {Product} from "../../model/Product";
+import CardProduct from "../../components/card-product";
 
 export interface IProduct {
     id: string;
@@ -15,7 +16,6 @@ export interface IProduct {
 
 const Products: NextPage = () => {
     const [products, setProducts] = useState<IProduct[]>([]);
-    const [value, setValue] = React.useState<string>('horizontal');
 
     useEffect(() => {
         getAll();
@@ -44,52 +44,15 @@ const Products: NextPage = () => {
     console.log(products);
 
     return (
-        <List grid={{gutter: 16, xs: 1, sm: 2, md: 4, lg: 4, xl: 6, xxl: 4}}
+        <List grid={{gutter: 16, xs: 1, sm: 2, md: 4, lg: 4, xl: 5, xxl: 5}}
               dataSource={products}
               renderItem={(product) => (
                   <List.Item>
-                      <Card
-                          hoverable
-                          style={{width: 240}}
-                          cover={<img alt="example"
-                                      src="https://png.pngtree.com/png-clipart/20221001/ourmid/pngtree-fast-food-big-ham-burger-png-image_6244235.png"/>}
-                      >
-                          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-                              <Badge count="Khoảng 2km"
-                                     color='#F5F5FA'
-                                     style={{ color: 'black', marginRight: '8px' }} />
-                          </div>
-                          <div style={{
-                              textAlign: 'left',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
-                              fontSize: '16px',
-                              marginBottom: '5px'
-                          }}>
-                              {product.name}
-                          </div>
-                          <Flex gap="middle" vertical style={{marginBottom: '5px'}}>
-                              <Flex vertical={value === 'vertical'}>
-                                  {Array.from({length: 5}).map((_, i) => (
-                                      <div key={i}
-                                           style={{backgroundColor: "white"}}>
-                                          <StarFilled style={{color: '#FEC32D'}}/>
-                                      </div>
-                                  ))}
-                              </Flex>
-                          </Flex>
-                          <div style={{textAlign: 'left', fontSize: '20px', fontWeight: 'bold'}}>${product.minPrice} -
-                              ${product.maxPrice}</div>
-                          <Divider/>
-                          <div style={{fontSize: '14px'}}>Dự kiến giao lúc 22:30</div>
-                      </Card>
+                      <CardProduct product={product}></CardProduct>
                   </List.Item>
               )}
         />
     );
 }
-
-const {Meta} = Card;
 
 export default Products
