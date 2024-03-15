@@ -1,11 +1,10 @@
 import type {NextPage} from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
-import {useEffect, useState} from "react";
-import {Button, Flex} from "antd";
-import {DefaultLayout, WithLeftSiderLayout} from "../components/layout";
+import React, {useEffect, useState} from "react";
+import {WithLeftSiderLayout} from "../components/layout";
 import Products from "./products/all-product";
+import Carousels from "../components/carousel";
+import Menus from "../components/menu";
+import {Col, Row} from "antd";
 
 export interface IPost {
     id: number;
@@ -36,27 +35,17 @@ const Home: NextPage = () => {
 
     return (
         <WithLeftSiderLayout>
-            {/*<div className={styles.container}>*/}
-            {/*    {posts && posts.map((post: any) => {*/}
-            {/*        return (*/}
-            {/*            <div className={styles.post} key={post.id}>*/}
-            {/*                <Head>*/}
-            {/*                    <title>{post.title}</title>*/}
-            {/*                    <link rel="icon" href="/favicon.ico"/>*/}
-            {/*                </Head>*/}
-            {/*                <h1 className={styles.title}>{post.title}</h1>*/}
-            {/*            </div>*/}
-            {/*        );*/}
-            {/*    })}*/}
-            {/*    <Flex gap="small" wrap="wrap">*/}
-            {/*        <Button type="primary">Primary Button</Button>*/}
-            {/*        <Button>Default Button</Button>*/}
-            {/*        <Button type="dashed">Dashed Button</Button>*/}
-            {/*        <Button type="text">Text Button</Button>*/}
-            {/*        <Button type="link">Link Button</Button>*/}
-            {/*    </Flex>*/}
-            {/*</div>*/}
-            <Products></Products>
+            <Row gutter={[16,16]}>
+                <Col span={24}>
+                    <Carousels></Carousels>
+                </Col>
+                <Col span={24}>
+                    <Menus></Menus>
+                </Col>
+                <Col span={24}>
+                    <Products></Products>
+                </Col>
+            </Row>
         </WithLeftSiderLayout>
     );
 }
