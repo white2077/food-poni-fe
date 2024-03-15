@@ -1,6 +1,8 @@
 import React from 'react';
 import {Layout} from 'antd';
 import MainHeader from "./header";
+import Carousels from "./carousel";
+import SecondaryMenu from "./secondary-menu";
 
 const {Header, Footer, Sider, Content} = Layout;
 export const DefaultLayout = ({children}: { children: React.ReactNode }) => {
@@ -35,8 +37,8 @@ export const WithLeftSiderLayout = ({children}: { children: React.ReactNode }) =
                 <MainHeader></MainHeader>
             </Header>
             <Layout>
-                <Sider width="25%" style={siderStyle}>
-                    Sider
+                <Sider width="20%" style={siderStyle}>
+                    <SecondaryMenu></SecondaryMenu>
                 </Sider>
                 <Content style={contentStyle}>{children}</Content>
             </Layout>
@@ -68,7 +70,7 @@ const siderStyle: React.CSSProperties = {
     textAlign: 'center',
     lineHeight: '120px',
     color: '#fff',
-    backgroundColor: '#1677ff',
+    backgroundColor: 'transparent',
 };
 
 const footerStyle: React.CSSProperties = {
