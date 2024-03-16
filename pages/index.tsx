@@ -2,8 +2,8 @@ import type {NextPage} from 'next'
 import React, {useEffect, useState} from "react";
 import {WithLeftSiderLayout} from "../components/layout";
 import Products from "./products/all-product";
-import Carousels from "../components/carousel";
-import Menus from "../components/menu";
+import CarouselBanner from "../components/carousel-banner";
+import MainMenu from "../components/main-menu";
 import {Col, Row} from "antd";
 
 export interface IPost {
@@ -37,10 +37,10 @@ const Home: NextPage = () => {
         <WithLeftSiderLayout>
             <Row gutter={[16,16]}>
                 <Col span={24}>
-                    <Carousels></Carousels>
+                    <CarouselBanner></CarouselBanner>
                 </Col>
                 <Col span={24}>
-                    <Menus></Menus>
+                    <MainMenu></MainMenu>
                 </Col>
                 <Col span={24}>
                     <Products></Products>
