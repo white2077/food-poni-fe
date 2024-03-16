@@ -1,6 +1,6 @@
 import Search from "antd/lib/input/Search";
-import {Avatar, Button, Col, Row} from "antd";
-import { useState } from "react";
+import {Avatar, Col, Row} from "antd";
+import {useState} from "react";
 
 const UserList = ['U', 'Lucy', 'Tom', 'Edward'];
 const ColorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'];

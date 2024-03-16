@@ -1,8 +1,10 @@
 import React from 'react';
-import {Layout} from 'antd';
+import {Carousel, Layout} from 'antd';
 import MainHeader from "./header";
-import Carousels from "./carousel";
+import Carousels from "./carousel-banner";
 import SecondaryMenu from "./secondary-menu";
+import CarouselBanner from "./image-product-detail.";
+import ImageProductDetail from "./image-product-detail.";
 
 const {Header, Footer, Sider, Content} = Layout;
 export const DefaultLayout = ({children}: { children: React.ReactNode }) => {
@@ -41,6 +43,26 @@ export const WithLeftSiderLayout = ({children}: { children: React.ReactNode }) =
                     <SecondaryMenu></SecondaryMenu>
                 </Sider>
                 <Content style={contentStyle}>{children}</Content>
+            </Layout>
+            <Footer style={footerStyle}>Footer</Footer>
+        </Layout>
+    )
+}
+
+export const WithTwoSiderLayout = ({children}: { children: React.ReactNode }) => {
+    return (
+        <Layout style={layoutStyle}>
+            <Header style={headerStyle}>
+                <MainHeader></MainHeader>
+            </Header>
+            <Layout>
+                <Sider width="25%" style={siderStyle}>
+                    <ImageProductDetail></ImageProductDetail>
+                </Sider>
+                <Content style={contentStyle}>{children}</Content>
+                <Sider width="25%" style={siderStyle}>
+
+                </Sider>
             </Layout>
             <Footer style={footerStyle}>Footer</Footer>
         </Layout>

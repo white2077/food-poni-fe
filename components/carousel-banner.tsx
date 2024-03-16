@@ -1,7 +1,7 @@
 import React from "react";
 import { Carousel } from 'antd';
 
-const Carousels = () => {
+const CarouselBanner = () => {
     return (
         <Carousel autoplay style={{ marginTop: '16px' }}>
             <div>
@@ -24,4 +24,4 @@ const Carousels = () => {
     )
 }
 
-export default Carousels
+export default CarouselBanner

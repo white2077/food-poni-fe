@@ -1,18 +1,20 @@
 import type {NextPage} from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import {useEffect, useState} from "react";
-import {Button, Flex} from "antd";
 import {useRouter} from "next/router";
+import {WithTwoSiderLayout} from "../../components/layout";
 
 const ProductDetail: NextPage = () => {
     const router = useRouter();
     const {id} = router.query;
 
+    console.log(id);
+
     return (
-        <div>
-            Detail {id}
-        </div>
+        // <div>
+        //     Detail {id}
+        // </div>
+        <WithTwoSiderLayout>
+            <div style={{color: 'black'}}>Detail {id}</div>
+        </WithTwoSiderLayout>
     );
 }
 
