@@ -1,5 +1,5 @@
 import React from "react";
-import { Carousel } from 'antd';
+import {Carousel} from 'antd';
 
 const CarouselBanner = () => {
     return (
