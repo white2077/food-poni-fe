@@ -38,12 +38,15 @@ export const WithLeftSiderLayout = ({children}: { children: React.ReactNode }) =
             <Header style={headerStyle}>
                 <MainHeader></MainHeader>
             </Header>
-            <Layout>
-                <Sider width="20%" style={siderStyle}>
-                    <SecondaryMenu></SecondaryMenu>
-                </Sider>
-                <Content style={contentStyle}>{children}</Content>
-            </Layout>
+
+            <Content style={contentStyle}>
+                <Layout>
+                    <Sider width="20%" style={siderStyle}>
+                        <SecondaryMenu></SecondaryMenu>
+                    </Sider>
+                    {children}
+                </Layout>
+            </Content>
             <Footer style={footerStyle}>Footer</Footer>
         </Layout>
     )
