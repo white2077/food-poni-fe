@@ -1,38 +1,29 @@
-import {Descriptions, DescriptionsProps} from "antd";
+import {Card, Rate} from "antd";
+import React from "react";
+import {IProduct} from "../pages/products/all-product";
 
-const Description = () => {
+const Description = ({product}: { product: IProduct }) => {
 
     return (
-        <Descriptions title="User Info" items={items} />
+        <div style={{textAlign: 'left'}}>
+            <Card size='small'>
+                <div>{product?.name + (product?.productDetails?.[0]?.name ? ' - ' + product.productDetails[0].name : '')}</div>
+                <Rate allowHalf defaultValue={4.5} style={{fontSize: '12px', marginRight: '8px'}}/>
+                <span>Đã bán 500</span>
+                <div>${product?.productDetails?.[0]?.price}</div>
+            </Card>
+            <Card size='small'>
+                <div>Thông tin vận chuyển</div>
+                <div>Giao đến Q. Hoàn Kiếm, P. Hàng Trống, Hà
+                    Nội</div>
+            </Card>
+            <Card size='small'>
+                <div>Mô tả sản phẩm</div>
+                <div style={{color: 'black'}}
+                     dangerouslySetInnerHTML={{__html: product.shortDescription || ''}}></div>
+            </Card>
+        </div>
     )
 }
-
-const items: DescriptionsProps['items'] = [
-    {
-        key: '1',
-        label: 'UserName',
-        children: 'Zhou Maomao',
-    },
-    {
-        key: '2',
-        label: 'Telephone',
-        children: '1810000000',
-    },
-    {
-        key: '3',
-        label: 'Live',
-        children: 'Hangzhou, Zhejiang',
-    },
-    {
-        key: '4',
-        label: 'Remark',
-        children: 'empty',
-    },
-    {
-        key: '5',
-        label: 'Address',
-        children: 'No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China',
-    },
-];
 
 export default Description

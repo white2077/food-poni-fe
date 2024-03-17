@@ -1,16 +1,15 @@
 import React from 'react';
-import {Carousel, Layout} from 'antd';
+import {Layout} from 'antd';
 import MainHeader from "./header";
-import Carousels from "./carousel-banner";
 import SecondaryMenu from "./secondary-menu";
-import CarouselBanner from "./image-product-detail.";
-import ImageProductDetail from "./image-product-detail.";
 
 const {Header, Footer, Sider, Content} = Layout;
 export const DefaultLayout = ({children}: { children: React.ReactNode }) => {
     return (
         <Layout style={layoutStyle}>
-            <Header style={headerStyle}>Header</Header>
+            <Header style={headerStyle}>
+                <MainHeader></MainHeader>
+            </Header>
             <Content style={contentStyle}>{children}</Content>
             <Footer style={footerStyle}>Footer</Footer>
         </Layout>
@@ -52,27 +51,6 @@ export const WithLeftSiderLayout = ({children}: { children: React.ReactNode }) =
     )
 }
 
-export const WithTwoSiderLayout = ({children}: { children: React.ReactNode }) => {
-    return (
-        <Layout style={layoutStyle}>
-            <Header style={headerStyle}>
-                <MainHeader></MainHeader>
-            </Header>
-            <Layout>
-                <Sider width="25%" style={siderStyle}>
-                    <ImageProductDetail></ImageProductDetail>
-                </Sider>
-                <Content style={contentStyle}>{children}</Content>
-                <Sider width="25%" style={siderStyle}>
-
-                </Sider>
-            </Layout>
-            <Footer style={footerStyle}>Footer</Footer>
-        </Layout>
-    )
-}
-
-
 const headerStyle: React.CSSProperties = {
     textAlign: 'center',
     color: '#fff',
@@ -89,6 +67,7 @@ const contentStyle: React.CSSProperties = {
     lineHeight: '120px',
     color: '#fff',
     backgroundColor: '#F5F5FA',
+    margin: '16px 0'
 };
 
 const siderStyle: React.CSSProperties = {
