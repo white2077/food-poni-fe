@@ -1,4 +1,4 @@
-import {Card, Rate} from "antd";
+import {Card, Radio, Rate} from "antd";
 import React from "react";
 import {IProduct} from "../pages/products/all-product";
 
@@ -11,6 +11,14 @@ const Description = ({product}: { product: IProduct }) => {
                 <Rate allowHalf defaultValue={4.5} style={{fontSize: '12px', marginRight: '8px'}}/>
                 <span>Đã bán 500</span>
                 <div>${product?.productDetails?.[0]?.price}</div>
+                <div>Loại</div>
+                <Radio.Group defaultValue={product.productDetails?.[0]?.name || "default"}>
+                    {(product.productDetails || []).map((productDetail) => (
+                        <Radio.Button key={productDetail.id} value={productDetail.name ? productDetail.name : "default"}>
+                            {productDetail.name || "Default"}
+                        </Radio.Button>
+                    ))}
+                </Radio.Group>
             </Card>
             <Card size='small'>
                 <div>Thông tin vận chuyển</div>

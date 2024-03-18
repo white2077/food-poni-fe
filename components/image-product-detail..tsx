@@ -11,6 +11,7 @@ const ImageProductDetail = ({images}: { images: string[] }) => {
     return (
         <Card size='small'>
             <Image
+                width={250}
                 style={{aspectRatio: '1', objectFit: 'cover'}}
                 src={selectedImage ? selectedImage : images?.[0]}
             />

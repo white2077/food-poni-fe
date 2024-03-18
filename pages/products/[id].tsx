@@ -7,7 +7,8 @@ import {IProduct} from "./all-product";
 import {Product} from "../../model/Product";
 import {ProductDetail} from "../../model/ProductDetail";
 import ImageProductDetail from "../../components/image-product-detail.";
-import {Card, Col, Row} from "antd";
+import {Button, Card, Col, Flex, InputNumber, Row} from "antd";
+import AddToCard from "../../components/add-to-card";
 
 export interface IProductDetail {
     id: string;
@@ -79,20 +80,7 @@ const ProductDetails: NextPage = () => {
                     <Description product={product ? product : defaultProduct}></Description>
                 </Col>
                 <Col flex={3}>
-                    <Card size='small'>
-                        <div style={{color: 'black'}}>Ghét anh Linh</div>
-                        <div style={{color: 'black'}}>Ghét anh Linh</div>
-                        <div style={{color: 'black'}}>Ghét anh Linh</div>
-                        <div style={{color: 'black'}}>Ghét anh Linh</div>
-                        <div style={{color: 'black'}}>Ghét anh Linh</div>
-                        <div style={{color: 'black'}}>Ghét anh Linh</div>
-                        <div style={{color: 'black'}}>Ghét anh Linh</div>
-                        <div style={{color: 'black'}}>Ghét anh Linh</div>
-                        <div style={{color: 'black'}}>Ghét anh Linh</div>
-                        <div style={{color: 'black'}}>Ghét anh Linh</div>
-                        <div style={{color: 'black'}}>Ghét anh Linh</div>
-                        <div style={{color: 'black'}}>Ghét anh Linh</div>
-                    </Card>
+                    <AddToCard></AddToCard>
                 </Col>
             </Row>
         </DefaultLayout>
