@@ -22,12 +22,10 @@ const Home: NextPage = () => {
     }, []);
 
     const getAll = () => {
-        console.log("123");
         fetch('https://jsonplaceholder.typicode.com/posts')
             .then(
                 response => response.json())
             .then(response => {
-                console.log("lay du lieu thanh cong");
                 setPosts(response);
             })
             .catch(response => console.log(response))

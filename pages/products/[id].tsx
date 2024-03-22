@@ -43,7 +43,7 @@ const ProductDetails: NextPage = () => {
             .then(
                 response => response.json())
             .then(response => {
-                const product: Product = response.result;
+                const product: Product = response;
 
                 const mappedProductDetail: IProduct = {
                     id: product.id,
@@ -72,17 +72,7 @@ const ProductDetails: NextPage = () => {
 
     return (
         <DefaultLayout>
-            <Row gutter={[16, 16]}>
-                <Col flex={3}>
-                    <ImageProductDetail images={product?.productDetails?.[0].images}></ImageProductDetail>
-                </Col>
-                <Col flex={4}>
-                    <Description product={product ? product : defaultProduct}></Description>
-                </Col>
-                <Col flex={3}>
-                    <AddToCard></AddToCard>
-                </Col>
-            </Row>
+            <Description product={product ? product : defaultProduct}></Description>
         </DefaultLayout>
     );
 }
