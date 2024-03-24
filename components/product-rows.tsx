@@ -8,7 +8,7 @@ import {server} from "../utils/server";
 export interface IProductCard {
     id: string;
     name: string;
-    thumbnail: string | null;
+    thumbnail: string;
     minPrice: number;
     maxPrice: number;
 }
