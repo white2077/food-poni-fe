@@ -3,6 +3,7 @@ import {Avatar, Col, Flex, Row} from "antd";
 import {useState} from "react";
 import Link from "next/link";
 import CartComponent from "./cart";
+import SearchComponent from "./search";
 
 const UserList = ['U', 'Lucy', 'Tom', 'Edward'];
 const ColorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'];
@@ -22,8 +23,7 @@ const MainHeader = () => {
                 }}>Foodponi</Link>
             </Col>
             <Col flex={3}>
-                <Search placeholder="input search text" enterButton="Search" size="large" loading={false}
-                        style={{verticalAlign: 'middle'}}/>
+                <SearchComponent></SearchComponent>
             </Col>
             <Col flex={2}>
                 <Flex gap='middle' align='center' justify='end'>

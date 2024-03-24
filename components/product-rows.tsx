@@ -2,7 +2,7 @@ import {List} from 'antd';
 import type {NextPage} from 'next'
 import React, {useEffect, useState} from 'react'
 import {Product} from "../model/Product";
-import CardProduct from "./card-product";
+import ProductCard from "./product-card";
 import {server} from "../utils/server";
 
 export interface IProductCard {
@@ -13,7 +13,7 @@ export interface IProductCard {
     maxPrice: number;
 }
 
-const Products: NextPage = () => {
+const ProductRows: NextPage = () => {
     const [products, setProducts] = useState<IProductCard[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -45,11 +45,11 @@ const Products: NextPage = () => {
               dataSource={products}
               renderItem={(product) => (
                   <List.Item>
-                      <CardProduct product={product}></CardProduct>
+                      <ProductCard product={product}></ProductCard>
                   </List.Item>
               )}
         />
     );
 }
 
-export default Products
+export default ProductRows

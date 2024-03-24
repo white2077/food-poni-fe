@@ -1,7 +1,7 @@
 import type {NextPage} from 'next'
 import React, {useEffect, useState} from "react";
 import {WithLeftSiderLayout} from "../components/layout";
-import Products from "../components/all-product";
+import ProductRows from "../components/product-rows";
 import CarouselBanner from "../components/carousel-banner";
 import MainMenu from "../components/main-menu";
 import {Col, Row} from "antd";
@@ -41,7 +41,7 @@ const Home: NextPage = () => {
                     <MainMenu></MainMenu>
                 </Col>
                 <Col span={24}>
-                    <Products></Products>
+                    <ProductRows></ProductRows>
                 </Col>
             </Row>
         </WithLeftSiderLayout>

@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Avatar, Card, Image, Segmented} from 'antd';
 
-const ImageProductDetail = ({images}: { images: string[] | null | undefined }) => {
+const ProductGallery = ({images}: { images: string[] | null | undefined }) => {
 
     const [selectedImage, setSelectedImage] = useState<string>();
 
@@ -36,4 +36,4 @@ const ImageProductDetail = ({images}: { images: string[] | null | undefined }) =
     )
 }
 
-export default ImageProductDetail
+export default ProductGallery

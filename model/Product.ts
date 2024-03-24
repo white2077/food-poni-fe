@@ -10,9 +10,9 @@ export interface Product {
 
   slug: string;
 
-  shortDescription: string | null;
+  shortDescription: string;
 
-  thumbnail: string | null;
+  thumbnail: string;
 
   status: boolean;
 
@@ -21,26 +21,5 @@ export interface Product {
   productDetails: ProductDetail[];
 
   categories: Category[];
-}
-
-export interface ProductRequest {
-
-  id?: string;
-
-  name: string;
-
-  slug: string;
-
-  shortDescription?: string;
-
-  thumbnail?: string;
-
-  status: boolean;
-
-  user: UserRequest;
-
-  productDetails: ProductDetailRequest[];
-
-  categories?: CategoryRequest[];
 }
 

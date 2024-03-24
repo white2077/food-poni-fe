@@ -2,7 +2,7 @@ import Search from "antd/lib/input/Search";
 import {Avatar, Button, Card, Col, Flex, InputNumber, Row} from "antd";
 import React, {useState} from "react";
 
-const AddToCard = ({price}: { price: number | null | undefined }) => {
+const ProductCart = ({price}: { price: number }) => {
     const [quantity, setQuantity] = useState<number>(1);
 
     const handleQuantityChange = (value: number | null) => {
@@ -17,7 +17,7 @@ const AddToCard = ({price}: { price: number | null | undefined }) => {
             <div>Số lượng</div>
             <InputNumber min={1} max={20} defaultValue={1} value={quantity} onChange={handleQuantityChange}/>
             <div>Tạm tính</div>
-            <div>${price ? price * quantity : ""}</div>
+            <div>${price * quantity}</div>
             <Flex vertical gap='small' style={{width: '100%'}}>
                 <Button type='primary' danger block>
                     Mua ngay
@@ -28,4 +28,4 @@ const AddToCard = ({price}: { price: number | null | undefined }) => {
     )
 }
 
-export default AddToCard
+export default ProductCart
