@@ -1,6 +1,8 @@
 import Search from "antd/lib/input/Search";
-import {Avatar, Col, Row} from "antd";
+import {Avatar, Col, Flex, Row} from "antd";
 import {useState} from "react";
+import Link from "next/link";
+import CartComponent from "./cart";
 
 const UserList = ['U', 'Lucy', 'Tom', 'Edward'];
 const ColorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'];
@@ -10,17 +12,26 @@ const MainHeader = () => {
     const [color, setColor] = useState(ColorList[0]);
 
     return (
-        <Row>
+        <Row align='middle'>
             <Col flex={2}>
-                <div style={{ verticalAlign: 'middle', color: color }}>Foodponi</div>
+                <Link href={'/'} style={{
+                    verticalAlign: 'middle',
+                    color: color,
+                    fontWeight: 'bold',
+                    fontSize: '24px'
+                }}>Foodponi</Link>
             </Col>
             <Col flex={3}>
-                <Search placeholder="input search text" enterButton="Search" size="large" loading={false} style={{ verticalAlign: 'middle' }}/>
+                <Search placeholder="input search text" enterButton="Search" size="large" loading={false}
+                        style={{verticalAlign: 'middle'}}/>
             </Col>
             <Col flex={2}>
-                <Avatar style={{ backgroundColor: color, verticalAlign: 'middle' }} size="large">
-                    {user}
-                </Avatar>
+                <Flex gap='middle' align='center' justify='end'>
+                        <CartComponent></CartComponent>
+                        <Avatar style={{backgroundColor: color, verticalAlign: 'middle'}} size="large">
+                            {user}
+                        </Avatar>
+                </Flex>
             </Col>
         </Row>
     )

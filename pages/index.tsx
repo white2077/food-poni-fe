@@ -1,7 +1,7 @@
 import type {NextPage} from 'next'
 import React, {useEffect, useState} from "react";
 import {WithLeftSiderLayout} from "../components/layout";
-import Products from "./products/all-product";
+import Products from "../components/all-product";
 import CarouselBanner from "../components/carousel-banner";
 import MainMenu from "../components/main-menu";
 import {Col, Row} from "antd";

@@ -1,14 +1,67 @@
-import {IProduct} from "../pages/products/all-product";
-import {IProductDetail} from "../pages/products/[id]";
-import React, {useState} from "react";
+import type {NextPage} from 'next'
+import {useRouter} from "next/router";
+import {DefaultLayout} from "../components/layout";
+import React, {useEffect, useState} from "react";
+import {Product} from "../model/Product";
+import {ProductDetail} from "../model/ProductDetail";
 import {Card, Col, Radio, Rate, Row} from "antd";
-import ImageProductDetail from "./image-product-detail.";
-import AddToCard from "./add-to-card";
+import ImageProductDetail from "../components/image-product-detail";
+import AddToCard from "../components/add-to-card";
+import {server} from "../utils/server";
 
-const ProductDetailComponent = ({product, firstProductDetail}: {
-    product: IProduct | null,
-    firstProductDetail: IProductDetail | null
-}) => {
+export interface IProduct {
+    id: string;
+    name: string | null;
+    shortDescription: string | null;
+    productDetails: IProductDetail[];
+}
+
+export interface IProductDetail {
+    id: string;
+    name: string | null;
+    price: number,
+    description: string | null;
+    images: string[] | null
+}
+
+const ProductDetails: NextPage = () => {
+    const router = useRouter();
+    const {pid} = router.query;
+    const [product, setProduct] = useState<IProduct>();
+
+    useEffect(() => {
+        getProductDetailById();
+    }, [router.isReady]);
+
+    const getProductDetailById = (): void => {
+        if (pid) {
+            fetch(`${server}/products/${pid}`)
+                .then(
+                    response => response.json())
+                .then(response => {
+                    const product: Product = response;
+
+                    // @ts-ignore
+                    const productMapped: IProduct = {
+                        id: product.id,
+                        name: product.name,
+                        shortDescription: product.shortDescription,
+                        productDetails: product.productDetails.map((productDetail: ProductDetail): IProductDetail => {
+                            return {
+                                id: productDetail.id,
+                                name: productDetail.name,
+                                price: productDetail.price,
+                                description: productDetail.description,
+                                images: productDetail.images
+                            }
+                        })
+                    };
+
+                    setProduct(productMapped);
+                })
+                .catch(response => console.log(response))
+        }
+    }
 
     const [productDetailSelected, setProductDetailSelected] = useState<IProductDetail>();
 
@@ -16,12 +69,17 @@ const ProductDetailComponent = ({product, firstProductDetail}: {
         setProductDetailSelected(productDetail);
     }
 
-    const {images, name: productDetailName, price, description} = productDetailSelected || firstProductDetail || {};
     const {name: productName, shortDescription} = product || {};
+    const {
+        images,
+        name: productDetailName,
+        price,
+        description
+    } = productDetailSelected || product?.productDetails.at(0) || {};
 
     return (
-        <>
-            {(firstProductDetail && product) && (
+        <DefaultLayout>
+            {(product) && (
                 <Row gutter={[16, 16]}>
                     <Col flex={3}>
                         <ImageProductDetail images={images}/>
@@ -71,8 +129,8 @@ const ProductDetailComponent = ({product, firstProductDetail}: {
                     </Col>
                 </Row>
             )}
-        </>
+        </DefaultLayout>
     );
 }
 
-export default ProductDetailComponent
+export default ProductDetails
