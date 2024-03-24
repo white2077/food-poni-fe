@@ -1,7 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit";
 
-export interface ICartItem
-{
+export interface ICartItem {
     id: string;
     thumbnail: string;
     name: string;
@@ -9,8 +8,7 @@ export interface ICartItem
     quantity: number;
 }
 
-export interface ICartState
-{
+export interface ICartState {
     cartItems: ICartItem[];
 }
 
@@ -22,14 +20,16 @@ const cartSlide = createSlice({
     name: 'cart',
     initialState,
     reducers: {
-        addProduct: (state, action) => {
-            return {
-                ...state,
-                cartItems: [...state.cartItems, action.payload.product]
-            }
+        addItem: (state, action) => {
+            const {id, quantity} = action.payload as ICartItem;
+            const itemInCart = state.cartItems.find(
+                (item) => item.id === id
+            );
+            if (itemInCart) itemInCart.quantity = quantity;
+            else state.cartItems.push({...action.payload});
         }
     }
 });
 
-export const {addProduct} = cartSlide.actions;
+export const {addItem} = cartSlide.actions;
 export default cartSlide.reducer;

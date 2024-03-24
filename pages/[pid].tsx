@@ -132,7 +132,12 @@ const ProductDetails: NextPage = () => {
                         </div>
                     </Col>
                     <Col flex={3}>
-                        <ProductCart price={price!}/>
+                        <ProductCart
+                            id={productDetailSelected.id}
+                            price={price}
+                            thumbnail={images.at(0)}
+                            name={product.name + ' - ' + productDetailName}
+                        />
                     </Col>
                 </Row>
             )}
