@@ -3,7 +3,7 @@ import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {addItem, ICartItem} from "../store/cart.reducer";
 
-const ProductCart = ({id, price, thumbnail, name}) => {
+const ProductCart = ({id, price, thumbnail, name}: {id: string, price: number, thumbnail: string, name: string}) => {
     const [quantity, setQuantity] = useState<number>(1);
     const dispatch = useDispatch();
     const cartItems = useSelector(state => state.cart.cartItems) as ICartItem[];
