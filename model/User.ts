@@ -27,7 +27,9 @@ export interface CurrentUser {
 
     roles: string[],
 
-    fullName: string,
+    firstName: string;
+
+    lastName: string;
 
     avatar: string,
 
