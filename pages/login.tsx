@@ -10,27 +10,18 @@ import {jwtDecode} from "jwt-decode";
 import {deleteCookie, setCookie} from "cookies-next";
 import {REFRESH_TOKEN, REMEMBER_ME} from "../utils/server";
 import {useRouter} from "next/router";
+import {useDispatch} from "react-redux";
+import {setCurrentUser} from "../store/user.reducer";
 
 const isPending: boolean = false;
-const isCurrentUser: CurrentUser = {
-    id: '',
-    sub: '',
-    roles: [],
-    fullName: '',
-    avatar: '',
-    email: '',
-    phoneNumber: '',
-    username: '',
-    accessToken: ''
-};
 
 const Login: NextPage = () => {
-
-    const [currentUser, setCurrentUser] = useState<CurrentUser>(isCurrentUser);
 
     const [pending, setPending] = useState<boolean>(isPending);
 
     const router = useRouter();
+
+    const dispatch = useDispatch();
 
     const onFinish = (values: any) => {
         setPending(true);
@@ -43,7 +34,8 @@ const Login: NextPage = () => {
                 setPending(false);
 
                 const {accessToken, refreshToken} = res.data as IToken;
-                setCurrentUser(jwtDecode(accessToken) as CurrentUser);
+                const payload = jwtDecode(accessToken) as CurrentUser;
+                dispatch(setCurrentUser(payload));
 
                 // set refresh token
                 setCookie(REFRESH_TOKEN, refreshToken, {
@@ -55,7 +47,7 @@ const Login: NextPage = () => {
                     const userRemember: IUserRemember = {
                         username: user.username ? user.username! : user.email!,
                         password: user.password,
-                        avatar: currentUser.avatar
+                        avatar: "currentUser.avatar"
                     }
                     setCookie(REMEMBER_ME, btoa(JSON.stringify(userRemember)), {
                         expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
@@ -95,7 +87,7 @@ const Login: NextPage = () => {
                     >
                         <Form.Item
                             name="username"
-                            rules={[{required: true, message: 'Please input your Username!'}]}
+                            rules={[{required: true, message: 'Please input your Username or Email!'}]}
                         >
                             <Input prefix={<UserOutlined className="site-form-item-icon"/>} placeholder="Username"/>
                         </Form.Item>

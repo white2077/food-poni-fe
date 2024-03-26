@@ -1,7 +1,7 @@
 import {Card} from "antd";
 import React from "react";
 
-const ProductDescriptionComponent = ({shortDescription, description}) => {
+const ProductDescriptionComponent = ({shortDescription, description}: {shortDescription: string, description: string}) => {
     return (
         <>
             <Card>

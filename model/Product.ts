@@ -21,5 +21,6 @@ export interface Product {
   productDetails: ProductDetail[];
 
   categories: Category[];
+
 }
 

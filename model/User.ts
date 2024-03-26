@@ -41,16 +41,6 @@ export interface CurrentUser {
 
 }
 
-export interface IUserRemember {
-
-    username: string;
-
-    password: string;
-
-    avatar: string;
-
-}
-
 export interface UserRequest {
 
     id: string;
@@ -64,5 +54,15 @@ export interface UserRequestLogin {
     email: string | null;
 
     password: string;
+
+}
+
+export interface IUserRemember {
+
+    username: string;
+
+    password: string;
+
+    avatar: string;
 
 }
