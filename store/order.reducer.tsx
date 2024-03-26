@@ -1,37 +1,31 @@
 import {ICurrentUser} from "./user.reducer";
 import {ICartItem} from "./cart.reducer";
 import {createSlice} from "@reduxjs/toolkit";
+import {IProductDetail} from "../pages/[pid]";
+
+export interface IOrder {
+    user: string;
+    orderItems: IOrderItem[];
+    note: string;
+    payment: IPaymentInfo;
+}
 
 export interface IOrderItem {
-
-    id: string;
-
-    currentUser: ICurrentUser;
-
-    listItem: ICartItem[];
-
-    note: string;
-
-    paymentInfor: IPaymentInfo;
-
+    quantity: number;
+    productDetail: ICartItem;
 }
 
 export interface IPaymentInfo {
-
-    id: string;
-
     method: string;
-
     status: string;
-
 }
 
 export interface IOrderState {
-    orderItems: IOrderItem[];
+    orders: IOrder[];
 }
 
 const initialState: IOrderState = {
-    orderItems: []
+    orders: []
 }
 
 const orderSlide = createSlice({
