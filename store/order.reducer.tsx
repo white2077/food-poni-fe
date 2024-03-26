@@ -1,7 +1,5 @@
-import {ICurrentUser} from "./user.reducer";
 import {ICartItem} from "./cart.reducer";
 import {createSlice} from "@reduxjs/toolkit";
-import {IProductDetail} from "../pages/[pid]";
 
 export interface IOrder {
     user: string;

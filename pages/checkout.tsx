@@ -16,16 +16,11 @@ import {
 import {DeleteOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {ICartItem, setQuantity} from "../store/cart.reducer";
-import {CurrentUser, IUserRemember} from "../model/User";
-import {addItem, IOrder, IOrderItem, IPaymentInfo} from "../store/order.reducer";
+import {CurrentUser} from "../model/User";
+import {IOrder, IOrderItem, IPaymentInfo} from "../store/order.reducer";
 import TextArea from "antd/es/input/TextArea";
 import React, {useState} from "react";
 import axiosConfig from "../utils/axios-config";
-import {IToken} from "../model/Auth";
-import {jwtDecode} from "jwt-decode";
-import {setCurrentUser} from "../store/user.reducer";
-import {deleteCookie, setCookie} from "cookies-next";
-import {REFRESH_TOKEN, REMEMBER_ME} from "../utils/server";
 import {useRouter} from "next/router";
 
 const isPayment: IPaymentInfo = {

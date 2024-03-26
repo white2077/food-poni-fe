@@ -1,6 +1,6 @@
-import {User, UserRequest} from "./User";
-import {ProductDetail, ProductDetailRequest} from "./ProductDetail";
-import {Category, CategoryRequest} from "./Category";
+import {User} from "./User";
+import {ProductDetail} from "./ProductDetail";
+import {Category} from "./Category";
 
 export interface Product {
 

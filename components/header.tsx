@@ -1,11 +1,8 @@
-import Search from "antd/lib/input/Search";
 import {Avatar, Col, Flex, Row} from "antd";
-import {useState} from "react";
 import Link from "next/link";
 import CartComponent from "./cart";
 import SearchComponent from "./search";
 import {useSelector} from "react-redux";
-import {ICartItem} from "../store/cart.reducer";
 import {ICurrentUser} from "../store/user.reducer";
 
 const MainHeader = () => {
