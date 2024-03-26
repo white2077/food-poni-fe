@@ -133,9 +133,9 @@ const ProductDetails: NextPage = () => {
                     </Col>
                     <Col flex={3}>
                         <ProductCart
-                            id={productDetailSelected.id}
+                            id={productDetailSelected?.id}
                             price={price}
-                            thumbnail={images.at(0)}
+                            thumbnail={images?.at(0)}
                             name={product.name + ' - ' + productDetailName}
                         />
                     </Col>
