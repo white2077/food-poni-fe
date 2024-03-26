@@ -1,11 +1,17 @@
 import {createSlice} from "@reduxjs/toolkit";
 
 export interface ICartItem {
+
     id: string;
+
     thumbnail: string;
+
     name: string;
+
     price: number;
+
     quantity: number;
+
 }
 
 export interface ICartState {

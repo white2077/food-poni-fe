@@ -4,20 +4,19 @@ import {useState} from "react";
 import Link from "next/link";
 import CartComponent from "./cart";
 import SearchComponent from "./search";
-
-const UserList = ['U', 'Lucy', 'Tom', 'Edward'];
-const ColorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'];
+import {useSelector} from "react-redux";
+import {ICartItem} from "../store/cart.reducer";
+import {ICurrentUser} from "../store/user.reducer";
 
 const MainHeader = () => {
-    const [user, setUser] = useState(UserList[0]);
-    const [color, setColor] = useState(ColorList[0]);
+
+    const currentUser = useSelector(state => state.user.currentUser) as ICurrentUser;
 
     return (
         <Row align='middle'>
             <Col flex={2}>
                 <Link href={'/'} style={{
                     verticalAlign: 'middle',
-                    color: color,
                     fontWeight: 'bold',
                     fontSize: '24px'
                 }}>Foodponi</Link>
@@ -28,8 +27,7 @@ const MainHeader = () => {
             <Col flex={2}>
                 <Flex gap='middle' align='center' justify='end'>
                         <CartComponent></CartComponent>
-                        <Avatar style={{backgroundColor: color, verticalAlign: 'middle'}} size="large">
-                            {user}
+                        <Avatar src={currentUser.avatar} style={{verticalAlign: 'middle'}} size="large">
                         </Avatar>
                 </Flex>
             </Col>

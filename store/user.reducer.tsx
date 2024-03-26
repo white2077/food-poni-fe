@@ -9,8 +9,7 @@ export interface ICurrentUser {
     lastName: string;
 }
 
-export interface ICurrentUserState
-{
+export interface ICurrentUserState {
     currentUser: ICurrentUser;
 }
 
@@ -29,9 +28,10 @@ const userSlide = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        setCurrentUser: (state, action) => {
-
-        }
+        setCurrentUser: (state, action) => ({
+            ...state,
+            currentUser: action.payload
+        })
     }
 });
 

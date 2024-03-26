@@ -2,15 +2,21 @@ import {Button, Card, Flex, InputNumber} from "antd";
 import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {addItem, ICartItem} from "../store/cart.reducer";
+import {useRouter} from "next/router";
 
 const ProductCart = ({id, price, thumbnail, name}) => {
     const [quantity, setQuantity] = useState<number>(1);
     const dispatch = useDispatch();
     const cartItems = useSelector(state => state.cart.cartItems) as ICartItem[];
     const isExisted = cartItems.some(item => item.id === id);
+    const router = useRouter();
     const addToCart = () => {
         const payload = {id, price, thumbnail, name, quantity} as ICartItem;
         dispatch(addItem(payload));
+    }
+
+    const getCheckout = () => {
+        router.push("/checkout");
     }
 
     return (
@@ -26,7 +32,7 @@ const ProductCart = ({id, price, thumbnail, name}) => {
             <div>Tạm tính</div>
             <div>${price * quantity}</div>
             <Flex vertical gap='small' style={{width: '100%'}}>
-                <Button type='primary' danger block>
+                <Button type='primary' danger block onClick={getCheckout}>
                     Mua ngay
                 </Button>
                 <Button block onClick={addToCart}
