@@ -1,36 +1,68 @@
 export interface User {
-  id: string;
+    id: string;
 
-  avatar: string;
+    avatar: string;
 
-  email: string;
+    email: string;
 
-  firstName: string;
+    firstName: string;
 
-  lastName: string;
+    lastName: string;
 
-  phoneNumber: string;
+    phoneNumber: string;
 
-  username: string;
+    username: string;
 
-  role: string;
+    role: string;
 
-  status: boolean;
+    status: boolean;
+
+}
+
+export interface CurrentUser {
+
+    id: string,
+
+    sub: string,
+
+    roles: string[],
+
+    fullName: string,
+
+    avatar: string,
+
+    email: string,
+
+    phoneNumber: string,
+
+    username: string,
+
+    accessToken: string
 
 }
 
 export interface UserRequest {
 
-  id: string;
+    id: string;
 
 }
 
 export interface UserRequestLogin {
 
-  username: string | null;
+    username: string | null;
 
-  email: string | null;
+    email: string | null;
 
-  password: string;
+    password: string;
+
+}
+
+export interface IUserRemember {
+
+    username: string;
+
+    password: string;
+
+    avatar: string;
 
 }

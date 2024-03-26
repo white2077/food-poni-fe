@@ -1,5 +1,6 @@
 
 export interface Category {
+
   id: string;
 
   categoryName: string;
@@ -19,5 +20,7 @@ export interface Category {
 }
 
 export interface CategoryRequest {
+
   id: string;
+
 }
