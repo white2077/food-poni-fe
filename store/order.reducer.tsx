@@ -4,7 +4,7 @@ import {createSlice} from "@reduxjs/toolkit";
 export interface IOrder {
     user: string;
     orderItems: IOrderItem[];
-    orderAddress: string;
+    shippingAddress: IShippingAddress;
     note: string;
     payment: IPaymentInfo;
 }
@@ -13,6 +13,16 @@ export interface IOrderItem {
     quantity: number;
     productDetail: ICartItem;
     note: string;
+}
+
+export interface IShippingAddress {
+    fullName: string;
+    phoneNumber: string;
+    address: string;
+    district: string;
+    province: string;
+    ward: string;
+    street: string;
 }
 
 export interface IPaymentInfo {

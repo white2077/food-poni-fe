@@ -3,10 +3,10 @@ import {
     Button,
     Card,
     Checkbox,
-    Col,
+    Col, Collapse,
     Divider,
     Form, Input,
-    InputNumber,
+    InputNumber, List, Modal,
     notification,
     Radio,
     RadioChangeEvent,
@@ -17,11 +17,14 @@ import {DeleteOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {ICartItem, setNote, setQuantity} from "../store/cart.reducer";
 import {CurrentUser} from "../model/User";
-import {IOrder, IOrderItem, IPaymentInfo} from "../store/order.reducer";
+import {IOrder, IOrderItem, IPaymentInfo, IShippingAddress} from "../store/order.reducer";
 import TextArea from "antd/es/input/TextArea";
 import React, {useState} from "react";
 import axiosConfig from "../utils/axios-config";
 import {useRouter} from "next/router";
+import {AxiosResponse} from "axios";
+import {Page} from "../model/common";
+import {DeliveryInfomation} from "../model/DeliveryInfomation";
 
 const isPayment: IPaymentInfo = {
 
@@ -29,8 +32,6 @@ const isPayment: IPaymentInfo = {
 
     status: "PAYING"
 }
-
-const isAddress: string = "Tòa ViwaSeen 48 Tố Hữu, Phường Trung Văn, Quận Nam Từ Liêm, Hà Nội";
 
 const isPending: boolean = false;
 
@@ -46,30 +47,33 @@ const Checkout = () => {
 
     const [pending, setPending] = useState<boolean>(isPending);
 
-    const [orderAddress, setOrderAddress] = useState<string>(isAddress);
+    const [shippingAddress, setShippingAddress] = useState<IShippingAddress>();
 
     const [payment, setPayment] = useState<IPaymentInfo>(isPayment);
 
+    const [deliveryInformationList, setDeliveryInformationList] = useState<DeliveryInfomation[]>([]);
+
+    const [modal2Open, setModal2Open] = useState(false);
+
     const totalAmount = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
-    // axiosConfig.get(`/delivery-informations?userId=${currentUser.id}`, {
-    //     headers: {
-    //         Authorization: 'Bearer ' + currentUser.accessToken,
-    //     }
-    // })
-    //     .then(function (res) {
-    //         console.log(res);
-    //         notification.open({
-    //             message: 'Delivery information message',
-    //             description: 'Get Delivery information successfully!',
-    //         });
-    //     })
-    //     .catch(function (res) {
-    //         notification.open({
-    //             message: 'Delivery information message',
-    //             description: res.message
-    //         });
-    //     })
+    const getDeliveryInformationList = () => {
+        axiosConfig.get(`/delivery-informations?userId=${currentUser.id}`, {
+            headers: {
+                Authorization: 'Bearer ' + currentUser.accessToken,
+            }
+        })
+            .then(function (res: AxiosResponse<Page<DeliveryInfomation[]>>) {
+                // console.log(res.data);
+                setDeliveryInformationList(res.data.content);
+            })
+            .catch(function (res) {
+                notification.open({
+                    message: 'Delivery information message',
+                    description: res.message
+                });
+            })
+    }
 
     const addToOrder = (values: any) => {
         setPending(true);
@@ -83,9 +87,7 @@ const Checkout = () => {
         });
         const note: string = values.note;
 
-        const order = {user, orderItems, orderAddress, note, payment} as IOrder;
-
-        console.log(order);
+        const order = {user, orderItems, shippingAddress, note, payment} as IOrder;
 
         axiosConfig.post("/orders", order, {
             headers: {
@@ -187,11 +189,49 @@ const Checkout = () => {
                         <Card style={{marginBottom: "16px"}}>
                             <div>
                                 Giao tới
-                                <a style={{float: 'right'}} href="">Thay đổi</a>
+                                <Button type='link' style={{float: 'right'}} onClick={() => {
+                                    setModal2Open(true);
+                                    getDeliveryInformationList();
+                                }}>Thay đổi</Button>
+                                <Modal
+                                    title="Vertically centered modal dialog"
+                                    centered
+                                    open={modal2Open}
+                                    onOk={() => setModal2Open(false)}
+                                    onCancel={() => setModal2Open(false)}
+                                >
+                                    <Radio.Group onChange={(e) => setShippingAddress(e.target.value)}>
+                                        <List
+                                            dataSource={deliveryInformationList}
+                                            renderItem={(item, index) => (
+                                                <Collapse
+                                                    expandIconPosition={"end"}
+                                                    collapsible={"icon"}
+                                                    items={[{
+                                                        key: index,
+                                                        label: <Radio value={item}>
+                                                            <div><span
+                                                                style={{fontWeight: 'bold'}}>{item.fullName}</span> | {item.phoneNumber}
+                                                            </div>
+                                                            <div>{item.address}, {item.street}, {item.ward}, {item.district}, {item.province}</div>
+                                                        </Radio>,
+                                                        children: <p>aaaaaaaaaaaaaaaa</p>
+                                                    }]}
+                                                />
+                                            )}
+                                        />
+                                    </Radio.Group>
+                                </Modal>
                             </div>
                             <div>
-                                <div>{currentUser.firstName + ' ' + currentUser.lastName} | {currentUser.phoneNumber}</div>
-                                <div>{orderAddress}</div>
+                                {shippingAddress && (
+                                    <>
+                                        <div><span
+                                            style={{fontWeight: 'bold'}}>{shippingAddress.fullName}</span> | {shippingAddress.phoneNumber}
+                                        </div>
+                                        <div>{shippingAddress.address}, {shippingAddress.street}, {shippingAddress.ward}, {shippingAddress.district}, {shippingAddress.province}</div>
+                                    </>)
+                                }
                             </div>
                         </Card>
                         <Card style={{marginBottom: "16px"}}>
