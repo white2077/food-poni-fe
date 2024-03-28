@@ -12,6 +12,8 @@ export interface ICartItem {
 
     quantity: number;
 
+    note: string;
+
 }
 
 export interface ICartState {
@@ -41,9 +43,15 @@ const cartSlide = createSlice({
             ...state,
             cartItems: state.cartItems.map((item) =>
                 (item.id === action.payload.id) ? {...item, quantity: action.payload.value} : item)
-        })
+        }),
+        setNote: (state, action) => {
+            const { id, note } = action.payload;
+            state.cartItems = state.cartItems.map((item) =>
+                item.id === id ? { ...item, note: note || "" } : item
+            );
+        }
     }
 });
 
-export const {addItem, setQuantity, deleteItem} = cartSlide.actions;
+export const {addItem, setQuantity, deleteItem, setNote} = cartSlide.actions;
 export default cartSlide.reducer;

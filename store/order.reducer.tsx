@@ -1,11 +1,10 @@
-import {ICurrentUser} from "./user.reducer";
 import {ICartItem} from "./cart.reducer";
 import {createSlice} from "@reduxjs/toolkit";
-import {IProductDetail} from "../pages/[pid]";
 
 export interface IOrder {
     user: string;
     orderItems: IOrderItem[];
+    shippingAddress: IShippingAddress;
     note: string;
     payment: IPaymentInfo;
 }
@@ -13,6 +12,17 @@ export interface IOrder {
 export interface IOrderItem {
     quantity: number;
     productDetail: ICartItem;
+    note: string;
+}
+
+export interface IShippingAddress {
+    fullName: string;
+    phoneNumber: string;
+    address: string;
+    district: string;
+    province: string;
+    ward: string;
+    street: string;
 }
 
 export interface IPaymentInfo {

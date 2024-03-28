@@ -10,7 +10,6 @@ import ProductCart from "../components/product-cart";
 import {server} from "../utils/server";
 import ProductDescriptionComponent from "../components/product-description";
 import ProductRetailer from "../components/product-retailer";
-import Title from "antd/lib/typography/Title";
 
 export interface IProduct {
     id: string;

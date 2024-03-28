@@ -3,10 +3,10 @@ import {
     Button,
     Card,
     Checkbox,
-    Col,
+    Col, Collapse,
     Divider,
-    Form,
-    InputNumber,
+    Form, Input,
+    InputNumber, List, Modal,
     notification,
     Radio,
     RadioChangeEvent,
@@ -15,18 +15,16 @@ import {
 } from "antd";
 import {DeleteOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
-import {ICartItem, setQuantity} from "../store/cart.reducer";
-import {CurrentUser, IUserRemember} from "../model/User";
-import {addItem, IOrder, IOrderItem, IPaymentInfo} from "../store/order.reducer";
+import {ICartItem, setNote, setQuantity} from "../store/cart.reducer";
+import {CurrentUser} from "../model/User";
+import {IOrder, IOrderItem, IPaymentInfo, IShippingAddress} from "../store/order.reducer";
 import TextArea from "antd/es/input/TextArea";
 import React, {useState} from "react";
 import axiosConfig from "../utils/axios-config";
-import {IToken} from "../model/Auth";
-import {jwtDecode} from "jwt-decode";
-import {setCurrentUser} from "../store/user.reducer";
-import {deleteCookie, setCookie} from "cookies-next";
-import {REFRESH_TOKEN, REMEMBER_ME} from "../utils/server";
 import {useRouter} from "next/router";
+import {AxiosResponse} from "axios";
+import {Page} from "../model/common";
+import {DeliveryInfomation} from "../model/DeliveryInfomation";
 
 const isPayment: IPaymentInfo = {
 
@@ -49,9 +47,33 @@ const Checkout = () => {
 
     const [pending, setPending] = useState<boolean>(isPending);
 
+    const [shippingAddress, setShippingAddress] = useState<IShippingAddress>();
+
     const [payment, setPayment] = useState<IPaymentInfo>(isPayment);
 
+    const [deliveryInformationList, setDeliveryInformationList] = useState<DeliveryInfomation[]>([]);
+
+    const [modal2Open, setModal2Open] = useState(false);
+
     const totalAmount = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+
+    const getDeliveryInformationList = () => {
+        axiosConfig.get(`/delivery-informations?userId=${currentUser.id}`, {
+            headers: {
+                Authorization: 'Bearer ' + currentUser.accessToken,
+            }
+        })
+            .then(function (res: AxiosResponse<Page<DeliveryInfomation[]>>) {
+                // console.log(res.data);
+                setDeliveryInformationList(res.data.content);
+            })
+            .catch(function (res) {
+                notification.open({
+                    message: 'Delivery information message',
+                    description: res.message
+                });
+            })
+    }
 
     const addToOrder = (values: any) => {
         setPending(true);
@@ -59,14 +81,19 @@ const Checkout = () => {
         const orderItems: IOrderItem[] = cartItems.map((item: ICartItem) => {
             return {
                 quantity: item.quantity,
-                productDetail: item
+                productDetail: item,
+                note: item.note
             };
         });
         const note: string = values.note;
 
-        const order = {user, orderItems, note, payment} as IOrder;
+        const order = {user, orderItems, shippingAddress, note, payment} as IOrder;
 
-        axiosConfig.post("/orders", order)
+        axiosConfig.post("/orders", order, {
+            headers: {
+                Authorization: 'Bearer ' + currentUser.accessToken,
+            }
+        })
             .then(function (res: any) {
                 setPending(false);
                 // redirect to home page
@@ -80,7 +107,7 @@ const Checkout = () => {
                 setPending(false);
                 notification.open({
                     message: 'Order message',
-                    description: res.message,
+                    description: res.message
                 });
             })
     }
@@ -94,6 +121,10 @@ const Checkout = () => {
         setPayment(prevPaymentInfo => ({...prevPaymentInfo, method: e.target.value}));
     };
 
+    const onChangeNote = (itemId: string, note: string) => {
+        dispatch(setNote({id: itemId, note}));
+    };
+
     return (
         <DefaultLayout>
             <div style={{color: "black", textAlign: "left"}}>
@@ -102,14 +133,15 @@ const Checkout = () => {
                     <Col flex='auto'>
                         <Card style={{marginBottom: "16px"}}>
                             <Row>
-                                <Col flex='5%'>
+                                <Col flex='2%'>
                                     <Checkbox></Checkbox>
                                 </Col>
                                 <Col flex='40%'>Tất cả</Col>
                                 <Col flex='15%'>Đơn giá</Col>
                                 <Col flex='10%'>Số lượng</Col>
                                 <Col flex='15%'>Thành tiền</Col>
-                                <Col flex='5%'>
+                                <Col flex='26%'>Ghi chú</Col>
+                                <Col flex='2%'>
                                     <DeleteOutlined/>
                                 </Col>
                             </Row>
@@ -117,7 +149,7 @@ const Checkout = () => {
                         <Card>
                             {cartItems.map((item, index) => (
                                 <Row key={index} style={{margin: '16px 0', alignItems: 'center'}}>
-                                    <Col flex='5%'>
+                                    <Col flex='2%'>
                                         <Checkbox></Checkbox>
                                     </Col>
                                     <Col flex='40%'>
@@ -138,22 +170,68 @@ const Checkout = () => {
                                                      onChange={(value: number | null) => onChangeQuantity(item.id, value!)}/>
                                     </Col>
                                     <Col flex='15%'>${item.price * item.quantity}</Col>
-                                    <Col flex='5%'>
+                                    <Col flex='26%'>
+                                        <TextArea
+                                            placeholder="Note"
+                                            value={item.note}
+                                            onChange={(e) => onChangeNote(item.id, e.target.value)}
+                                            rows={2}
+                                        />
+                                    </Col>
+                                    <Col flex='2%'>
                                         <DeleteOutlined/>
                                     </Col>
                                 </Row>
                             ))}
                         </Card>
                     </Col>
-                    <Col flex='450px'>
+                    <Col flex='400px'>
                         <Card style={{marginBottom: "16px"}}>
                             <div>
                                 Giao tới
-                                <a style={{float: 'right'}} href="">Thay đổi</a>
+                                <Button type='link' style={{float: 'right'}} onClick={() => {
+                                    setModal2Open(true);
+                                    getDeliveryInformationList();
+                                }}>Thay đổi</Button>
+                                <Modal
+                                    title="Vertically centered modal dialog"
+                                    centered
+                                    open={modal2Open}
+                                    onOk={() => setModal2Open(false)}
+                                    onCancel={() => setModal2Open(false)}
+                                >
+                                    <Radio.Group onChange={(e) => setShippingAddress(e.target.value)}>
+                                        <List
+                                            dataSource={deliveryInformationList}
+                                            renderItem={(item, index) => (
+                                                <Collapse
+                                                    expandIconPosition={"end"}
+                                                    collapsible={"icon"}
+                                                    items={[{
+                                                        key: index,
+                                                        label: <Radio value={item}>
+                                                            <div><span
+                                                                style={{fontWeight: 'bold'}}>{item.fullName}</span> | {item.phoneNumber}
+                                                            </div>
+                                                            <div>{item.address}, {item.street}, {item.ward}, {item.district}, {item.province}</div>
+                                                        </Radio>,
+                                                        children: <p>aaaaaaaaaaaaaaaa</p>
+                                                    }]}
+                                                />
+                                            )}
+                                        />
+                                    </Radio.Group>
+                                </Modal>
                             </div>
                             <div>
-                                <div>{currentUser.firstName + ' ' + currentUser.lastName} | {currentUser.phoneNumber}</div>
-                                <div>Tòa ViwaSeen 48 Tố Hữu, Phường Trung Văn, Quận Nam Từ Liêm, Hà Nội</div>
+                                {shippingAddress && (
+                                    <>
+                                        <div><span
+                                            style={{fontWeight: 'bold'}}>{shippingAddress.fullName}</span> | {shippingAddress.phoneNumber}
+                                        </div>
+                                        <div>{shippingAddress.address}, {shippingAddress.street}, {shippingAddress.ward}, {shippingAddress.district}, {shippingAddress.province}</div>
+                                    </>)
+                                }
                             </div>
                         </Card>
                         <Card style={{marginBottom: "16px"}}>
@@ -190,7 +268,6 @@ const Checkout = () => {
                         >
                             <Form.Item
                                 name="note"
-                                rules={[{required: true, message: 'Please input your note!'}]}
                             >
                                 <TextArea placeholder="Note" rows={4}/>
                             </Form.Item>

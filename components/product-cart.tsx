@@ -16,6 +16,7 @@ const ProductCart = ({id, price, thumbnail, name}: {id: string, price: number, t
     }
 
     const getCheckout = () => {
+        addToCart();
         router.push("/checkout");
     }
 
