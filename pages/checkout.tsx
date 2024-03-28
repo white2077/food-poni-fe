@@ -5,7 +5,7 @@ import {
     Checkbox,
     Col,
     Divider,
-    Form,
+    Form, Input,
     InputNumber,
     notification,
     Radio,
@@ -15,7 +15,7 @@ import {
 } from "antd";
 import {DeleteOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
-import {ICartItem, setQuantity} from "../store/cart.reducer";
+import {ICartItem, setNote, setQuantity} from "../store/cart.reducer";
 import {CurrentUser} from "../model/User";
 import {IOrder, IOrderItem, IPaymentInfo} from "../store/order.reducer";
 import TextArea from "antd/es/input/TextArea";
@@ -29,6 +29,8 @@ const isPayment: IPaymentInfo = {
 
     status: "PAYING"
 }
+
+const isAddress: string = "Tòa ViwaSeen 48 Tố Hữu, Phường Trung Văn, Quận Nam Từ Liêm, Hà Nội";
 
 const isPending: boolean = false;
 
@@ -44,9 +46,30 @@ const Checkout = () => {
 
     const [pending, setPending] = useState<boolean>(isPending);
 
+    const [orderAddress, setOrderAddress] = useState<string>(isAddress);
+
     const [payment, setPayment] = useState<IPaymentInfo>(isPayment);
 
     const totalAmount = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+
+    // axiosConfig.get(`/delivery-informations?userId=${currentUser.id}`, {
+    //     headers: {
+    //         Authorization: 'Bearer ' + currentUser.accessToken,
+    //     }
+    // })
+    //     .then(function (res) {
+    //         console.log(res);
+    //         notification.open({
+    //             message: 'Delivery information message',
+    //             description: 'Get Delivery information successfully!',
+    //         });
+    //     })
+    //     .catch(function (res) {
+    //         notification.open({
+    //             message: 'Delivery information message',
+    //             description: res.message
+    //         });
+    //     })
 
     const addToOrder = (values: any) => {
         setPending(true);
@@ -54,14 +77,21 @@ const Checkout = () => {
         const orderItems: IOrderItem[] = cartItems.map((item: ICartItem) => {
             return {
                 quantity: item.quantity,
-                productDetail: item
+                productDetail: item,
+                note: item.note
             };
         });
         const note: string = values.note;
 
-        const order = {user, orderItems, note, payment} as IOrder;
+        const order = {user, orderItems, orderAddress, note, payment} as IOrder;
 
-        axiosConfig.post("/orders", order)
+        console.log(order);
+
+        axiosConfig.post("/orders", order, {
+            headers: {
+                Authorization: 'Bearer ' + currentUser.accessToken,
+            }
+        })
             .then(function (res: any) {
                 setPending(false);
                 // redirect to home page
@@ -75,7 +105,7 @@ const Checkout = () => {
                 setPending(false);
                 notification.open({
                     message: 'Order message',
-                    description: res.message,
+                    description: res.message
                 });
             })
     }
@@ -89,6 +119,10 @@ const Checkout = () => {
         setPayment(prevPaymentInfo => ({...prevPaymentInfo, method: e.target.value}));
     };
 
+    const onChangeNote = (itemId: string, note: string) => {
+        dispatch(setNote({id: itemId, note}));
+    };
+
     return (
         <DefaultLayout>
             <div style={{color: "black", textAlign: "left"}}>
@@ -97,14 +131,15 @@ const Checkout = () => {
                     <Col flex='auto'>
                         <Card style={{marginBottom: "16px"}}>
                             <Row>
-                                <Col flex='5%'>
+                                <Col flex='2%'>
                                     <Checkbox></Checkbox>
                                 </Col>
                                 <Col flex='40%'>Tất cả</Col>
                                 <Col flex='15%'>Đơn giá</Col>
                                 <Col flex='10%'>Số lượng</Col>
                                 <Col flex='15%'>Thành tiền</Col>
-                                <Col flex='5%'>
+                                <Col flex='26%'>Ghi chú</Col>
+                                <Col flex='2%'>
                                     <DeleteOutlined/>
                                 </Col>
                             </Row>
@@ -112,7 +147,7 @@ const Checkout = () => {
                         <Card>
                             {cartItems.map((item, index) => (
                                 <Row key={index} style={{margin: '16px 0', alignItems: 'center'}}>
-                                    <Col flex='5%'>
+                                    <Col flex='2%'>
                                         <Checkbox></Checkbox>
                                     </Col>
                                     <Col flex='40%'>
@@ -133,14 +168,22 @@ const Checkout = () => {
                                                      onChange={(value: number | null) => onChangeQuantity(item.id, value!)}/>
                                     </Col>
                                     <Col flex='15%'>${item.price * item.quantity}</Col>
-                                    <Col flex='5%'>
+                                    <Col flex='26%'>
+                                        <TextArea
+                                            placeholder="Note"
+                                            value={item.note}
+                                            onChange={(e) => onChangeNote(item.id, e.target.value)}
+                                            rows={2}
+                                        />
+                                    </Col>
+                                    <Col flex='2%'>
                                         <DeleteOutlined/>
                                     </Col>
                                 </Row>
                             ))}
                         </Card>
                     </Col>
-                    <Col flex='450px'>
+                    <Col flex='400px'>
                         <Card style={{marginBottom: "16px"}}>
                             <div>
                                 Giao tới
@@ -148,7 +191,7 @@ const Checkout = () => {
                             </div>
                             <div>
                                 <div>{currentUser.firstName + ' ' + currentUser.lastName} | {currentUser.phoneNumber}</div>
-                                <div>Tòa ViwaSeen 48 Tố Hữu, Phường Trung Văn, Quận Nam Từ Liêm, Hà Nội</div>
+                                <div>{orderAddress}</div>
                             </div>
                         </Card>
                         <Card style={{marginBottom: "16px"}}>
@@ -185,7 +228,6 @@ const Checkout = () => {
                         >
                             <Form.Item
                                 name="note"
-                                rules={[{required: true, message: 'Please input your note!'}]}
                             >
                                 <TextArea placeholder="Note" rows={4}/>
                             </Form.Item>

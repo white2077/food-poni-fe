@@ -1,36 +1,34 @@
-import {createSlice} from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {CurrentUser} from "../model/User";
 
-export interface ICurrentUser {
-    id: string;
-    avatar: string;
-    username: string;
-    email: string;
-    firstName: string;
-    lastName: string;
+export const INITIAL_CURRENT_USER = {
+    id: "",
+    sub: "",
+    roles: [],
+    firstName: "",
+    lastName: "",
+    avatar: "",
+    email: "",
+    phoneNumber: "",
+    username: "",
+    accessToken: ""
 }
 
 export interface ICurrentUserState {
-    currentUser: ICurrentUser;
+    currentUser: CurrentUser;
 }
 
 const initialState: ICurrentUserState = {
-    currentUser: {
-        id: '',
-        avatar: '',
-        username: '',
-        email: '',
-        firstName: '',
-        lastName: ''
-    },
+    currentUser: INITIAL_CURRENT_USER
 }
 
 const userSlide = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        setCurrentUser: (state, action) => ({
+        setCurrentUser: (state, {payload}: {payload: CurrentUser}) => ({
             ...state,
-            currentUser: action.payload
+            currentUser: payload
         })
     }
 });
