@@ -22,7 +22,7 @@ const ProductCart = ({id, price, thumbnail, name}: {id: string, price: number, t
 
     return (
         <Card size='small' style={{color: 'black', textAlign: 'left'}}>
-            <div>Tên biến thể</div>
+            <div>{name}</div>
             <div>Số lượng</div>
             <InputNumber
                 min={1}

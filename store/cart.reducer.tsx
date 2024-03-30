@@ -39,6 +39,9 @@ const cartSlide = createSlice({
         deleteItem: (state, action) => {
             state.cartItems = state.cartItems.filter(item => item.id !== action.payload.id);
         },
+        deleteAllItem: (state, action) => {
+            state.cartItems = [];
+        },
         setQuantity: (state, action) => ({
             ...state,
             cartItems: state.cartItems.map((item) =>
@@ -53,5 +56,5 @@ const cartSlide = createSlice({
     }
 });
 
-export const {addItem, setQuantity, deleteItem, setNote} = cartSlide.actions;
+export const {addItem, setQuantity, deleteItem, deleteAllItem, setNote} = cartSlide.actions;
 export default cartSlide.reducer;

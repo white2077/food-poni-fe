@@ -15,7 +15,7 @@ import {
 } from "antd";
 import {DeleteOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
-import {ICartItem, setNote, setQuantity} from "../store/cart.reducer";
+import {deleteAllItem, ICartItem, setNote, setQuantity} from "../store/cart.reducer";
 import {CurrentUser} from "../model/User";
 import {IOrder, IOrderItem, IPaymentInfo, IShippingAddress} from "../store/order.reducer";
 import TextArea from "antd/es/input/TextArea";
@@ -69,6 +69,7 @@ const Checkout = () => {
             })
             .catch(function (res) {
                 notification.open({
+                    type: 'error',
                     message: 'Delivery information message',
                     description: res.message
                 });
@@ -87,29 +88,41 @@ const Checkout = () => {
         });
         const note: string = values.note;
 
-        const order = {user, orderItems, shippingAddress, note, payment} as IOrder;
+        if (user && orderItems && shippingAddress && payment) {
+            const order = {user, orderItems, shippingAddress, note, payment} as IOrder;
 
-        axiosConfig.post("/orders", order, {
-            headers: {
-                Authorization: 'Bearer ' + currentUser.accessToken,
-            }
-        })
-            .then(function (res: any) {
-                setPending(false);
-                // redirect to home page
-                notification.open({
-                    message: 'Order message',
-                    description: 'Create new order successfully!',
-                });
-                router.push('/');
+            axiosConfig.post("/orders", order, {
+                headers: {
+                    Authorization: 'Bearer ' + currentUser.accessToken,
+                }
             })
-            .catch(function (res) {
-                setPending(false);
-                notification.open({
-                    message: 'Order message',
-                    description: res.message
-                });
-            })
+                .then(function (res: any) {
+                    setPending(false);
+                    dispatch(deleteAllItem({}));
+                    notification.open({
+                        type: 'success',
+                        message: 'Order message',
+                        description: 'Create new order successfully!',
+                    });
+                    // redirect to home page
+                    router.push('/');
+                })
+                .catch(function (res) {
+                    setPending(false);
+                    notification.open({
+                        type: 'error',
+                        message: 'Order message',
+                        description: res.message
+                    });
+                })
+        } else {
+            setPending(false);
+            notification.open({
+                type: "error",
+                message: "Order message",
+                description: "Some information is missing. Please fill in all required fields."
+            });
+        }
     }
 
     const onChangeQuantity = (id: string, value: number) => {
@@ -131,59 +144,61 @@ const Checkout = () => {
                 <h1>GIỎ HÀNG</h1>
                 <Row gutter={16}>
                     <Col flex='auto'>
-                        <Card style={{marginBottom: "16px"}}>
-                            <Row>
-                                <Col flex='2%'>
-                                    <Checkbox></Checkbox>
-                                </Col>
-                                <Col flex='40%'>Tất cả</Col>
-                                <Col flex='15%'>Đơn giá</Col>
-                                <Col flex='10%'>Số lượng</Col>
-                                <Col flex='15%'>Thành tiền</Col>
-                                <Col flex='26%'>Ghi chú</Col>
-                                <Col flex='2%'>
-                                    <DeleteOutlined/>
-                                </Col>
-                            </Row>
-                        </Card>
-                        <Card>
-                            {cartItems.map((item, index) => (
-                                <Row key={index} style={{margin: '16px 0', alignItems: 'center'}}>
+                        <div>
+                            <Card style={{marginBottom: "16px"}}>
+                                <Row>
                                     <Col flex='2%'>
                                         <Checkbox></Checkbox>
                                     </Col>
-                                    <Col flex='40%'>
-                                        <div style={{display: 'flex', alignItems: 'center'}}>
-                                            <div>
-                                                <img src={item.thumbnail} style={{width: "100px"}} alt="Product"/>
-                                            </div>
-                                            <div style={{marginLeft: '16px'}}>{item.name}</div>
-                                        </div>
-                                    </Col>
-                                    <Col flex='15%'>${item.price}</Col>
-                                    <Col flex='10%'>
-                                        <InputNumber min={1}
-                                                     max={20}
-                                                     style={{maxWidth: '70px'}}
-                                                     defaultValue={1}
-                                                     value={item.quantity}
-                                                     onChange={(value: number | null) => onChangeQuantity(item.id, value!)}/>
-                                    </Col>
-                                    <Col flex='15%'>${item.price * item.quantity}</Col>
-                                    <Col flex='26%'>
-                                        <TextArea
-                                            placeholder="Note"
-                                            value={item.note}
-                                            onChange={(e) => onChangeNote(item.id, e.target.value)}
-                                            rows={2}
-                                        />
-                                    </Col>
+                                    <Col flex='40%'>Tất cả</Col>
+                                    <Col flex='15%'>Đơn giá</Col>
+                                    <Col flex='10%'>Số lượng</Col>
+                                    <Col flex='15%'>Thành tiền</Col>
+                                    <Col flex='26%'>Ghi chú</Col>
                                     <Col flex='2%'>
                                         <DeleteOutlined/>
                                     </Col>
                                 </Row>
-                            ))}
-                        </Card>
+                            </Card>
+                            <Card>
+                                {cartItems.map((item, index) => (
+                                    <Row key={index} style={{margin: '16px 0', alignItems: 'center'}}>
+                                        <Col flex='2%'>
+                                            <Checkbox></Checkbox>
+                                        </Col>
+                                        <Col flex='40%'>
+                                            <div style={{display: 'flex', alignItems: 'center'}}>
+                                                <div>
+                                                    <img src={item.thumbnail} style={{width: "100px"}} alt="Product"/>
+                                                </div>
+                                                <div style={{marginLeft: '16px'}}>{item.name}</div>
+                                            </div>
+                                        </Col>
+                                        <Col flex='15%'>${item.price}</Col>
+                                        <Col flex='10%'>
+                                            <InputNumber min={1}
+                                                         max={20}
+                                                         style={{maxWidth: '70px'}}
+                                                         defaultValue={1}
+                                                         value={item.quantity}
+                                                         onChange={(value: number | null) => onChangeQuantity(item.id, value!)}/>
+                                        </Col>
+                                        <Col flex='15%'>${item.price * item.quantity}</Col>
+                                        <Col flex='26%'>
+                                            <TextArea
+                                                placeholder="Note"
+                                                value={item.note}
+                                                onChange={(e) => onChangeNote(item.id, e.target.value)}
+                                                rows={2}
+                                            />
+                                        </Col>
+                                        <Col flex='2%'>
+                                            <DeleteOutlined/>
+                                        </Col>
+                                    </Row>
+                                ))}
+                            </Card>
+                        </div>
                     </Col>
                     <Col flex='400px'>
                         <Card style={{marginBottom: "16px"}}>
@@ -232,6 +247,9 @@ const Checkout = () => {
                                         <div>{shippingAddress.address}, {shippingAddress.street}, {shippingAddress.ward}, {shippingAddress.district}, {shippingAddress.province}</div>
                                     </>)
                                 }
+                                {!shippingAddress && (
+                                    <div style={{ color: 'red' }}>Vui lòng chọn thông tin vận chuyển</div>
+                                )}
                             </div>
                         </Card>
                         <Card style={{marginBottom: "16px"}}>

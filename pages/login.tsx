@@ -57,6 +57,7 @@ const Login: NextPage = () => {
 
                 // redirect to home page
                 notification.open({
+                    type: 'success',
                     message: 'Login message',
                     description: 'Login successfully!',
                 });
@@ -65,6 +66,7 @@ const Login: NextPage = () => {
             .catch(function (res) {
                 setPending(false);
                 notification.open({
+                    type: 'error',
                     message: 'Login message',
                     description: res.message,
                 });
