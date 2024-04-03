@@ -2,20 +2,20 @@ import {DefaultLayout} from "../components/layout";
 import {
     Button,
     Card,
-    Checkbox,
-    Col, Collapse,
+    Col,
+    Collapse,
     Divider,
-    Form, Input,
-    InputNumber, List, Modal,
+    Form,
+    List,
+    Modal,
     notification,
     Radio,
     RadioChangeEvent,
     Row,
     Space
 } from "antd";
-import {DeleteOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
-import {deleteAllItem, ICartItem, setNote, setQuantity} from "../store/cart.reducer";
+import {deleteAllItem, ICartItem} from "../store/cart.reducer";
 import {CurrentUser} from "../model/User";
 import {IOrder, IOrderItem, IPaymentInfo, IShippingAddress} from "../store/order.reducer";
 import TextArea from "antd/es/input/TextArea";
@@ -25,6 +25,7 @@ import {useRouter} from "next/router";
 import {AxiosResponse} from "axios";
 import {Page} from "../model/common";
 import {DeliveryInfomation} from "../model/DeliveryInfomation";
+import OrderCartItems from "../components/oder-cartItems";
 
 const isPayment: IPaymentInfo = {
 
@@ -58,7 +59,7 @@ const Checkout = () => {
     const totalAmount = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
     const getDeliveryInformationList = () => {
-        axiosConfig.get(`/delivery-informations?userId=${currentUser.id}`, {
+        axiosConfig.get("/addresses", {
             headers: {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }
@@ -78,7 +79,6 @@ const Checkout = () => {
 
     const addToOrder = (values: any) => {
         setPending(true);
-        const user = currentUser.id;
         const orderItems: IOrderItem[] = cartItems.map((item: ICartItem) => {
             return {
                 quantity: item.quantity,
@@ -88,8 +88,8 @@ const Checkout = () => {
         });
         const note: string = values.note;
 
-        if (user && orderItems && shippingAddress && payment) {
-            const order = {user, orderItems, shippingAddress, note, payment} as IOrder;
+        if (orderItems && shippingAddress && payment) {
+            const order = {orderItems, shippingAddress, note, payment} as IOrder;
 
             axiosConfig.post("/orders", order, {
                 headers: {
@@ -125,17 +125,8 @@ const Checkout = () => {
         }
     }
 
-    const onChangeQuantity = (id: string, value: number) => {
-        const payload = {id, value};
-        dispatch(setQuantity(payload));
-    }
-
     const onChange = (e: RadioChangeEvent) => {
         setPayment(prevPaymentInfo => ({...prevPaymentInfo, method: e.target.value}));
-    };
-
-    const onChangeNote = (itemId: string, note: string) => {
-        dispatch(setNote({id: itemId, note}));
     };
 
     return (
@@ -144,61 +135,7 @@ const Checkout = () => {
                 <h1>GIỎ HÀNG</h1>
                 <Row gutter={16}>
                     <Col flex='auto'>
-                        <div>
-                            <Card style={{marginBottom: "16px"}}>
-                                <Row>
-                                    <Col flex='2%'>
-                                        <Checkbox></Checkbox>
-                                    </Col>
-                                    <Col flex='40%'>Tất cả</Col>
-                                    <Col flex='15%'>Đơn giá</Col>
-                                    <Col flex='10%'>Số lượng</Col>
-                                    <Col flex='15%'>Thành tiền</Col>
-                                    <Col flex='26%'>Ghi chú</Col>
-                                    <Col flex='2%'>
-                                        <DeleteOutlined/>
-                                    </Col>
-                                </Row>
-                            </Card>
-                            <Card>
-                                {cartItems.map((item, index) => (
-                                    <Row key={index} style={{margin: '16px 0', alignItems: 'center'}}>
-                                        <Col flex='2%'>
-                                            <Checkbox></Checkbox>
-                                        </Col>
-                                        <Col flex='40%'>
-                                            <div style={{display: 'flex', alignItems: 'center'}}>
-                                                <div>
-                                                    <img src={item.thumbnail} style={{width: "100px"}} alt="Product"/>
-                                                </div>
-                                                <div style={{marginLeft: '16px'}}>{item.name}</div>
-                                            </div>
-                                        </Col>
-                                        <Col flex='15%'>${item.price}</Col>
-                                        <Col flex='10%'>
-                                            <InputNumber min={1}
-                                                         max={20}
-                                                         style={{maxWidth: '70px'}}
-                                                         defaultValue={1}
-                                                         value={item.quantity}
-                                                         onChange={(value: number | null) => onChangeQuantity(item.id, value!)}/>
-                                        </Col>
-                                        <Col flex='15%'>${item.price * item.quantity}</Col>
-                                        <Col flex='26%'>
-                                            <TextArea
-                                                placeholder="Note"
-                                                value={item.note}
-                                                onChange={(e) => onChangeNote(item.id, e.target.value)}
-                                                rows={2}
-                                            />
-                                        </Col>
-                                        <Col flex='2%'>
-                                            <DeleteOutlined/>
-                                        </Col>
-                                    </Row>
-                                ))}
-                            </Card>
-                        </div>
+                        <OrderCartItems></OrderCartItems>
                     </Col>
                     <Col flex='400px'>
                         <Card style={{marginBottom: "16px"}}>

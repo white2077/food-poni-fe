@@ -2,7 +2,6 @@ import {ICartItem} from "./cart.reducer";
 import {createSlice} from "@reduxjs/toolkit";
 
 export interface IOrder {
-    user: string;
     orderItems: IOrderItem[];
     shippingAddress: IShippingAddress;
     note: string;
@@ -30,12 +29,31 @@ export interface IPaymentInfo {
     status: string;
 }
 
+export const INITIAL_ORDER = {
+    user: "",
+    orderItems: [],
+    shippingAddress: {
+        fullName: "",
+        phoneNumber: "",
+        address: "",
+        district: "",
+        province: "",
+        ward: "",
+        street: ""
+    },
+    note: "",
+    payment: {
+        method: "",
+        status: ""
+    }
+}
+
 export interface IOrderState {
-    orders: IOrder[];
+    orders: IOrder;
 }
 
 const initialState: IOrderState = {
-    orders: []
+    orders: INITIAL_ORDER
 }
 
 const orderSlide = createSlice({
