@@ -15,21 +15,6 @@ export interface IPost {
 }
 
 const Home: NextPage = () => {
-    const [posts, setPosts] = useState([]);
-
-    useEffect(() => {
-        getAll();
-    }, []);
-
-    const getAll = () => {
-        fetch('https://jsonplaceholder.typicode.com/posts')
-            .then(
-                response => response.json())
-            .then(response => {
-                setPosts(response);
-            })
-            .catch(response => console.log(response))
-    }
 
     return (
         <WithLeftSiderLayout>
@@ -46,6 +31,7 @@ const Home: NextPage = () => {
             </Row>
         </WithLeftSiderLayout>
     );
+
 }
 
 export default Home

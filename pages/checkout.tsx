@@ -25,7 +25,7 @@ import {useRouter} from "next/router";
 import {AxiosResponse} from "axios";
 import {Page} from "../model/common";
 import {DeliveryInfomation} from "../model/DeliveryInfomation";
-import OrderCartItems from "../components/oder-cartItems";
+import OrderCartItems from "../components/order-cartItems";
 
 const isPayment: IPaymentInfo = {
 

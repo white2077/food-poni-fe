@@ -1,31 +1,35 @@
+import {Product} from "./Product";
+
 export interface ProductDetail {
 
-   id: string;
+    id: string;
 
-   name: string;
+    name: string;
 
-   price: number;
+    price: number;
 
-   description: string;
+    description: string;
 
-   status: boolean;
+    status: boolean;
 
-   images: string[];
+    images: string[];
+
+    product: Product;
 
 }
 
 export interface ProductDetailRequest {
 
-  id?: string;
+    id?: string;
 
-  name?: string;
+    name?: string;
 
-  price: number;
+    price: number;
 
-  description?: string;
+    description?: string;
 
-  status: boolean;
+    status: boolean;
 
-  images?: string[];
+    images?: string[];
 
 }
