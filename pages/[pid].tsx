@@ -109,13 +109,13 @@ const ProductDetails: NextPage = () => {
                             <Col xs={24} sm={24} md={16} lg={10} xl={12}>
                                 <div style={{textAlign: 'left'}}>
                                     <Card>
-                                        <div>
+                                        <h2 style={{marginTop: '0'}}>
                                             {product.name + (productDetailName ? ' - ' + productDetailName : '')}
-                                        </div>
+                                        </h2>
                                         <Rate allowHalf defaultValue={4.5}
                                               style={{fontSize: '12px', marginRight: '8px'}}/>
                                         <span>Đã bán 500</span>
-                                        <div>${price}</div>
+                                        <h3>${price}</h3>
                                         {(product && product.productDetails && product.productDetails.length > 1) && (
                                             <>
                                                 <div>Loại</div>
