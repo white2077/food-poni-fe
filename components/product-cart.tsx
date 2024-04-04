@@ -3,11 +3,12 @@ import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {addItem, ICartItem} from "../store/cart.reducer";
 import {useRouter} from "next/router";
+import {RootState} from "../store";
 
 const ProductCart = ({id, price, thumbnail, name}: {id: string, price: number, thumbnail: string, name: string}) => {
     const [quantity, setQuantity] = useState<number>(1);
     const dispatch = useDispatch();
-    const cartItems = useSelector(state => state.cart.cartItems) as ICartItem[];
+    const cartItems = useSelector((state: RootState) => state.cart.cartItems) as ICartItem[];
     const isExisted = cartItems.some(item => item.id === id);
     const router = useRouter();
     const addToCart = () => {
@@ -29,7 +30,7 @@ const ProductCart = ({id, price, thumbnail, name}: {id: string, price: number, t
                 max={20}
                 defaultValue={1}
                 value={quantity}
-                onChange={(value) => setQuantity(value)} disabled={isExisted}/>
+                onChange={(value) => setQuantity(value ? value : 1)} disabled={isExisted}/>
             <div>Tạm tính</div>
             <div>${price * quantity}</div>
             <Flex vertical gap='small' style={{width: '100%'}}>

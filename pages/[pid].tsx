@@ -1,10 +1,10 @@
 import type {NextPage} from 'next'
-import {useRouter} from "next/router";
+import {NextRouter, useRouter} from "next/router";
 import {DefaultLayout} from "../components/layout";
 import React, {useEffect, useState} from "react";
 import {Product} from "../model/Product";
 import {ProductDetail} from "../model/ProductDetail";
-import {Card, Col, Radio, Rate, Row} from "antd";
+import {Card, Col, Radio, Rate, Row, Result, Button} from "antd";
 import ProductGallery from "../components/product-gallery";
 import ProductCart from "../components/product-cart";
 import {server} from "../utils/server";
@@ -35,9 +35,10 @@ export interface IRetailer {
 }
 
 const ProductDetails: NextPage = () => {
-    const router = useRouter();
+    const router: NextRouter = useRouter();
     const {pid} = router.query;
     const [product, setProduct] = useState<IProduct>();
+    const [isError, setIsError] = useState<boolean>(false);
 
     useEffect(() => {
         getProductDetailById();
@@ -71,7 +72,9 @@ const ProductDetails: NextPage = () => {
                     setProduct(productMapped);
                     setProductDetailSelected(productMapped.productDetails[0]);
                 })
-                .catch(response => console.log(response))
+                .catch(response => {
+                    setIsError(true);
+                })
         }
     }
 
@@ -82,6 +85,7 @@ const ProductDetails: NextPage = () => {
     }
 
     const {
+        id,
         images,
         name: productDetailName,
         price,
@@ -90,56 +94,67 @@ const ProductDetails: NextPage = () => {
 
     return (
         <DefaultLayout>
-            {product && (
-                <Row gutter={[16, 16]}>
-                    <Col flex={3}>
-                        <ProductGallery images={images}/>
-                    </Col>
-                    <Col flex={4}>
-                        <div style={{textAlign: 'left'}}>
-                            <Card>
-                                <div>
-                                    {product.name + (productDetailName ? ' - ' + productDetailName : '')}
+            {isError ? (<Result
+                status="404"
+                title="404"
+                subTitle="Sorry, the page you visited does not exist."
+                extra={<Button type="primary" onClick={() => router.push('/')}>Back Home</Button>}
+            />) : (
+                <>
+                    {product && (
+                        <Row gutter={[16, 16]}>
+                            <Col flex={3}>
+                                <ProductGallery images={images}/>
+                            </Col>
+                            <Col flex={4}>
+                                <div style={{textAlign: 'left'}}>
+                                    <Card>
+                                        <div>
+                                            {product.name + (productDetailName ? ' - ' + productDetailName : '')}
+                                        </div>
+                                        <Rate allowHalf defaultValue={4.5}
+                                              style={{fontSize: '12px', marginRight: '8px'}}/>
+                                        <span>Đã bán 500</span>
+                                        <div>${price}</div>
+                                        {(product && product.productDetails && product.productDetails.length > 1) && (
+                                            <>
+                                                <div>Loại</div>
+                                                <Radio.Group defaultValue={productDetailName || "default"}>
+                                                    {(product?.productDetails || []).map((productDetail) => (
+                                                        <Radio.Button key={productDetail.id}
+                                                                      value={productDetail.name || "default"}
+                                                                      onClick={() => changeProductDetailSelected(productDetail)}>
+                                                            {productDetail.name || "Default"}
+                                                        </Radio.Button>
+                                                    ))}
+                                                </Radio.Group>
+                                            </>
+                                        )}
+                                    </Card>
+                                    <Card>
+                                        <div>Thông tin vận chuyển</div>
+                                        <div>Giao đến Q. Hoàn Kiếm, P. Hàng Trống, Hà Nội</div>
+                                    </Card>
+                                    <ProductRetailer retailer={product.retailer}></ProductRetailer>
+                                    <ProductDescriptionComponent
+                                        description={description!}
+                                        shortDescription={product.shortDescription}
+                                    ></ProductDescriptionComponent>
                                 </div>
-                                <Rate allowHalf defaultValue={4.5} style={{fontSize: '12px', marginRight: '8px'}}/>
-                                <span>Đã bán 500</span>
-                                <div>${price}</div>
-                                {(product && product.productDetails && product.productDetails.length > 1) && (
-                                    <>
-                                        <div>Loại</div>
-                                        <Radio.Group defaultValue={productDetailName || "default"}>
-                                            {(product?.productDetails || []).map((productDetail) => (
-                                                <Radio.Button key={productDetail.id}
-                                                              value={productDetail.name || "default"}
-                                                              onClick={() => changeProductDetailSelected(productDetail)}>
-                                                    {productDetail.name || "Default"}
-                                                </Radio.Button>
-                                            ))}
-                                        </Radio.Group>
-                                    </>
-                                )}
-                            </Card>
-                            <Card>
-                                <div>Thông tin vận chuyển</div>
-                                <div>Giao đến Q. Hoàn Kiếm, P. Hàng Trống, Hà Nội</div>
-                            </Card>
-                            <ProductRetailer retailer={product.retailer}></ProductRetailer>
-                            <ProductDescriptionComponent
-                                description={description!}
-                                shortDescription={product.shortDescription}
-                            ></ProductDescriptionComponent>
-                        </div>
-                    </Col>
-                    <Col flex={3}>
-                        <ProductCart
-                            id={productDetailSelected?.id}
-                            price={price}
-                            thumbnail={images?.at(0)}
-                            name={product.name + ' - ' + productDetailName}
-                        />
-                    </Col>
-                </Row>
+                            </Col>
+                            <Col flex={3}>
+                                <ProductCart
+                                    id={id}
+                                    price={price}
+                                    thumbnail={images?.at(0)}
+                                    name={product.name + ' - ' + productDetailName}
+                                />
+                            </Col>
+                        </Row>
+                    )}
+                </>
             )}
+
         </DefaultLayout>
     );
 }

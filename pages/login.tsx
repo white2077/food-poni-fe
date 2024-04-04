@@ -6,12 +6,13 @@ import {useState} from "react";
 import axiosConfig from "../utils/axios-config";
 import {CurrentUser, IUserRemember, UserRequestLogin} from "../model/User";
 import {IToken} from "../model/Auth";
-import {jwtDecode} from "jwt-decode";
+
 import {deleteCookie, setCookie} from "cookies-next";
 import {REFRESH_TOKEN, REMEMBER_ME} from "../utils/server";
 import {useRouter} from "next/router";
 import {useDispatch} from "react-redux";
 import {setCurrentUser} from "../store/user.reducer";
+import jwtDecode from "jwt-decode";
 
 const isPending: boolean = false;
 
