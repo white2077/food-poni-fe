@@ -103,10 +103,10 @@ const ProductDetails: NextPage = () => {
                 <>
                     {product && (
                         <Row gutter={[16, 16]}>
-                            <Col flex={3}>
+                            <Col xs={24} sm={24} md={8} lg={8} xl={6}>
                                 <ProductGallery images={images}/>
                             </Col>
-                            <Col flex={4}>
+                            <Col xs={24} sm={24} md={16} lg={10} xl={12}>
                                 <div style={{textAlign: 'left'}}>
                                     <Card>
                                         <div>
@@ -142,7 +142,7 @@ const ProductDetails: NextPage = () => {
                                     ></ProductDescriptionComponent>
                                 </div>
                             </Col>
-                            <Col flex={3}>
+                            <Col xs={24} sm={24} md={24} lg={6} xl={6}>
                                 <ProductCart
                                     id={id!}
                                     price={price!}

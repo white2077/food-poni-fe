@@ -28,9 +28,9 @@ const OrderCartItems = () => {
                         <Checkbox></Checkbox>
                     </Col>
                     <Col flex='40%'>Tất cả</Col>
-                    <Col flex='15%'>Đơn giá</Col>
+                    <Col flex='10%'>Đơn giá</Col>
                     <Col flex='10%'>Số lượng</Col>
-                    <Col flex='15%'>Thành tiền</Col>
+                    <Col flex='10%'>Thành tiền</Col>
                     <Col flex='26%'>Ghi chú</Col>
                     <Col flex='2%'>
                         <DeleteOutlined/>
@@ -41,7 +41,7 @@ const OrderCartItems = () => {
                 {cartItems.map((item, index) => (
                     <Row key={index} style={{margin: '16px 0', alignItems: 'center'}}>
                         <Col flex='2%'>
-                            <Checkbox></Checkbox>
+                            <Checkbox checked></Checkbox>
                         </Col>
                         <Col flex='40%'>
                             <div style={{display: 'flex', alignItems: 'center'}}>
@@ -51,7 +51,7 @@ const OrderCartItems = () => {
                                 <div style={{marginLeft: '16px'}}>{item.name}</div>
                             </div>
                         </Col>
-                        <Col flex='15%'>${item.price}</Col>
+                        <Col flex='10%'>${item.price}</Col>
                         <Col flex='10%'>
                             <InputNumber min={1}
                                          max={20}
@@ -60,7 +60,7 @@ const OrderCartItems = () => {
                                          value={item.quantity}
                                          onChange={(value: number | null) => onChangeQuantity(item.id, value!)}/>
                         </Col>
-                        <Col flex='15%'>${item.price * item.quantity}</Col>
+                        <Col flex='10%'>${item.price * item.quantity}</Col>
                         <Col flex='26%'>
                             <TextArea
                                 placeholder="Note"

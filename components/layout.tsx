@@ -16,41 +16,6 @@ export const DefaultLayout = ({children}: { children: React.ReactNode }) => {
     )
 }
 
-export const WithRightSiderLayout = ({children}: { children: React.ReactNode }) => {
-    return (
-        <Layout style={layoutStyle}>
-            <Header style={headerStyle}>Header</Header>
-            <Layout>
-                <Content style={contentStyle}>{children}</Content>
-                <Sider width="25%" style={siderStyle}>
-                    Sider
-                </Sider>
-            </Layout>
-            <Footer style={footerStyle}>Footer</Footer>
-        </Layout>
-    )
-}
-
-export const WithLeftSiderLayout = ({children}: { children: React.ReactNode }) => {
-    return (
-        <Layout style={layoutStyle}>
-            <Header style={headerStyle}>
-                <MainHeader></MainHeader>
-            </Header>
-
-            <Content style={contentStyle}>
-                <Layout>
-                    <Sider width="20%" style={siderStyle}>
-                        <SecondaryMenu></SecondaryMenu>
-                    </Sider>
-                    {children}
-                </Layout>
-            </Content>
-            <Footer style={footerStyle}>Footer</Footer>
-        </Layout>
-    )
-}
-
 const headerStyle: React.CSSProperties = {
     textAlign: 'center',
     color: '#fff',
@@ -61,13 +26,9 @@ const headerStyle: React.CSSProperties = {
 };
 
 const contentStyle: React.CSSProperties = {
-    padding: '0 48px',
-    textAlign: 'center',
-    minHeight: 120,
-    lineHeight: '120px',
     color: '#fff',
     backgroundColor: '#F5F5FA',
-    margin: '16px 0'
+    padding: '0 50px',
 };
 
 const siderStyle: React.CSSProperties = {
