@@ -23,7 +23,7 @@ import React, {useState} from "react";
 import axiosConfig from "../utils/axios-config";
 import {useRouter} from "next/router";
 import {AxiosResponse} from "axios";
-import {Page} from "../model/common";
+import {Page} from "../model/Common";
 import {DeliveryInfomation} from "../model/DeliveryInfomation";
 import OrderCartItems from "../components/order-cartItems";
 

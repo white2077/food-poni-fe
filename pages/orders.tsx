@@ -1,17 +1,20 @@
 import {DefaultLayout} from "../components/layout";
-import {List, notification} from "antd";
+import {Button, List, notification, Result} from "antd";
 import React, {useEffect, useState} from "react";
 import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
-import {Page} from "../model/common";
 import {useSelector} from "react-redux";
 import {CurrentUser} from "../model/User";
 import OrderCard from "../components/order-card";
 import {Order} from "../model/Order";
+import {RootState} from "../store";
+import {Page} from "../model/Common";
+import {NextRouter, useRouter} from "next/router";
 
 const Orders = () => {
+    const router: NextRouter = useRouter();
 
-    const currentUser = useSelector(state => state.user.currentUser) as CurrentUser;
+    const currentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
 
     const [orders, setOrders] = useState<Order[]>([]);
 
@@ -43,19 +46,29 @@ const Orders = () => {
 
     return (
         <DefaultLayout>
-            <div style={{color: "black", textAlign: "left"}}>
-                <List loading={isLoading} grid={{gutter: 16, xs: 1, sm: 2, md: 4, lg: 4, xl: 5, xxl: 5}}
-                      dataSource={orders}
-                      renderItem={(order) => (
-                          <List.Item>
-                              <OrderCard order={order}></OrderCard>
-                          </List.Item>
-                      )}
-                />
-            </div>
+            {
+                currentUser.id ? (
+                    <div style={{color: "black", textAlign: "left"}}>
+                        <List loading={isLoading} grid={{gutter: 16, xs: 1, sm: 2, md: 4, lg: 4, xl: 5, xxl: 5}}
+                              dataSource={orders}
+                              renderItem={(order) => (
+                                  <List.Item>
+                                      <OrderCard order={order}></OrderCard>
+                                  </List.Item>
+                              )}
+                        />
+                    </div>
+                ) : (
+                    <Result
+                        status="403"
+                        title="403"
+                        subTitle="Sorry, you are not authorized to access this page."
+                        extra={<Button type="primary" onClick={() => router.push('/')}>Back Home</Button>}
+                    />
+                )
+            }
         </DefaultLayout>
     )
-
 }
 
 export default Orders;
