@@ -141,7 +141,7 @@ const Checkout = () => {
                         <Card style={{marginBottom: "16px"}}>
                             <div>
                                 Giao tới
-                                <Button type='link' style={{float: 'right'}} onClick={() => {
+                                <Button id="button-change-address" type='link' style={{float: 'right'}} onClick={() => {
                                     setModal2Open(true);
                                     getDeliveryInformationList();
                                 }}>Thay đổi</Button>
@@ -161,7 +161,7 @@ const Checkout = () => {
                                                     collapsible={"icon"}
                                                     items={[{
                                                         key: index,
-                                                        label: <Radio value={item}>
+                                                        label: <Radio id={`radio-${index}`} value={item}>
                                                             <div><span
                                                                 style={{fontWeight: 'bold'}}>{item.fullName}</span> | {item.phoneNumber}
                                                             </div>

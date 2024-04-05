@@ -13,7 +13,7 @@ const MainHeader = () => {
         {
             key: '1',
             label: (
-                <span onClick={() => handleItemClick('/orders')}>
+                <span id="your-orders" onClick={() => handleItemClick('/orders')}>
                     <span style={{ marginRight: '5px' }}>
                         <ShoppingOutlined />
                     </span>
@@ -24,7 +24,7 @@ const MainHeader = () => {
         {
             key: '2',
             label: (
-                <span onClick={() => handleItemClick('/login')}>
+                <span id="logout" onClick={() => handleItemClick('/login')}>
                     <span style={{ marginRight: '5px' }}>
                         <LogoutOutlined />
                     </span>
@@ -59,7 +59,7 @@ const MainHeader = () => {
                 <Flex gap='middle' align='center' justify='end'>
                     <CartComponent></CartComponent>
                     <Dropdown menu={{ items }} placement='bottomRight' arrow>
-                        <Avatar src={currentUser.avatar} style={{ verticalAlign: 'middle' }} size='large' />
+                        <Avatar data-id="hover-target" src={currentUser.avatar} style={{ verticalAlign: 'middle' }} size='large' />
                     </Dropdown>
                 </Flex>
             </Col>

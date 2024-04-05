@@ -38,6 +38,7 @@ const CartComponent = () => {
                             actions={[
                                 <CloseOutlined
                                     key="list-loadmore-edit"
+                                    id={`delete-icon-${item.id}`}
                                     onClick={() => dispatch(deleteItem({id: item.id}))}/>
                             ]}
                         >

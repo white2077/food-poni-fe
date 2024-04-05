@@ -57,11 +57,11 @@ const Login: NextPage = () => {
                 } else deleteCookie(REMEMBER_ME);
 
                 // redirect to home page
-                notification.open({
-                    type: 'success',
-                    message: 'Login message',
-                    description: 'Login successfully!',
-                });
+                // notification.open({
+                //     type: 'success',
+                //     message: 'Login message',
+                //     description: 'Login successfully!',
+                // });
                 router.push('/');
             })
             .catch(function (res) {

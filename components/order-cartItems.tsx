@@ -70,7 +70,7 @@ const OrderCartItems = () => {
                             />
                         </Col>
                         <Col flex='2%'>
-                            <DeleteOutlined onClick={() => dispatch(deleteItem({id: item.id}))}/>
+                            <DeleteOutlined id={`delete-icon-${item.id}`} onClick={() => dispatch(deleteItem({id: item.id}))}/>
                         </Col>
                     </Row>
                 ))}
