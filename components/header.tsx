@@ -1,11 +1,12 @@
-import {Avatar, Button, Col, Dropdown, Flex, MenuProps, Row} from 'antd';
+import {Icon, Avatar, Button, Col, Dropdown, Flex, MenuProps, Row, Badge} from 'antd';
 import CartComponent from './cart';
 import SearchComponent from './search';
 import {useSelector} from 'react-redux';
-import {LogoutOutlined, ShoppingOutlined} from '@ant-design/icons';
+import {LogoutOutlined, ShoppingCartOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
 import {useRouter} from 'next/router';
-import {RootState} from "../store";
-import {CurrentUser} from "../model/User";
+import {RootState} from '../store';
+import {CurrentUser} from '../model/User';
+import React from "react";
 
 const MainHeader = () => {
 
@@ -13,9 +14,9 @@ const MainHeader = () => {
         {
             key: '1',
             label: (
-                <span id="your-orders" onClick={() => handleItemClick('/orders')}>
-                    <span style={{ marginRight: '5px' }}>
-                        <ShoppingOutlined />
+                <span id='your-orders' onClick={() => handleItemClick('/orders')}>
+                    <span style={{marginRight: '5px'}}>
+                        <ShoppingOutlined/>
                     </span>
                     <span>Your orders</span>
                 </span>
@@ -24,9 +25,9 @@ const MainHeader = () => {
         {
             key: '2',
             label: (
-                <span id="logout" onClick={() => handleItemClick('/login')}>
-                    <span style={{ marginRight: '5px' }}>
-                        <LogoutOutlined />
+                <span id='logout' onClick={() => handleItemClick('/login')}>
+                    <span style={{marginRight: '5px'}}>
+                        <LogoutOutlined/>
                     </span>
                     <span>Logout</span>
                 </span>
@@ -43,8 +44,8 @@ const MainHeader = () => {
     };
 
     return (
-        <Row align='middle'>
-            <Col flex={2}>
+        <Row style={{maxWidth: '1440px', margin: '0 auto'}} align='middle'>
+            <Col span={6}>
                 <Button type='link' style={{
                     verticalAlign: 'middle',
                     fontWeight: 'bold',
@@ -52,14 +53,23 @@ const MainHeader = () => {
                     height: 'unset'
                 }} onClick={() => router.push('/')}>Foodponi</Button>
             </Col>
-            <Col flex={3}>
+            <Col span={12}>
                 <SearchComponent></SearchComponent>
             </Col>
-            <Col flex={2}>
+            <Col span={6}>
                 <Flex gap='middle' align='center' justify='end'>
                     <CartComponent></CartComponent>
-                    <Dropdown menu={{ items }} placement='bottomRight' arrow>
-                        <Avatar data-id="hover-target" src={currentUser.avatar} style={{ verticalAlign: 'middle' }} size='large' />
+                    {/*<a onClick={showDrawer}>*/}
+                    {/*    <Avatar shape="square" icon={<ShoppingCartOutlined/>} size='large'/>*/}
+                    {/*</a>*/}
+                    <Dropdown menu={{items}} placement='bottomRight'>
+                        <a style={{verticalAlign: 'middle'}}>
+                            {currentUser.avatar ? (
+                                <Avatar src={currentUser.avatar} size='large'/>
+                            ) : (
+                                <Avatar icon={<UserOutlined/>} size='large'/>
+                            )}
+                        </a>
                     </Dropdown>
                 </Flex>
             </Col>

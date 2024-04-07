@@ -17,25 +17,13 @@ export const DefaultLayout = ({children}: { children: React.ReactNode }) => {
 }
 
 const headerStyle: React.CSSProperties = {
-    textAlign: 'center',
-    color: '#fff',
-    height: 64,
-    paddingInline: 48,
-    lineHeight: '64px',
     backgroundColor: '#fff',
 };
 
 const contentStyle: React.CSSProperties = {
-    color: '#fff',
     backgroundColor: '#F5F5FA',
-    padding: '0 50px',
-};
-
-const siderStyle: React.CSSProperties = {
-    textAlign: 'center',
-    lineHeight: '120px',
-    color: '#fff',
-    backgroundColor: 'transparent',
+    maxWidth: '1440px',
+    margin: '0 auto'
 };
 
 const footerStyle: React.CSSProperties = {

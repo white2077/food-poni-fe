@@ -1,14 +1,16 @@
 import React, {useState} from "react";
-import {Avatar, Badge, Drawer, InputNumber, List} from 'antd';
+import {Avatar, Badge, Button, Drawer, InputNumber, List} from 'antd';
 import {CloseOutlined, ShoppingCartOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {deleteItem, ICartItem, setQuantity} from "../store/cart.reducer";
+import {RootState} from "../store";
 
 
 const CartComponent = () => {
     const [open, setOpen] = useState(false);
-    const cartItems = useSelector(state => state.cart.cartItems) as ICartItem[];
+    const cartItems = useSelector((state: RootState) => state.cart.cartItems) as ICartItem[];
     const dispatch = useDispatch();
+
     const showDrawer = () => {
         setOpen(true);
     };
@@ -24,9 +26,11 @@ const CartComponent = () => {
 
     return (
         <>
-            <Badge count={cartItems.length} onClick={showDrawer}>
-                <Avatar shape="square" icon={<ShoppingCartOutlined/>} size='large'/>
-            </Badge>
+            <a onClick={showDrawer}>
+                <Badge count={cartItems.length}>
+                    <Avatar shape="square" icon={<ShoppingCartOutlined/>} size='large'/>
+                </Badge>
+            </a>
             {/*<ShoppingCartOutlined style={{fontSize: '32px', color: 'black'}}/>*/}
             <Drawer title="Cart Items" onClose={onClose} open={open}>
                 <List

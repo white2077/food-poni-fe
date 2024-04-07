@@ -53,7 +53,7 @@ const SecondaryMenu: React.FC = () => {
     return (
         <Menu
             onClick={onClick}
-            style={{ width: 256, marginTop: '16px', borderRadius: '8px' }}
+            style={{ minWidth: 256, marginTop: '16px', borderRadius: '8px' }}
             defaultSelectedKeys={['1']}
             defaultOpenKeys={['sub1']}
             mode="inline"
