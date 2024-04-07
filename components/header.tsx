@@ -1,8 +1,8 @@
-import {Icon, Avatar, Button, Col, Dropdown, Flex, MenuProps, Row, Badge} from 'antd';
+import {Avatar, Button, Col, Dropdown, Flex, MenuProps, Row,} from 'antd';
 import CartComponent from './cart';
 import SearchComponent from './search';
 import {useSelector} from 'react-redux';
-import {LogoutOutlined, ShoppingCartOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
+import {LogoutOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
 import {useRouter} from 'next/router';
 import {RootState} from '../store';
 import {CurrentUser} from '../model/User';

@@ -1,64 +1,77 @@
-import React from 'react';
-import {AppstoreOutlined, MailOutlined, SettingOutlined} from '@ant-design/icons';
+import React, {useEffect, useState} from 'react';
+import {PieChartOutlined} from '@ant-design/icons';
 import type {MenuProps} from 'antd';
-import {Menu} from 'antd';
+import {Menu, Skeleton, Spin} from 'antd';
+import axiosConfig from "../utils/axios-config";
+import {Category} from "../model/Category";
+import {Page} from "../model/Common";
+import {AxiosResponse} from "axios";
 
-type MenuItem = Required<MenuProps>['items'][number];
-
-function getItem(
-    label: React.ReactNode,
-    key: React.Key,
-    icon?: React.ReactNode,
-    children?: MenuItem[],
-    type?: 'group',
-): MenuItem {
-    return {
-        key,
-        icon,
-        children,
-        label,
-        type,
-    } as MenuItem;
+export interface ICategory {
+    id: string;
+    name: string;
+    tab: string;
 }
 
-const items: MenuProps['items'] = [
-    getItem('Navigation One', 'sub1', <MailOutlined />, [
-        getItem('Item 1', 'g1', null, [getItem('Option 1', '1'), getItem('Option 2', '2')], 'group'),
-        getItem('Item 2', 'g2', null, [getItem('Option 3', '3'), getItem('Option 4', '4')], 'group'),
-    ]),
-
-    getItem('Navigation Two', 'sub2', <AppstoreOutlined />, [
-        getItem('Option 5', '5'),
-        getItem('Option 6', '6'),
-        getItem('Submenu', 'sub3', null, [getItem('Option 7', '7'), getItem('Option 8', '8')]),
-    ]),
-
-    { type: 'divider' },
-
-    getItem('Navigation Three', 'sub4', <SettingOutlined />, [
-        getItem('Option 9', '9'),
-        getItem('Option 10', '10'),
-        getItem('Option 11', '11'),
-        getItem('Option 12', '12'),
-    ]),
-
-    getItem('Group', 'grp', null, [getItem('Option 13', '13'), getItem('Option 14', '14')], 'group'),
-];
-
 const SecondaryMenu: React.FC = () => {
+    let items: ICategory[] = [];
+    const [categories, setCategories] = useState<ICategory[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    useEffect(() => {
+        getAllCategories()
+    }, [])
+
+    const getAllCategories = () => {
+        setIsLoading(true);
+        axiosConfig.get("/product-categories?onlyParent=true")
+            .then((res: AxiosResponse<Page<Category[]>>) => {
+                res.data.content.forEach((category) => {
+                    convertCategory(category, '');
+                });
+                setCategories(items);
+                setIsLoading(false);
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+
+    const convertCategory = (category: Category, tab: string) => {
+        items.push({id: category.id, name: category.categoryName, tab: tab});
+
+        if (category.categories.length)
+            category.categories.forEach((subCategory) => {
+                convertCategory(subCategory, tab + '&emsp;');
+            })
+    }
+
     const onClick: MenuProps['onClick'] = (e) => {
         console.log('click ', e);
     };
 
     return (
-        <Menu
-            onClick={onClick}
-            style={{ minWidth: 256, marginTop: '16px', borderRadius: '8px' }}
-            defaultSelectedKeys={['1']}
-            defaultOpenKeys={['sub1']}
-            mode="inline"
-            items={items}
-        />
+        <div style={{marginTop: '16px'}}>
+            <Skeleton loading={isLoading} active></Skeleton>
+            <Menu
+                onClick={onClick}
+                style={{minWidth: 256, borderRadius: '8px'}}
+                defaultSelectedKeys={['all']}
+                mode='inline'
+            >
+                <Menu.Item key='all'>
+                    <span>All</span>
+                </Menu.Item>
+                {categories.map((category) => {
+                    return (
+                        <Menu.Item key={category.id}>
+                            <span dangerouslySetInnerHTML={{__html: category.tab || ''}}></span>
+                            <span>{category.name}</span>
+                        </Menu.Item>
+                    )
+                })}
+            </Menu>
+        </div>
     );
 };
 

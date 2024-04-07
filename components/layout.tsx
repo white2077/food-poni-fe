@@ -1,14 +1,13 @@
 import React from 'react';
 import {Layout} from 'antd';
 import MainHeader from "./header";
-import SecondaryMenu from "./secondary-menu";
 
 const {Header, Footer, Sider, Content} = Layout;
 export const DefaultLayout = ({children}: { children: React.ReactNode }) => {
     return (
         <Layout style={layoutStyle}>
             <Header style={headerStyle}>
-                <MainHeader></MainHeader>
+                <MainHeader/>
             </Header>
             <Content style={contentStyle}>{children}</Content>
             <Footer style={footerStyle}>Footer</Footer>
@@ -22,6 +21,7 @@ const headerStyle: React.CSSProperties = {
 
 const contentStyle: React.CSSProperties = {
     backgroundColor: '#F5F5FA',
+    padding: '0 10px',
     maxWidth: '1440px',
     margin: '0 auto'
 };
