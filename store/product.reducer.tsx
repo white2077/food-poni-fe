@@ -3,9 +3,9 @@ import {CurrentUser} from "../model/User";
 import {Product} from "../model/Product";
 import {IProductCard} from "../components/product-rows";
 
-export const INITIAL_PRODUCT_LIST = {
+export const INITIAL_PRODUCT_LIST: IProductState = {
     products: [],
-    isLoading: false
+    isLoading: true
 };
 
 export interface IProductState {
@@ -21,16 +21,13 @@ const productListSlide = createSlice({
     name: 'productList',
     initialState,
     reducers: {
-        setProductList: (state, { payload }: { payload: IProductCard[] }) => ({
+        setProductList: (state, { payload }: { payload: IProductState }) => ({
             ...state,
-            products: payload,
-        }),
-        setLoading: (state, { payload }: { payload: boolean }) => ({
-            ...state,
-            isLoading: payload,
+            products: payload.products,
+            isLoading: payload.isLoading,
         }),
     }
 });
 
-export const {setProductList, setLoading} = productListSlide.actions;
+export const {setProductList} = productListSlide.actions;
 export default productListSlide.reducer;

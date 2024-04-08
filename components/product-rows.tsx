@@ -27,8 +27,6 @@ const ProductRows: NextPage = () => {
     }, []);
 
     const getProducts = (): void => {
-        dispatch(setLoading(true));
-
         axiosConfig.get("/products")
             .then((res: AxiosResponse<Page<Product[]>>) => {
                 const productList = (res.data.content as Product[]).map((product): IProductCard => {
@@ -41,8 +39,7 @@ const ProductRows: NextPage = () => {
                     };
                 });
 
-                dispatch(setProductList(productList));
-                dispatch(setLoading(false));
+                dispatch(setProductList({products:productList, isLoading: false}));
             })
             .catch(err => {
                 console.log(err)
