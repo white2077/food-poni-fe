@@ -1,9 +1,14 @@
 import {List} from 'antd';
 import type {NextPage} from 'next'
-import React, {useEffect, useState} from 'react'
+import React, {useEffect} from 'react'
 import {Product} from "../model/Product";
 import ProductCard from "./product-card";
-import {server} from "../utils/server";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../store";
+import {setLoading, setProductList} from "../store/product.reducer";
+import axiosConfig from "../utils/axios-config";
+import {AxiosResponse} from "axios";
+import {Page} from "../model/Common";
 
 export interface IProductCard {
     id: string;
@@ -14,42 +19,49 @@ export interface IProductCard {
 }
 
 const ProductRows: NextPage = () => {
-    const [products, setProducts] = useState<IProductCard[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const dispatch = useDispatch();
+    const {products, isLoading} = useSelector((state: RootState) => state.productList);
 
     useEffect(() => {
-        getAll();
+        getProducts();
     }, []);
 
-    const getAll = (): void => {
-        fetch(`${server}/products`)
-            .then(
-                response => response.json())
-            .then(response => {
-                setProducts((response.content as Product[]).map((product): IProductCard => {
+    const getProducts = (): void => {
+        dispatch(setLoading(true));
+
+        axiosConfig.get("/products")
+            .then((res: AxiosResponse<Page<Product[]>>) => {
+                const productList = (res.data.content as Product[]).map((product): IProductCard => {
                     return {
                         id: product.id,
                         name: product.name,
                         thumbnail: product.thumbnail,
                         minPrice: Math.min(...product.productDetails.map((productDetail) => productDetail.price)),
                         maxPrice: Math.max(...product.productDetails.map((productDetail) => productDetail.price)),
-                    }
-                }));
-                setIsLoading(false);
+                    };
+                });
+
+                dispatch(setProductList(productList));
+                dispatch(setLoading(false));
             })
-            .catch(response => console.log(response))
-    }
+            .catch(err => {
+                console.log(err)
+            })
+    };
 
     return (
-        <List loading={isLoading} grid={{gutter: 16, xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 4}}
-              dataSource={products}
-              renderItem={(product) => (
-                  <List.Item id={product.id}>
-                      <ProductCard product={product}></ProductCard>
-                  </List.Item>
-              )}
+        <List
+            loading={isLoading}
+            grid={{gutter: 16, xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 4}}
+            dataSource={products}
+            renderItem={(product) => (
+                <List.Item id={product.id}>
+                    <ProductCard product={product}/>
+                </List.Item>
+            )}
         />
     );
+
 }
 
 export default ProductRows
