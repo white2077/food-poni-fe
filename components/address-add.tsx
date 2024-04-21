@@ -3,7 +3,6 @@ import {AutoComplete, Button, Form, Input, notification} from 'antd';
 import axios from "axios";
 import axiosConfig from "../utils/axios-config";
 import {DeliveryInfomation} from "../model/DeliveryInfomation";
-import {deleteAllItem} from "../store/cart.reducer";
 import {useSelector} from "react-redux";
 import {CurrentUser} from "../model/User";
 

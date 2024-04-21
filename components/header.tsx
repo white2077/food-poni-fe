@@ -2,7 +2,7 @@ import {Avatar, Button, Col, Dropdown, Flex, MenuProps, Row,} from 'antd';
 import CartComponent from './cart';
 import SearchComponent from './search';
 import {useSelector} from 'react-redux';
-import {LogoutOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
+import {LogoutOutlined, ShopOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
 import {useRouter} from 'next/router';
 import {RootState} from '../store';
 import {CurrentUser} from '../model/User';
@@ -24,6 +24,17 @@ const MainHeader = () => {
         },
         {
             key: '2',
+            label: (
+                <span id='checkout' onClick={() => handleItemClick('/checkout')}>
+                    <span style={{marginRight: '5px'}}>
+                        <ShopOutlined />
+                    </span>
+                    <span>Checkout</span>
+                </span>
+            ),
+        },
+        {
+            key: '3',
             label: (
                 <span id='logout' onClick={() => handleItemClick('/login')}>
                     <span style={{marginRight: '5px'}}>

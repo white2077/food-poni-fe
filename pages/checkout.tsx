@@ -57,8 +57,6 @@ const Checkout = () => {
 
     const [modal2Open, setModal2Open] = useState(false);
 
-    const [showAddAddress, setShowAddAddress] = useState(false);
-
     const totalAmount = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
     const getDeliveryInformationList = () => {
@@ -131,9 +129,9 @@ const Checkout = () => {
         setPayment(prevPaymentInfo => ({...prevPaymentInfo, method: e.target.value}));
     };
 
-    const handleButtonClick = () => {
-        setShowAddAddress(!showAddAddress);
-    };
+    const handleAddAddressClick = () => {
+        router.push('/add-address');
+    }
 
     return (
         <DefaultLayout>
@@ -158,8 +156,7 @@ const Checkout = () => {
                                     onOk={() => setModal2Open(false)}
                                     onCancel={() => setModal2Open(false)}
                                 >
-                                    <Button onClick={handleButtonClick}>Add address</Button>
-                                    {showAddAddress && <AddressAdd />}
+                                    <Button onClick={handleAddAddressClick}>Add address</Button>
                                     <Radio.Group style={{ width: '100%' }} onChange={(e) => setShippingAddress(e.target.value)}>
                                         <List
                                             dataSource={deliveryInformationList}
