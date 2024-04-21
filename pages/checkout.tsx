@@ -26,6 +26,7 @@ import {AxiosResponse} from "axios";
 import {Page} from "../model/Common";
 import {DeliveryInfomation} from "../model/DeliveryInfomation";
 import OrderCartItems from "../components/order-cartItems";
+import AddressAdd from "../components/address-add";
 
 const isPayment: IPaymentInfo = {
 
@@ -56,6 +57,8 @@ const Checkout = () => {
 
     const [modal2Open, setModal2Open] = useState(false);
 
+    const [showAddAddress, setShowAddAddress] = useState(false);
+
     const totalAmount = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
     const getDeliveryInformationList = () => {
@@ -65,7 +68,6 @@ const Checkout = () => {
             }
         })
             .then(function (res: AxiosResponse<Page<DeliveryInfomation[]>>) {
-                // console.log(res.data);
                 setDeliveryInformationList(res.data.content);
             })
             .catch(function (res) {
@@ -129,6 +131,10 @@ const Checkout = () => {
         setPayment(prevPaymentInfo => ({...prevPaymentInfo, method: e.target.value}));
     };
 
+    const handleButtonClick = () => {
+        setShowAddAddress(!showAddAddress);
+    };
+
     return (
         <DefaultLayout>
             <div style={{color: "black", textAlign: "left"}}>
@@ -146,13 +152,15 @@ const Checkout = () => {
                                     getDeliveryInformationList();
                                 }}>Thay đổi</Button>
                                 <Modal
-                                    title="Vertically centered modal dialog"
+                                    title="Your address"
                                     centered
                                     open={modal2Open}
                                     onOk={() => setModal2Open(false)}
                                     onCancel={() => setModal2Open(false)}
                                 >
-                                    <Radio.Group onChange={(e) => setShippingAddress(e.target.value)}>
+                                    <Button onClick={handleButtonClick}>Add address</Button>
+                                    {showAddAddress && <AddressAdd />}
+                                    <Radio.Group style={{ width: '100%' }} onChange={(e) => setShippingAddress(e.target.value)}>
                                         <List
                                             dataSource={deliveryInformationList}
                                             renderItem={(item, index) => (
@@ -165,7 +173,7 @@ const Checkout = () => {
                                                             <div><span
                                                                 style={{fontWeight: 'bold'}}>{item.fullName}</span> | {item.phoneNumber}
                                                             </div>
-                                                            <div>{item.address}, {item.street}, {item.ward}, {item.district}, {item.province}</div>
+                                                            <div>{item.address}</div>
                                                         </Radio>,
                                                         children: <p>aaaaaaaaaaaaaaaa</p>
                                                     }]}
@@ -181,11 +189,11 @@ const Checkout = () => {
                                         <div><span
                                             style={{fontWeight: 'bold'}}>{shippingAddress.fullName}</span> | {shippingAddress.phoneNumber}
                                         </div>
-                                        <div>{shippingAddress.address}, {shippingAddress.street}, {shippingAddress.ward}, {shippingAddress.district}, {shippingAddress.province}</div>
+                                        <div>{shippingAddress.address}</div>
                                     </>)
                                 }
                                 {!shippingAddress && (
-                                    <div style={{ color: 'red' }}>Vui lòng chọn thông tin vận chuyển</div>
+                                    <div style={{color: 'red'}}>Vui lòng chọn thông tin vận chuyển</div>
                                 )}
                             </div>
                         </Card>

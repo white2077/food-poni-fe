@@ -14,11 +14,9 @@ import {useDispatch} from "react-redux";
 import {setCurrentUser} from "../store/user.reducer";
 import jwtDecode from "jwt-decode";
 
-const isPending: boolean = false;
-
 const Login: NextPage = () => {
 
-    const [pending, setPending] = useState<boolean>(isPending);
+    const [pending, setPending] = useState<boolean>(false);
 
     const router = useRouter();
 

@@ -1,5 +1,5 @@
 import type {NextPage} from 'next'
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {DefaultLayout} from "../components/layout";
 import ProductRows from "../components/product-rows";
 import CarouselBanner from "../components/carousel-banner";

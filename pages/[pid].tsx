@@ -4,7 +4,7 @@ import {DefaultLayout} from "../components/layout";
 import React, {useEffect, useState} from "react";
 import {Product} from "../model/Product";
 import {ProductDetail} from "../model/ProductDetail";
-import {Card, Col, Radio, Rate, Row, Result, Button} from "antd";
+import {Button, Card, Col, Radio, Rate, Result, Row} from "antd";
 import ProductGallery from "../components/product-gallery";
 import ProductCart from "../components/product-cart";
 import {server} from "../utils/server";

@@ -1,4 +1,4 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {createSlice} from "@reduxjs/toolkit";
 import {CurrentUser} from "../model/User";
 
 export const INITIAL_CURRENT_USER = {

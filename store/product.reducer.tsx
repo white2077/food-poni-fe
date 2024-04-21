@@ -1,6 +1,4 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {CurrentUser} from "../model/User";
-import {Product} from "../model/Product";
+import {createSlice} from "@reduxjs/toolkit";
 import {IProductCard} from "../components/product-rows";
 
 export const INITIAL_PRODUCT_LIST: IProductState = {

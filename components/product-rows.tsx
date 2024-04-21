@@ -5,7 +5,7 @@ import {Product} from "../model/Product";
 import ProductCard from "./product-card";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../store";
-import {setLoading, setProductList} from "../store/product.reducer";
+import {setProductList} from "../store/product.reducer";
 import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {Page} from "../model/Common";

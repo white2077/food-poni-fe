@@ -18,10 +18,8 @@ export interface IShippingAddress {
     fullName: string;
     phoneNumber: string;
     address: string;
-    district: string;
-    province: string;
-    ward: string;
-    street: string;
+    lon: number;
+    lat: number;
 }
 
 export interface IPaymentInfo {
@@ -36,10 +34,8 @@ export const INITIAL_ORDER = {
         fullName: "",
         phoneNumber: "",
         address: "",
-        district: "",
-        province: "",
-        ward: "",
-        street: ""
+        lon: 0,
+        lat: 0
     },
     note: "",
     payment: {

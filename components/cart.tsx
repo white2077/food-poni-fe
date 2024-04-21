@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Avatar, Badge, Button, Drawer, InputNumber, List} from 'antd';
+import {Avatar, Badge, Drawer, InputNumber, List} from 'antd';
 import {CloseOutlined, ShoppingCartOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {deleteItem, ICartItem, setQuantity} from "../store/cart.reducer";

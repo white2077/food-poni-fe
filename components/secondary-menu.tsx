@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {PieChartOutlined} from '@ant-design/icons';
 import type {MenuProps} from 'antd';
-import {Menu, Skeleton, Spin} from 'antd';
+import {Menu, Skeleton} from 'antd';
 import axiosConfig from "../utils/axios-config";
 import {Category} from "../model/Category";
 import {Page} from "../model/Common";
