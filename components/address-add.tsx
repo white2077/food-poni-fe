@@ -2,6 +2,10 @@ import {useState} from 'react';
 import {AutoComplete, Button, Form, Input, notification} from 'antd';
 import axios from "axios";
 import axiosConfig from "../utils/axios-config";
+import {DeliveryInfomation} from "../model/DeliveryInfomation";
+import {deleteAllItem} from "../store/cart.reducer";
+import {useSelector} from "react-redux";
+import {CurrentUser} from "../model/User";
 
 interface SearchResult {
     display_name: string;
@@ -10,6 +14,8 @@ interface SearchResult {
 }
 
 const AddressAdd = () => {
+
+    const currentUser = useSelector(state => state.user.currentUser) as CurrentUser;
 
     const [pending, setPending] = useState<boolean>(false);
 
@@ -66,7 +72,11 @@ const AddressAdd = () => {
             lat: selectedAddress?.lat || 0
         };
 
-        axiosConfig.post("/addresses", deliveryInfo)
+        axiosConfig.post("/addresses", deliveryInfo, {
+            headers: {
+                Authorization: 'Bearer ' + currentUser.accessToken,
+            }
+        })
             .then(function (res: any) {
                 setPending(false);
 
@@ -91,23 +101,21 @@ const AddressAdd = () => {
             name="normal_add_address"
             className="add-address-form"
             onFinish={onFinish}
+            style={{margin: '16px 0'}}
         >
             <Form.Item
                 name="fullname"
-                rules={[{required: true, message: 'Please input your fullname!'}]}
-            >
+                rules={[{required: true, message: 'Please input your fullname!'}]}>
                 <Input placeholder="Fullname"/>
             </Form.Item>
             <Form.Item
                 name="phoneNumber"
-                rules={[{required: true, message: 'Please input your phone number!'}]}
-            >
+                rules={[{required: true, message: 'Please input your phone number!'}]}>
                 <Input placeholder="Phone number"/>
             </Form.Item>
             <Form.Item
                 name="yourAddress"
-                rules={[{required: true, message: 'Please choose your address!'}]}
-            >
+                rules={[{required: true, message: 'Please choose your address!'}]}>
                 <AutoComplete
                     options={dataSource.map((result) => ({
                         value: result.display_name,
@@ -117,11 +125,10 @@ const AddressAdd = () => {
                     onSelect={onSelect}
                     onSearch={onSearch}
                     placeholder="input search text"
-                    style={{width: '100%', margin: '16px 0'}}>
+                    style={{width: '100%'}}>
                     <Input.Search enterButton/>
                 </AutoComplete>
             </Form.Item>
-
             <Form.Item>
                 <Button type="primary" htmlType="submit" className="add-address-form-button" loading={pending}
                         block>
