@@ -138,18 +138,20 @@ const Checkout = () => {
                                     open={modal2Open}
                                     onOk={() => setModal2Open(false)}
                                     onCancel={() => setModal2Open(false)}
+                                    footer={null}
                                 >
                                     <Button
                                         onClick={handleAddAddressClick}>{showAddAddress ? "Cancel" : "Add address"}</Button>
                                     {showAddAddress && <AddressAdd/>}
                                     {!showAddAddress && (
                                         <Radio.Group style={{width: '100%'}}
-                                                     value={deliveryInformationList.find(item => item.id === currentUser.addressId)}
+                                                     defaultValue={deliveryInformationList.find(item => item.id === currentUser.addressId)}
                                                      onChange={(e: RadioChangeEvent) => setShippingAddress(e.target.value)}>
                                             <List
                                                 dataSource={deliveryInformationList}
                                                 renderItem={(item: DeliveryInformation, index: number) => (
                                                     <Collapse
+                                                        style={{margin: '16px 0'}}
                                                         expandIconPosition={"end"}
                                                         collapsible={"icon"}
                                                         items={[{

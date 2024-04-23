@@ -101,11 +101,13 @@ export const AddressDeliveryInformation = () => {
     }
 
     return (
-        <div>
+        <div style={{width: '1000px', margin: '0 auto'}}>
             <Button
                 style={{margin: '16px 0'}}
                 onClick={handleAddAddressClick}>{showAddAddress ? "Cancel" : "Add address"}</Button>
-            {showAddAddress && <AddressAdd/>}
+            {showAddAddress && (
+                <div style={{width: '600px', margin: '0 auto'}}><AddressAdd/></div>
+            )}
             {!showAddAddress && (
                 <List
                     grid={{gutter: 16, column: 1}}
