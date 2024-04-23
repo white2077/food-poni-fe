@@ -4,7 +4,7 @@ import {DefaultLayout} from "../components/layout";
 import ProductRows from "../components/product-rows";
 import CarouselBanner from "../components/carousel-banner";
 import MainMenu from "../components/main-menu";
-import {Col, Flex, notification, Row} from "antd";
+import {Col, Flex, Row} from "antd";
 import SecondaryMenu from "../components/secondary-menu";
 import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
