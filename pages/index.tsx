@@ -38,11 +38,7 @@ const Home: NextPage = () => {
                 dispatch(setCurrentShippingAddress(res.data));
             })
             .catch(function (res) {
-                notification.open({
-                    type: 'error',
-                    message: 'Shipping address message',
-                    description: res.message
-                });
+                console.log("Shipping address message: ", res.message);
             })
     }
 
@@ -53,16 +49,10 @@ const Home: NextPage = () => {
             }
         })
             .then(function (res: AxiosResponse<Page<DeliveryInformation[]>>) {
-
                 dispatch(setDeliveryInformationList(res.data.content));
-
             })
             .catch(function (res) {
-                notification.open({
-                    type: 'error',
-                    message: 'Delivery information message',
-                    description: res.message
-                });
+                console.log("Delivery information message: ", res.message);
             })
     }
 
