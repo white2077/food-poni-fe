@@ -2,7 +2,7 @@ import {Avatar, Button, Col, Dropdown, Flex, MenuProps, Row,} from 'antd';
 import CartComponent from './cart';
 import SearchComponent from './search';
 import {useSelector} from 'react-redux';
-import {LogoutOutlined, ShopOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
+import {LogoutOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
 import {useRouter} from 'next/router';
 import {RootState} from '../store';
 import {CurrentUser} from '../model/User';
@@ -14,22 +14,22 @@ const MainHeader = () => {
         {
             key: '1',
             label: (
-                <span id='your-orders' onClick={() => handleItemClick('/orders')}>
+                <span id='account-information' onClick={() => handleItemClick('/account-information')}>
                     <span style={{marginRight: '5px'}}>
-                        <ShoppingOutlined/>
+                        <UserOutlined />
                     </span>
-                    <span>Your orders</span>
+                    <span>Account information</span>
                 </span>
             ),
         },
         {
             key: '2',
             label: (
-                <span id='checkout' onClick={() => handleItemClick('/checkout')}>
+                <span id='your-orders' onClick={() => handleItemClick('/orders')}>
                     <span style={{marginRight: '5px'}}>
-                        <ShopOutlined />
+                        <ShoppingOutlined/>
                     </span>
-                    <span>Checkout</span>
+                    <span>Your orders</span>
                 </span>
             ),
         },

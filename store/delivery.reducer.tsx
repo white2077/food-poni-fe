@@ -20,9 +20,13 @@ const deliverySlide = createSlice({
         addDeliveryInformationList: (state, {payload}: { payload: DeliveryInformation }) => ({
             ...state,
             deliveryInformationList: [...state.deliveryInformationList, payload]
+        }),
+        deleteDeliveryInformationList: (state, {payload}: { payload: string }) => ({
+            ...state,
+            deliveryInformationList: state.deliveryInformationList.filter(item => item.id !== payload)
         })
     }
 });
 
-export const {setDeliveryInformationList, addDeliveryInformationList} = deliverySlide.actions;
+export const {setDeliveryInformationList, addDeliveryInformationList, deleteDeliveryInformationList} = deliverySlide.actions;
 export default deliverySlide.reducer;

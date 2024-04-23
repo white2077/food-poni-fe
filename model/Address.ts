@@ -7,6 +7,10 @@ export interface Address {
     lat: number;
 }
 
+export interface AddressIdDTO {
+    id: string;
+}
+
 export const INITIAL_CURRENT_ADDRESS: Address = {
     id: "",
     fullName: "",
