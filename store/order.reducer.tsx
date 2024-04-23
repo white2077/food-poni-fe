@@ -1,6 +1,5 @@
 import {ICartItem} from "./cart.reducer";
 import {createSlice} from "@reduxjs/toolkit";
-import {Address} from "../model/Address";
 
 export interface IOrder {
     orderItems: IOrderItem[];

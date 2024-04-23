@@ -1,6 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {DeliveryInformation} from "../model/DeliveryInformation";
-import {Address} from "../model/Address";
 
 export interface IDeliveryInformationState {
     deliveryInformationList: DeliveryInformation[];
