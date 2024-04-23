@@ -23,7 +23,7 @@ const OrderCard = ({order}: { order: Order }) => {
                 ))}
                 <div style={{marginBottom: "5px"}}>
                     <span style={{marginRight: "5px"}}><EnvironmentOutlined /></span>
-                    <span>{order.shippingAddress.address}, {order.shippingAddress.street}, {order.shippingAddress.ward}, {order.shippingAddress.district}, {order.shippingAddress.province}</span>
+                    <span>{order.shippingAddress.address}</span>
                 </div>
                 <div>
                     <span style={{marginRight: "5px"}}><FieldTimeOutlined/></span>

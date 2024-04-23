@@ -1,4 +1,5 @@
-export interface DeliveryInfomation {
+export interface DeliveryInformation {
+    id: string;
     fullName: string;
     phoneNumber: string;
     address: string;

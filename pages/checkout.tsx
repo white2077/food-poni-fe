@@ -19,23 +19,17 @@ import {deleteAllItem, ICartItem} from "../store/cart.reducer";
 import {CurrentUser} from "../model/User";
 import {IOrder, IOrderItem, IPaymentInfo, IShippingAddress} from "../store/order.reducer";
 import TextArea from "antd/es/input/TextArea";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import axiosConfig from "../utils/axios-config";
 import {useRouter} from "next/router";
 import {AxiosResponse} from "axios";
 import {Page} from "../model/Common";
-import {DeliveryInfomation} from "../model/DeliveryInfomation";
+import {DeliveryInformation} from "../model/DeliveryInformation";
 import OrderCartItems from "../components/order-cartItems";
 import AddressAdd from "../components/address-add";
-
-const isPayment: IPaymentInfo = {
-
-    method: "CASH",
-
-    status: "PAYING"
-}
-
-const isPending: boolean = false;
+import {RootState} from "../store";
+import {setCurrentShippingAddress} from "../store/address.reducer";
+import {Address} from "../model/Address";
 
 const Checkout = () => {
 
@@ -43,21 +37,64 @@ const Checkout = () => {
 
     const dispatch = useDispatch();
 
-    const cartItems = useSelector(state => state.cart.cartItems) as ICartItem[];
+    const cartItems = useSelector((state: RootState) => state.cart.cartItems) as ICartItem[];
 
-    const currentUser = useSelector(state => state.user.currentUser) as CurrentUser;
+    const currentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
 
-    const [pending, setPending] = useState<boolean>(isPending);
+    const currentShippingAddress = useSelector((state: RootState) => state.address.shippingAddress) as Address;
 
-    const [shippingAddress, setShippingAddress] = useState<IShippingAddress>();
+    const [pending, setPending] = useState<boolean>(false);
 
-    const [payment, setPayment] = useState<IPaymentInfo>(isPayment);
+    const [payment, setPayment] = useState<IPaymentInfo>({
+        method: "CASH",
+        status: "PAYING"
+    });
 
-    const [deliveryInformationList, setDeliveryInformationList] = useState<DeliveryInfomation[]>([]);
+    const [shippingAddress, setShippingAddress] = useState<IShippingAddress>({
+        fullName: currentShippingAddress?.fullName,
+        phoneNumber: currentShippingAddress?.phoneNumber,
+        address: currentShippingAddress?.address
+    });
+
+    const [deliveryInformationList, setDeliveryInformationList] = useState<DeliveryInformation[]>([]);
 
     const [modal2Open, setModal2Open] = useState(false);
 
+    const [showAddAddress, setShowAddAddress] = useState(false);
+
     const totalAmount = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+
+    const getShippingAddress = () => {
+        const addressId = currentUser.addressId;
+
+        axiosConfig.get(`/addresses/${addressId}`, {
+            headers: {
+                Authorization: 'Bearer ' + currentUser.accessToken,
+            }
+        })
+            .then(function (res: AxiosResponse<Address>) {
+                dispatch(setCurrentShippingAddress(res.data));
+            })
+            .catch(function (res) {
+                notification.open({
+                    type: 'error',
+                    message: 'Shipping address message',
+                    description: res.message
+                });
+            })
+    }
+
+    useEffect(() => {
+        getShippingAddress();
+    }, [router.isReady]);
+
+    useEffect(() => {
+        setShippingAddress({
+            fullName: currentShippingAddress?.fullName,
+            phoneNumber: currentShippingAddress?.phoneNumber,
+            address: currentShippingAddress?.address
+        });
+    }, [currentShippingAddress]);
 
     const getDeliveryInformationList = () => {
         axiosConfig.get("/addresses", {
@@ -65,7 +102,7 @@ const Checkout = () => {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }
         })
-            .then(function (res: AxiosResponse<Page<DeliveryInfomation[]>>) {
+            .then(function (res: AxiosResponse<Page<DeliveryInformation[]>>) {
                 setDeliveryInformationList(res.data.content);
             })
             .catch(function (res) {
@@ -96,7 +133,7 @@ const Checkout = () => {
                     Authorization: 'Bearer ' + currentUser.accessToken,
                 }
             })
-                .then(function (res: any) {
+                .then(function () {
                     setPending(false);
                     dispatch(deleteAllItem({}));
                     notification.open({
@@ -130,7 +167,7 @@ const Checkout = () => {
     };
 
     const handleAddAddressClick = () => {
-        router.push('/add-address');
+        setShowAddAddress(!showAddAddress)
     }
 
     return (
@@ -156,28 +193,34 @@ const Checkout = () => {
                                     onOk={() => setModal2Open(false)}
                                     onCancel={() => setModal2Open(false)}
                                 >
-                                    <Button onClick={handleAddAddressClick}>Add address</Button>
-                                    <Radio.Group style={{ width: '100%' }} onChange={(e) => setShippingAddress(e.target.value)}>
-                                        <List
-                                            dataSource={deliveryInformationList}
-                                            renderItem={(item, index) => (
-                                                <Collapse
-                                                    expandIconPosition={"end"}
-                                                    collapsible={"icon"}
-                                                    items={[{
-                                                        key: index,
-                                                        label: <Radio id={`radio-${index}`} value={item}>
-                                                            <div><span
-                                                                style={{fontWeight: 'bold'}}>{item.fullName}</span> | {item.phoneNumber}
-                                                            </div>
-                                                            <div>{item.address}</div>
-                                                        </Radio>,
-                                                        children: <p>aaaaaaaaaaaaaaaa</p>
-                                                    }]}
-                                                />
-                                            )}
-                                        />
-                                    </Radio.Group>
+                                    <Button
+                                        onClick={handleAddAddressClick}>{showAddAddress ? "Cancel" : "Add address"}</Button>
+                                    {showAddAddress && <AddressAdd/>}
+                                    {!showAddAddress && (
+                                        <Radio.Group style={{width: '100%'}}
+                                                     value={deliveryInformationList.find(item => item.id === currentUser.addressId)}
+                                                     onChange={(e: RadioChangeEvent) => setShippingAddress(e.target.value)}>
+                                            <List
+                                                dataSource={deliveryInformationList}
+                                                renderItem={(item: DeliveryInformation, index: number) => (
+                                                    <Collapse
+                                                        expandIconPosition={"end"}
+                                                        collapsible={"icon"}
+                                                        items={[{
+                                                            key: index,
+                                                            label: <Radio id={`radio-${index}`} value={item}>
+                                                                <div><span
+                                                                    style={{fontWeight: 'bold'}}>{item.fullName}</span> | {item.phoneNumber}
+                                                                </div>
+                                                                <div>{item.address}</div>
+                                                            </Radio>,
+                                                            children: <p>aaaaaaaaaaaaaaaa</p>
+                                                        }]}
+                                                    />
+                                                )}
+                                            />
+                                        </Radio.Group>
+                                    )}
                                 </Modal>
                             </div>
                             <div>

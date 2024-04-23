@@ -33,7 +33,7 @@ const Login: NextPage = () => {
                 setPending(false);
 
                 const {accessToken, refreshToken} = res.data as IToken;
-                const payload = jwtDecode(accessToken) as CurrentUser;
+                const payload: CurrentUser = jwtDecode(accessToken) as CurrentUser;
                 payload.accessToken = accessToken;
                 dispatch(setCurrentUser(payload));
 

@@ -17,29 +17,33 @@ export interface User {
 
     status: boolean;
 
+    address: string;
+
 }
 
 export interface CurrentUser {
 
-    id: string,
+    id: string;
 
-    sub: string,
+    sub: string;
 
-    roles: string[],
+    roles: string[];
 
     firstName: string;
 
     lastName: string;
 
-    avatar: string,
+    avatar: string;
 
-    email: string,
+    email: string;
 
-    phoneNumber: string,
+    phoneNumber: string;
 
-    username: string,
+    username: string;
 
-    accessToken: string
+    accessToken: string;
+
+    addressId: string;
 
 }
 

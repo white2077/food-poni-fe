@@ -4,12 +4,13 @@ import TextArea from "antd/es/input/TextArea";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {deleteItem, ICartItem, setNote, setQuantity} from "../store/cart.reducer";
+import {RootState} from "../store";
 
 const OrderCartItems = () => {
 
     const dispatch = useDispatch();
 
-    const cartItems = useSelector(state => state.cart.cartItems) as ICartItem[];
+    const cartItems = useSelector((state: RootState) => state.cart.cartItems) as ICartItem[];
 
     const onChangeQuantity = (id: string, value: number) => {
         const payload = {id, value};

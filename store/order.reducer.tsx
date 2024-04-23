@@ -1,5 +1,6 @@
 import {ICartItem} from "./cart.reducer";
 import {createSlice} from "@reduxjs/toolkit";
+import {Address} from "../model/Address";
 
 export interface IOrder {
     orderItems: IOrderItem[];
@@ -18,8 +19,6 @@ export interface IShippingAddress {
     fullName: string;
     phoneNumber: string;
     address: string;
-    lon: number;
-    lat: number;
 }
 
 export interface IPaymentInfo {
@@ -27,21 +26,23 @@ export interface IPaymentInfo {
     status: string;
 }
 
+export const INITIAL_SHIPPING_ADDRESS: IShippingAddress = {
+    fullName: "",
+    phoneNumber: "",
+    address: ""
+}
+
+export const INITIAL_PAYMENT_INFO: IPaymentInfo = {
+    method: "",
+    status: ""
+}
+
 export const INITIAL_ORDER = {
     user: "",
     orderItems: [],
-    shippingAddress: {
-        fullName: "",
-        phoneNumber: "",
-        address: "",
-        lon: 0,
-        lat: 0
-    },
+    shippingAddress: INITIAL_SHIPPING_ADDRESS,
     note: "",
-    payment: {
-        method: "",
-        status: ""
-    }
+    payment: INITIAL_PAYMENT_INFO
 }
 
 export interface IOrderState {

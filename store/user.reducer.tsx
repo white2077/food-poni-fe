@@ -1,7 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {CurrentUser} from "../model/User";
 
-export const INITIAL_CURRENT_USER = {
+export const INITIAL_CURRENT_USER: CurrentUser = {
     id: "",
     sub: "",
     roles: [],
@@ -11,7 +11,8 @@ export const INITIAL_CURRENT_USER = {
     email: "",
     phoneNumber: "",
     username: "",
-    accessToken: ""
+    accessToken: "",
+    addressId: ""
 }
 
 export interface ICurrentUserState {

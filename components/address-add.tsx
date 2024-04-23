@@ -2,9 +2,10 @@ import {useState} from 'react';
 import {AutoComplete, Button, Form, Input, notification} from 'antd';
 import axios from "axios";
 import axiosConfig from "../utils/axios-config";
-import {DeliveryInfomation} from "../model/DeliveryInfomation";
+import {DeliveryInformation} from "../model/DeliveryInformation";
 import {useSelector} from "react-redux";
 import {CurrentUser} from "../model/User";
+import {RootState} from "../store";
 
 interface SearchResult {
     display_name: string;
@@ -14,7 +15,7 @@ interface SearchResult {
 
 const AddressAdd = () => {
 
-    const currentUser = useSelector(state => state.user.currentUser) as CurrentUser;
+    const currentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
 
     const [pending, setPending] = useState<boolean>(false);
 
@@ -63,7 +64,8 @@ const AddressAdd = () => {
     const onFinish = (values: any) => {
         setPending(true);
 
-        const deliveryInfo: DeliveryInfomation = {
+        const deliveryInfo: DeliveryInformation = {
+            id: currentUser.addressId,
             fullName: values.fullname,
             phoneNumber: values.phoneNumber,
             address: selectedAddress?.display_name || "",
