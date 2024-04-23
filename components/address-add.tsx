@@ -1,11 +1,12 @@
 import {useState} from 'react';
 import {AutoComplete, Button, Form, Input, notification} from 'antd';
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
 import axiosConfig from "../utils/axios-config";
-import {DeliveryInformation} from "../model/DeliveryInformation";
-import {useSelector} from "react-redux";
+import {DeliveryInformation, DeliveryInformationRequest} from "../model/DeliveryInformation";
+import {useDispatch, useSelector} from "react-redux";
 import {CurrentUser} from "../model/User";
 import {RootState} from "../store";
+import {addDeliveryInformationList} from "../store/delivery.reducer";
 
 interface SearchResult {
     display_name: string;
@@ -14,6 +15,8 @@ interface SearchResult {
 }
 
 const AddressAdd = () => {
+
+    const dispatch = useDispatch();
 
     const currentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
 
@@ -40,8 +43,6 @@ const AddressAdd = () => {
                         lat: item.lat
                     }));
 
-                    console.log(results);
-
                     setDataSource(results);
                 })
                 .catch((error) => {
@@ -64,8 +65,7 @@ const AddressAdd = () => {
     const onFinish = (values: any) => {
         setPending(true);
 
-        const deliveryInfo: DeliveryInformation = {
-            id: currentUser.addressId,
+        const deliveryInfo: DeliveryInformationRequest = {
             fullName: values.fullname,
             phoneNumber: values.phoneNumber,
             address: selectedAddress?.display_name || "",
@@ -78,8 +78,10 @@ const AddressAdd = () => {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }
         })
-            .then(function (res: any) {
+            .then(function (res: AxiosResponse<DeliveryInformation>) {
                 setPending(false);
+
+                dispatch(addDeliveryInformationList(res.data));
 
                 notification.open({
                     type: 'success',

@@ -30,6 +30,7 @@ import AddressAdd from "../components/address-add";
 import {RootState} from "../store";
 import {setCurrentShippingAddress} from "../store/address.reducer";
 import {Address} from "../model/Address";
+import {setDeliveryInformationList} from "../store/delivery.reducer";
 
 const Checkout = () => {
 
@@ -43,6 +44,8 @@ const Checkout = () => {
 
     const currentShippingAddress = useSelector((state: RootState) => state.address.shippingAddress) as Address;
 
+    const deliveryInformationList = useSelector((state: RootState) => state.delivery.deliveryInformationList) as DeliveryInformation[];
+
     const [pending, setPending] = useState<boolean>(false);
 
     const [payment, setPayment] = useState<IPaymentInfo>({
@@ -55,8 +58,6 @@ const Checkout = () => {
         phoneNumber: currentShippingAddress?.phoneNumber,
         address: currentShippingAddress?.address
     });
-
-    const [deliveryInformationList, setDeliveryInformationList] = useState<DeliveryInformation[]>([]);
 
     const [modal2Open, setModal2Open] = useState(false);
 
@@ -103,7 +104,9 @@ const Checkout = () => {
             }
         })
             .then(function (res: AxiosResponse<Page<DeliveryInformation[]>>) {
-                setDeliveryInformationList(res.data.content);
+
+                dispatch(setDeliveryInformationList(res.data.content));
+
             })
             .catch(function (res) {
                 notification.open({

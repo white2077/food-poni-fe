@@ -3,13 +3,15 @@ import cartReducer from './cart.reducer';
 import userReducer from './user.reducer';
 import productReducer from "./product.reducer";
 import addressReducer from "./address.reducer";
+import deliveryReducer from "./delivery.reducer";
 
 
 const rootReducer = combineReducers({
     cart: cartReducer,
     user: userReducer,
     productList: productReducer,
-    address: addressReducer
+    address: addressReducer,
+    delivery: deliveryReducer
 })
 
 const store = configureStore({
