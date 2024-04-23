@@ -18,7 +18,7 @@ const MainHeader = () => {
                     <span style={{marginRight: '5px'}}>
                         <UserOutlined />
                     </span>
-                    <span>Account information</span>
+                    <span>Account management</span>
                 </span>
             ),
         },
