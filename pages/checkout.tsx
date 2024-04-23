@@ -19,18 +19,14 @@ import {deleteAllItem, ICartItem} from "../store/cart.reducer";
 import {CurrentUser} from "../model/User";
 import {IOrder, IOrderItem, IPaymentInfo, IShippingAddress} from "../store/order.reducer";
 import TextArea from "antd/es/input/TextArea";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import axiosConfig from "../utils/axios-config";
 import {useRouter} from "next/router";
-import {AxiosResponse} from "axios";
-import {Page} from "../model/Common";
 import {DeliveryInformation} from "../model/DeliveryInformation";
 import OrderCartItems from "../components/order-cartItems";
 import AddressAdd from "../components/address-add";
 import {RootState} from "../store";
-import {setCurrentShippingAddress} from "../store/address.reducer";
 import {Address} from "../model/Address";
-import {setDeliveryInformationList} from "../store/delivery.reducer";
 
 const Checkout = () => {
 
@@ -54,9 +50,9 @@ const Checkout = () => {
     });
 
     const [shippingAddress, setShippingAddress] = useState<IShippingAddress>({
-        fullName: currentShippingAddress?.fullName,
-        phoneNumber: currentShippingAddress?.phoneNumber,
-        address: currentShippingAddress?.address
+        fullName: currentShippingAddress.fullName,
+        phoneNumber: currentShippingAddress.phoneNumber,
+        address: currentShippingAddress.address
     });
 
     const [modal2Open, setModal2Open] = useState(false);
@@ -64,58 +60,6 @@ const Checkout = () => {
     const [showAddAddress, setShowAddAddress] = useState(false);
 
     const totalAmount = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-
-    const getShippingAddress = () => {
-        const addressId = currentUser.addressId;
-
-        axiosConfig.get(`/addresses/${addressId}`, {
-            headers: {
-                Authorization: 'Bearer ' + currentUser.accessToken,
-            }
-        })
-            .then(function (res: AxiosResponse<Address>) {
-                dispatch(setCurrentShippingAddress(res.data));
-            })
-            .catch(function (res) {
-                notification.open({
-                    type: 'error',
-                    message: 'Shipping address message',
-                    description: res.message
-                });
-            })
-    }
-
-    useEffect(() => {
-        getShippingAddress();
-    }, [router.isReady]);
-
-    useEffect(() => {
-        setShippingAddress({
-            fullName: currentShippingAddress?.fullName,
-            phoneNumber: currentShippingAddress?.phoneNumber,
-            address: currentShippingAddress?.address
-        });
-    }, [currentShippingAddress]);
-
-    const getDeliveryInformationList = () => {
-        axiosConfig.get("/addresses", {
-            headers: {
-                Authorization: 'Bearer ' + currentUser.accessToken,
-            }
-        })
-            .then(function (res: AxiosResponse<Page<DeliveryInformation[]>>) {
-
-                dispatch(setDeliveryInformationList(res.data.content));
-
-            })
-            .catch(function (res) {
-                notification.open({
-                    type: 'error',
-                    message: 'Delivery information message',
-                    description: res.message
-                });
-            })
-    }
 
     const addToOrder = (values: any) => {
         setPending(true);
@@ -187,7 +131,6 @@ const Checkout = () => {
                                 Giao tới
                                 <Button id="button-change-address" type='link' style={{float: 'right'}} onClick={() => {
                                     setModal2Open(true);
-                                    getDeliveryInformationList();
                                 }}>Thay đổi</Button>
                                 <Modal
                                     title="Your address"
