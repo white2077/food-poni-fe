@@ -25,7 +25,7 @@ const Orders = () => {
     }, []);
 
     const getOrders = () => {
-        axiosConfig.get("/orders", {
+        axiosConfig.get("/customer/orders", {
             headers: {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }
