@@ -32,7 +32,7 @@ const AddressAdd = () => {
     const delayedSearch = (value: string): void => {
         if (timeout) {
             clearTimeout(timeout);
-        };
+        }
 
         timeout = setTimeout((): void => {
             axios
