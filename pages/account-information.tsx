@@ -65,6 +65,6 @@ const AccountInformation: NextPage = () => {
         </DefaultLayout>
     );
 
-}
+};
 
 export default AccountInformation;

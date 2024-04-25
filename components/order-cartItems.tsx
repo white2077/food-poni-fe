@@ -10,14 +10,14 @@ const OrderCartItems = () => {
 
     const dispatch = useDispatch();
 
-    const cartItems = useSelector((state: RootState) => state.cart.cartItems) as ICartItem[];
+    const cartItems: ICartItem[] = useSelector((state: RootState) => state.cart.cartItems) as ICartItem[];
 
-    const onChangeQuantity = (id: string, value: number) => {
-        const payload = {id, value};
+    const onChangeQuantity = (id: string, value: number): void => {
+        const payload: {id: string, value: number} = {id, value};
         dispatch(setQuantity(payload));
-    }
+    };
 
-    const onChangeNote = (itemId: string, note: string) => {
+    const onChangeNote = (itemId: string, note: string): void => {
         dispatch(setNote({id: itemId, note}));
     };
 
@@ -39,7 +39,7 @@ const OrderCartItems = () => {
                 </Row>
             </Card>
             <Card>
-                {cartItems.map((item, index) => (
+                {cartItems.map((item: ICartItem, index: number) => (
                     <Row key={index} style={{margin: '16px 0', alignItems: 'center'}}>
                         <Col flex='2%'>
                             <Checkbox checked></Checkbox>
@@ -77,7 +77,8 @@ const OrderCartItems = () => {
                 ))}
             </Card>
         </div>
-    )
-}
+    );
+
+};
 
 export default OrderCartItems;

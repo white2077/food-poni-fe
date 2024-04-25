@@ -2,11 +2,12 @@ import {useState} from 'react';
 import {AutoComplete, Button, Form, Input, notification} from 'antd';
 import axios, {AxiosResponse} from "axios";
 import axiosConfig from "../utils/axios-config";
-import {DeliveryInformation, DeliveryInformationRequest} from "../model/DeliveryInformation";
 import {useDispatch, useSelector} from "react-redux";
-import {CurrentUser} from "../model/User";
 import {RootState} from "../store";
 import {addDeliveryInformationList} from "../store/delivery.reducer";
+import {CurrentUser} from "../pages/login";
+import {AddressRequestDTO} from "../model/address/AddressRequest";
+import {AddressResponseDTO} from "../model/address/AddressResponseAPI";
 
 interface SearchResult {
     display_name: string;
@@ -18,7 +19,7 @@ const AddressAdd = () => {
 
     const dispatch = useDispatch();
 
-    const currentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
 
     const [pending, setPending] = useState<boolean>(false);
 
@@ -28,16 +29,20 @@ const AddressAdd = () => {
 
     let timeout: NodeJS.Timeout | null = null;
 
-    const delayedSearch = (value: string) => {
+    const delayedSearch = (value: string): void => {
         if (timeout) {
             clearTimeout(timeout);
-        }
+        };
 
-        timeout = setTimeout(() => {
+        timeout = setTimeout((): void => {
             axios
                 .get<SearchResult[]>(`https://nominatim.openstreetmap.org/search?q=${value}&format=json&addressdetails=1`)
-                .then((response) => {
-                    const results = response.data.map((item) => ({
+                .then((response: AxiosResponse<SearchResult[]>): void => {
+                    const results: {
+                        display_name: string,
+                        lon: number,
+                        lat: number
+                    }[] = response.data.map((item: SearchResult) => ({
                         display_name: item.display_name,
                         lon: item.lon,
                         lat: item.lat
@@ -45,27 +50,27 @@ const AddressAdd = () => {
 
                     setDataSource(results);
                 })
-                .catch((error) => {
+                .catch((error): void => {
                     console.error(error);
                 });
         }, 500);
     };
 
-    const onSearch = (value: string) => {
+    const onSearch = (value: string): void => {
         delayedSearch(value);
     };
 
-    const onSelect = (value: string, option: { data: SearchResult }) => {
+    const onSelect = (value: string, option: { data: SearchResult }): void => {
         // console.log('onSelect', value);
         // console.log('Selected Option:', option.data);
 
         setSelectedAddress(option.data);
     };
 
-    const onFinish = (values: any) => {
+    const onFinish = (values: any): void => {
         setPending(true);
 
-        const deliveryInfo: DeliveryInformationRequest = {
+        const deliveryInfo: AddressRequestDTO = {
             fullName: values.fullname,
             phoneNumber: values.phoneNumber,
             address: selectedAddress?.display_name || "",
@@ -78,7 +83,7 @@ const AddressAdd = () => {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }
         })
-            .then(function (res: AxiosResponse<DeliveryInformation>) {
+            .then(function (res: AxiosResponse<AddressResponseDTO>) {
                 setPending(false);
 
                 dispatch(addDeliveryInformationList(res.data));
@@ -96,7 +101,7 @@ const AddressAdd = () => {
                     message: 'Add address message',
                     description: res.message,
                 });
-            })
+            });
     };
 
     return (
@@ -140,6 +145,7 @@ const AddressAdd = () => {
             </Form.Item>
         </Form>
     );
+
 };
 
 export default AddressAdd;

@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import type {MenuProps} from 'antd';
 import {Menu, Skeleton} from 'antd';
 import axiosConfig from "../utils/axios-config";
-import {Category} from "../model/Category";
 import {Page} from "../model/Common";
 import {AxiosResponse} from "axios";
+import {CategoryResponseDTO} from "../model/category/CategoryResponseAPI";
 
 export interface ICategory {
     id: string;
@@ -13,19 +13,24 @@ export interface ICategory {
 }
 
 const SecondaryMenu: React.FC = () => {
+
     let items: ICategory[] = [];
+
     const [categories, setCategories] = useState<ICategory[]>([]);
+
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
         getAllCategories()
-    }, [])
+    }, []);
 
-    const getAllCategories = () => {
+    const getAllCategories = (): void => {
+
         setIsLoading(true);
+
         axiosConfig.get("/product-categories?onlyParent=true")
-            .then((res: AxiosResponse<Page<Category[]>>) => {
-                res.data.content.forEach((category) => {
+            .then((res: AxiosResponse<Page<CategoryResponseDTO[]>>) => {
+                res.data.content.forEach((category: CategoryResponseDTO) => {
                     convertCategory(category, '');
                 });
                 setCategories(items);
@@ -33,19 +38,20 @@ const SecondaryMenu: React.FC = () => {
             })
             .catch(err => {
                 console.log(err)
-            })
-    }
+            });
 
-    const convertCategory = (category: Category, tab: string) => {
+    };
+
+    const convertCategory = (category: CategoryResponseDTO, tab: string): void => {
         items.push({id: category.id, name: category.categoryName, tab: tab});
 
         if (category.categories.length)
-            category.categories.forEach((subCategory) => {
+            category.categories.forEach((subCategory: CategoryResponseDTO): void => {
                 convertCategory(subCategory, tab + '&emsp;');
-            })
-    }
+            });
+    };
 
-    const onClick: MenuProps['onClick'] = (e) => {
+    const onClick: MenuProps['onClick'] = (e): void => {
         console.log('click ', e);
     };
 
@@ -72,6 +78,7 @@ const SecondaryMenu: React.FC = () => {
             </Menu>
         </div>
     );
+
 };
 
 export default SecondaryMenu;

@@ -2,24 +2,30 @@ import {Button, Card, Flex, InputNumber} from "antd";
 import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {addItem, ICartItem} from "../store/cart.reducer";
-import {useRouter} from "next/router";
+import {NextRouter, useRouter} from "next/router";
 import {RootState} from "../store";
 
 const ProductCart = ({id, price, thumbnail, name}: {id: string, price: number, thumbnail: string, name: string}) => {
-    const [quantity, setQuantity] = useState<number>(1);
-    const dispatch = useDispatch();
-    const cartItems = useSelector((state: RootState) => state.cart.cartItems) as ICartItem[];
-    const isExisted = cartItems.some(item => item.id === id);
-    const router = useRouter();
-    const addToCart = () => {
-        const payload = {id, price, thumbnail, name, quantity} as ICartItem;
-        dispatch(addItem(payload));
-    }
 
-    const getCheckout = () => {
+    const router: NextRouter = useRouter();
+
+    const dispatch = useDispatch();
+
+    const [quantity, setQuantity] = useState<number>(1);
+
+    const cartItems: ICartItem[] = useSelector((state: RootState) => state.cart.cartItems) as ICartItem[];
+
+    const isExisted: boolean = cartItems.some(item => item.id === id);
+
+    const addToCart = (): void => {
+        const payload: ICartItem = {id, price, thumbnail, name, quantity} as ICartItem;
+        dispatch(addItem(payload));
+    };
+
+    const getCheckout = (): void => {
         addToCart();
         router.push("/checkout");
-    }
+    };
 
     return (
         <Card size='small' style={{color: 'black', textAlign: 'left'}}>
@@ -41,7 +47,8 @@ const ProductCart = ({id, price, thumbnail, name}: {id: string, price: number, t
                         disabled={isExisted}>{isExisted ? 'Sản phẩm đã có trong giỏ hàng' : 'Thêm vào giỏ hàng'}</Button>
             </Flex>
         </Card>
-    )
-}
+    );
 
-export default ProductCart
+};
+
+export default ProductCart;

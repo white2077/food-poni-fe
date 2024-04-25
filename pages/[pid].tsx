@@ -2,14 +2,15 @@ import type {NextPage} from 'next'
 import {NextRouter, useRouter} from "next/router";
 import {DefaultLayout} from "../components/layout";
 import React, {useEffect, useState} from "react";
-import {Product} from "../model/Product";
-import {ProductDetail} from "../model/ProductDetail";
 import {Button, Card, Col, Radio, Rate, Result, Row} from "antd";
 import ProductGallery from "../components/product-gallery";
 import ProductCart from "../components/product-cart";
-import {server} from "../utils/server";
 import ProductDescriptionComponent from "../components/product-description";
 import ProductRetailer from "../components/product-retailer";
+import {ProductResponseDTO} from "../model/product/ProductResponseAPI";
+import {ProductDetailResponseDTO} from "../model/product_detail/ProductDetailResponseAPI";
+import axiosConfig from "../utils/axios-config";
+import {AxiosResponse} from "axios";
 
 export interface IProduct {
     id: string;
@@ -24,7 +25,7 @@ export interface IProductDetail {
     name: string;
     price: number,
     description: string;
-    images: string[]
+    images: string[];
 }
 
 export interface IRetailer {
@@ -40,25 +41,22 @@ const ProductDetails: NextPage = () => {
     const [product, setProduct] = useState<IProduct>();
     const [isError, setIsError] = useState<boolean>(false);
 
-    useEffect(() => {
+    useEffect((): void => {
         getProductDetailById();
     }, [router.isReady]);
 
     const getProductDetailById = (): void => {
         if (pid) {
-            fetch(`${server}/products/${pid}`)
-                .then(
-                    response => response.json())
-                .then(response => {
-                    const product: Product = response;
+            axiosConfig.get(`/products/${pid}`)
+                .then(function (res: AxiosResponse<ProductResponseDTO>): void {
+                    const product: ProductResponseDTO = res.data;
 
-                    // @ts-ignore
                     const productMapped: IProduct = {
                         id: product.id,
                         name: product.name,
                         shortDescription: product.shortDescription,
                         retailer: product.user,
-                        productDetails: product.productDetails.map((productDetail: ProductDetail): IProductDetail => {
+                        productDetails: product.productDetails.map((productDetail: ProductDetailResponseDTO): IProductDetail => {
                             return {
                                 id: productDetail.id,
                                 name: productDetail.name,
@@ -72,15 +70,15 @@ const ProductDetails: NextPage = () => {
                     setProduct(productMapped);
                     setProductDetailSelected(productMapped.productDetails[0]);
                 })
-                .catch(response => {
+                .catch(function (): void {
                     setIsError(true);
-                })
+                });
         }
-    }
+    };
 
     const [productDetailSelected, setProductDetailSelected] = useState<IProductDetail>();
 
-    const changeProductDetailSelected = (productDetail: IProductDetail) => {
+    const changeProductDetailSelected = (productDetail: IProductDetail): void => {
         setProductDetailSelected(productDetail);
     }
 
@@ -154,9 +152,9 @@ const ProductDetails: NextPage = () => {
                     )}
                 </>
             )}
-
         </DefaultLayout>
     );
-}
 
-export default ProductDetails
+};
+
+export default ProductDetails;

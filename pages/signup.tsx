@@ -7,6 +7,7 @@ const SignUp: NextPage = () => {
             Sign Up Page
         </div>
     );
-}
+
+};
 
 export default SignUp

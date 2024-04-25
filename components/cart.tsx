@@ -7,22 +7,25 @@ import {RootState} from "../store";
 
 
 const CartComponent = () => {
-    const [open, setOpen] = useState(false);
-    const cartItems = useSelector((state: RootState) => state.cart.cartItems) as ICartItem[];
+
     const dispatch = useDispatch();
 
-    const showDrawer = () => {
+    const [open, setOpen] = useState<boolean>(false);
+
+    const cartItems: ICartItem[] = useSelector((state: RootState) => state.cart.cartItems) as ICartItem[];
+
+    const showDrawer = (): void => {
         setOpen(true);
     };
 
-    const onClose = () => {
+    const onClose = (): void => {
         setOpen(false);
     };
 
-    const onChangeQuantity = (id: string, value: number) => {
-        const payload = {id, value};
+    const onChangeQuantity = (id: string, value: number): void => {
+        const payload: {id: string, value: number} = {id, value};
         dispatch(setQuantity(payload));
-    }
+    };
 
     return (
         <>
@@ -68,6 +71,7 @@ const CartComponent = () => {
             </Drawer>
         </>
     );
-}
 
-export default CartComponent
+};
+
+export default CartComponent;

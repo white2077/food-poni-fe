@@ -1,7 +1,6 @@
 import {List} from 'antd';
 import type {NextPage} from 'next'
-import React, {useEffect} from 'react'
-import {Product} from "../model/Product";
+import React, {useEffect} from 'react';
 import ProductCard from "./product-card";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../store";
@@ -9,6 +8,8 @@ import {setProductList} from "../store/product.reducer";
 import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {Page} from "../model/Common";
+import {ProductResponseDTO} from "../model/product/ProductResponseAPI";
+import {ProductDetailResponseDTO} from "../model/product_detail/ProductDetailResponseAPI";
 
 export interface IProductCard {
     id: string;
@@ -19,23 +20,26 @@ export interface IProductCard {
 }
 
 const ProductRows: NextPage = () => {
+
     const dispatch = useDispatch();
+
     const {products, isLoading} = useSelector((state: RootState) => state.productList);
 
-    useEffect(() => {
+    useEffect((): void => {
         getProducts();
     }, []);
 
     const getProducts = (): void => {
+
         axiosConfig.get("/products")
-            .then((res: AxiosResponse<Page<Product[]>>) => {
-                const productList = (res.data.content as Product[]).map((product): IProductCard => {
+            .then((res: AxiosResponse<Page<ProductResponseDTO[]>>): void => {
+                const productList: IProductCard[] = (res.data.content as ProductResponseDTO[]).map((product: ProductResponseDTO): IProductCard => {
                     return {
                         id: product.id,
                         name: product.name,
                         thumbnail: product.thumbnail,
-                        minPrice: Math.min(...product.productDetails.map((productDetail) => productDetail.price)),
-                        maxPrice: Math.max(...product.productDetails.map((productDetail) => productDetail.price)),
+                        minPrice: Math.min(...product.productDetails.map((productDetail: ProductDetailResponseDTO) => productDetail.price)),
+                        maxPrice: Math.max(...product.productDetails.map((productDetail: ProductDetailResponseDTO) => productDetail.price)),
                     };
                 });
 
@@ -43,7 +47,8 @@ const ProductRows: NextPage = () => {
             })
             .catch(err => {
                 console.log(err)
-            })
+            });
+
     };
 
     return (
@@ -51,7 +56,7 @@ const ProductRows: NextPage = () => {
             loading={isLoading}
             grid={{gutter: 16, xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 4}}
             dataSource={products}
-            renderItem={(product) => (
+            renderItem={(product: IProductCard) => (
                 <List.Item id={product.id}>
                     <ProductCard product={product}/>
                 </List.Item>
@@ -59,6 +64,6 @@ const ProductRows: NextPage = () => {
         />
     );
 
-}
+};
 
-export default ProductRows
+export default ProductRows;

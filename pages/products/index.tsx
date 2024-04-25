@@ -1,15 +1,18 @@
-import {useRouter} from "next/router";
+import {NextRouter, useRouter} from "next/router";
 import {DefaultLayout} from "../../components/layout";
 
 const ProductsPage = () => {
-    const router = useRouter();
+
+    const router: NextRouter = useRouter();
+
     const {search} = router.query;
 
     return (
         <DefaultLayout>
             <div>Search: ${search}</div>
         </DefaultLayout>
-    )
-}
+    );
 
-export default ProductsPage
+};
+
+export default ProductsPage;

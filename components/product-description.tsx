@@ -2,6 +2,7 @@ import {Card} from "antd";
 import React from "react";
 
 const ProductDescriptionComponent = ({shortDescription, description}: {shortDescription: string, description: string}) => {
+
     return (
         <>
             <Card>
@@ -15,7 +16,8 @@ const ProductDescriptionComponent = ({shortDescription, description}: {shortDesc
                      dangerouslySetInnerHTML={{__html: description || ''}}></div>
             </Card>
         </>
-    )
-}
+    );
 
-export default ProductDescriptionComponent
+};
+
+export default ProductDescriptionComponent;

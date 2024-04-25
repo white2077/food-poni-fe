@@ -1,9 +1,10 @@
 import {Badge, Card, Divider} from "antd";
-import {Order, OrderItem} from "../model/Order";
 import {EnvironmentOutlined, FieldTimeOutlined} from "@ant-design/icons";
 import {format} from "date-fns";
+import {OrderResponseDTO} from "../model/order/OrderResposeAPI";
+import {OrderItemResponseDTO} from "../model/order_item/OrderItemResponseAPI";
 
-const OrderCard = ({order}: { order: Order }) => {
+const OrderCard = ({order}: { order: OrderResponseDTO }) => {
 
     return (
         <Badge.Ribbon text={order.status} color="red">
@@ -12,7 +13,7 @@ const OrderCard = ({order}: { order: Order }) => {
                     <div>{order.shippingAddress.fullName}</div>
                     <div>{order.shippingAddress.phoneNumber}</div>
                 </div>
-                {order.orderItems.map((item: OrderItem, index) => (
+                {order.orderItems.map((item: OrderItemResponseDTO, index: number) => (
                     <div key={index} style={{marginBottom: "5px"}}>
                         <div style={{display: "flex", justifyContent: "space-between"}}>
                             <div>{item.productDetail.product.name} - {item.productDetail.name}</div>
@@ -36,8 +37,8 @@ const OrderCard = ({order}: { order: Order }) => {
                 </div>
             </Card>
         </Badge.Ribbon>
-    )
+    );
 
-}
+};
 
 export default OrderCard;

@@ -1,26 +1,12 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {CurrentUser} from "../model/User";
-
-export const INITIAL_CURRENT_USER: CurrentUser = {
-    id: "",
-    sub: "",
-    roles: [],
-    firstName: "",
-    lastName: "",
-    avatar: "",
-    email: "",
-    phoneNumber: "",
-    username: "",
-    accessToken: "",
-    addressId: ""
-}
+import {currentUser, CurrentUser} from "../pages/login";
 
 export interface ICurrentUserState {
     currentUser: CurrentUser;
 }
 
 const initialState: ICurrentUserState = {
-    currentUser: INITIAL_CURRENT_USER
+    currentUser: currentUser
 }
 
 const userSlide = createSlice({

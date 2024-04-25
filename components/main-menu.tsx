@@ -4,9 +4,10 @@ import type {MenuProps} from 'antd';
 import {Menu} from 'antd';
 
 const MainMenu = () => {
-    const [current, setCurrent] = useState('mail');
 
-    const onClick: MenuProps['onClick'] = (e) => {
+    const [current, setCurrent] = useState<string>('mail');
+
+    const onClick: MenuProps['onClick'] = (e): void => {
         console.log('click ', e);
         setCurrent(e.key);
     };
@@ -14,7 +15,8 @@ const MainMenu = () => {
     return (
         <Menu style={{borderRadius: '8px'}} onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
     );
-}
+
+};
 
 const items: MenuProps['items'] = [
     {
@@ -49,4 +51,4 @@ const items: MenuProps['items'] = [
     }
 ];
 
-export default MainMenu
+export default MainMenu;

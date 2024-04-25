@@ -4,6 +4,7 @@ import MainHeader from "./header";
 
 const {Header, Footer, Sider, Content} = Layout;
 export const DefaultLayout = ({children}: { children: React.ReactNode }) => {
+
     return (
         <Layout style={layoutStyle}>
             <Header style={headerStyle}>
@@ -12,8 +13,9 @@ export const DefaultLayout = ({children}: { children: React.ReactNode }) => {
             <Content style={contentStyle}>{children}</Content>
             <Footer style={footerStyle}>Footer</Footer>
         </Layout>
-    )
-}
+    );
+
+};
 
 const headerStyle: React.CSSProperties = {
     backgroundColor: '#fff',

@@ -2,35 +2,35 @@ import {Button, Card, List, notification} from "antd";
 import AddressAdd from "./address-add";
 import {CheckCircleOutlined, DeleteOutlined} from "@ant-design/icons";
 import React, {useState} from "react";
-import {useRouter} from "next/router";
+import {NextRouter, useRouter} from "next/router";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../store";
-import {CurrentUser} from "../model/User";
-import {DeliveryInformation} from "../model/DeliveryInformation";
 import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
-import {Address, AddressIdDTO} from "../model/Address";
 import {setCurrentShippingAddress} from "../store/address.reducer";
 import {deleteDeliveryInformationList} from "../store/delivery.reducer";
 import {updateAddressId} from "../store/user.reducer";
+import {CurrentUser} from "../pages/login";
+import {AddressIdDTO} from "../model/address/AddressRequest";
+import {AddressResponseDTO} from "../model/address/AddressResponseAPI";
 
 export const AddressDeliveryInformation = () => {
 
-    const router = useRouter();
+    const router: NextRouter = useRouter();
 
     const dispatch = useDispatch();
 
-    const currentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
 
-    const [showAddAddress, setShowAddAddress] = useState(false);
+    const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
 
-    const deliveryInformationList = useSelector((state: RootState) => state.delivery.deliveryInformationList) as DeliveryInformation[];
+    const deliveryInformationList: AddressResponseDTO[] = useSelector((state: RootState) => state.delivery.deliveryInformationList) as AddressResponseDTO[];
 
-    const handleAddAddressClick = () => {
-        setShowAddAddress(!showAddAddress)
-    }
+    const handleAddAddressClick = (): void => {
+        setShowAddAddress(!showAddAddress);
+    };
 
-    const getShippingAddress = () => {
+    const getShippingAddress = (): void => {
         const addressId = currentUser.addressId;
 
         axiosConfig.get(`/addresses/${addressId}`, {
@@ -38,47 +38,47 @@ export const AddressDeliveryInformation = () => {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }
         })
-            .then(function (res: AxiosResponse<Address>) {
+            .then(function (res: AxiosResponse<AddressResponseDTO>): void {
                 dispatch(setCurrentShippingAddress(res.data));
             })
-            .catch(function (res) {
+            .catch(function (res): void {
                 notification.open({
                     type: 'error',
                     message: 'Shipping address message',
                     description: res.message
                 });
-            })
-    }
+            });
+    };
 
-    const deleteDeliveryInformation = (addressId: string) => {
+    const deleteDeliveryInformation = (addressId: string): void => {
         axiosConfig.delete(`/addresses/${addressId}`, {
             headers: {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }
         })
-            .then(function () {
+            .then(function (): void {
                 dispatch(deleteDeliveryInformationList(addressId));
             })
-            .catch(function (res) {
+            .catch(function (res): void {
                 notification.open({
                     type: 'error',
                     message: 'Delivery information message',
                     description: res.message
                 });
             })
-    }
+    };
 
-    const updateShippingAddress = (addressId: string) => {
+    const updateShippingAddress = (addressId: string): void => {
         const addressIdDTO: AddressIdDTO = {
             id: addressId
-        }
+        };
 
         axiosConfig.put("/users/update-address", addressIdDTO, {
             headers: {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }
         })
-            .then(function () {
+            .then(function (): void {
                 dispatch(updateAddressId(addressId));
 
                 getShippingAddress();
@@ -91,14 +91,14 @@ export const AddressDeliveryInformation = () => {
 
                 router.push("/account-information")
             })
-            .catch(function (res) {
+            .catch(function (res): void {
                 notification.open({
                     type: 'error',
                     message: 'Shipping address message',
                     description: res.message
                 });
-            })
-    }
+            });
+    };
 
     return (
         <div style={{width: '1000px', margin: '0 auto'}}>
@@ -112,7 +112,7 @@ export const AddressDeliveryInformation = () => {
                 <List
                     grid={{gutter: 16, column: 1}}
                     dataSource={deliveryInformationList}
-                    renderItem={(item: DeliveryInformation, index: number) => (
+                    renderItem={(item: AddressResponseDTO, index: number) => (
                         <List.Item>
                             <Card>
                                 <div style={{display: 'flex', justifyContent: 'space-between'}}>
@@ -128,10 +128,10 @@ export const AddressDeliveryInformation = () => {
                                         <div>{item.address}</div>
                                     </div>
                                     <div>
-                                        <Button type="text" style={{color: 'blueviolet'}} onClick={() => updateShippingAddress(item.id)}>
+                                        <Button type="text" style={{color: 'blueviolet'}} onClick={() => updateShippingAddress(item.id ?? "")}>
                                             Đặt làm mặc định
                                         </Button>
-                                        <span style={{marginLeft: '16px'}}><DeleteOutlined onClick={() => deleteDeliveryInformation(item.id)} /></span>
+                                        <span style={{marginLeft: '16px'}}><DeleteOutlined onClick={() => deleteDeliveryInformation(item.id ?? "")} /></span>
                                     </div>
                                 </div>
                             </Card>
@@ -140,8 +140,8 @@ export const AddressDeliveryInformation = () => {
                 />
             )}
         </div>
-    )
+    );
 
-}
+};
 
 export default AddressDeliveryInformation;

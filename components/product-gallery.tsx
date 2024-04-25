@@ -5,7 +5,7 @@ const ProductGallery = ({images}: { images: string[] | null | undefined }) => {
 
     const [selectedImage, setSelectedImage] = useState<string>();
 
-    const handleImageClick = (image: string) => {
+    const handleImageClick = (image: string): void => {
         setSelectedImage(image);
     };
 
@@ -18,7 +18,7 @@ const ProductGallery = ({images}: { images: string[] | null | undefined }) => {
             />
             <div>
                 <Segmented
-                    options={images ? images?.map((image, index) => ({
+                    options={images ? images?.map((image: string, index: number) => ({
                         label: (
                             <div style={{padding: 4}}>
                                 <Avatar
@@ -33,7 +33,8 @@ const ProductGallery = ({images}: { images: string[] | null | undefined }) => {
                 />
             </div>
         </Card>
-    )
-}
+    );
 
-export default ProductGallery
+};
+
+export default ProductGallery;

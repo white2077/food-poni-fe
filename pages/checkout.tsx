@@ -16,54 +16,54 @@ import {
 } from "antd";
 import {useDispatch, useSelector} from "react-redux";
 import {deleteAllItem, ICartItem} from "../store/cart.reducer";
-import {CurrentUser} from "../model/User";
-import {IOrder, IOrderItem, IPaymentInfo, IShippingAddress} from "../store/order.reducer";
 import TextArea from "antd/es/input/TextArea";
 import React, {useState} from "react";
 import axiosConfig from "../utils/axios-config";
-import {useRouter} from "next/router";
-import {DeliveryInformation} from "../model/DeliveryInformation";
+import {NextRouter, useRouter} from "next/router";
 import OrderCartItems from "../components/order-cartItems";
 import AddressAdd from "../components/address-add";
 import {RootState} from "../store";
-import {Address} from "../model/Address";
+import {CurrentUser} from "./login";
+import {AddressResponseDTO} from "../model/address/AddressResponseAPI";
+import {OrderItemRequestDTO} from "../model/order_item/OrderItemRequest";
+import {OrderRequestDTO, PaymentInfo, ShippingAddress} from "../model/order/OrderRequest";
 
 const Checkout = () => {
 
-    const router = useRouter();
+    const router: NextRouter = useRouter();
 
     const dispatch = useDispatch();
 
-    const cartItems = useSelector((state: RootState) => state.cart.cartItems) as ICartItem[];
+    const cartItems: ICartItem[] = useSelector((state: RootState) => state.cart.cartItems) as ICartItem[];
 
-    const currentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
 
-    const currentShippingAddress = useSelector((state: RootState) => state.address.shippingAddress) as Address;
+    const currentShippingAddress: AddressResponseDTO = useSelector((state: RootState) => state.address.shippingAddress) as AddressResponseDTO;
 
-    const deliveryInformationList = useSelector((state: RootState) => state.delivery.deliveryInformationList) as DeliveryInformation[];
+    const deliveryInformationList: AddressResponseDTO[] = useSelector((state: RootState) => state.delivery.deliveryInformationList) as AddressResponseDTO[];
 
     const [pending, setPending] = useState<boolean>(false);
 
-    const [payment, setPayment] = useState<IPaymentInfo>({
+    const [payment, setPayment] = useState<PaymentInfo>({
         method: "CASH",
         status: "PAYING"
     });
 
-    const [shippingAddress, setShippingAddress] = useState<IShippingAddress>({
+    const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
         fullName: currentShippingAddress.fullName,
         phoneNumber: currentShippingAddress.phoneNumber,
         address: currentShippingAddress.address
     });
 
-    const [modal2Open, setModal2Open] = useState(false);
+    const [modal2Open, setModal2Open] = useState<boolean>(false);
 
-    const [showAddAddress, setShowAddAddress] = useState(false);
+    const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
 
-    const totalAmount = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+    const totalAmount: number = cartItems.reduce((total: number, item: ICartItem) => total + (item.price * item.quantity), 0);
 
-    const addToOrder = (values: any) => {
+    const addToOrder = (values: any): void => {
         setPending(true);
-        const orderItems: IOrderItem[] = cartItems.map((item: ICartItem) => {
+        const orderItems: OrderItemRequestDTO[] = cartItems.map((item: ICartItem) => {
             return {
                 quantity: item.quantity,
                 productDetail: item,
@@ -73,7 +73,7 @@ const Checkout = () => {
         const note: string = values.note;
 
         if (orderItems && shippingAddress && payment) {
-            const order = {orderItems, shippingAddress, note, payment} as IOrder;
+            const order: OrderRequestDTO = {orderItems, shippingAddress, note, payment} as OrderRequestDTO;
 
             axiosConfig.post("/orders", order, {
                 headers: {
@@ -98,7 +98,7 @@ const Checkout = () => {
                         message: 'Order message',
                         description: res.message
                     });
-                })
+                });
         } else {
             setPending(false);
             notification.open({
@@ -107,15 +107,15 @@ const Checkout = () => {
                 description: "Some information is missing. Please fill in all required fields."
             });
         }
-    }
+    };
 
-    const onChange = (e: RadioChangeEvent) => {
+    const onChange = (e: RadioChangeEvent): void => {
         setPayment(prevPaymentInfo => ({...prevPaymentInfo, method: e.target.value}));
     };
 
-    const handleAddAddressClick = () => {
-        setShowAddAddress(!showAddAddress)
-    }
+    const handleAddAddressClick = (): void => {
+        setShowAddAddress(!showAddAddress);
+    };
 
     return (
         <DefaultLayout>
@@ -149,7 +149,7 @@ const Checkout = () => {
                                                      onChange={(e: RadioChangeEvent) => setShippingAddress(e.target.value)}>
                                             <List
                                                 dataSource={deliveryInformationList}
-                                                renderItem={(item: DeliveryInformation, index: number) => (
+                                                renderItem={(item: AddressResponseDTO, index: number) => (
                                                     <Collapse
                                                         style={{margin: '16px 0'}}
                                                         expandIconPosition={"end"}
@@ -233,7 +233,8 @@ const Checkout = () => {
                 </Row>
             </div>
         </DefaultLayout>
-    )
-}
+    );
 
-export default Checkout
+};
+
+export default Checkout;

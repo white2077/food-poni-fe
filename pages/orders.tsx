@@ -4,23 +4,24 @@ import React, {useEffect, useState} from "react";
 import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {useSelector} from "react-redux";
-import {CurrentUser} from "../model/User";
 import OrderCard from "../components/order-card";
-import {Order} from "../model/Order";
 import {RootState} from "../store";
 import {Page} from "../model/Common";
 import {NextRouter, useRouter} from "next/router";
+import {CurrentUser} from "./login";
+import {OrderResponseDTO} from "../model/order/OrderResposeAPI";
 
 const Orders = () => {
+
     const router: NextRouter = useRouter();
 
-    const currentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
 
-    const [orders, setOrders] = useState<Order[]>([]);
+    const [orders, setOrders] = useState<OrderResponseDTO[]>([]);
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    useEffect(() => {
+    useEffect((): void => {
         getOrders();
     }, []);
 
@@ -30,7 +31,7 @@ const Orders = () => {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }
         })
-            .then(function (res: AxiosResponse<Page<Order[]>>) {
+            .then(function (res: AxiosResponse<Page<OrderResponseDTO[]>>) {
                 // console.log(res.data);
                 setOrders(res.data.content);
                 setIsLoading(false);
@@ -42,7 +43,7 @@ const Orders = () => {
                     description: res.message
                 });
             })
-    }
+    };
 
     return (
         <DefaultLayout>
@@ -68,7 +69,8 @@ const Orders = () => {
                 )
             }
         </DefaultLayout>
-    )
-}
+    );
+
+};
 
 export default Orders;

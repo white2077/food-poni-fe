@@ -2,6 +2,7 @@ import React from "react";
 import {Carousel} from 'antd';
 
 const CarouselBanner = () => {
+
     return (
         <Carousel autoplay style={{marginTop: '16px'}}>
             <div>
@@ -25,7 +26,8 @@ const CarouselBanner = () => {
                      alt=''/>
             </div>
         </Carousel>
-    )
-}
+    );
 
-export default CarouselBanner
+};
+
+export default CarouselBanner;

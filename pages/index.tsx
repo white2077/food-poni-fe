@@ -8,25 +8,24 @@ import {Col, Flex, Row} from "antd";
 import SecondaryMenu from "../components/secondary-menu";
 import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
-import {Address} from "../model/Address";
 import {setCurrentShippingAddress} from "../store/address.reducer";
-import {useRouter} from "next/router";
+import {NextRouter, useRouter} from "next/router";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../store";
-import {CurrentUser} from "../model/User";
 import {Page} from "../model/Common";
-import {DeliveryInformation} from "../model/DeliveryInformation";
 import {setDeliveryInformationList} from "../store/delivery.reducer";
+import {CurrentUser} from "./login";
+import {AddressResponseDTO} from "../model/address/AddressResponseAPI";
 
 const Home: NextPage = () => {
 
-    const router = useRouter();
+    const router: NextRouter = useRouter();
 
     const dispatch = useDispatch();
 
-    const currentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
 
-    const getShippingAddress = () => {
+    const getShippingAddress = (): void => {
         const addressId = currentUser.addressId;
 
         axiosConfig.get(`/addresses/${addressId}`, {
@@ -34,29 +33,29 @@ const Home: NextPage = () => {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }
         })
-            .then(function (res: AxiosResponse<Address>) {
+            .then(function (res: AxiosResponse<AddressResponseDTO>): void {
                 dispatch(setCurrentShippingAddress(res.data));
             })
-            .catch(function (res) {
+            .catch(function (res): void {
                 console.log("Shipping address message: ", res.message);
-            })
-    }
+            });
+    };
 
-    const getDeliveryInformationList = () => {
+    const getDeliveryInformationList = (): void => {
         axiosConfig.get("/addresses", {
             headers: {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }
         })
-            .then(function (res: AxiosResponse<Page<DeliveryInformation[]>>) {
+            .then(function (res: AxiosResponse<Page<AddressResponseDTO[]>>): void {
                 dispatch(setDeliveryInformationList(res.data.content));
             })
-            .catch(function (res) {
+            .catch(function (res): void {
                 console.log("Delivery information message: ", res.message);
-            })
-    }
+            });
+    };
 
-    useEffect(() => {
+    useEffect((): void => {
         getShippingAddress();
         getDeliveryInformationList();
     }, [router.isReady]);
@@ -82,6 +81,6 @@ const Home: NextPage = () => {
         </DefaultLayout>
     );
 
-}
+};
 
-export default Home
+export default Home;

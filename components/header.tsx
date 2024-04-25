@@ -3,12 +3,16 @@ import CartComponent from './cart';
 import SearchComponent from './search';
 import {useSelector} from 'react-redux';
 import {LogoutOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
-import {useRouter} from 'next/router';
+import {NextRouter, useRouter} from 'next/router';
 import {RootState} from '../store';
-import {CurrentUser} from '../model/User';
 import React from "react";
+import {CurrentUser} from "../pages/login";
 
 const MainHeader = () => {
+
+    const router: NextRouter = useRouter();
+
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
 
     const items: MenuProps['items'] = [
         {
@@ -46,11 +50,7 @@ const MainHeader = () => {
         },
     ];
 
-    const router = useRouter();
-
-    const currentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
-
-    const handleItemClick = (path: string) => {
+    const handleItemClick = (path: string): void => {
         router.push(path);
     };
 
@@ -85,7 +85,8 @@ const MainHeader = () => {
                 </Flex>
             </Col>
         </Row>
-    )
-}
+    );
 
-export default MainHeader
+};
+
+export default MainHeader;

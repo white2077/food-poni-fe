@@ -1,12 +1,14 @@
 import Search from "antd/lib/input/Search";
-import {useRouter} from "next/router";
+import {NextRouter, useRouter} from "next/router";
 
 const SearchComponent = () => {
-    const router = useRouter();
-    const search = (value: string) => {
+
+    const router: NextRouter = useRouter();
+
+    const search = (value: string): void => {
         router.push('/products?search=' + value);
         console.log('search')
-    }
+    };
 
     return (
         <Search placeholder="input search text"
@@ -16,7 +18,8 @@ const SearchComponent = () => {
                 loading={false}
                 onSearch={search}
         />
-    )
-}
+    );
 
-export default SearchComponent
+};
+
+export default SearchComponent;

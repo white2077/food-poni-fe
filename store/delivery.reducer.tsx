@@ -1,8 +1,8 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {DeliveryInformation} from "../model/DeliveryInformation";
+import {AddressResponseDTO} from "../model/address/AddressResponseAPI";
 
 export interface IDeliveryInformationState {
-    deliveryInformationList: DeliveryInformation[];
+    deliveryInformationList: AddressResponseDTO[];
 }
 
 const initialState: IDeliveryInformationState = {
@@ -13,11 +13,11 @@ const deliverySlide = createSlice({
     name: 'delivery',
     initialState,
     reducers: {
-        setDeliveryInformationList: (state, {payload}: { payload: DeliveryInformation[] }) => ({
+        setDeliveryInformationList: (state, {payload}: { payload: AddressResponseDTO[] }) => ({
             ...state,
             deliveryInformationList: payload
         }),
-        addDeliveryInformationList: (state, {payload}: { payload: DeliveryInformation }) => ({
+        addDeliveryInformationList: (state, {payload}: { payload: AddressResponseDTO }) => ({
             ...state,
             deliveryInformationList: [...state.deliveryInformationList, payload]
         }),

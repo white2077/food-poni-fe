@@ -1,55 +1,12 @@
-import {ICartItem} from "./cart.reducer";
 import {createSlice} from "@reduxjs/toolkit";
-
-export interface IOrder {
-    orderItems: IOrderItem[];
-    shippingAddress: IShippingAddress;
-    note: string;
-    payment: IPaymentInfo;
-}
-
-export interface IOrderItem {
-    quantity: number;
-    productDetail: ICartItem;
-    note: string;
-}
-
-export interface IShippingAddress {
-    fullName: string;
-    phoneNumber: string;
-    address: string;
-}
-
-export interface IPaymentInfo {
-    method: string;
-    status: string;
-}
-
-export const INITIAL_SHIPPING_ADDRESS: IShippingAddress = {
-    fullName: "",
-    phoneNumber: "",
-    address: ""
-}
-
-export const INITIAL_PAYMENT_INFO: IPaymentInfo = {
-    method: "",
-    status: ""
-}
-
-export const INITIAL_ORDER = {
-    user: "",
-    orderItems: [],
-    shippingAddress: INITIAL_SHIPPING_ADDRESS,
-    note: "",
-    payment: INITIAL_PAYMENT_INFO
-}
+import {orderRequestDTO, OrderRequestDTO} from "../model/order/OrderRequest";
 
 export interface IOrderState {
-    orders: IOrder;
+    orders: OrderRequestDTO;
 }
 
 const initialState: IOrderState = {
-    orders: INITIAL_ORDER
+    orders: orderRequestDTO
 }
 
 const orderSlide = createSlice({

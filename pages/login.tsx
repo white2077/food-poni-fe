@@ -4,41 +4,64 @@ import {DefaultLayout} from "../components/layout";
 import {GithubOutlined, GoogleOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
 import {useState} from "react";
 import axiosConfig from "../utils/axios-config";
-import {CurrentUser, IUserRemember, UserRequestLogin} from "../model/User";
-import {IToken} from "../model/Auth";
 
 import {deleteCookie, setCookie} from "cookies-next";
 import {REFRESH_TOKEN, REMEMBER_ME} from "../utils/server";
-import {useRouter} from "next/router";
+import {NextRouter, useRouter} from "next/router";
 import {useDispatch} from "react-redux";
 import {setCurrentUser} from "../store/user.reducer";
 import jwtDecode from "jwt-decode";
+import {AuthenticationRequest} from "../model/auth/AuthenticationRequest";
+import {AuthenticationResponse} from "../model/auth/AuthenticationResponse";
+import {AxiosResponse} from "axios";
+
+export interface CurrentUser {
+    id?: string;
+    sub?: string;
+    role?: string;
+    firstName?: string;
+    lastName?: string;
+    avatar?: string;
+    email?: string;
+    phoneNumber?: string;
+    username?: string;
+    accessToken?: string;
+    addressId?: string;
+}
+
+export const currentUser: CurrentUser = {};
+
+export interface IUserRemember {
+    username: string;
+    password: string;
+    avatar: string;
+}
 
 const Login: NextPage = () => {
 
-    const [pending, setPending] = useState<boolean>(false);
-
-    const router = useRouter();
+    const router: NextRouter = useRouter();
 
     const dispatch = useDispatch();
 
-    const onFinish = (values: any) => {
+    const [pending, setPending] = useState<boolean>(false);
+
+    const onFinish = (values: any): void => {
         setPending(true);
-        let user: UserRequestLogin = values.username.includes("@")
+        let user: AuthenticationRequest = values.username.includes("@")
             ? {username: null, email: values.username, password: values.password}
             : {username: values.username, email: null, password: values.password}
 
         axiosConfig.post("/auth/login", user)
-            .then(function (res: any) {
+            .then(function (res: AxiosResponse<AuthenticationResponse>): void {
                 setPending(false);
 
-                const {accessToken, refreshToken} = res.data as IToken;
-                const payload: CurrentUser = jwtDecode(accessToken) as CurrentUser;
-                payload.accessToken = accessToken;
+                const token: AuthenticationResponse = res.data;
+                const payload: CurrentUser = jwtDecode(token.accessToken);
+                payload.accessToken = token.accessToken;
                 dispatch(setCurrentUser(payload));
 
                 // set refresh token
-                setCookie(REFRESH_TOKEN, refreshToken, {
+                setCookie(REFRESH_TOKEN, token.refreshToken, {
                     expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
                 });
 
@@ -54,22 +77,16 @@ const Login: NextPage = () => {
                     });
                 } else deleteCookie(REMEMBER_ME);
 
-                // redirect to home page
-                // notification.open({
-                //     type: 'success',
-                //     message: 'Login message',
-                //     description: 'Login successfully!',
-                // });
                 router.push('/');
             })
-            .catch(function (res) {
+            .catch(function (res): void {
                 setPending(false);
                 notification.open({
                     type: 'error',
                     message: 'Login message',
                     description: res.message,
                 });
-            })
+            });
     };
 
     return (
@@ -128,12 +145,13 @@ const Login: NextPage = () => {
                                 <GoogleOutlined/>
                             </Space>
                         </div>
-                        <a style={{float: 'right'}} href="">Register now</a>
+                        <a style={{float: 'right'}} onClick={() => router.push('/signup')}>Register now</a>
                     </div>
                 </Space>
             </Card>
         </DefaultLayout>
     );
-}
 
-export default Login
+};
+
+export default Login;
