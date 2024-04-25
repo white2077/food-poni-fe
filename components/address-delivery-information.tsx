@@ -112,7 +112,7 @@ export const AddressDeliveryInformation = () => {
                 <List
                     grid={{gutter: 16, column: 1}}
                     dataSource={deliveryInformationList}
-                    renderItem={(item: AddressResponseDTO, index: number) => (
+                    renderItem={(item: AddressResponseDTO) => (
                         <List.Item>
                             <Card>
                                 <div style={{display: 'flex', justifyContent: 'space-between'}}>
