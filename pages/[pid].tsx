@@ -36,9 +36,13 @@ export interface IRetailer {
 }
 
 const ProductDetails: NextPage = () => {
+
     const router: NextRouter = useRouter();
+
     const {pid} = router.query;
+
     const [product, setProduct] = useState<IProduct>();
+
     const [isError, setIsError] = useState<boolean>(false);
 
     useEffect((): void => {
