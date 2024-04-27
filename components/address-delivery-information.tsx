@@ -9,10 +9,9 @@ import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {setCurrentShippingAddress} from "../store/address.reducer";
 import {deleteDeliveryInformationList} from "../store/delivery.reducer";
-import {updateAddressId} from "../store/user.reducer";
-import {CurrentUser} from "../pages/login";
 import {AddressIdDTO} from "../model/address/AddressRequest";
 import {AddressResponseDTO} from "../model/address/AddressResponseAPI";
+import {CurrentUser, updateAddressId} from "../store/user.reducer";
 
 export const AddressDeliveryInformation = () => {
 
@@ -20,7 +19,7 @@ export const AddressDeliveryInformation = () => {
 
     const dispatch = useDispatch();
 
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
 
@@ -31,23 +30,25 @@ export const AddressDeliveryInformation = () => {
     };
 
     const getShippingAddress = (): void => {
-        const addressId = currentUser.addressId;
+        const addressId: string = currentUser.addressId ?? "";
 
-        axiosConfig.get(`/addresses/${addressId}`, {
-            headers: {
-                Authorization: 'Bearer ' + currentUser.accessToken,
-            }
-        })
-            .then(function (res: AxiosResponse<AddressResponseDTO>): void {
-                dispatch(setCurrentShippingAddress(res.data));
+        if (addressId !== "") {
+            axiosConfig.get(`/addresses/${addressId}`, {
+                headers: {
+                    Authorization: 'Bearer ' + currentUser.accessToken,
+                }
             })
-            .catch(function (res): void {
-                notification.open({
-                    type: 'error',
-                    message: 'Shipping address message',
-                    description: res.message
+                .then(function (res: AxiosResponse<AddressResponseDTO>): void {
+                    dispatch(setCurrentShippingAddress(res.data));
+                })
+                .catch(function (res): void {
+                    notification.open({
+                        type: 'error',
+                        message: 'Shipping address message',
+                        description: res.message
+                    });
                 });
-            });
+        }
     };
 
     const deleteDeliveryInformation = (addressId: string): void => {
@@ -118,20 +119,24 @@ export const AddressDeliveryInformation = () => {
                                 <div style={{display: 'flex', justifyContent: 'space-between'}}>
                                     <div>
                                         <div>
-                                            <span style={{fontWeight: 'bold', marginRight: '8px'}}>{item.fullName}</span>
+                                            <span
+                                                style={{fontWeight: 'bold', marginRight: '8px'}}>{item.fullName}</span>
                                             <span style={{marginRight: '8px'}}>|</span>
                                             <span style={{marginRight: '8px'}}>{item.phoneNumber}</span>
                                             {(item.id === currentUser.addressId) &&
-                                                <span style={{color: 'green'}}><CheckCircleOutlined /> Địa chỉ mặc định</span>
+                                                <span
+                                                    style={{color: 'green'}}><CheckCircleOutlined/> Địa chỉ mặc định</span>
                                             }
                                         </div>
                                         <div>{item.address}</div>
                                     </div>
                                     <div>
-                                        <Button type="text" style={{color: 'blueviolet'}} onClick={() => updateShippingAddress(item.id ?? "")}>
+                                        <Button type="text" style={{color: 'blueviolet'}}
+                                                onClick={() => updateShippingAddress(item.id ?? "")}>
                                             Đặt làm mặc định
                                         </Button>
-                                        <span style={{marginLeft: '16px'}}><DeleteOutlined onClick={() => deleteDeliveryInformation(item.id ?? "")} /></span>
+                                        <span style={{marginLeft: '16px'}}><DeleteOutlined
+                                            onClick={() => deleteDeliveryInformation(item.id ?? "")}/></span>
                                     </div>
                                 </div>
                             </Card>

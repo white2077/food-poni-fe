@@ -13,5 +13,3 @@ export interface AddressResponseDTO {
     lat?: number;
 
 }
-
-export const addressResponseDTO: AddressResponseDTO = {};

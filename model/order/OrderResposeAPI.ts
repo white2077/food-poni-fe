@@ -4,22 +4,22 @@ import {PaymentInfo, ShippingAddress} from "./OrderRequest";
 
 export interface OrderResponseDTO {
 
-    id: string;
+    id?: string;
 
-    totalAmount: number;
+    totalAmount?: number;
 
-    user: UserResponseDTO;
+    user?: UserResponseDTO;
 
-    orderItems: OrderItemResponseDTO[];
+    orderItems?: OrderItemResponseDTO[];
 
-    shippingAddress: ShippingAddress;
+    shippingAddress?: ShippingAddress;
 
-    status: string;
+    status?: string;
 
-    note: string;
+    note?: string;
 
-    payment: PaymentInfo;
+    payment?: PaymentInfo;
 
-    createdDate: string;
+    createdDate?: string;
 
 }

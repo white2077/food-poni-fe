@@ -13,19 +13,3 @@ export type Page<T> = {
     first: boolean,
 
 }
-
-export const INITIAL_PAGE = {
-
-    content: [],
-
-    totalElements: 0,
-
-    totalPages: 0,
-
-    number: 0,
-
-    size: 0,
-
-    first: true
-
-}

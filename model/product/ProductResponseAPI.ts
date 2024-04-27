@@ -4,22 +4,22 @@ import {ProductDetailResponseDTO} from "../product_detail/ProductDetailResponseA
 
 export interface ProductResponseDTO {
 
-    id: string;
+    id?: string;
 
-    name: string;
+    name?: string;
 
-    slug: string;
+    slug?: string;
 
-    shortDescription: string;
+    shortDescription?: string;
 
-    thumbnail: string;
+    thumbnail?: string;
 
-    status: boolean;
+    status?: boolean;
 
-    user: UserResponseDTO;
+    user?: UserResponseDTO;
 
-    productDetails: ProductDetailResponseDTO[];
+    productDetails?: ProductDetailResponseDTO[];
 
-    categories: CategoryResponseDTO[];
+    categories?: CategoryResponseDTO[];
 
 }

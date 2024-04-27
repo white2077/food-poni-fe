@@ -14,8 +14,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../store";
 import {Page} from "../model/Common";
 import {setDeliveryInformationList} from "../store/delivery.reducer";
-import {CurrentUser} from "./login";
 import {AddressResponseDTO} from "../model/address/AddressResponseAPI";
+import {CurrentUser} from "../store/user.reducer";
 
 const Home: NextPage = () => {
 
@@ -23,22 +23,24 @@ const Home: NextPage = () => {
 
     const dispatch = useDispatch();
 
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const getShippingAddress = (): void => {
-        const addressId = currentUser.addressId;
+        const addressId: string = currentUser.addressId ?? "";
 
-        axiosConfig.get(`/addresses/${addressId}`, {
-            headers: {
-                Authorization: 'Bearer ' + currentUser.accessToken,
-            }
-        })
-            .then(function (res: AxiosResponse<AddressResponseDTO>): void {
-                dispatch(setCurrentShippingAddress(res.data));
+        if (addressId !== "") {
+            axiosConfig.get(`/addresses/${addressId}`, {
+                headers: {
+                    Authorization: 'Bearer ' + currentUser.accessToken,
+                }
             })
-            .catch(function (res): void {
-                console.log("Shipping address message: ", res.message);
-            });
+                .then(function (res: AxiosResponse<AddressResponseDTO>): void {
+                    dispatch(setCurrentShippingAddress(res.data));
+                })
+                .catch(function (res): void {
+                    console.log("Shipping address message: ", res.message);
+                });
+        }
     };
 
     const getDeliveryInformationList = (): void => {

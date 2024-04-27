@@ -2,14 +2,14 @@ import {ProductDetailResponseDTO} from "../product_detail/ProductDetailResponseA
 
 export interface OrderItemResponseDTO {
 
-    id: string;
+    id?: string;
 
-    quantity: number;
+    quantity?: number;
 
-    price: number;
+    price?: number;
 
-    productDetail: ProductDetailResponseDTO;
+    productDetail?: ProductDetailResponseDTO;
 
-    note: string;
+    note?: string;
 
 }

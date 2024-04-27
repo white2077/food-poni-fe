@@ -13,18 +13,19 @@ export interface OrderRequestDTO {
 }
 
 export interface ShippingAddress {
+
     fullName?: string;
+
     phoneNumber?: string;
+
     address?: string;
+
 }
 
 export interface PaymentInfo {
+
     method?: string;
+
     status?: string;
+
 }
-
-export const shippingAddress: ShippingAddress = {};
-
-export const paymentInfo: PaymentInfo = {};
-
-export const orderRequestDTO: OrderRequestDTO = {};

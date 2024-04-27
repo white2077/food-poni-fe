@@ -34,12 +34,21 @@ const ProductRows: NextPage = () => {
         axiosConfig.get("/products")
             .then((res: AxiosResponse<Page<ProductResponseDTO[]>>): void => {
                 const productList: IProductCard[] = (res.data.content as ProductResponseDTO[]).map((product: ProductResponseDTO): IProductCard => {
+                    const productDetails: ProductDetailResponseDTO[] = product.productDetails ?? [];
+                    const prices: number[] = productDetails
+                        .map((productDetail: ProductDetailResponseDTO) => productDetail.price)
+                        .filter((price: number | undefined): price is number => price !== undefined);
+                    const minPrice: number = prices.length > 0 ? Math.min(...prices) : 0;
+                    const maxPrice: number = prices.length > 0 ? Math.max(...prices) : 0;
+
                     return {
-                        id: product.id,
-                        name: product.name,
-                        thumbnail: product.thumbnail,
-                        minPrice: Math.min(...product.productDetails.map((productDetail: ProductDetailResponseDTO) => productDetail.price)),
-                        maxPrice: Math.max(...product.productDetails.map((productDetail: ProductDetailResponseDTO) => productDetail.price)),
+                        id: product.id ?? "",
+                        name: product.name ?? "",
+                        thumbnail: product.thumbnail ?? "",
+                        minPrice: minPrice,
+                        maxPrice: maxPrice
+                        // minPrice: Math.min(...product.productDetails.map((productDetail: ProductDetailResponseDTO) => productDetail.price)),
+                        // maxPrice: Math.max(...product.productDetails.map((productDetail: ProductDetailResponseDTO) => productDetail.price)),
                     };
                 });
 

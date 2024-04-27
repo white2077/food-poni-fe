@@ -2,18 +2,18 @@ import {ProductResponseDTO} from "../product/ProductResponseAPI";
 
 export interface ProductDetailResponseDTO {
 
-    id: string;
+    id?: string;
 
-    name: string;
+    name?: string;
 
-    price: number;
+    price?: number;
 
-    description: string;
+    description?: string;
 
-    status: boolean;
+    status?: boolean;
 
-    images: string[];
+    images?: string[];
 
-    product: ProductResponseDTO;
+    product?: ProductResponseDTO;
 
 }

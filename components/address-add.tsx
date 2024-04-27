@@ -5,9 +5,9 @@ import axiosConfig from "../utils/axios-config";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../store";
 import {addDeliveryInformationList} from "../store/delivery.reducer";
-import {CurrentUser} from "../pages/login";
 import {AddressRequestDTO} from "../model/address/AddressRequest";
 import {AddressResponseDTO} from "../model/address/AddressResponseAPI";
+import {CurrentUser} from "../store/user.reducer";
 
 interface SearchResult {
     display_name: string;
@@ -19,7 +19,7 @@ const AddressAdd = () => {
 
     const dispatch = useDispatch();
 
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const [pending, setPending] = useState<boolean>(false);
 

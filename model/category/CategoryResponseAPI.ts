@@ -1,19 +1,19 @@
 export interface CategoryResponseDTO {
 
-    id: string;
+    id?: string;
 
-    categoryName: string;
+    categoryName?: string;
 
-    slug: string;
+    slug?: string;
 
-    description: string;
+    description?: string;
 
-    thumbnail: string;
+    thumbnail?: string;
 
-    default: boolean;
+    default?: boolean;
 
-    categories: CategoryResponseDTO[];
+    categories?: CategoryResponseDTO[];
 
-    parentCategory: CategoryResponseDTO;
+    parentCategory?: CategoryResponseDTO;
 
 }

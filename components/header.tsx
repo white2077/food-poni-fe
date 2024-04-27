@@ -6,13 +6,13 @@ import {LogoutOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons'
 import {NextRouter, useRouter} from 'next/router';
 import {RootState} from '../store';
 import React from "react";
-import {CurrentUser} from "../pages/login";
+import {CurrentUser} from "../store/user.reducer";
 
 const MainHeader = () => {
 
     const router: NextRouter = useRouter();
 
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const items: MenuProps['items'] = [
         {

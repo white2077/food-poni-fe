@@ -43,9 +43,9 @@ const SecondaryMenu: React.FC = () => {
     };
 
     const convertCategory = (category: CategoryResponseDTO, tab: string): void => {
-        items.push({id: category.id, name: category.categoryName, tab: tab});
+        items.push({id: category.id ?? "", name: category.categoryName ?? "", tab: tab});
 
-        if (category.categories.length)
+        if (category.categories?.length)
             category.categories.forEach((subCategory: CategoryResponseDTO): void => {
                 convertCategory(subCategory, tab + '&emsp;');
             });

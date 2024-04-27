@@ -56,19 +56,29 @@ const ProductDetails: NextPage = () => {
                     const product: ProductResponseDTO = res.data;
 
                     const productMapped: IProduct = {
-                        id: product.id,
-                        name: product.name,
-                        shortDescription: product.shortDescription,
-                        retailer: product.user,
-                        productDetails: product.productDetails.map((productDetail: ProductDetailResponseDTO): IProductDetail => {
+                        id: product.id ?? "",
+                        name: product.name ?? "",
+                        shortDescription: product.shortDescription ?? "",
+                        retailer: product.user ? {
+                            avatar: product.user.avatar ?? "",
+                            firstName: product.user.firstName ?? "",
+                            lastName: product.user.lastName ?? "",
+                            phoneNumber: product.user.phoneNumber ?? "",
+                        } : {
+                            avatar: "",
+                            firstName: "",
+                            lastName: "",
+                            phoneNumber: "",
+                        },
+                        productDetails: product.productDetails && product.productDetails.map((productDetail: ProductDetailResponseDTO): IProductDetail => {
                             return {
-                                id: productDetail.id,
-                                name: productDetail.name,
-                                price: productDetail.price,
-                                description: productDetail.description,
-                                images: productDetail.images
+                                id: productDetail.id ?? "",
+                                name: productDetail.name ?? "",
+                                price: productDetail.price ?? 0,
+                                description: productDetail.description ?? "",
+                                images: productDetail.images ?? []
                             }
-                        })
+                        }) || []
                     };
 
                     setProduct(productMapped);

@@ -1,12 +1,12 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {orderRequestDTO, OrderRequestDTO} from "../model/order/OrderRequest";
+import {OrderRequestDTO} from "../model/order/OrderRequest";
 
 export interface IOrderState {
     orders: OrderRequestDTO;
 }
 
 const initialState: IOrderState = {
-    orders: orderRequestDTO
+    orders: {}
 }
 
 const orderSlide = createSlice({

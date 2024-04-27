@@ -23,10 +23,10 @@ import {NextRouter, useRouter} from "next/router";
 import OrderCartItems from "../components/order-cartItems";
 import AddressAdd from "../components/address-add";
 import {RootState} from "../store";
-import {CurrentUser} from "./login";
 import {AddressResponseDTO} from "../model/address/AddressResponseAPI";
 import {OrderItemRequestDTO} from "../model/order_item/OrderItemRequest";
 import {OrderRequestDTO, PaymentInfo, ShippingAddress} from "../model/order/OrderRequest";
+import {CurrentUser} from "../store/user.reducer";
 
 const Checkout = () => {
 
@@ -36,7 +36,7 @@ const Checkout = () => {
 
     const cartItems: ICartItem[] = useSelector((state: RootState) => state.cart.cartItems) as ICartItem[];
 
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const currentShippingAddress: AddressResponseDTO = useSelector((state: RootState) => state.address.shippingAddress) as AddressResponseDTO;
 

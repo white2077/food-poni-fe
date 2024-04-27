@@ -2,24 +2,24 @@ import {AddressResponseDTO} from "../address/AddressResponseAPI";
 
 export interface UserResponseDTO {
 
-    id: string;
+    id?: string;
 
-    avatar: string;
+    avatar?: string;
 
-    email: string;
+    email?: string;
 
-    firstName: string;
+    firstName?: string;
 
-    lastName: string;
+    lastName?: string;
 
-    phoneNumber: string;
+    phoneNumber?: string;
 
-    username: string;
+    username?: string;
 
-    role: string;
+    role?: string;
 
-    status: boolean;
+    status?: boolean;
 
-    address: AddressResponseDTO;
+    address?: AddressResponseDTO;
 
 }

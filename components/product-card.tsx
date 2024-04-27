@@ -2,6 +2,9 @@ import {Badge, Card, Divider, Rate, Space} from "antd";
 import React, {useState} from "react";
 import {IProductCard} from "./product-rows";
 import Link from "next/link";
+import {RootState} from "../store";
+import {CurrentUser} from "../store/user.reducer";
+import {useSelector} from "react-redux";
 
 const ProductCard = ({product}: { product: IProductCard }) => {
 

@@ -8,14 +8,14 @@ import OrderCard from "../components/order-card";
 import {RootState} from "../store";
 import {Page} from "../model/Common";
 import {NextRouter, useRouter} from "next/router";
-import {CurrentUser} from "./login";
 import {OrderResponseDTO} from "../model/order/OrderResposeAPI";
+import {CurrentUser} from "../store/user.reducer";
 
 const Orders = () => {
 
     const router: NextRouter = useRouter();
 
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const [orders, setOrders] = useState<OrderResponseDTO[]>([]);
 
@@ -48,7 +48,7 @@ const Orders = () => {
     return (
         <DefaultLayout>
             {
-                currentUser.id ? (
+                (currentUser.id ?? "") ? (
                     <div style={{color: "black", textAlign: "left"}}>
                         <List loading={isLoading} grid={{gutter: 16, xs: 1, sm: 2, md: 4, lg: 4, xl: 5, xxl: 5}}
                               dataSource={orders}

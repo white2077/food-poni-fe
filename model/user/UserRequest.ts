@@ -1,5 +1,3 @@
-import {CurrentUser} from "../../pages/login";
-
 export interface UserIdDTO {
 
     id: string;
