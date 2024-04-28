@@ -9,11 +9,11 @@ import {deleteCookie, setCookie} from "cookies-next";
 import {REFRESH_TOKEN, REMEMBER_ME} from "../utils/server";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch} from "react-redux";
-import {AuthenticationRequest} from "../model/auth/AuthenticationRequest";
-import {AuthenticationResponse} from "../model/auth/AuthenticationResponse";
+import {AuthenticationRequest} from "../models/auth/AuthenticationRequest";
+import {AuthenticationResponse} from "../models/auth/AuthenticationResponse";
 import {AxiosResponse} from "axios";
 import jwtDecode from "jwt-decode";
-import {CurrentUser, setCurrentUser} from "../store/user.reducer";
+import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
 
 export interface IUserRemember {
     username: string;

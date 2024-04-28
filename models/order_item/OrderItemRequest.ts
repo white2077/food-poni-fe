@@ -1,4 +1,4 @@
-import {ICartItem} from "../../store/cart.reducer";
+import {ICartItem} from "../../stores/cart.reducer";
 
 export interface OrderItemRequestDTO {
 

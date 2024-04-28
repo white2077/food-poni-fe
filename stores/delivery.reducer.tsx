@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {AddressResponseDTO} from "../model/address/AddressResponseAPI";
+import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 
 export interface IDeliveryInformationState {
     deliveryInformationList: AddressResponseDTO[];

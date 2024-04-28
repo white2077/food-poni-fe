@@ -5,11 +5,11 @@ import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {useSelector} from "react-redux";
 import OrderCard from "../components/order-card";
-import {RootState} from "../store";
-import {Page} from "../model/Common";
+import {RootState} from "../stores";
+import {Page} from "../models/Common";
 import {NextRouter, useRouter} from "next/router";
-import {OrderResponseDTO} from "../model/order/OrderResposeAPI";
-import {CurrentUser} from "../store/user.reducer";
+import {OrderResponseDTO} from "../models/order/OrderResposeAPI";
+import {CurrentUser} from "../stores/user.reducer";
 
 const Orders = () => {
 

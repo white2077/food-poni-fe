@@ -3,13 +3,13 @@ import type {NextPage} from 'next'
 import React, {useEffect} from 'react';
 import ProductCard from "./product-card";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../store";
-import {setProductList} from "../store/product.reducer";
+import {RootState} from "../stores";
+import {setProductList} from "../stores/product.reducer";
 import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
-import {Page} from "../model/Common";
-import {ProductResponseDTO} from "../model/product/ProductResponseAPI";
-import {ProductDetailResponseDTO} from "../model/product_detail/ProductDetailResponseAPI";
+import {Page} from "../models/Common";
+import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
+import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailResponseAPI";
 
 export interface IProductCard {
     id: string;

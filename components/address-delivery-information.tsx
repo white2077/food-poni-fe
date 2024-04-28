@@ -4,14 +4,14 @@ import {CheckCircleOutlined, DeleteOutlined} from "@ant-design/icons";
 import React, {useState} from "react";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../store";
+import {RootState} from "../stores";
 import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
-import {setCurrentShippingAddress} from "../store/address.reducer";
-import {deleteDeliveryInformationList} from "../store/delivery.reducer";
-import {AddressIdDTO} from "../model/address/AddressRequest";
-import {AddressResponseDTO} from "../model/address/AddressResponseAPI";
-import {CurrentUser, updateAddressId} from "../store/user.reducer";
+import {setCurrentShippingAddress} from "../stores/address.reducer";
+import {deleteDeliveryInformationList} from "../stores/delivery.reducer";
+import {AddressIdDTO} from "../models/address/AddressRequest";
+import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {CurrentUser, updateAddressId} from "../stores/user.reducer";
 
 export const AddressDeliveryInformation = () => {
 

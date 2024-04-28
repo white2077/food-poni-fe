@@ -1,9 +1,9 @@
 import {Button, Card, Flex, InputNumber} from "antd";
 import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {addItem, ICartItem} from "../store/cart.reducer";
+import {addItem, ICartItem} from "../stores/cart.reducer";
 import {NextRouter, useRouter} from "next/router";
-import {RootState} from "../store";
+import {RootState} from "../stores";
 
 const ProductCart = ({id, price, thumbnail, name}: {id: string, price: number, thumbnail: string, name: string}) => {
 

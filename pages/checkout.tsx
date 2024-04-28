@@ -15,18 +15,18 @@ import {
     Space
 } from "antd";
 import {useDispatch, useSelector} from "react-redux";
-import {deleteAllItem, ICartItem} from "../store/cart.reducer";
+import {deleteAllItem, ICartItem} from "../stores/cart.reducer";
 import TextArea from "antd/es/input/TextArea";
 import React, {useState} from "react";
 import axiosConfig from "../utils/axios-config";
 import {NextRouter, useRouter} from "next/router";
 import OrderCartItems from "../components/order-cartItems";
 import AddressAdd from "../components/address-add";
-import {RootState} from "../store";
-import {AddressResponseDTO} from "../model/address/AddressResponseAPI";
-import {OrderItemRequestDTO} from "../model/order_item/OrderItemRequest";
-import {OrderRequestDTO, PaymentInfo, ShippingAddress} from "../model/order/OrderRequest";
-import {CurrentUser} from "../store/user.reducer";
+import {RootState} from "../stores";
+import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {OrderItemRequestDTO} from "../models/order_item/OrderItemRequest";
+import {OrderRequestDTO, PaymentInfo, ShippingAddress} from "../models/order/OrderRequest";
+import {CurrentUser} from "../stores/user.reducer";
 
 const Checkout = () => {
 

@@ -1,8 +1,8 @@
 import {Badge, Card, Divider} from "antd";
 import {EnvironmentOutlined, FieldTimeOutlined} from "@ant-design/icons";
 import {format} from "date-fns";
-import {OrderResponseDTO} from "../model/order/OrderResposeAPI";
-import {OrderItemResponseDTO} from "../model/order_item/OrderItemResponseAPI";
+import {OrderResponseDTO} from "../models/order/OrderResposeAPI";
+import {OrderItemResponseDTO} from "../models/order_item/OrderItemResponseAPI";
 
 const OrderCard = ({order}: { order: OrderResponseDTO }) => {
 

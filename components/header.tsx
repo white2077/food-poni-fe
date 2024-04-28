@@ -4,9 +4,9 @@ import SearchComponent from './search';
 import {useSelector} from 'react-redux';
 import {LogoutOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
 import {NextRouter, useRouter} from 'next/router';
-import {RootState} from '../store';
+import {RootState} from '../stores';
 import React from "react";
-import {CurrentUser} from "../store/user.reducer";
+import {CurrentUser} from "../stores/user.reducer";
 
 const MainHeader = () => {
 

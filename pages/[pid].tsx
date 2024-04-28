@@ -7,8 +7,8 @@ import ProductGallery from "../components/product-gallery";
 import ProductCart from "../components/product-cart";
 import ProductDescriptionComponent from "../components/product-description";
 import ProductRetailer from "../components/product-retailer";
-import {ProductResponseDTO} from "../model/product/ProductResponseAPI";
-import {ProductDetailResponseDTO} from "../model/product_detail/ProductDetailResponseAPI";
+import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
+import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailResponseAPI";
 import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 

@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {OrderRequestDTO} from "../model/order/OrderRequest";
+import {OrderRequestDTO} from "../models/order/OrderRequest";
 
 export interface IOrderState {
     orders: OrderRequestDTO;

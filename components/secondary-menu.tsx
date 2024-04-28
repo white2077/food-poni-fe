@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import type {MenuProps} from 'antd';
 import {Menu, Skeleton} from 'antd';
 import axiosConfig from "../utils/axios-config";
-import {Page} from "../model/Common";
+import {Page} from "../models/Common";
 import {AxiosResponse} from "axios";
-import {CategoryResponseDTO} from "../model/category/CategoryResponseAPI";
+import {CategoryResponseDTO} from "../models/category/CategoryResponseAPI";
 
 export interface ICategory {
     id: string;

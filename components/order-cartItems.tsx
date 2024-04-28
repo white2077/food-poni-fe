@@ -3,8 +3,8 @@ import {DeleteOutlined} from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {deleteItem, ICartItem, setNote, setQuantity} from "../store/cart.reducer";
-import {RootState} from "../store";
+import {deleteItem, ICartItem, setNote, setQuantity} from "../stores/cart.reducer";
+import {RootState} from "../stores";
 
 const OrderCartItems = () => {
 

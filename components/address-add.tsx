@@ -3,11 +3,11 @@ import {AutoComplete, Button, Form, Input, notification} from 'antd';
 import axios, {AxiosResponse} from "axios";
 import axiosConfig from "../utils/axios-config";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../store";
-import {addDeliveryInformationList} from "../store/delivery.reducer";
-import {AddressRequestDTO} from "../model/address/AddressRequest";
-import {AddressResponseDTO} from "../model/address/AddressResponseAPI";
-import {CurrentUser} from "../store/user.reducer";
+import {RootState} from "../stores";
+import {addDeliveryInformationList} from "../stores/delivery.reducer";
+import {AddressRequestDTO} from "../models/address/AddressRequest";
+import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {CurrentUser} from "../stores/user.reducer";
 
 interface SearchResult {
     display_name: string;

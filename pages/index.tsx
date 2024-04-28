@@ -8,14 +8,14 @@ import {Col, Flex, Row} from "antd";
 import SecondaryMenu from "../components/secondary-menu";
 import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
-import {setCurrentShippingAddress} from "../store/address.reducer";
+import {setCurrentShippingAddress} from "../stores/address.reducer";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../store";
-import {Page} from "../model/Common";
-import {setDeliveryInformationList} from "../store/delivery.reducer";
-import {AddressResponseDTO} from "../model/address/AddressResponseAPI";
-import {CurrentUser} from "../store/user.reducer";
+import {RootState} from "../stores";
+import {Page} from "../models/Common";
+import {setDeliveryInformationList} from "../stores/delivery.reducer";
+import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {CurrentUser} from "../stores/user.reducer";
 
 const Home: NextPage = () => {
 
