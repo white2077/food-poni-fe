@@ -44,17 +44,19 @@ const Home: NextPage = () => {
     };
 
     const getDeliveryInformationList = (): void => {
-        axiosConfig.get("/addresses", {
-            headers: {
-                Authorization: 'Bearer ' + currentUser.accessToken,
-            }
-        })
-            .then(function (res: AxiosResponse<Page<AddressResponseDTO[]>>): void {
-                dispatch(setDeliveryInformationList(res.data.content));
+        if (currentUser && currentUser.accessToken) {
+            axiosConfig.get("/addresses", {
+                headers: {
+                    Authorization: 'Bearer ' + currentUser.accessToken,
+                }
             })
-            .catch(function (res): void {
-                console.log("Delivery information message: ", res.message);
-            });
+                .then(function (res: AxiosResponse<Page<AddressResponseDTO[]>>): void {
+                    dispatch(setDeliveryInformationList(res.data.content));
+                })
+                .catch(function (res): void {
+                    console.log("Delivery information message: ", res.message);
+                });
+        }
     };
 
     useEffect((): void => {
