@@ -5,7 +5,7 @@ import ProductRows from "../components/product-rows";
 import CarouselBanner from "../components/carousel-banner";
 import MainMenu from "../components/main-menu";
 import {Col, Flex, Row} from "antd";
-import SecondaryMenu from "../components/secondary-menu";
+import ProductCategory from "../components/product-category";
 import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {setCurrentShippingAddress} from "../stores/address.reducer";
@@ -66,7 +66,7 @@ const Home: NextPage = () => {
         <DefaultLayout>
             <Flex gap={16}>
                 <Col>
-                    <SecondaryMenu></SecondaryMenu>
+                    <ProductCategory></ProductCategory>
                 </Col>
                 <Row gutter={[16, 16]}>
                     <Col span={24}>

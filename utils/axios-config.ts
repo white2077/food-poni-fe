@@ -1,7 +1,7 @@
-import axios from "axios";
+import axios, {AxiosInstance} from "axios";
 import {server} from "./server";
 
-const instance = axios.create({
+const instance: AxiosInstance = axios.create({
     baseURL: server
 })
 
