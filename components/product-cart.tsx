@@ -44,7 +44,7 @@ const ProductCart = ({id, price, thumbnail, name}: { id: string, price: number, 
                 max={20}
                 defaultValue={1}
                 value={quantity}
-                onChange={(value) => setQuantity(value ? value : 1)} disabled={isExisted}/>
+                onChange={(value: number | null) => setQuantity(value ?? 1)} disabled={isExisted}/>
             <div>Tạm tính</div>
             <div>${price * quantity}</div>
             <Flex vertical gap='small' style={{width: '100%'}}>

@@ -3,7 +3,7 @@ import {AppstoreOutlined, EnvironmentOutlined, HomeOutlined, StarOutlined} from 
 import type {MenuProps} from 'antd';
 import {Menu} from 'antd';
 
-const MenuMain = () => {
+const MenuMobile = () => {
 
     const [current, setCurrent] = useState<string>('mail');
 
@@ -13,10 +13,7 @@ const MenuMain = () => {
     };
 
     return (
-        <div className='overflow-hidden'>
-            <Menu style={{borderRadius: '8px'}} onClick={onClick} selectedKeys={[current]} mode='horizontal'
-                  items={items}/>
-        </div>
+        <Menu style={{borderRadius: '8px'}} onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
     );
 
 };
@@ -25,33 +22,33 @@ const items: MenuProps['items'] = [
     {
         label: 'Nearby',
         key: 'nearby',
-        icon: <EnvironmentOutlined/>,
+        icon: <EnvironmentOutlined />,
     },
     {
         label: 'Promotion',
         key: 'promotion',
-        icon: <EnvironmentOutlined/>,
+        icon: <EnvironmentOutlined />,
     },
     {
         label: 'Newcomers',
         key: 'newcomers',
-        icon: <HomeOutlined/>,
+        icon: <HomeOutlined />,
     },
     {
         label: 'Best Sellers',
         key: 'bestsellers',
-        icon: <EnvironmentOutlined/>,
+        icon: <EnvironmentOutlined />,
     },
     {
         label: 'Top Rates',
         key: 'toprates',
-        icon: <StarOutlined/>,
+        icon: <StarOutlined />,
     },
     {
         label: 'All',
         key: 'all',
-        icon: <AppstoreOutlined/>,
+        icon: <AppstoreOutlined />,
     }
 ];
 
-export default MenuMain;
+export default MenuMobile;

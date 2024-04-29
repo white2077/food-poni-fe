@@ -72,7 +72,7 @@ const Home: NextPage = () => {
                 </div>
                 <div className='grid gap-4'>
                     {/*<CarouselBanner></CarouselBanner>*/}
-                    {/*<MenuMain></MenuMain>*/}
+                    <MenuMain></MenuMain>
                     <ProductRows></ProductRows>
                 </div>
             </div>

@@ -59,7 +59,7 @@ const HeaderMain = () => {
     };
 
     return (
-        <div className='lg:w-[1440px] grid grid-cols-[1fr_2fr_1fr] px-10 mx-auto items-center py-2'>
+        <div className='lg:w-[1440px] grid grid-cols-2 md:grid-cols-[1fr_2fr_1fr] px-2 mx-auto items-center py-2'>
             <a className='font-bold text-2xl h-[unset]' onClick={() => router.push('/')}>FoodPoni</a>
             <SearchComponent></SearchComponent>
             <div className='flex items-center justify-end gap-4'>

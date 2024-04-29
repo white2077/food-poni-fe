@@ -10,6 +10,7 @@ import {RootState} from "../stores";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import axiosConfig from "../utils/axios-config";
 import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
+import {presetPrimaryColors} from "@ant-design/colors";
 
 export interface ElementDistance {
     distance: {
@@ -96,22 +97,16 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                             src={product.thumbnail ? product.thumbnail : fallback}/>}
             >
                 <Space direction="vertical" size="small" style={{display: 'flex'}}>
-                    <div style={{display: 'flex', alignItems: 'center'}}>
-                        <Badge count={(currentUser && currentUser.accessToken) ? `Khoảng ${distance}` : "Đăng nhập để xem khoảng cách"}
-                               color='#F5F5FA'
-                               style={{color: 'black', marginRight: '8px'}}/>
+                    <div className='flex items-center overflow-hidden'>
+                        <Badge className='text-black mr-1 overflow-hidden'
+                               count={(currentUser && currentUser.accessToken) ? `Khoảng ${distance}` : "Đăng nhập để xem khoảng cách"}
+                               color='red'/>
                     </div>
-                    <div style={{
-                        textAlign: 'left',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                        fontSize: '16px'
-                    }}>
+                    <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>
                         {product.name}
                     </div>
-                    <div style={{display: 'flex', alignItems: 'center'}}>
-                        <Rate allowHalf defaultValue={2.5} style={{fontSize: '12px', marginRight: '8px'}}/>
+                    <div className='flex items-center'>
+                        <Rate allowHalf defaultValue={2.5} className='text-sm mr-1'/>
                     </div>
                     <div style={{textAlign: 'left', fontSize: '20px', fontWeight: 'bold'}}>${product.minPrice} -
                         ${product.maxPrice}</div>
