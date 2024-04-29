@@ -7,9 +7,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'primary': presetPrimaryColors.blue,
-        'secondary': presetPrimaryColors.indigo,
-        'warning': presetPrimaryColors.red
+        'primary': '#F36F24',
+        // 'secondary': presetPrimaryColors.indigo,
+        // 'success': presetPrimaryColors.green,
+        // 'danger': presetPrimaryColors.red,
+        // 'warning': presetPrimaryColors.red
       },
       fontFamily: {
         'sans': ['Poppins', 'sans-serif']
