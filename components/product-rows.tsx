@@ -61,13 +61,13 @@ const ProductRows: NextPage = () => {
 
     return (
         <>
-            <Skeleton loading={isLoading} active></Skeleton>
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
+            <Skeleton loading={isLoading} active/>
+            <div className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
 
-            {products.map((product: IProductCard) => (
+                {products.map((product: IProductCard) => (
                     <ProductCard key={product.id} product={product}/>
                 ))}
-        </div>
+            </div>
         </>
     );
 

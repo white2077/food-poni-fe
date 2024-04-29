@@ -1,18 +1,23 @@
 import React from 'react';
 import {Layout} from 'antd';
-import MainHeader from "./header";
+import HeaderMain from "./header-main";
+import HeaderBar from "./header-bar";
 
-const {Header, Footer, Sider, Content} = Layout;
 export const DefaultLayout = ({children}: { children: React.ReactNode }) => {
 
     return (
-        <div className='bg-[#F5F5FA]'>
-            <div className='bg-white'>
-                <MainHeader/>
+        <>
+            <div className='bg-blue-700'>
+                <HeaderBar/>
             </div>
-            <div className='bg-[#F5F5FA] px-10 w-[1440px] mx-auto my-4'>{children}</div>
+            <div className='bg-white'>
+                <HeaderMain/>
+            </div>
+            <div className='bg-[#F5F5FA]'>
+                <div className='px-4 lg:w-[1440px] mx-auto py-4'>{children}</div>
+            </div>
             <div className='text-center text-white bg-[#4096ff]'>Footer</div>
-        </div>
+        </>
     );
 
 };

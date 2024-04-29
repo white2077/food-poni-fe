@@ -8,7 +8,7 @@ import {RootState} from '../stores';
 import React from "react";
 import {CurrentUser} from "../stores/user.reducer";
 
-const MainHeader = () => {
+const HeaderMain = () => {
 
     const router: NextRouter = useRouter();
 
@@ -20,7 +20,7 @@ const MainHeader = () => {
             label: (
                 <span id='account-information' onClick={() => handleItemClick('/account-information')}>
                     <span style={{marginRight: '5px'}}>
-                        <UserOutlined />
+                        <UserOutlined/>
                     </span>
                     <span>Account management</span>
                 </span>
@@ -59,38 +59,27 @@ const MainHeader = () => {
     };
 
     return (
-        <Row style={{maxWidth: '1440px', margin: '0 auto'}} align='middle'>
-            <Col span={6}>
-                <Button type='link' style={{
-                    verticalAlign: 'middle',
-                    fontWeight: 'bold',
-                    fontSize: '24px',
-                    height: 'unset'
-                }} onClick={() => router.push('/')}>Foodponi</Button>
-            </Col>
-            <Col span={12}>
-                <SearchComponent></SearchComponent>
-            </Col>
-            <Col span={6}>
-                <Flex gap='middle' align='center' justify='end'>
-                    <CartComponent></CartComponent>
-                    {/*<a onClick={showDrawer}>*/}
-                    {/*    <Avatar shape="square" icon={<ShoppingCartOutlined/>} size='large'/>*/}
-                    {/*</a>*/}
-                    <Dropdown menu={{items}} placement='bottomRight'>
-                        <a style={{verticalAlign: 'middle'}}>
-                            {currentUser.avatar ? (
-                                <Avatar src={currentUser.avatar} size='large'/>
-                            ) : (
-                                <Avatar icon={<UserOutlined/>} size='large'/>
-                            )}
-                        </a>
-                    </Dropdown>
-                </Flex>
-            </Col>
-        </Row>
+        <div className='lg:w-[1440px] grid grid-cols-[1fr_2fr_1fr] px-10 mx-auto items-center py-2'>
+            <a className='font-bold text-2xl h-[unset]' onClick={() => router.push('/')}>FoodPoni</a>
+            <SearchComponent></SearchComponent>
+            <div className='flex items-center justify-end gap-4'>
+                <CartComponent/>
+                {/*<a onClick={showDrawer}>*/}
+                {/*    <Avatar shape="square" icon={<ShoppingCartOutlined/>} size='large'/>*/}
+                {/*</a>*/}
+                <Dropdown menu={{items}} placement='bottomRight'>
+                    <a style={{verticalAlign: 'middle'}}>
+                        {currentUser.avatar ? (
+                            <Avatar src={currentUser.avatar} size='large'/>
+                        ) : (
+                            <Avatar icon={<UserOutlined/>} size='large'/>
+                        )}
+                    </a>
+                </Dropdown>
+            </div>
+        </div>
     );
 
 };
 
-export default MainHeader;
+export default HeaderMain;
