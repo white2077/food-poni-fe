@@ -3,7 +3,7 @@ import React, {useEffect} from "react";
 import {DefaultLayout} from "../components/layout";
 import ProductRows from "../components/product-rows";
 import CarouselBanner from "../components/carousel-banner";
-import MainMenu from "../components/main-menu";
+import MenuMain from "../components/menu-main";
 import {Col, Flex, Row} from "antd";
 import ProductCategory from "../components/product-category";
 import axiosConfig from "../utils/axios-config";
@@ -72,7 +72,7 @@ const Home: NextPage = () => {
                 </div>
                 <div className='grid gap-4'>
                     {/*<CarouselBanner></CarouselBanner>*/}
-                    <MainMenu></MainMenu>
+                    {/*<MenuMain></MenuMain>*/}
                     <ProductRows></ProductRows>
                 </div>
             </div>

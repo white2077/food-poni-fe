@@ -3,7 +3,7 @@ import {AppstoreOutlined, EnvironmentOutlined, HomeOutlined, StarOutlined} from 
 import type {MenuProps} from 'antd';
 import {Menu} from 'antd';
 
-const MainMenu = () => {
+const MenuMain = () => {
 
     const [current, setCurrent] = useState<string>('mail');
 
@@ -51,4 +51,4 @@ const items: MenuProps['items'] = [
     }
 ];
 
-export default MainMenu;
+export default MenuMain;
