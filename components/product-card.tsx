@@ -1,15 +1,11 @@
-import {Badge, Card, Divider, notification, Rate, Space} from "antd";
-import React, {useEffect, useState} from "react";
+import {Badge, Card, Divider, Rate, Space} from "antd";
+import React, {useState} from "react";
 import {IProductCard} from "./product-rows";
 import Link from "next/link";
-import axios from "axios";
-import {AxiosResponse} from "axios/index";
 import {CurrentUser} from "../stores/user.reducer";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
-import axiosConfig from "../utils/axios-config";
-import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
 
 export interface ElementDistance {
     distance: {
@@ -43,47 +39,48 @@ const ProductCard = ({product}: { product: IProductCard }) => {
 
     const [distance, setDistance] = useState<string>("");
 
-    const getDistanceMatrix = async (originLat: number, originLng: number, destLat: number, destLng: number) => {
-        const apiKey = 'dXWhFMOOlIYRZhbprENdNjcoAtYSFZOwWZiTSJEY0H1zoYNCDjk0ZfBlBOmyRYw0';
-        const apiUrl = `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${originLat},${originLng}&destinations=${destLat},${destLng}&key=${apiKey}`;
-
-        axios
-            .get<DistanceResponse>(apiUrl)
-            .then((response: AxiosResponse<DistanceResponse>): void => {
-                const distance: string = response.data.rows[0].elements[0].distance.text;
-                setDistance(distance);
-            })
-            .catch((error): void => {
-                console.error(error);
-            });
-    };
-
-    useEffect(() => {
-        if (currentUser && currentUser.accessToken) {
-            const originLat: number = shippingAddress.lat ?? 0;
-            const originLng: number = shippingAddress.lon ?? 0;
-            let destLat: number;
-            let destLng: number;
-
-            const productId: string = product.id;
-
-            axiosConfig.get(`/products/${productId}`)
-                .then(function (res: AxiosResponse<ProductResponseDTO>): void {
-                    destLat = res.data.user?.address?.lat ?? 0;
-                    destLng = res.data.user?.address?.lon ?? 0;
-
-                    getDistanceMatrix(originLat, originLng, destLat, destLng);
-                })
-                .catch(function (res): void {
-                    notification.open({
-                        type: 'error',
-                        message: 'Product message',
-                        description: res.message
-                    });
-                });
-        }
-    }, []);
-
+    // const getDistanceMatrix = async (originLat: number, originLng: number, destLat: number, destLng: number) => {
+    //     const apiKey = 'dXWhFMOOlIYRZhbprENdNjcoAtYSFZOwWZiTSJEY0H1zoYNCDjk0ZfBlBOmyRYw0';
+    //     const apiUrl = `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${originLat},${originLng}&destinations=${destLat},${destLng}&key=${apiKey}`;
+    //
+    //     axios
+    //         .get<DistanceResponse>(apiUrl)
+    //         .then((response: AxiosResponse<DistanceResponse>): void => {
+    //             const distance: string = response.data.rows[0].elements[0].distance.text;
+    //             setDistance(distance);
+    //         })
+    //         .catch((error): void => {
+    //             console.error(error);
+    //         });
+    // };
+    //
+    // useEffect(() => {
+    //     if (currentUser && currentUser.accessToken) {
+    //         const originLat: number = shippingAddress.lat ?? 0;
+    //         const originLng: number = shippingAddress.lon ?? 0;
+    //         let destLat: number;
+    //         let destLng: number;
+    //
+    //         const productId: string = product.id;
+    //
+    //         axiosConfig.get(`/products/${productId}`)
+    //             .then(function (res: AxiosResponse<ProductResponseDTO>): void {
+    //                 destLat = res.data.user?.address?.lat ?? 0;
+    //                 destLng = res.data.user?.address?.lon ?? 0;
+    //
+    //                 getDistanceMatrix(originLat, originLng, destLat, destLng);
+    //             })
+    //             .catch(function (res): void {
+    //                 notification.open({
+    //                     type: 'error',
+    //                     message: 'Product message',
+    //                     description: res.message
+    //                 });
+    //             });
+    //
+    //
+    //     }
+    // }, []);
     return (
         <Link href={`/${product.id}`}>
             <Card
@@ -96,7 +93,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                 <Space direction="vertical" size="small" style={{display: 'flex'}}>
                     <div className='flex items-center overflow-hidden'>
                         <Badge className='text-black mr-1 overflow-hidden'
-                               count={(currentUser && currentUser.accessToken) ? `Khoảng ${distance}` : "Đăng nhập để xem khoảng cách"}
+                               count={(currentUser && currentUser.accessToken) ? `Khoảng ${distance}` : "Khoảng cách không xác định"}
                                color='red'/>
                     </div>
                     <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>

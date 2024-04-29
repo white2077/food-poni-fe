@@ -71,9 +71,9 @@ const Home: NextPage = () => {
                     <ProductCategory></ProductCategory>
                 </div>
                 <div className='grid gap-4'>
-                    {/*<CarouselBanner></CarouselBanner>*/}
-                    <MenuMain></MenuMain>
-                    <ProductRows></ProductRows>
+                    <CarouselBanner/>
+                    <MenuMain/>
+                    <ProductRows/>
                 </div>
             </div>
         </DefaultLayout>
