@@ -51,7 +51,11 @@ const HeaderMain = () => {
     ];
 
     const handleItemClick = (path: string): void => {
-        router.push(path);
+        if (currentUser && currentUser.accessToken) {
+            router.push(path);
+        } else {
+            router.push('/login');
+        }
     };
 
     return (
