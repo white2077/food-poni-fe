@@ -84,7 +84,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
 
 
         }
-    }, [currentUser]);
+    }, []);
 
     return (
         <Link href={`/${product.id}`}>
