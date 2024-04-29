@@ -12,7 +12,7 @@ import {setCurrentShippingAddress} from "../stores/address.reducer";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../stores";
-import {Page} from "../models/Common";
+import {Page} from "../models/Page";
 import {setDeliveryInformationList} from "../stores/delivery.reducer";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {CurrentUser} from "../stores/user.reducer";
@@ -64,22 +64,16 @@ const Home: NextPage = () => {
 
     return (
         <DefaultLayout>
-            <Flex gap={16}>
-                <Col>
+            <div className='flex gap-4'>
+                <div className='hidden md:block'>
                     <ProductCategory></ProductCategory>
-                </Col>
-                <Row gutter={[16, 16]}>
-                    <Col span={24}>
-                        <CarouselBanner></CarouselBanner>
-                    </Col>
-                    <Col span={24}>
-                        <MainMenu></MainMenu>
-                    </Col>
-                    <Col span={24}>
-                        <ProductRows></ProductRows>
-                    </Col>
-                </Row>
-            </Flex>
+                </div>
+                <div className='grid gap-4'>
+                    {/*<CarouselBanner></CarouselBanner>*/}
+                    <MainMenu></MainMenu>
+                    <ProductRows></ProductRows>
+                </div>
+            </div>
         </DefaultLayout>
     );
 

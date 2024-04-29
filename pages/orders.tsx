@@ -6,7 +6,7 @@ import {AxiosResponse} from "axios";
 import {useSelector} from "react-redux";
 import OrderCard from "../components/order-card";
 import {RootState} from "../stores";
-import {Page} from "../models/Common";
+import {Page} from "../models/Page";
 import {NextRouter, useRouter} from "next/router";
 import {OrderResponseDTO} from "../models/order/OrderResposeAPI";
 import {CurrentUser} from "../stores/user.reducer";

@@ -4,7 +4,7 @@ import {Carousel} from 'antd';
 const CarouselBanner = () => {
 
     return (
-        <Carousel autoplay style={{marginTop: '16px'}}>
+        <Carousel autoplay>
             <div>
                 <img style={{width: '100%', height: '400px', objectFit: 'cover', borderRadius: '8px'}}
                      src='https://cdn.magicdecor.in/com/2023/09/29153817/Fast-Food-Banner-Background-for-Wall-1.jpg'

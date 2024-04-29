@@ -1,4 +1,4 @@
-import {List} from 'antd';
+import {Col, List, Row, Skeleton} from 'antd';
 import type {NextPage} from 'next'
 import React, {useEffect} from 'react';
 import ProductCard from "./product-card";
@@ -7,7 +7,7 @@ import {RootState} from "../stores";
 import {setProductList} from "../stores/product.reducer";
 import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
-import {Page} from "../models/Common";
+import {Page} from "../models/Page";
 import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
 import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailResponseAPI";
 
@@ -52,25 +52,23 @@ const ProductRows: NextPage = () => {
                     };
                 });
 
-                dispatch(setProductList({products:productList, isLoading: false}));
+                dispatch(setProductList({products: productList, isLoading: false}));
             })
             .catch(err => {
                 console.log(err)
             });
-
     };
 
     return (
-        <List
-            loading={isLoading}
-            grid={{gutter: 16, xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 4}}
-            dataSource={products}
-            renderItem={(product: IProductCard) => (
-                <List.Item id={product.id}>
-                    <ProductCard product={product}/>
-                </List.Item>
-            )}
-        />
+        <>
+            <Skeleton loading={isLoading} active></Skeleton>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
+
+            {products.map((product: IProductCard) => (
+                    <ProductCard key={product.id} product={product}/>
+                ))}
+        </div>
+        </>
     );
 
 };

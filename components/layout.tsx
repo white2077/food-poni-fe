@@ -6,34 +6,13 @@ const {Header, Footer, Sider, Content} = Layout;
 export const DefaultLayout = ({children}: { children: React.ReactNode }) => {
 
     return (
-        <Layout style={layoutStyle}>
-            <Header style={headerStyle}>
+        <div className='bg-[#F5F5FA]'>
+            <div className='bg-white'>
                 <MainHeader/>
-            </Header>
-            <Content style={contentStyle}>{children}</Content>
-            <Footer style={footerStyle}>Footer</Footer>
-        </Layout>
+            </div>
+            <div className='bg-[#F5F5FA] px-10 w-[1440px] mx-auto my-4'>{children}</div>
+            <div className='text-center text-white bg-[#4096ff]'>Footer</div>
+        </div>
     );
 
-};
-
-const headerStyle: React.CSSProperties = {
-    backgroundColor: '#fff',
-};
-
-const contentStyle: React.CSSProperties = {
-    backgroundColor: '#F5F5FA',
-    padding: '0 10px',
-    maxWidth: '1440px',
-    margin: '0 auto'
-};
-
-const footerStyle: React.CSSProperties = {
-    textAlign: 'center',
-    color: '#fff',
-    backgroundColor: '#4096ff',
-};
-
-const layoutStyle = {
-    overflow: 'hidden',
 };

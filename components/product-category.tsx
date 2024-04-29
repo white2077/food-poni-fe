@@ -2,7 +2,7 @@ import React, {ReactElement, useEffect, useState} from 'react';
 import type {MenuProps} from 'antd';
 import {Menu, Skeleton} from 'antd';
 import axiosConfig from "../utils/axios-config";
-import {Page} from "../models/Common";
+import {Page} from "../models/Page";
 import {AxiosResponse} from "axios";
 import {CategoryResponseDTO} from "../models/category/CategoryResponseAPI";
 
@@ -55,7 +55,7 @@ const ProductCategory: React.FC = () => {
     };
 
     return (
-        <div style={{marginTop: '16px'}}>
+        <>
             <Skeleton loading={isLoading} active></Skeleton>
             <Menu
                 onClick={onClick}
@@ -64,7 +64,7 @@ const ProductCategory: React.FC = () => {
                 mode='inline'
                 items={categories}
             />
-        </div>
+        </>
     );
 };
 
