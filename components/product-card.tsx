@@ -99,7 +99,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                 <Space direction="vertical" size="small" style={{display: 'flex'}}>
                     <div className='flex items-center overflow-hidden'>
                         <Badge className='text-black mr-1 overflow-hidden'
-                               count={(currentUser && currentUser.accessToken) ? `Khoảng ${distance}` : "Đăng nhập để xem khoảng cách"}
+                               count={(currentUser && currentUser.accessToken) ? `Khoảng ${distance}` : "Khoảng cách không xác định"}
                                color='red'/>
                     </div>
                     <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>
