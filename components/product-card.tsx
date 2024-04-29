@@ -44,48 +44,48 @@ const ProductCard = ({product}: { product: IProductCard }) => {
 
     const [distance, setDistance] = useState<string>("");
 
-    const getDistanceMatrix = async (originLat: number, originLng: number, destLat: number, destLng: number) => {
-        const apiKey = 'dXWhFMOOlIYRZhbprENdNjcoAtYSFZOwWZiTSJEY0H1zoYNCDjk0ZfBlBOmyRYw0';
-        const apiUrl = `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${originLat},${originLng}&destinations=${destLat},${destLng}&key=${apiKey}`;
-
-        axios
-            .get<DistanceResponse>(apiUrl)
-            .then((response: AxiosResponse<DistanceResponse>): void => {
-                const distance: string = response.data.rows[0].elements[0].distance.text;
-                setDistance(distance);
-            })
-            .catch((error): void => {
-                console.error(error);
-            });
-    };
-
-    useEffect(() => {
-        if (currentUser && currentUser.accessToken) {
-            const originLat: number = shippingAddress.lat ?? 0;
-            const originLng: number = shippingAddress.lon ?? 0;
-            let destLat: number;
-            let destLng: number;
-
-            const productId: string = product.id;
-
-            axiosConfig.get(`/products/${productId}`)
-                .then(function (res: AxiosResponse<ProductResponseDTO>): void {
-                    destLat = res.data.user?.address?.lat ?? 0;
-                    destLng = res.data.user?.address?.lon ?? 0;
-
-                    getDistanceMatrix(originLat, originLng, destLat, destLng);
-                })
-                .catch(function (res): void {
-                    notification.open({
-                        type: 'error',
-                        message: 'Product message',
-                        description: res.message
-                    });
-                });
-
-
-        }
-    }, []);
+    // const getDistanceMatrix = async (originLat: number, originLng: number, destLat: number, destLng: number) => {
+    //     const apiKey = 'dXWhFMOOlIYRZhbprENdNjcoAtYSFZOwWZiTSJEY0H1zoYNCDjk0ZfBlBOmyRYw0';
+    //     const apiUrl = `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${originLat},${originLng}&destinations=${destLat},${destLng}&key=${apiKey}`;
+    //
+    //     axios
+    //         .get<DistanceResponse>(apiUrl)
+    //         .then((response: AxiosResponse<DistanceResponse>): void => {
+    //             const distance: string = response.data.rows[0].elements[0].distance.text;
+    //             setDistance(distance);
+    //         })
+    //         .catch((error): void => {
+    //             console.error(error);
+    //         });
+    // };
+    //
+    // useEffect(() => {
+    //     if (currentUser && currentUser.accessToken) {
+    //         const originLat: number = shippingAddress.lat ?? 0;
+    //         const originLng: number = shippingAddress.lon ?? 0;
+    //         let destLat: number;
+    //         let destLng: number;
+    //
+    //         const productId: string = product.id;
+    //
+    //         axiosConfig.get(`/products/${productId}`)
+    //             .then(function (res: AxiosResponse<ProductResponseDTO>): void {
+    //                 destLat = res.data.user?.address?.lat ?? 0;
+    //                 destLng = res.data.user?.address?.lon ?? 0;
+    //
+    //                 getDistanceMatrix(originLat, originLng, destLat, destLng);
+    //             })
+    //             .catch(function (res): void {
+    //                 notification.open({
+    //                     type: 'error',
+    //                     message: 'Product message',
+    //                     description: res.message
+    //                 });
+    //             });
+    //
+    //
+    //     }
+    // }, []);
 
     return (
         <Link href={`/${product.id}`}>
