@@ -33,6 +33,7 @@ export interface IRetailer {
     firstName: string;
     lastName: string;
     phoneNumber: string;
+    username: string;
 }
 
 const ProductDetails: NextPage = () => {
@@ -120,7 +121,7 @@ const ProductDetails: NextPage = () => {
                                         <h3>${price}</h3>
                                         {(product && product.productDetails && product.productDetails.length > 1) && (
                                             <>
-                                                <div>Loại</div>
+                                                <div>Loại1</div>
                                                 <Radio.Group defaultValue={productDetailName || "default"}>
                                                     {(product?.productDetails || []).map((productDetail) => (
                                                         <Radio.Button key={productDetail.id}

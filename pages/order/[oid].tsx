@@ -1,0 +1,223 @@
+import type {NextPage} from 'next'
+import {NextRouter, useRouter} from "next/router";
+import {DefaultLayout} from "../../components/layout";
+import React, {useEffect, useState} from "react";
+import {Button, Card, Col, Result, Row, Image, Typography, Spin, Divider} from "antd";
+import axiosConfig from "../../utils/axios-config";
+import {AxiosResponse} from "axios";
+import {OrderResponseDTO} from "../../model/order/OrderResposeAPI";
+import {IRetailer} from "../[pid]";
+import {PaymentInfo, RateDTO, ShippingAddress} from "../../model/order/OrderRequest";
+import {OrderItemResponseDTO} from "../../model/order_item/OrderItemResponseAPI";
+import {CurrentUser} from "../login";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../../store";
+import {UserResponseDTO} from "../../model/user/UserResponseAPI";
+import {setSelectedOrderItemRate, setShowModalAddRate} from "../../store/rate.reducer";
+import RateAdd from "../../components/rate-add";
+import {MessageOutlined} from "@ant-design/icons";
+import {RateResponseDTO} from "../../model/rate/RateResponseAPI";
+import {setLoadingOrderItem} from "../../store/order.reducer";
+
+const {Text} = Typography;
+
+export interface IOrder {
+    id: string;
+    tolalAmount: number;
+    status: string;
+    user: UserResponseDTO;
+    retailer: IRetailer;
+    orderItems: IOrderItem[];
+    shippingAddress: ShippingAddress;
+    paymentMethod: PaymentInfo;
+}
+
+export interface IOrderItem {
+    id: string;
+    name: string;
+    quantity: number;
+    price: number;
+    image: string;
+    rate: RateResponseDTO;
+}
+
+const OrderDetails: NextPage = () => {
+
+    const router: NextRouter = useRouter();
+
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
+
+    const isLoading: boolean = useSelector((state: RootState) => state.order.isLoadingOrderItem) ;
+
+    const {oid} = router.query;
+
+    const [order, seOrder] = useState<IOrder>();
+
+    const [orderItems, seOrderItems] = useState<IOrderItem[]>([]);
+
+    const [isError, setIsError] = useState<boolean>(false);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        getOrderItemById(oid as string);
+    }, [isLoading]);
+
+    const handleSetOrderItemRate = (id: string): void => {
+        dispatch(setSelectedOrderItemRate(id));
+        dispatch(setShowModalAddRate(true));
+        console.log(id);
+    }
+
+    const getOrderItemById = (oid: string): void => {
+        if (oid) {
+            axiosConfig.get(`/customer/orders/${oid}`, {
+                headers: {
+                    Authorization: 'Bearer ' + currentUser.accessToken,
+                }
+            })
+                .then(function (res: AxiosResponse<OrderResponseDTO>): void {
+                    dispatch(setLoadingOrderItem(false));
+                    const order: OrderResponseDTO = res.data;
+                    const orderMapped: IOrder = {
+                        id: order.id,
+                        tolalAmount: order.totalAmount,
+                        status: order.status,
+                        user: order.user,
+                        retailer: order.orderItems[0].productDetail.product.user,
+                        shippingAddress: order.shippingAddress,
+                        paymentMethod: order.payment,
+                        orderItems: order.orderItems.map((orderItem: OrderItemResponseDTO): IOrderItem => {
+                            return {
+                                id: orderItem.id,
+                                name: orderItem.productDetail.product.name,
+                                quantity: orderItem.quantity,
+                                price: orderItem.price,
+                                image: orderItem.productDetail.images[0],
+                                rate: orderItem.rate,
+                            }
+                        })
+                    };
+                    seOrder(orderMapped);
+                    seOrderItems(orderMapped.orderItems);
+                })
+                .catch(function (): void {
+                    setIsError(true);
+                });
+        }
+    };
+
+    return (
+        <DefaultLayout>
+            {isError ? (
+                <Result
+                    status="404"
+                    title="404"
+                    subTitle="Sorry, the page you visited does not exist."
+                    extra={
+                        <Button type="primary" onClick={() => router.push('/')}>
+                            Back Home
+                        </Button>
+                    }
+                />
+            ) : isLoading ? (
+                <Spin size="large"/>
+            ) : (
+                <>
+                    {order && (
+                        <Row justify="center" style={{width: '1400px'}}>
+                            <Col span={20}>
+                                <Card title={`Order #${order.id}`} style={{marginTop: '20px'}}>
+                                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                        <Text strong>
+                                            {
+                                                order.status.includes("PENDING") ?
+                                                    'Chờ xác nhận' : order.status.includes("APPROVED") ?
+                                                        'Chờ giao hàng' : 'Đơn hoàn tất'
+                                            }
+                                        </Text>
+                                        <MessageOutlined/>
+                                    </div>
+                                    <Divider/>
+                                    <div>
+                                        <Text style={{fontSize: '18px'}} strong>Đồ ăn | {order.retailer.username}</Text>
+                                        <br/>
+                                        <br/>
+                                        <Text>{order.tolalAmount + '$ - ' + order.orderItems.length + ' món - '} {order.paymentMethod.method?.includes('CASH') ? 'Tiền mặt' : 'VNPay'}</Text>
+                                        <br/>
+                                        <Text>{order.shippingAddress.fullName + ' - ' + order.shippingAddress.phoneNumber}</Text>
+                                    </div>
+                                    <div style={{marginTop: '20px'}}>
+                                        <Text style={{fontSize: '18px'}} strong>Shipping Address:</Text>
+                                        <br/>
+                                        <br/>
+                                        <Text>{order.shippingAddress.address}</Text>
+                                    </div>
+                                    <Divider/>
+                                    <Row gutter={[16, 16]}>
+                                        {orderItems.map((item) => (
+                                            <Col span={24} key={item.id}>
+                                                <Card hoverable style={{overflow: 'hidden'}}
+                                                      onClick={() => {
+                                                          console.log(item.rate);
+                                                          if (!item.rate) {
+                                                              handleSetOrderItemRate(item.id); // Chỉ cho phép click khi chưa có rate
+                                                          }
+                                                      }}>
+                                                    {item.rate && (
+                                                        <div style={{ position: 'absolute', top: 5, right: 5}}>
+                                                            <Text type="secondary" style={{color: 'red'}}>Đã đánh giá</Text>
+                                                        </div>
+                                                    )}
+                                                    <Row gutter={[16, 16]}>
+                                                        <Col span={6}>
+                                                            <Image src={item.image} style={{
+                                                                width: '200px',
+                                                                height: '150px',
+                                                                objectFit: 'cover'
+                                                            }}/>
+                                                        </Col>
+                                                        <Col span={18}
+                                                             style={{display: 'flex', justifyContent: 'space-between'}}>
+                                                            <Text strong
+                                                                  style={{fontSize: '20px'}}>{item.quantity} x {item.name}</Text>
+                                                            <Text strong style={{
+                                                                fontSize: '20px',
+                                                                color: 'green'
+                                                            }}>{item.price} $</Text>
+                                                        </Col>
+                                                    </Row>
+                                                </Card>
+                                            </Col>
+                                        ))}
+                                    </Row>
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        paddingTop: '20px',
+                                        padding: '20px 20px 0 20px'
+                                    }}>
+                                        <Text style={{fontSize: '20px'}} strong>Item
+                                            Subtotal({order.orderItems.length + ' món'}):</Text>
+                                        <Text style={{fontSize: '20px'}}>{order.tolalAmount}$</Text>
+                                    </div>
+                                    <Divider/>
+                                    <div style={{gap: "10px", display: "flex"}}>
+                                        <Button type={"dashed"} danger>Xem đánh
+                                            giá</Button>
+                                        <Button type={"primary"} danger>Đặt lại</Button>
+                                    </div>
+                                </Card>
+                            </Col>
+                            <RateAdd/>
+                        </Row>
+                    )}
+                </>
+            )}
+        </DefaultLayout>
+    );
+
+};
+
+export default OrderDetails;

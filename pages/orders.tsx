@@ -1,5 +1,5 @@
 import {DefaultLayout} from "../components/layout";
-import {Button, List, notification, Result} from "antd";
+import {Button, GetProp, List, notification, Result, Segmented, UploadFile, UploadProps} from "antd";
 import React, {useEffect, useState} from "react";
 import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
@@ -10,6 +10,22 @@ import {Page} from "../model/Common";
 import {NextRouter, useRouter} from "next/router";
 import {CurrentUser} from "./login";
 import {OrderResponseDTO} from "../model/order/OrderResposeAPI";
+import RateAdd from "../components/rate-add";
+enum OrderStatus {
+    PENDING,
+    APPROVED,
+    COMPLETED,
+}
+
+type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+
+const getBase64 = (file: FileType): Promise<string> =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+    });
 
 const Orders = () => {
 
@@ -24,6 +40,7 @@ const Orders = () => {
     useEffect((): void => {
         getOrders();
     }, []);
+
 
     const getOrders = () => {
         axiosConfig.get("/customer/orders", {
@@ -45,12 +62,44 @@ const Orders = () => {
             })
     };
 
+    const handleChange = (value: string) => {
+        console.log(OrderStatus[value as keyof typeof OrderStatus]);
+        // Xử lý logic tại đây nếu cần
+    };
+
+    const getStatusText = (status: OrderStatus) => {
+        switch (status) {
+            case OrderStatus.PENDING:
+                return 'Chờ xác nhận';
+            case OrderStatus.APPROVED:
+                return 'Chờ lấy hàng';
+            case OrderStatus.COMPLETED:
+                return 'Hoàn thành';
+            default:
+                return '';
+        }
+    };
+
+    const orderStatusOptions = Object.values(OrderStatus)
+        .filter((status) => typeof status === 'number')
+        .map((status) => ({
+            label: getStatusText(status as OrderStatus),
+            value: String(status),
+        }));
+
     return (
         <DefaultLayout>
             {
                 currentUser.id ? (
-                    <div style={{color: "black", textAlign: "left"}}>
-                        <List loading={isLoading} grid={{gutter: 16, xs: 1, sm: 2, md: 4, lg: 4, xl: 5, xxl: 5}}
+                    <div style={{color: "black", textAlign: "left", width: "1440px"}}>
+                        <div style={{textAlign: "left", width: "100%", marginBottom: "20px"}}>
+                            <Segmented<string>
+                                options={orderStatusOptions}
+                                onChange={handleChange}
+                                style={{width: "100%"}}
+                            />
+                        </div>
+                        <List loading={isLoading}
                               dataSource={orders}
                               renderItem={(order) => (
                                   <List.Item>

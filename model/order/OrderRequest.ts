@@ -23,8 +23,16 @@ export interface PaymentInfo {
     status?: string;
 }
 
+export interface RateDTO {
+    rate?: number,
+    message?: String,
+    images?: String[],
+}
+
 export const shippingAddress: ShippingAddress = {};
 
 export const paymentInfo: PaymentInfo = {};
 
 export const orderRequestDTO: OrderRequestDTO = {};
+
+export const rateDTO: RateDTO = {};

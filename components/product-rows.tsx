@@ -30,7 +30,6 @@ const ProductRows: NextPage = () => {
     }, []);
 
     const getProducts = (): void => {
-
         axiosConfig.get("/products")
             .then((res: AxiosResponse<Page<ProductResponseDTO[]>>): void => {
                 const productList: IProductCard[] = (res.data.content as ProductResponseDTO[]).map((product: ProductResponseDTO): IProductCard => {
