@@ -2,22 +2,20 @@ import type {NextPage} from 'next'
 import {NextRouter, useRouter} from "next/router";
 import {DefaultLayout} from "../../components/layout";
 import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Result, Row, Image, Typography, Spin, Divider} from "antd";
+import {Button, Card, Col, Divider, Image, Result, Row, Spin, Typography} from "antd";
 import axiosConfig from "../../utils/axios-config";
 import {AxiosResponse} from "axios";
-import {OrderResponseDTO} from "../../model/order/OrderResposeAPI";
-import {IRetailer} from "../[pid]";
-import {PaymentInfo, RateDTO, ShippingAddress} from "../../model/order/OrderRequest";
-import {OrderItemResponseDTO} from "../../model/order_item/OrderItemResponseAPI";
-import {CurrentUser} from "../login";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../store";
-import {UserResponseDTO} from "../../model/user/UserResponseAPI";
-import {setSelectedOrderItemRate, setShowModalAddRate} from "../../store/rate.reducer";
 import RateAdd from "../../components/rate-add";
 import {MessageOutlined} from "@ant-design/icons";
-import {RateResponseDTO} from "../../model/rate/RateResponseAPI";
-import {setLoadingOrderItem} from "../../store/order.reducer";
+import {UserResponseDTO} from "../../models/user/UserResponseAPI";
+import {PaymentInfo, RateDTO, ShippingAddress} from "../../models/order/OrderRequest";
+import {CurrentUser} from "../../stores/user.reducer";
+import {RootState} from "../../stores";
+import {setSelectedOrderItemRate, setShowModalAddRate} from "../../stores/rate.reducer";
+import {setLoadingOrderItem} from "../../stores/order.reducer";
+import {OrderItemResponseDTO} from "../../models/order_item/OrderItemResponseAPI";
+import {OrderResponseDTO} from "../../models/order/OrderResposeAPI";
 
 const {Text} = Typography;
 
@@ -26,7 +24,6 @@ export interface IOrder {
     tolalAmount: number;
     status: string;
     user: UserResponseDTO;
-    retailer: IRetailer;
     orderItems: IOrderItem[];
     shippingAddress: ShippingAddress;
     paymentMethod: PaymentInfo;
@@ -38,7 +35,7 @@ export interface IOrderItem {
     quantity: number;
     price: number;
     image: string;
-    rate: RateResponseDTO;
+    rate: RateDTO;
 }
 
 const OrderDetails: NextPage = () => {
@@ -80,23 +77,22 @@ const OrderDetails: NextPage = () => {
                     dispatch(setLoadingOrderItem(false));
                     const order: OrderResponseDTO = res.data;
                     const orderMapped: IOrder = {
-                        id: order.id,
-                        tolalAmount: order.totalAmount,
-                        status: order.status,
-                        user: order.user,
-                        retailer: order.orderItems[0].productDetail.product.user,
-                        shippingAddress: order.shippingAddress,
-                        paymentMethod: order.payment,
-                        orderItems: order.orderItems.map((orderItem: OrderItemResponseDTO): IOrderItem => {
+                        id: order.id ?? "",
+                        tolalAmount: order.totalAmount ?? 0,
+                        status: order.status ?? "",
+                        user: order.user ?? {},
+                        shippingAddress: order.shippingAddress ?? {},
+                        paymentMethod: order.payment ?? {},
+                        orderItems: order.orderItems?.map((orderItem: OrderItemResponseDTO): IOrderItem => {
                             return {
-                                id: orderItem.id,
-                                name: orderItem.productDetail.product.name,
-                                quantity: orderItem.quantity,
-                                price: orderItem.price,
-                                image: orderItem.productDetail.images[0],
-                                rate: orderItem.rate,
+                                id: orderItem.id ?? "",
+                                name: orderItem.productDetail?.product?.name ?? "",
+                                quantity: orderItem.quantity ?? 0,
+                                price: orderItem.price ?? 0,
+                                image: orderItem.productDetail?.product?.thumbnail ?? "",
+                                rate: orderItem.rate ?? {},
                             }
-                        })
+                        }) ?? [],
                     };
                     seOrder(orderMapped);
                     seOrderItems(orderMapped.orderItems);
@@ -140,7 +136,7 @@ const OrderDetails: NextPage = () => {
                                     </div>
                                     <Divider/>
                                     <div>
-                                        <Text style={{fontSize: '18px'}} strong>Đồ ăn | {order.retailer.username}</Text>
+                                        <Text style={{fontSize: '18px'}} strong>Đồ ăn</Text>
                                         <br/>
                                         <br/>
                                         <Text>{order.tolalAmount + '$ - ' + order.orderItems.length + ' món - '} {order.paymentMethod.method?.includes('CASH') ? 'Tiền mặt' : 'VNPay'}</Text>
@@ -160,11 +156,11 @@ const OrderDetails: NextPage = () => {
                                                 <Card hoverable style={{overflow: 'hidden'}}
                                                       onClick={() => {
                                                           console.log(item.rate);
-                                                          if (!item.rate) {
-                                                              handleSetOrderItemRate(item.id); // Chỉ cho phép click khi chưa có rate
+                                                          if (Object.keys(item.rate).length === 0) {
+                                                              handleSetOrderItemRate(item.id);
                                                           }
                                                       }}>
-                                                    {item.rate && (
+                                                    {Object.keys(item.rate).length !== 0 && (
                                                         <div style={{ position: 'absolute', top: 5, right: 5}}>
                                                             <Text type="secondary" style={{color: 'red'}}>Đã đánh giá</Text>
                                                         </div>

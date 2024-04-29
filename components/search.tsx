@@ -11,8 +11,7 @@ const SearchComponent = () => {
     };
 
     return (
-        <Search placeholder="input search text"
-                style={{verticalAlign: 'middle'}}
+        <Search className='hidden md:block' placeholder="input search text"
                 enterButton="Search"
                 size="large"
                 loading={false}

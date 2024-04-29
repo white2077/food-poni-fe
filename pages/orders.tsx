@@ -5,12 +5,11 @@ import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {useSelector} from "react-redux";
 import OrderCard from "../components/order-card";
-import {RootState} from "../store";
-import {Page} from "../model/Common";
+import {RootState} from "../stores";
+import {Page} from "../models/Page";
 import {NextRouter, useRouter} from "next/router";
-import {CurrentUser} from "./login";
-import {OrderResponseDTO} from "../model/order/OrderResposeAPI";
-import RateAdd from "../components/rate-add";
+import {CurrentUser} from "../stores/user.reducer";
+import {OrderResponseDTO} from "../models/order/OrderResposeAPI";
 enum OrderStatus {
     PENDING,
     APPROVED,
@@ -31,7 +30,7 @@ const Orders = () => {
 
     const router: NextRouter = useRouter();
 
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const [orders, setOrders] = useState<OrderResponseDTO[]>([]);
 

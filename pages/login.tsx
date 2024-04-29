@@ -9,27 +9,11 @@ import {deleteCookie, setCookie} from "cookies-next";
 import {REFRESH_TOKEN, REMEMBER_ME} from "../utils/server";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch} from "react-redux";
-import {setCurrentUser} from "../store/user.reducer";
-import jwtDecode from "jwt-decode";
-import {AuthenticationRequest} from "../model/auth/AuthenticationRequest";
-import {AuthenticationResponse} from "../model/auth/AuthenticationResponse";
+import {AuthenticationRequest} from "../models/auth/AuthenticationRequest";
+import {AuthenticationResponse} from "../models/auth/AuthenticationResponse";
 import {AxiosResponse} from "axios";
-
-export interface CurrentUser {
-    id?: string;
-    sub?: string;
-    role?: string;
-    firstName?: string;
-    lastName?: string;
-    avatar?: string;
-    email?: string;
-    phoneNumber?: string;
-    username?: string;
-    accessToken?: string;
-    addressId?: string;
-}
-
-export const currentUser: CurrentUser = {};
+import jwtDecode from "jwt-decode";
+import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
 
 export interface IUserRemember {
     username: string;
@@ -55,29 +39,33 @@ const Login: NextPage = () => {
             .then(function (res: AxiosResponse<AuthenticationResponse>): void {
                 setPending(false);
 
-                const token: AuthenticationResponse = res.data;
-                const payload: CurrentUser = jwtDecode(token.accessToken);
-                payload.accessToken = token.accessToken;
-                dispatch(setCurrentUser(payload));
+                const accessToken: string = res.data.accessToken ?? "";
 
-                // set refresh token
-                setCookie(REFRESH_TOKEN, token.refreshToken, {
-                    expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
-                });
+                if (accessToken) {
+                    const payload: CurrentUser = jwtDecode(accessToken);
+                    payload.accessToken = accessToken;
+                    dispatch(setCurrentUser(payload));
 
-                //set user remembered and delete
-                if (values.remember) {
-                    const userRemember: IUserRemember = {
-                        username: user.username ? user.username! : user.email!,
-                        password: user.password,
-                        avatar: "currentUser.avatar"
-                    }
-                    setCookie(REMEMBER_ME, btoa(JSON.stringify(userRemember)), {
+                    // set refresh token
+                    setCookie(REFRESH_TOKEN, res.data.refreshToken, {
                         expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
                     });
-                } else deleteCookie(REMEMBER_ME);
 
-                router.push('/');
+                    //set user remembered and delete
+                    if (values.remember) {
+                        const userRemember: IUserRemember = {
+                            username: user.username ? user.username! : user.email!,
+                            password: user.password,
+                            avatar: "currentUser.avatar"
+                        }
+                        setCookie(REMEMBER_ME, btoa(JSON.stringify(userRemember)), {
+                            expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
+                        });
+                    } else deleteCookie(REMEMBER_ME);
+
+                    router.push('/');
+                }
+
             })
             .catch(function (res): void {
                 setPending(false);

@@ -1,15 +1,15 @@
 import {Button, Card, Divider, List, Modal, notification, Upload} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../store";
 import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
-import {Page} from "../model/Common";
-import {CurrentUser} from "../pages/login";
-import {FileUploadsResponseDTO} from "../model/file/FileUploadsResponseAPI";
-import {setFileUploads, setSelectedFile} from "../store/fileUploads.reducer";
-import {setShowModalFileUpload} from "../store/rate.reducer";
+import {FileUploadsResponseDTO} from "../models/file/FileUploadsResponseAPI";
 import {UploadOutlined} from "@ant-design/icons";
+import {Page} from "../models/Page";
+import {setFileUploads, setSelectedFile} from "../stores/fileUploads.reducer";
+import {setShowModalFileUpload} from "../stores/rate.reducer";
+import {CurrentUser} from "../stores/user.reducer";
+import {RootState} from "../stores";
 
 export interface IFileUploadCard {
     id: string;

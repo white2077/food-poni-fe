@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
 import {Button, Input, Modal, notification, Rate} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../store";
-import {setShowModalAddRate, setShowModalFileUpload} from "../store/rate.reducer";
-import {CurrentUser} from "../pages/login";
-import {RateDTO} from "../model/order/OrderRequest";
 import axiosConfig from "../utils/axios-config";
 import FileUploads from "./file-upload";
-import {setSelectedFile} from "../store/fileUploads.reducer";
-import {setLoadingOrderItem} from "../store/order.reducer";
+import {CurrentUser} from "../stores/user.reducer";
+import {RootState} from "../stores";
+import {RateDTO} from "../models/order/OrderRequest";
+import {setLoadingOrderItem} from "../stores/order.reducer";
+import {setShowModalAddRate, setShowModalFileUpload} from "../stores/rate.reducer";
+import {setSelectedFile} from "../stores/fileUploads.reducer";
 
 const RateAdd = () => {
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;

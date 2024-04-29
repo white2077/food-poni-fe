@@ -1,15 +1,18 @@
 import {Button, Card, Flex, InputNumber} from "antd";
 import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {addItem, ICartItem} from "../store/cart.reducer";
+import {addItem, deleteAllItem, ICartItem} from "../stores/cart.reducer";
 import {NextRouter, useRouter} from "next/router";
-import {RootState} from "../store";
+import {RootState} from "../stores";
+import {CurrentUser} from "../stores/user.reducer";
 
-const ProductCart = ({id, price, thumbnail, name}: {id: string, price: number, thumbnail: string, name: string}) => {
+const ProductCart = ({id, price, thumbnail, name}: { id: string, price: number, thumbnail: string, name: string }) => {
 
     const router: NextRouter = useRouter();
 
     const dispatch = useDispatch();
+
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const [quantity, setQuantity] = useState<number>(1);
 
@@ -23,8 +26,13 @@ const ProductCart = ({id, price, thumbnail, name}: {id: string, price: number, t
     };
 
     const getCheckout = (): void => {
-        addToCart();
-        router.push("/checkout");
+        if (currentUser && currentUser.accessToken) {
+            addToCart();
+            router.push("/checkout");
+        } else {
+            dispatch(deleteAllItem({}));
+            router.push("/login");
+        }
     };
 
     return (
@@ -36,7 +44,7 @@ const ProductCart = ({id, price, thumbnail, name}: {id: string, price: number, t
                 max={20}
                 defaultValue={1}
                 value={quantity}
-                onChange={(value) => setQuantity(value ? value : 1)} disabled={isExisted}/>
+                onChange={(value: number | null) => setQuantity(value ?? 1)} disabled={isExisted}/>
             <div>Tạm tính</div>
             <div>${price * quantity}</div>
             <Flex vertical gap='small' style={{width: '100%'}}>

@@ -7,8 +7,8 @@ import ProductGallery from "../components/product-gallery";
 import ProductCart from "../components/product-cart";
 import ProductDescriptionComponent from "../components/product-description";
 import ProductRetailer from "../components/product-retailer";
-import {ProductResponseDTO} from "../model/product/ProductResponseAPI";
-import {ProductDetailResponseDTO} from "../model/product_detail/ProductDetailResponseAPI";
+import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
+import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailResponseAPI";
 import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 
@@ -57,19 +57,31 @@ const ProductDetails: NextPage = () => {
                     const product: ProductResponseDTO = res.data;
 
                     const productMapped: IProduct = {
-                        id: product.id,
-                        name: product.name,
-                        shortDescription: product.shortDescription,
-                        retailer: product.user,
-                        productDetails: product.productDetails.map((productDetail: ProductDetailResponseDTO): IProductDetail => {
+                        id: product.id ?? "",
+                        name: product.name ?? "",
+                        shortDescription: product.shortDescription ?? "",
+                        retailer: product.user ? {
+                            avatar: product.user.avatar ?? "",
+                            firstName: product.user.firstName ?? "",
+                            lastName: product.user.lastName ?? "",
+                            phoneNumber: product.user.phoneNumber ?? "",
+                            username: product.user.username ?? "",
+                        } : {
+                            avatar: "",
+                            firstName: "",
+                            lastName: "",
+                            phoneNumber: "",
+                            username: "",
+                        },
+                        productDetails: product.productDetails && product.productDetails.map((productDetail: ProductDetailResponseDTO): IProductDetail => {
                             return {
-                                id: productDetail.id,
-                                name: productDetail.name,
-                                price: productDetail.price,
-                                description: productDetail.description,
-                                images: productDetail.images
+                                id: productDetail.id ?? "",
+                                name: productDetail.name ?? "",
+                                price: productDetail.price ?? 0,
+                                description: productDetail.description ?? "",
+                                images: productDetail.images ?? []
                             }
-                        })
+                        }) || []
                     };
 
                     setProduct(productMapped);
@@ -105,61 +117,57 @@ const ProductDetails: NextPage = () => {
             />) : (
                 <>
                     {product && (
-                        <Row gutter={[16, 16]}>
-                            <Col xs={24} sm={24} md={8} lg={8} xl={6}>
-                                <ProductGallery images={images}/>
-                            </Col>
-                            <Col xs={24} sm={24} md={16} lg={10} xl={12}>
-                                <div style={{textAlign: 'left'}}>
-                                    <Card>
-                                        <h2 style={{marginTop: '0'}}>
-                                            {product.name + (productDetailName ? ' - ' + productDetailName : '')}
-                                        </h2>
-                                        <Rate allowHalf defaultValue={4.5}
-                                              style={{fontSize: '12px', marginRight: '8px'}}/>
-                                        <span>Đã bán 500</span>
-                                        <h3>${price}</h3>
-                                        {(product && product.productDetails && product.productDetails.length > 1) && (
-                                            <>
-                                                <div>Loại1</div>
-                                                <Radio.Group defaultValue={productDetailName || "default"}>
-                                                    {(product?.productDetails || []).map((productDetail) => (
-                                                        <Radio.Button key={productDetail.id}
-                                                                      value={productDetail.name || "default"}
-                                                                      onClick={() => changeProductDetailSelected(productDetail)}>
-                                                            {productDetail.name || "Default"}
-                                                        </Radio.Button>
-                                                    ))}
-                                                </Radio.Group>
-                                            </>
-                                        )}
-                                    </Card>
-                                    <Card>
-                                        <div>Thông tin vận chuyển</div>
-                                        <div>Giao đến Q. Hoàn Kiếm, P. Hàng Trống, Hà Nội</div>
-                                    </Card>
-                                    <ProductRetailer retailer={product.retailer}></ProductRetailer>
-                                    <ProductDescriptionComponent
-                                        description={description!}
-                                        shortDescription={product.shortDescription}
-                                    ></ProductDescriptionComponent>
-                                </div>
-                            </Col>
-                            <Col xs={24} sm={24} md={24} lg={6} xl={6}>
-                                <ProductCart
-                                    id={id!}
-                                    price={price!}
-                                    thumbnail={images![0]}
-                                    name={product.name + ' - ' + productDetailName}
-                                />
-                            </Col>
-                        </Row>
+                        <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[2fr_3fr_2fr] gap-4'>
+                            <ProductGallery images={images}/>
+
+                            <div className='grid gap-4'>
+                                <Card>
+                                    <h2 style={{marginTop: '0'}}>
+                                        {product.name + (productDetailName ? ' - ' + productDetailName : '')}
+                                    </h2>
+                                    <Rate allowHalf defaultValue={4.5}
+                                          style={{fontSize: '12px', marginRight: '8px'}}/>
+                                    <span>Đã bán 500</span>
+                                    <h3>${price}</h3>
+                                    {(product && product.productDetails && product.productDetails.length > 1) && (
+                                        <>
+                                            <div>Loại</div>
+                                            <Radio.Group defaultValue={productDetailName || "default"}>
+                                                {(product?.productDetails || []).map((productDetail) => (
+                                                    <Radio.Button key={productDetail.id}
+                                                                  value={productDetail.name || "default"}
+                                                                  onClick={() => changeProductDetailSelected(productDetail)}>
+                                                        {productDetail.name || "Default"}
+                                                    </Radio.Button>
+                                                ))}
+                                            </Radio.Group>
+                                        </>
+                                    )}
+                                </Card>
+                                <Card>
+                                    <div>Thông tin vận chuyển</div>
+                                    <div>Giao đến Q. Hoàn Kiếm, P. Hàng Trống, Hà Nội</div>
+                                </Card>
+                                <ProductRetailer retailer={product.retailer}></ProductRetailer>
+                                <ProductDescriptionComponent
+                                    description={description!}
+                                    shortDescription={product.shortDescription}
+                                ></ProductDescriptionComponent>
+                            </div>
+
+                            <ProductCart
+                                id={id!}
+                                price={price!}
+                                thumbnail={images![0]}
+                                name={product.name + ' - ' + productDetailName}
+                            />
+
+                        </div>
                     )}
                 </>
             )}
         </DefaultLayout>
     );
-
 };
 
 export default ProductDetails;
