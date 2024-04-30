@@ -1,4 +1,4 @@
-import {Button, Card, Flex, InputNumber} from "antd";
+import {Avatar, Button, Card, Divider, Flex, InputNumber, List} from "antd";
 import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {addItem, deleteAllItem, ICartItem} from "../stores/cart.reducer";
@@ -37,16 +37,17 @@ const ProductCart = ({id, price, thumbnail, name}: { id: string, price: number, 
 
     return (
         <Card className='text-left text-black h-fit' size='small'>
-            <div>{name}</div>
-            <div>Số lượng</div>
+            <div>retailer here</div>
+            <Divider/>
+            <div className='text-md font-medium'>Số lượng</div>
             <InputNumber
                 min={1}
                 max={20}
                 defaultValue={1}
                 value={quantity}
                 onChange={(value: number | null) => setQuantity(value ?? 1)} disabled={isExisted}/>
-            <div>Tạm tính</div>
-            <div>${price * quantity}</div>
+            <div className='text-md font-medium'>Tạm tính</div>
+            <div className='text-2xl font-semibold'>${price * quantity}</div>
             <Flex vertical gap='small' style={{width: '100%'}}>
                 <Button type='primary' danger block onClick={getCheckout}>
                     Mua ngay

@@ -2,15 +2,14 @@ import type {NextPage} from 'next'
 import {NextRouter, useRouter} from "next/router";
 import {DefaultLayout} from "../components/layout";
 import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Radio, Rate, Result, Row} from "antd";
+import {Button, Card, Radio, Rate, Result} from "antd";
 import ProductGallery from "../components/product-gallery";
 import ProductCart from "../components/product-cart";
-import ProductDescription from "../components/product-description";
-import ProductRetailer from "../components/product-retailer";
 import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
 import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailResponseAPI";
 import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
+import ProductComment from "../components/product-comment";
 
 export interface IProduct {
     id: string;
@@ -114,51 +113,52 @@ const ProductDetails: NextPage = () => {
             />) : (
                 <>
                     {product && (
-                        <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[2fr_3fr_2fr] gap-4'>
-                            <ProductGallery images={images ?? []}/>
+                        <div className='grid gap-4'>
+                            <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[2fr_3fr_2fr] gap-4'>
+                                <ProductGallery images={images ?? []}/>
+                                <div className='grid gap-4'>
+                                    <Card size='small'>
+                                        <h2 className='text-xl'>{product.name + (productDetailName ? ' - ' + productDetailName : '')}</h2>
+                                        <Rate allowHalf defaultValue={4.5}
+                                              style={{fontSize: '12px', marginRight: '8px'}}/>
+                                        <span>Đã bán 500</span>
+                                        <h3 className='text-2xl font-semibold'>${price}</h3>
+                                    </Card>
+                                    <Card size='small' title='Product type'>
+                                        {(product.productDetails && product.productDetails.length > 1) && (
+                                                <Radio.Group defaultValue={productDetailName || "default"}>
+                                                    {(product?.productDetails || []).map((productDetail: IProductDetail) => (
+                                                        <Radio.Button key={productDetail.id}
+                                                                      value={productDetail.name || "default"}
+                                                                      onClick={() => changeProductDetailSelected(productDetail)}>
+                                                            {productDetail.name || "Default"}
+                                                        </Radio.Button>
+                                                    ))}
+                                                </Radio.Group>
+                                        )}
+                                    </Card>
+                                    <Card size='small' title='Shipping information'>
+                                        <div>Giao đến Q. Hoàn Kiếm, P. Hàng Trống, Hà Nội</div>
+                                    </Card>
+                                    <Card size='small' title='Short description'>
+                                        <div style={{color: 'black'}}
+                                             dangerouslySetInnerHTML={{__html: product.shortDescription || ''}}></div>
+                                    </Card>
+                                    <Card size='small' title='Description'>
+                                        <div style={{color: 'black'}}
+                                             dangerouslySetInnerHTML={{__html: description || ''}}></div>
+                                    </Card>
 
-                            <div className='grid gap-4'>
-                                <Card className='h-fit'>
-                                    <h2>
-                                        {product.name + (productDetailName ? ' - ' + productDetailName : '')}
-                                    </h2>
-                                    <Rate allowHalf defaultValue={4.5}
-                                          style={{fontSize: '12px', marginRight: '8px'}}/>
-                                    <span>Đã bán 500</span>
-                                    <h3>${price}</h3>
-                                    {(product && product.productDetails && product.productDetails.length > 1) && (
-                                        <>
-                                            <div>Loại</div>
-                                            <Radio.Group defaultValue={productDetailName || "default"}>
-                                                {(product?.productDetails || []).map((productDetail: IProductDetail) => (
-                                                    <Radio.Button key={productDetail.id}
-                                                                  value={productDetail.name || "default"}
-                                                                  onClick={() => changeProductDetailSelected(productDetail)}>
-                                                        {productDetail.name || "Default"}
-                                                    </Radio.Button>
-                                                ))}
-                                            </Radio.Group>
-                                        </>
-                                    )}
-                                </Card>
-                                <Card>
-                                    <div>Thông tin vận chuyển</div>
-                                    <div>Giao đến Q. Hoàn Kiếm, P. Hàng Trống, Hà Nội</div>
-                                </Card>
-                                <ProductRetailer retailer={product.retailer}></ProductRetailer>
-                                <ProductDescription
-                                    description={description!}
-                                    shortDescription={product.shortDescription}
-                                ></ProductDescription>
+                                </div>
+
+                                <ProductCart
+                                    id={id!}
+                                    price={price!}
+                                    thumbnail={images![0]}
+                                    name={product.name + ' - ' + productDetailName}
+                                />
                             </div>
-
-                            <ProductCart
-                                id={id!}
-                                price={price!}
-                                thumbnail={images![0]}
-                                name={product.name + ' - ' + productDetailName}
-                            />
-
+                            <ProductComment/>
                         </div>
                     )}
                 </>
