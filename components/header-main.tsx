@@ -1,12 +1,16 @@
 import {Avatar, Button, Col, Dropdown, Flex, MenuProps, Row,} from 'antd';
 import CartComponent from './cart';
-import SearchComponent from './search';
 import {useSelector} from 'react-redux';
 import {LogoutOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
 import {NextRouter, useRouter} from 'next/router';
 import {RootState} from '../stores';
 import React from "react";
 import {CurrentUser} from "../stores/user.reducer";
+import dynamic from "next/dynamic";
+
+const SearchComponent = dynamic(() => import('./search'), {
+    ssr: false, loading: () => <p>Loading...</p>,
+});
 
 const HeaderMain = () => {
 
@@ -64,7 +68,7 @@ const HeaderMain = () => {
     return (
         <div className='lg:w-[1440px] grid grid-cols-2 md:grid-cols-[1fr_2fr_1fr] px-2 mx-auto items-center py-2'>
             <a className='font-bold text-2xl h-[unset]' onClick={() => router.push('/')}>FoodPoni</a>
-            <SearchComponent></SearchComponent>
+            <SearchComponent/>
             <div className='flex items-center justify-end gap-4'>
                 <CartComponent/>
                 {/*<a onClick={showDrawer}>*/}

@@ -104,9 +104,9 @@ const ProductCard = ({product, selectedAddressData}: { product: IProductCard, se
             >
                 <Space direction="vertical" size="small" style={{display: 'flex'}}>
                     <div className='flex items-center overflow-hidden'>
-                        <Badge className='text-black mr-1 overflow-hidden'
+                        <Badge className='mr-1 overflow-hidden'
                                count={(distance !== "") ? `Khoảng ${distance}` : "Khoảng cách không xác định"}
-                               color='red'/>
+                               color='#F36F24'/>
                     </div>
                     <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>
                         {product.name}

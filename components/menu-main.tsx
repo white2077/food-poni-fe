@@ -5,7 +5,7 @@ import {Menu} from 'antd';
 
 const MenuMain = () => {
 
-    const [current, setCurrent] = useState<string>('mail');
+    const [current, setCurrent] = useState<string>('random');
 
     const onClick: MenuProps['onClick'] = (e): void => {
         console.log('click ', e);
@@ -22,6 +22,11 @@ const MenuMain = () => {
 };
 
 const items: MenuProps['items'] = [
+    {
+        label: 'Random',
+        key: 'random',
+        icon: <AppstoreOutlined/>,
+    },
     {
         label: 'Nearby',
         key: 'nearby',
@@ -46,11 +51,6 @@ const items: MenuProps['items'] = [
         label: 'Top Rates',
         key: 'toprates',
         icon: <StarOutlined/>,
-    },
-    {
-        label: 'All',
-        key: 'all',
-        icon: <AppstoreOutlined/>,
     }
 ];
 
