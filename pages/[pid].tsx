@@ -115,11 +115,11 @@ const ProductDetails: NextPage = () => {
                 <>
                     {product && (
                         <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[2fr_3fr_2fr] gap-4'>
-                            <ProductGallery images={images}/>
+                            <ProductGallery images={images ?? []}/>
 
                             <div className='grid gap-4'>
-                                <Card>
-                                    <h2 style={{marginTop: '0'}}>
+                                <Card className='h-fit'>
+                                    <h2>
                                         {product.name + (productDetailName ? ' - ' + productDetailName : '')}
                                     </h2>
                                     <Rate allowHalf defaultValue={4.5}
@@ -130,7 +130,7 @@ const ProductDetails: NextPage = () => {
                                         <>
                                             <div>Loại</div>
                                             <Radio.Group defaultValue={productDetailName || "default"}>
-                                                {(product?.productDetails || []).map((productDetail) => (
+                                                {(product?.productDetails || []).map((productDetail: IProductDetail) => (
                                                     <Radio.Button key={productDetail.id}
                                                                   value={productDetail.name || "default"}
                                                                   onClick={() => changeProductDetailSelected(productDetail)}>

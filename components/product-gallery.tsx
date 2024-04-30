@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Avatar, Card, Image, Segmented} from 'antd';
 import {NextPage} from "next";
 
-const ProductGallery = ({images}: { images: string[] | null | undefined }) => {
+const ProductGallery = ({images}: { images: string[] }) => {
 
     const [selectedImage, setSelectedImage] = useState<string>();
 
@@ -11,13 +11,12 @@ const ProductGallery = ({images}: { images: string[] | null | undefined }) => {
     };
 
     return (
-        <Card size='small'>
-            <Image
-                width={250}
-                style={{aspectRatio: '1', objectFit: 'cover'}}
-                src={selectedImage ? selectedImage : images?.[0]}
+        <Card className='h-fit grid gap-4' size='small'>
+            <Image className='aspect-square object-cover rounded'
+                   width='100%'
+                   src={selectedImage ?? (images[0] ?? '')}
             />
-            <div>
+            <div className='overflow-x-scroll'>
                 <Segmented
                     options={images ? images?.map((image: string, index: number) => ({
                         label: (
