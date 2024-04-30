@@ -11,6 +11,7 @@ import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import axiosConfig from "../utils/axios-config";
 import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
 import {presetPrimaryColors} from "@ant-design/colors";
+import {SearchResult} from "./address-add";
 
 export interface ElementDistance {
     distance: {
@@ -34,7 +35,7 @@ export interface DistanceResponse {
     status: string;
 }
 
-const ProductCard = ({product}: { product: IProductCard }) => {
+const ProductCard = ({product, selectedAddressData}: { product: IProductCard, selectedAddressData: SearchResult | null }) => {
 
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
@@ -45,12 +46,13 @@ const ProductCard = ({product}: { product: IProductCard }) => {
     const [distance, setDistance] = useState<string>("");
 
     // const getDistanceMatrix = async (originLat: number, originLng: number, destLat: number, destLng: number) => {
-    //     const apiKey = 'dXWhFMOOlIYRZhbprENdNjcoAtYSFZOwWZiTSJEY0H1zoYNCDjk0ZfBlBOmyRYw0';
-    //     const apiUrl = `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${originLat},${originLng}&destinations=${destLat},${destLng}&key=${apiKey}`;
+    //     const apiKey: string = 'dXWhFMOOlIYRZhbprENdNjcoAtYSFZOwWZiTSJEY0H1zoYNCDjk0ZfBlBOmyRYw0';
+    //     const apiUrl: string = `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${originLat},${originLng}&destinations=${destLat},${destLng}&key=${apiKey}`;
     //
     //     axios
     //         .get<DistanceResponse>(apiUrl)
     //         .then((response: AxiosResponse<DistanceResponse>): void => {
+    //             console.log(response);
     //             const distance: string = response.data.rows[0].elements[0].distance.text;
     //             setDistance(distance);
     //         })
@@ -60,32 +62,36 @@ const ProductCard = ({product}: { product: IProductCard }) => {
     // };
     //
     // useEffect(() => {
-    //     if (currentUser && currentUser.accessToken) {
-    //         const originLat: number = shippingAddress.lat ?? 0;
-    //         const originLng: number = shippingAddress.lon ?? 0;
-    //         let destLat: number;
-    //         let destLng: number;
+    //     let originLat: number;
+    //     let originLng: number;
+    //     let destLat: number;
+    //     let destLng: number;
     //
-    //         const productId: string = product.id;
-    //
-    //         axiosConfig.get(`/products/${productId}`)
-    //             .then(function (res: AxiosResponse<ProductResponseDTO>): void {
-    //                 destLat = res.data.user?.address?.lat ?? 0;
-    //                 destLng = res.data.user?.address?.lon ?? 0;
-    //
-    //                 getDistanceMatrix(originLat, originLng, destLat, destLng);
-    //             })
-    //             .catch(function (res): void {
-    //                 notification.open({
-    //                     type: 'error',
-    //                     message: 'Product message',
-    //                     description: res.message
-    //                 });
-    //             });
-    //
-    //
+    //     if (selectedAddressData != null) {
+    //         originLat = selectedAddressData.lat;
+    //         originLng = selectedAddressData.lon;
+    //     } else if (currentUser && currentUser.accessToken && selectedAddressData == null) {
+    //         originLat = shippingAddress.lat ?? 0;
+    //         originLng = shippingAddress.lon ?? 0;
     //     }
-    // }, []);
+    //
+    //     const productId: string = product.id;
+    //
+    //     axiosConfig.get(`/products/${productId}`)
+    //         .then(function (res: AxiosResponse<ProductResponseDTO>): void {
+    //             destLat = res.data.user?.address?.lat ?? 0;
+    //             destLng = res.data.user?.address?.lon ?? 0;
+    //
+    //             getDistanceMatrix(originLat, originLng, destLat, destLng);
+    //         })
+    //         .catch(function (res): void {
+    //             notification.open({
+    //                 type: 'error',
+    //                 message: 'Product message',
+    //                 description: res.message
+    //             });
+    //         });
+    // }, [selectedAddressData, currentUser, shippingAddress]);
 
     return (
         <Link href={`/${product.id}`}>
@@ -99,7 +105,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                 <Space direction="vertical" size="small" style={{display: 'flex'}}>
                     <div className='flex items-center overflow-hidden'>
                         <Badge className='mr-1 overflow-hidden'
-                               count={currentUser.accessToken ? `Khoảng ${distance}` : "Khoảng cách không xác định"}
+                               count={(distance !== "") ? `Khoảng ${distance}` : "Khoảng cách không xác định"}
                                color='#F36F24'/>
                     </div>
                     <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>
