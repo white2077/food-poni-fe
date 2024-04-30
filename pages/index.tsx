@@ -72,7 +72,7 @@ const Home: NextPage = () => {
                 </div>
                 <div className='grid gap-4'>
                     <div className='overflow-hidden relative'>
-                        <div className='absolute left-4 bottom-4 z-10'>
+                        <div className='absolute w-full md:w-2/3 lg:w-1/2 bottom-1 p-4 z-10'>
                             <SearchPosition/>
                         </div>
                         <CarouselBanner/>
