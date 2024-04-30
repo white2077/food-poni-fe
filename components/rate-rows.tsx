@@ -5,68 +5,23 @@ import axiosConfig from "../utils/axios-config";
 import FileUploads from "./file-upload";
 import {CurrentUser} from "../stores/user.reducer";
 import {RootState} from "../stores";
-import {RateDTO} from "../models/order/OrderRequest";
 import {setLoadingOrderItem} from "../stores/order.reducer";
 import {setShowModalAddRate, setShowModalFileUpload} from "../stores/rate.reducer";
 import {setSelectedFile} from "../stores/fileUploads.reducer";
+import {IProductCard} from "./product-rows";
+import {RateResponseDTO} from "../models/rate/RateResponseAPI";
 
-const RateAdd = () => {
+const RateRows = ({orderId}: { orderId: string }) => {
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
-    const showModalAddRate: boolean = useSelector((state: RootState) => state.rate.showModalAddRate);
-    const orderItemId: string = useSelector((state: RootState) => state.rate.selecOrderItemRate);
-    const images = useSelector((state: RootState) => state.fileUpload.selectedFile);
+    const showModalRate: boolean = useSelector((state: RootState) => state.rate.showModalRate);
     const [rate, setRate] = useState<number>(0);
     const [message, setMessage] = useState<string>('');
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const dispatch = useDispatch();
 
-    const createRateDTO = (rate: number, message: string, images: string[]) => {
-        // Thêm các trường vào đối tượng RateDTO nếu chúng được cung cấp
-        const rateDTO: RateDTO = {};
-        if (rate !== 0) {
-            rateDTO.rate = rate;
-        } else {
-            notification.open({
-                type: "error",
-                message: "Rate message",
-                description: "Some information is missing. Please fill in all required fields."
-            });
-            return;
-        }
-        if (message !== "") {
-            rateDTO.message = message;
-        }
-        if (images.length > 0) {
-            rateDTO.images = images;
-        }
-        dispatch(setLoadingOrderItem(true));
-        axiosConfig.post(`/order-items/rate/${orderItemId}`, rateDTO, {
-            headers: {
-                Authorization: 'Bearer ' + currentUser.accessToken,
-            }
-        })
-            .then(()=> {
-                notification.open({
-                    type: 'success',
-                    message: 'Rate',
-                    description: 'Rate success!',
-                });
-            })
-            .catch((res)=> {
-                notification.open({
-                    type: 'error',
-                    message: 'Rate message',
-                    description: res.message
-                });
-            }).finally(()=>{
-                setTimeout(()=> {
-                    dispatch(setLoadingOrderItem(false));
-                },1000)
-                handleModalClose();
-            }
-        );
-        return rateDTO;
+    const getRates = () => {
+
     }
 
     // Handler for rate change
@@ -142,4 +97,4 @@ const RateAdd = () => {
     );
 };
 
-export default RateAdd;
+export default RateRow;
