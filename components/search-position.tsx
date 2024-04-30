@@ -51,7 +51,7 @@ const SearchPosition = () => {
     return(
         <Space.Compact className='w-full'>
             <AutoComplete
-                style={{ width: 400 }}
+                style={{ width: 200 }}
                 placeholder="input your location here..."
                 onSearch={onSearch}
                 options={dataSource.map((result: SearchResult) => ({
