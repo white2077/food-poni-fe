@@ -54,10 +54,11 @@ const SearchPosition = () => {
                 style={{ width: 200 }}
                 placeholder="input your location here..."
                 onSearch={onSearch}
-                options={dataSource.map((result: SearchResult) => ({
+                options={dataSource.map((result: SearchResult, index: number) => ({
                     value: result.display_name,
                     label: result.display_name,
-                    data: result
+                    data: result,
+                    key: index
                 }))}
                 onSelect={onSelect}
                 size='large'
