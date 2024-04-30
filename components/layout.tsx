@@ -7,7 +7,7 @@ export const DefaultLayout = ({children}: { children: React.ReactNode }) => {
 
     return (
         <>
-            <div className='bg-blue-700'>
+            <div className='bg-primary'>
                 <HeaderBar/>
             </div>
             <div className='bg-white'>
@@ -16,7 +16,7 @@ export const DefaultLayout = ({children}: { children: React.ReactNode }) => {
             <div className='bg-[#F5F5FA]'>
                 <div className='px-2 lg:w-[1440px] mx-auto py-4'>{children}</div>
             </div>
-            <div className='text-center text-white bg-[#4096ff]'>Footer</div>
+            <div className='text-center text-white bg-primary'>Footer</div>
         </>
     );
 
