@@ -6,8 +6,9 @@ import {RootState} from '../stores';
 import React from "react";
 import {CurrentUser} from "../stores/user.reducer";
 import Search from "antd/lib/input/Search";
-import SearchComponent from "./search";
-import CartComponent from "./cart";
+import SearchComponent from "./search-position";
+import Cart from "./cart";
+import SearchKeyword from "./search-keyword";
 
 const HeaderMain = () => {
 
@@ -65,10 +66,10 @@ const HeaderMain = () => {
     return (
         <div className='lg:w-[1440px] grid grid-cols-2 md:grid-cols-[1fr_2fr_1fr] px-2 mx-auto items-center py-2'>
             <a className='font-bold text-2xl h-[unset]' onClick={() => router.push('/')}>FoodPoni</a>
-            <SearchComponent/>
+            <SearchKeyword/>
 
             <div className='flex items-center justify-end gap-4'>
-                <CartComponent/>
+                <Cart/>
                 <Dropdown menu={{items}} placement='bottomRight'>
                     <a style={{verticalAlign: 'middle'}}>
                         {currentUser.avatar ? (

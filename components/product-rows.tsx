@@ -22,7 +22,7 @@ export interface IProductCard {
     maxPrice: number;
 }
 
-const ProductRows: NextPage = () => {
+const ProductRows = () => {
 
     const router: NextRouter = useRouter();
 

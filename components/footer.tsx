@@ -1,6 +1,6 @@
 import {Avatar, Button, Col, Dropdown, Flex, MenuProps, Row,} from 'antd';
-import CartComponent from './cart';
-import SearchComponent from './search';
+import Cart from './cart';
+import SearchComponent from './search-position';
 import {useSelector} from 'react-redux';
 import {LogoutOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
 import {NextRouter, useRouter} from 'next/router';

@@ -2,8 +2,9 @@ import Search from 'antd/lib/input/Search';
 import {NextRouter, useRouter} from 'next/router';
 import {Button, Input, Space} from 'antd';
 import React from 'react';
+import {NextPage} from "next";
 
-const SearchComponent = () => {
+const SearchKeyword = () => {
 
     const router: NextRouter = useRouter();
 
@@ -13,7 +14,7 @@ const SearchComponent = () => {
     };
 
     return (
-        <Space.Compact className='w-full'>
+        <Space.Compact className='w-full hidden md:flex'>
             <Input size='large' placeholder='input keyword here...'/>
             <Button size='large' type='primary' onClick={() => search('') }>Search</Button>
         </Space.Compact>
@@ -21,4 +22,4 @@ const SearchComponent = () => {
 
 };
 
-export default SearchComponent;
+export default SearchKeyword;

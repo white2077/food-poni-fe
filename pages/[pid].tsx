@@ -5,7 +5,7 @@ import React, {useEffect, useState} from "react";
 import {Button, Card, Col, Radio, Rate, Result, Row} from "antd";
 import ProductGallery from "../components/product-gallery";
 import ProductCart from "../components/product-cart";
-import ProductDescriptionComponent from "../components/product-description";
+import ProductDescription from "../components/product-description";
 import ProductRetailer from "../components/product-retailer";
 import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
 import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailResponseAPI";
@@ -146,10 +146,10 @@ const ProductDetails: NextPage = () => {
                                     <div>Giao đến Q. Hoàn Kiếm, P. Hàng Trống, Hà Nội</div>
                                 </Card>
                                 <ProductRetailer retailer={product.retailer}></ProductRetailer>
-                                <ProductDescriptionComponent
+                                <ProductDescription
                                     description={description!}
                                     shortDescription={product.shortDescription}
-                                ></ProductDescriptionComponent>
+                                ></ProductDescription>
                             </div>
 
                             <ProductCart

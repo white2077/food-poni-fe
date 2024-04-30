@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import {Avatar, Card, Image, Segmented} from 'antd';
+import {NextPage} from "next";
 
 const ProductGallery = ({images}: { images: string[] | null | undefined }) => {
 

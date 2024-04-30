@@ -17,6 +17,7 @@ import {setDeliveryInformationList} from "../stores/delivery.reducer";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {CurrentUser} from "../stores/user.reducer";
 import {SearchResult} from "../components/address-add";
+import SearchPosition from "../components/search-position";
 
 const Home: NextPage = () => {
 
@@ -69,10 +70,15 @@ const Home: NextPage = () => {
         <DefaultLayout>
             <div className='flex gap-4'>
                 <div className='hidden md:block'>
-                    <ProductCategory></ProductCategory>
+                    <ProductCategory/>
                 </div>
                 <div className='grid gap-4'>
-                    <CarouselBanner/>
+                    <div className='overflow-hidden relative'>
+                        <div className='absolute left-4 bottom-4 z-10'>
+                            <SearchPosition/>
+                        </div>
+                        <CarouselBanner/>
+                    </div>
                     <MenuMain/>
                     <ProductRows/>
                 </div>

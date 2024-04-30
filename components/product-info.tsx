@@ -1,5 +1,6 @@
 import {Card} from "antd";
 import React from "react";
+import {NextPage} from "next";
 
 const ProductInfo = ({description}: {description: string}) => {
 
