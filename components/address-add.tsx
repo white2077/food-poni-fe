@@ -9,7 +9,7 @@ import {AddressRequestDTO} from "../models/address/AddressRequest";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {CurrentUser} from "../stores/user.reducer";
 
-interface SearchResult {
+export interface SearchResult {
     display_name: string;
     lon: number;
     lat: number;
@@ -125,7 +125,7 @@ const AddressAdd = () => {
                 name="yourAddress"
                 rules={[{required: true, message: 'Please choose your address!'}]}>
                 <AutoComplete
-                    options={dataSource.map((result) => ({
+                    options={dataSource.map((result: SearchResult) => ({
                         value: result.display_name,
                         label: result.display_name,
                         data: result

@@ -5,13 +5,14 @@ import axiosConfig from "../utils/axios-config";
 import {Page} from "../models/Page";
 import {AxiosResponse} from "axios";
 import {CategoryResponseDTO} from "../models/category/CategoryResponseAPI";
+import {NextPage} from "next";
 
 export interface ICategory {
     key: string;
     label: ReactElement;
 }
 
-const ProductCategory: React.FC = () => {
+const ProductCategory = () => {
 
     let items: ICategory[] = [{key: "all", label: <span style={{fontWeight: "bold"}}>All</span>}];
 

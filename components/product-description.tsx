@@ -1,7 +1,8 @@
 import {Card} from "antd";
 import React from "react";
+import {NextPage} from "next";
 
-const ProductDescriptionComponent = ({shortDescription, description}: {shortDescription: string, description: string}) => {
+const ProductDescription = ({shortDescription, description}: {shortDescription: string, description: string}) => {
 
     return (
         <>
@@ -20,4 +21,4 @@ const ProductDescriptionComponent = ({shortDescription, description}: {shortDesc
 
 };
 
-export default ProductDescriptionComponent;
+export default ProductDescription;

@@ -6,7 +6,7 @@ import {deleteItem, ICartItem, setQuantity} from "../stores/cart.reducer";
 import {RootState} from "../stores";
 
 
-const CartComponent = () => {
+const Cart = () => {
 
     const dispatch = useDispatch();
 
@@ -74,4 +74,4 @@ const CartComponent = () => {
 
 };
 
-export default CartComponent;
+export default Cart;

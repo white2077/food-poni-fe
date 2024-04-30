@@ -1,4 +1,4 @@
-import {Button, Card, Divider, List, Modal, notification, Upload} from 'antd';
+import {Button, Card, Divider, List, message, Modal, notification, Upload} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import axiosConfig from "../utils/axios-config";
@@ -31,11 +31,12 @@ const FileUploads = () => {
 
     const showModalFileUpload = useSelector((state: RootState) => state.rate.showModalFileUpload);
 
-    // const [selectedFiles, setSelectedFiles] = useState<FileUploadsResponseDTO[]>([]);
 
     const [hoveredFile, setHoveredFile] = useState<string | null>(null);
 
     const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+
+    const [messageApi, contextHolder] = message.useMessage();
 
     useEffect((): void => {
         getFileUploads();
@@ -106,8 +107,15 @@ const FileUploads = () => {
     };
 
     const handleSetFileUpload = () => {
-        dispatch(setSelectedFile(selectedFiles));
-        dispatch(setShowModalFileUpload(false));
+        if(selectedFiles.length > 0) {
+            dispatch(setSelectedFile(selectedFiles));
+            dispatch(setShowModalFileUpload(false));
+        }else {
+            messageApi.open({
+                type: 'warning',
+                content: 'You have not selected any images.',
+            });
+        }
     }
 
     return (
@@ -149,6 +157,7 @@ const FileUploads = () => {
             />
             <Divider/>
             <div style={{marginTop: 20, textAlign: "right"}}>
+                {contextHolder}
                 <Upload {...props}>
                     <Button icon={<UploadOutlined/>}>Upload</Button>
                 </Upload>

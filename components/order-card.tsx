@@ -71,9 +71,9 @@ const OrderCard = ({order}: { order: OrderResponseDTO }) => {
                     }}>
                         <div style={{gap: "10px", display: "flex"}}>
                             <Link href={`/order/${order.id}`}>
-                                <Button type={"dashed"} danger>Chi tiết</Button>
+                                <Button style={{backgroundColor: '#F36F24', color: 'white'}}>Chi tiết</Button>
                             </Link>
-                            <Button type={"primary"} danger>Đặt lại</Button>
+                            <Button style={{backgroundColor: '#F36F24', color: 'white'}}>Đặt lại</Button>
                         </div>
                     </div>
                     <div style={{display: "flex", justifyContent: "left", marginTop: "12px", gap: "10px"}}>
@@ -116,7 +116,6 @@ const OrderCard = ({order}: { order: OrderResponseDTO }) => {
 //         </Badge.Ribbon>
 // >>>>>>> e43ab1cc9f8b3978e6cd6f8dcba8a782eb0cad84
     );
-
 };
 
 export default OrderCard;

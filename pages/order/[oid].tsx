@@ -118,7 +118,13 @@ const OrderDetails: NextPage = () => {
                     }
                 />
             ) : isLoading ? (
-                <Spin style={{width: '100%',height: '100vh', display: 'flex',alignItems: 'center', justifyContent: 'center'}} size="large"/>
+                <Spin style={{
+                    width: '100%',
+                    height: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }} size="large"/>
             ) : (
                 <>
                     {order && (
@@ -202,10 +208,9 @@ const OrderDetails: NextPage = () => {
                                     </div>
                                     <Divider/>
                                     <div style={{gap: "10px", display: "flex"}}>
-                                        <Button type={"dashed"} danger onClick={() => dispatch(setShowModalRate(true))}>Xem
-                                            đánh
-                                            giá</Button>
-                                        <Button type={"primary"} danger>Đặt lại</Button>
+                                        <Button style={{color: '#F36F24'}}
+                                                onClick={() => dispatch(setShowModalRate(true))}>Xem đánh giá</Button>
+                                        <Button style={{backgroundColor: '#F36F24', color: 'white'}}>Đặt lại</Button>
                                     </div>
                                 </Card>
                             </Col>
