@@ -7,6 +7,7 @@ import React from "react";
 import {CurrentUser} from "../stores/user.reducer";
 import Search from "antd/lib/input/Search";
 import SearchComponent from "./search";
+import CartComponent from "./cart";
 
 const HeaderMain = () => {
 
@@ -67,14 +68,7 @@ const HeaderMain = () => {
             <SearchComponent/>
 
             <div className='flex items-center justify-end gap-4'>
-                {/*<CartComponent/>*/}
-                {/*<Search className='hidden md:block' placeholder="input search text"*/}
-                {/*        enterButton="Search"*/}
-                {/*        size="large"*/}
-                {/*/>*/}
-                {/*<a onClick={showDrawer}>*/}
-                {/*    <Avatar shape="square" icon={<ShoppingCartOutlined/>} size='large'/>*/}
-                {/*</a>*/}
+                <CartComponent/>
                 <Dropdown menu={{items}} placement='bottomRight'>
                     <a style={{verticalAlign: 'middle'}}>
                         {currentUser.avatar ? (
