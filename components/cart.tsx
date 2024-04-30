@@ -34,7 +34,6 @@ const Cart = () => {
                     <Avatar shape="square" icon={<ShoppingCartOutlined/>} size='large'/>
                 </Badge>
             </a>
-            {/*<ShoppingCartOutlined style={{fontSize: '32px', color: 'black'}}/>*/}
             <Drawer title="Cart Items" onClose={onClose} open={open}>
                 <List
                     className="demo-loadmore-list"

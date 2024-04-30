@@ -67,14 +67,10 @@ const Home: NextPage = () => {
     return (
         <DefaultLayout>
             <div className='flex gap-4'>
-                <div className='hidden md:block'>
-                    <ProductCategory/>
-                </div>
+                <ProductCategory/>
                 <div className='grid gap-4'>
                     <div className='overflow-hidden relative'>
-                        <div className='absolute w-full md:w-2/3 lg:w-1/2 bottom-1 p-4 z-10'>
-                            <SearchPosition/>
-                        </div>
+                        <SearchPosition/>
                         <CarouselBanner/>
                     </div>
                     <MenuMain/>

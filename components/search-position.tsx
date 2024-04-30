@@ -48,23 +48,25 @@ const SearchPosition = () => {
         dispatch(setSelectedAddress(option.data));
     };
 
-    return(
-        <Space.Compact className='w-full'>
-            <AutoComplete
-                className='w-full'
-                placeholder="input your location here..."
-                onSearch={onSearch}
-                options={dataSource.map((result: SearchResult, index: number) => ({
-                    value: result.display_name,
-                    label: result.display_name,
-                    data: result,
-                    key: index
-                }))}
-                onSelect={onSelect}
-                size='large'
-            />
-            <Button size='large' icon={<AimOutlined/>}/>
-        </Space.Compact>
+    return (
+        <div className='absolute w-full md:w-2/3 lg:w-1/2 bottom-1 p-4 z-10'>
+            <Space.Compact className='w-full'>
+                <AutoComplete
+                    className='w-full'
+                    placeholder="input your location here..."
+                    onSearch={onSearch}
+                    options={dataSource.map((result: SearchResult, index: number) => ({
+                        value: result.display_name,
+                        label: result.display_name,
+                        data: result,
+                        key: index
+                    }))}
+                    onSelect={onSelect}
+                    size='large'
+                />
+                <Button size='large' icon={<AimOutlined/>}/>
+            </Space.Compact>
+        </div>
     );
 }
 
