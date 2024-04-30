@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import {Avatar, Card, Image, Segmented} from 'antd';
-import {NextPage} from "next";
 
 const ProductGallery = ({images}: { images: string[] }) => {
 
@@ -14,15 +13,8 @@ const ProductGallery = ({images}: { images: string[] }) => {
             />
             <div className='overflow-x-scroll'>
                 <Segmented
-                    options={images.map((image: string, index: number) => ({
-                        label: (
-                            <div className='p-2'>
-                                <Avatar
-                                    size={75}
-                                    src={image}
-                                />
-                            </div>
-                        ),
+                    options={images.map((image: string) => ({
+                        label: <Avatar size={75} src={image}/>,
                         value: image
                     }))}
                     onChange={(image: string) => setSelectedImage(image)}
