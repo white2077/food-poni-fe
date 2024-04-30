@@ -1,13 +1,12 @@
 import type {NextPage} from 'next'
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {DefaultLayout} from "../components/layout";
 import ProductRows from "../components/product-rows";
 import CarouselBanner from "../components/carousel-banner";
 import MenuMain from "../components/menu-main";
-import {AutoComplete, Input, Modal} from "antd";
 import ProductCategory from "../components/product-category";
 import axiosConfig from "../utils/axios-config";
-import axios, {AxiosResponse} from "axios";
+import {AxiosResponse} from "axios";
 import {setCurrentShippingAddress} from "../stores/address.reducer";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch, useSelector} from "react-redux";
@@ -16,7 +15,6 @@ import {Page} from "../models/Page";
 import {setDeliveryInformationList} from "../stores/delivery.reducer";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {CurrentUser} from "../stores/user.reducer";
-import {SearchResult} from "../components/address-add";
 import SearchPosition from "../components/search-position";
 
 const Home: NextPage = () => {
