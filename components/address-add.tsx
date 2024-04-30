@@ -8,12 +8,7 @@ import {addDeliveryInformationList} from "../stores/delivery.reducer";
 import {AddressRequestDTO} from "../models/address/AddressRequest";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {CurrentUser} from "../stores/user.reducer";
-
-export interface SearchResult {
-    display_name: string;
-    lon: number;
-    lat: number;
-}
+import {SearchResult} from "../stores/search-position.reducer";
 
 const AddressAdd = () => {
 

@@ -36,7 +36,7 @@ const ProductCart = ({id, price, thumbnail, name}: { id: string, price: number, 
     };
 
     return (
-        <Card size='small' style={{color: 'black', textAlign: 'left'}}>
+        <Card className='text-left text-black h-fit' size='small'>
             <div>{name}</div>
             <div>Số lượng</div>
             <InputNumber
