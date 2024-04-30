@@ -16,7 +16,6 @@ import {Page} from "../models/Page";
 import {setDeliveryInformationList} from "../stores/delivery.reducer";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {CurrentUser} from "../stores/user.reducer";
-import {SearchResult} from "../components/address-add";
 import SearchPosition from "../components/search-position";
 
 const Home: NextPage = () => {
