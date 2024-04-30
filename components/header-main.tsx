@@ -42,10 +42,7 @@ const HeaderMain = () => {
         {
             key: '3',
             label: (
-                <span id='logout' onClick={() => {
-                    // localStorage.removeItem('modalShown');
-                    handleItemClick('/login');
-                }}>
+                <span id='logout' onClick={() => handleItemClick('/login')}>
                     <span style={{marginRight: '5px'}}>
                         <LogoutOutlined/>
                     </span>

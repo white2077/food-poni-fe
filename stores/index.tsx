@@ -4,13 +4,15 @@ import productReducer from "./product.reducer";
 import addressReducer from "./address.reducer";
 import deliveryReducer from "./delivery.reducer";
 import userReducer from "./user.reducer";
+import searchPositionReducer from "./search-position.reducer";
 
 const rootReducer = combineReducers({
     user: userReducer,
     cart: cartReducer,
     productList: productReducer,
     address: addressReducer,
-    delivery: deliveryReducer
+    delivery: deliveryReducer,
+    searchPosition: searchPositionReducer
 });
 
 const store = configureStore({
