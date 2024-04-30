@@ -6,10 +6,6 @@ const ProductGallery = ({images}: { images: string[] }) => {
 
     const [selectedImage, setSelectedImage] = useState<string>();
 
-    const handleImageClick = (image: string): void => {
-        setSelectedImage(image);
-    };
-
     return (
         <Card className='h-fit grid gap-4' size='small'>
             <Image className='aspect-square object-cover rounded'
@@ -18,18 +14,18 @@ const ProductGallery = ({images}: { images: string[] }) => {
             />
             <div className='overflow-x-scroll'>
                 <Segmented
-                    options={images ? images?.map((image: string, index: number) => ({
+                    options={images.map((image: string, index: number) => ({
                         label: (
-                            <div style={{padding: 4}}>
+                            <div className='p-2'>
                                 <Avatar
                                     size={75}
                                     src={image}
-                                    onClick={() => handleImageClick(image)}
                                 />
                             </div>
                         ),
-                        value: `image${index}`,
-                    })) : []}
+                        value: image
+                    }))}
+                    onChange={(image: string) => setSelectedImage(image)}
                 />
             </div>
         </Card>
