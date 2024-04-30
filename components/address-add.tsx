@@ -120,10 +120,11 @@ const AddressAdd = () => {
                 name="yourAddress"
                 rules={[{required: true, message: 'Please choose your address!'}]}>
                 <AutoComplete
-                    options={dataSource.map((result: SearchResult) => ({
+                    options={dataSource.map((result: SearchResult, index: number) => ({
                         value: result.display_name,
                         label: result.display_name,
-                        data: result
+                        data: result,
+                        key: index
                     }))}
                     onSelect={onSelect}
                     onSearch={onSearch}
