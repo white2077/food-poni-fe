@@ -1,16 +1,12 @@
-import {Avatar, Button, Col, Dropdown, Flex, MenuProps, Row,} from 'antd';
-import CartComponent from './cart';
+import {Avatar, Button, Dropdown, Input, MenuProps, Space,} from 'antd';
 import {useSelector} from 'react-redux';
 import {LogoutOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
 import {NextRouter, useRouter} from 'next/router';
 import {RootState} from '../stores';
 import React from "react";
 import {CurrentUser} from "../stores/user.reducer";
-import dynamic from "next/dynamic";
-
-const SearchComponent = dynamic(() => import('./search'), {
-    ssr: false, loading: () => <p>Loading...</p>,
-});
+import Search from "antd/lib/input/Search";
+import SearchComponent from "./search";
 
 const HeaderMain = () => {
 
@@ -66,8 +62,13 @@ const HeaderMain = () => {
         <div className='lg:w-[1440px] grid grid-cols-2 md:grid-cols-[1fr_2fr_1fr] px-2 mx-auto items-center py-2'>
             <a className='font-bold text-2xl h-[unset]' onClick={() => router.push('/')}>FoodPoni</a>
             <SearchComponent/>
+
             <div className='flex items-center justify-end gap-4'>
-                <CartComponent/>
+                {/*<CartComponent/>*/}
+                {/*<Search className='hidden md:block' placeholder="input search text"*/}
+                {/*        enterButton="Search"*/}
+                {/*        size="large"*/}
+                {/*/>*/}
                 {/*<a onClick={showDrawer}>*/}
                 {/*    <Avatar shape="square" icon={<ShoppingCartOutlined/>} size='large'/>*/}
                 {/*</a>*/}
