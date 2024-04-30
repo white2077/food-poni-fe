@@ -11,6 +11,8 @@ const SearchPosition = () => {
 
     const [dataSource, setDataSource] = useState<SearchResult[]>([]);
 
+    const [pending, setPending] = useState<boolean>(false);
+
     let timeout: NodeJS.Timeout | null = null;
 
     const delayedSearch = (value: string): void => {
@@ -19,6 +21,8 @@ const SearchPosition = () => {
         }
 
         timeout = setTimeout((): void => {
+            setPending(true);
+
             axios
                 .get<SearchResult[]>(`https://nominatim.openstreetmap.org/search?q=${value}&format=json&addressdetails=1`)
                 .then((response: AxiosResponse<SearchResult[]>): void => {
@@ -33,9 +37,11 @@ const SearchPosition = () => {
                     }));
 
                     setDataSource(results);
+                    setPending(false);
                 })
                 .catch((error): void => {
                     console.error(error);
+                    setPending(false);
                 });
         }, 500);
     };
@@ -64,7 +70,7 @@ const SearchPosition = () => {
                     onSelect={onSelect}
                     size='large'
                 />
-                <Button size='large' icon={<AimOutlined/>}/>
+                <Button size='large' icon={<AimOutlined/>} loading={pending} />
             </Space.Compact>
         </div>
     );

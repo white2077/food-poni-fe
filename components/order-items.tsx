@@ -6,7 +6,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {deleteItem, ICartItem, setNote, setQuantity} from "../stores/cart.reducer";
 import {RootState} from "../stores";
 
-const OrderCartItems = () => {
+const OrderItems = () => {
 
     const dispatch = useDispatch();
 
@@ -81,4 +81,4 @@ const OrderCartItems = () => {
 
 };
 
-export default OrderCartItems;
+export default OrderItems;
