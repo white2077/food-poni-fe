@@ -2,9 +2,9 @@ import {Card} from "antd";
 import React from "react";
 import {IRetailer} from "../pages/[pid]";
 
-const ProductRetailer = ({retailer}: {retailer: IRetailer}) => {
+const ProductRetailer = ({retailer}: { retailer: IRetailer }) => {
 
-    return(
+    return (
         <Card>
             <div>Product retailer</div>
         </Card>

@@ -1,9 +1,9 @@
 import {Card} from "antd";
 import React from "react";
 
-const ProductInfo = ({description}: {description: string}) => {
+const ProductInfo = ({description}: { description: string }) => {
 
-    return(
+    return (
         <Card>
             <div>Mô tả sản phẩm</div>
             <div style={{color: 'black'}}

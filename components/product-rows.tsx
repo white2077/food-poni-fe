@@ -1,4 +1,4 @@
-import {Col, List, Row, Skeleton} from 'antd';
+import {Skeleton} from 'antd';
 import type {NextPage} from 'next'
 import React, {useEffect} from 'react';
 import ProductCard from "./product-card";

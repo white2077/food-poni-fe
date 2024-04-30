@@ -7,4 +7,8 @@ export interface RateResponseDTO {
 
     images?: string[];
 
+    name?: string;
+
+    thumbnail?: string;
+
 }

@@ -31,8 +31,8 @@ export interface PaymentInfo {
 
 export interface RateDTO {
     rate?: number,
-    message?: String,
-    images?: String[],
+    message?: string,
+    images?: string[],
 }
 
 export const shippingAddress: ShippingAddress = {};

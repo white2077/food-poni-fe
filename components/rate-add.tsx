@@ -46,24 +46,24 @@ const RateAdd = () => {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }
         })
-            .then(()=> {
+            .then(() => {
                 notification.open({
                     type: 'success',
                     message: 'Rate',
                     description: 'Rate success!',
                 });
+                handleModalClose();
             })
-            .catch((res)=> {
+            .catch((res) => {
                 notification.open({
                     type: 'error',
                     message: 'Rate message',
                     description: res.message
                 });
-            }).finally(()=>{
-                setTimeout(()=> {
+            }).finally(() => {
+                setTimeout(() => {
                     dispatch(setLoadingOrderItem(false));
-                },1000)
-                handleModalClose();
+                }, 1000)
             }
         );
         return rateDTO;

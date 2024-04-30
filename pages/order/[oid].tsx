@@ -12,10 +12,11 @@ import {UserResponseDTO} from "../../models/user/UserResponseAPI";
 import {PaymentInfo, RateDTO, ShippingAddress} from "../../models/order/OrderRequest";
 import {CurrentUser} from "../../stores/user.reducer";
 import {RootState} from "../../stores";
-import {setSelectedOrderItemRate, setShowModalAddRate} from "../../stores/rate.reducer";
+import {setSelectedOrderItemRate, setShowModalAddRate, setShowModalRate} from "../../stores/rate.reducer";
 import {setLoadingOrderItem} from "../../stores/order.reducer";
 import {OrderItemResponseDTO} from "../../models/order_item/OrderItemResponseAPI";
 import {OrderResponseDTO} from "../../models/order/OrderResposeAPI";
+import RateRows from "../../components/rate-rows";
 
 const {Text} = Typography;
 
@@ -44,7 +45,7 @@ const OrderDetails: NextPage = () => {
 
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
 
-    const isLoading: boolean = useSelector((state: RootState) => state.order.isLoadingOrderItem) ;
+    const isLoading: boolean = useSelector((state: RootState) => state.order.isLoadingOrderItem);
 
     const {oid} = router.query;
 
@@ -117,11 +118,11 @@ const OrderDetails: NextPage = () => {
                     }
                 />
             ) : isLoading ? (
-                <Spin size="large"/>
+                <Spin style={{width: '100%',height: '100vh', display: 'flex',alignItems: 'center', justifyContent: 'center'}} size="large"/>
             ) : (
                 <>
                     {order && (
-                        <Row justify="center" style={{width: '1400px'}}>
+                        <Row justify="center" style={{width: '1400px', userSelect: 'none'}}>
                             <Col span={20}>
                                 <Card title={`Order #${order.id}`} style={{marginTop: '20px'}}>
                                     <div style={{display: 'flex', justifyContent: 'space-between'}}>
@@ -161,8 +162,9 @@ const OrderDetails: NextPage = () => {
                                                           }
                                                       }}>
                                                     {Object.keys(item.rate).length !== 0 && (
-                                                        <div style={{ position: 'absolute', top: 5, right: 5}}>
-                                                            <Text type="secondary" style={{color: 'red'}}>Đã đánh giá</Text>
+                                                        <div style={{position: 'absolute', top: 5, right: 5}}>
+                                                            <Text type="secondary" style={{color: 'red'}}>Đã đánh
+                                                                giá</Text>
                                                         </div>
                                                     )}
                                                     <Row gutter={[16, 16]}>
@@ -200,13 +202,15 @@ const OrderDetails: NextPage = () => {
                                     </div>
                                     <Divider/>
                                     <div style={{gap: "10px", display: "flex"}}>
-                                        <Button type={"dashed"} danger>Xem đánh
+                                        <Button type={"dashed"} danger onClick={() => dispatch(setShowModalRate(true))}>Xem
+                                            đánh
                                             giá</Button>
                                         <Button type={"primary"} danger>Đặt lại</Button>
                                     </div>
                                 </Card>
                             </Col>
                             <RateAdd/>
+                            <RateRows orderId={order.id}/>
                         </Row>
                     )}
                 </>

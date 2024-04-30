@@ -70,7 +70,7 @@ const FileUploads = () => {
         });
     };
 
-    const uploadFile = async (options : any) => {
+    const uploadFile = async (options: any) => {
         const {file} = options;
         const formData = new FormData();
         formData.append('multipartFile', file);
