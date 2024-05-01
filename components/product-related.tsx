@@ -17,10 +17,9 @@ export interface IProductCard {
     thumbnail: string;
     minPrice: number;
     maxPrice: number;
-    rate: number;
 }
 
-const ProductRows = () => {
+const ProductRelated = () => {
 
     const dispatch = useDispatch();
 
@@ -33,6 +32,7 @@ const ProductRows = () => {
     }, []);
 
     const getProducts = (): void => {
+
         axiosConfig.get("/products?status=true")
             .then((res: AxiosResponse<Page<ProductResponseDTO[]>>): void => {
                 const productList: IProductCard[] = [];
@@ -54,8 +54,7 @@ const ProductRows = () => {
                         name: product.name ?? "",
                         thumbnail: product.thumbnail ?? "",
                         minPrice: minPrice,
-                        maxPrice: maxPrice,
-                        rate: product.rate ?? 0,
+                        maxPrice: maxPrice
                         // minPrice: Math.min(...product.productDetails.map((productDetail: ProductDetailResponseDTO) => productDetail.price)),
                         // maxPrice: Math.max(...product.productDetails.map((productDetail: ProductDetailResponseDTO) => productDetail.price)),
                     };
@@ -83,4 +82,4 @@ const ProductRows = () => {
 
 };
 
-export default ProductRows;
+export default ProductRelated;

@@ -42,10 +42,7 @@ const HeaderMain = () => {
         {
             key: '3',
             label: (
-                <span id='logout' onClick={() => {
-                    // localStorage.removeItem('modalShown');
-                    handleItemClick('/login');
-                }}>
+                <span id='logout' onClick={() => handleItemClick('/login')}>
                     <span style={{marginRight: '5px'}}>
                         <LogoutOutlined/>
                     </span>
@@ -56,7 +53,7 @@ const HeaderMain = () => {
     ];
 
     const handleItemClick = (path: string): void => {
-        if (currentUser && currentUser.accessToken) {
+        if (currentUser.accessToken) {
             router.push(path);
         } else {
             router.push('/login');
@@ -64,21 +61,26 @@ const HeaderMain = () => {
     };
 
     return (
-        <div className='lg:w-[1440px] grid grid-cols-2 md:grid-cols-[1fr_2fr_1fr] px-2 mx-auto items-center py-2'>
+        <div className='lg:w-[1440px] grid grid-cols-2 md:grid-cols-[1fr_2fr_1fr] px-2 mx-auto items-center py-2 gap-4'>
             <a className='font-bold text-2xl h-[unset]' onClick={() => router.push('/')}>FoodPoni</a>
             <SearchKeyword/>
-
             <div className='flex items-center justify-end gap-4'>
-                <Cart/>
-                <Dropdown menu={{items}} placement='bottomRight'>
-                    <a style={{verticalAlign: 'middle'}}>
-                        {currentUser.avatar ? (
-                            <Avatar src={currentUser.avatar} size='large'/>
-                        ) : (
-                            <Avatar icon={<UserOutlined/>} size='large'/>
-                        )}
-                    </a>
-                </Dropdown>
+                {currentUser.id ? (
+                        <>
+                            <Cart/>
+                            <Dropdown menu={{items}} placement='bottomRight'>
+                                <a>
+                                    {currentUser.avatar
+                                        ? <Avatar src={currentUser.avatar} size='large'/>
+                                        : <Avatar icon={<UserOutlined/>} size='large'/>}
+                                </a>
+                            </Dropdown>
+                        </>
+                    )
+                    : <Button type='primary' onClick={() => router.push('/login')} icon={<UserOutlined/>}
+                              size='large'>Sign In
+                    </Button>
+                }
             </div>
         </div>
     );

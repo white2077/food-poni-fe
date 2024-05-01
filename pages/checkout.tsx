@@ -20,7 +20,7 @@ import TextArea from "antd/es/input/TextArea";
 import React, {useState} from "react";
 import axiosConfig from "../utils/axios-config";
 import {NextRouter, useRouter} from "next/router";
-import OrderCartItems from "../components/order-cartItems";
+import OrderItems from "../components/order-items";
 import AddressAdd from "../components/address-add";
 import {RootState} from "../stores";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
@@ -123,7 +123,7 @@ const Checkout = () => {
                 <h1>GIỎ HÀNG</h1>
                 <Row gutter={16}>
                     <Col flex='auto'>
-                        <OrderCartItems></OrderCartItems>
+                        <OrderItems></OrderItems>
                     </Col>
                     <Col flex='400px'>
                         <Card style={{marginBottom: "16px"}}>

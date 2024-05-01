@@ -56,7 +56,8 @@ const ProductCategory = () => {
     };
 
     return (
-        <>
+        <div className='hidden md:block'>
+
             <Skeleton loading={isLoading} active></Skeleton>
             <Menu
                 onClick={onClick}
@@ -65,7 +66,7 @@ const ProductCategory = () => {
                 mode='inline'
                 items={categories}
             />
-        </>
+        </div>
     );
 };
 
