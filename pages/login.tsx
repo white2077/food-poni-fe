@@ -78,7 +78,7 @@ const Login: NextPage = () => {
     };
 
     return (
-        <DefaultLayout>
+        <div className='bg-[url("/login-bg.png")] bg-cover bg-center bg-no-repeat h-screen'>
             <Card style={{width: "500px", margin: "auto"}}>
                 <Space direction="vertical" size="middle" style={{display: 'flex'}}>
                     <div>
@@ -133,11 +133,12 @@ const Login: NextPage = () => {
                                 <GoogleOutlined/>
                             </Space>
                         </div>
-                        <a style={{float: 'right'}} onClick={() => router.push('/signup')}>Register now</a>
+                        <a className='float-right' onClick={() => router.push('/signup')}>Register now</a>
                     </div>
                 </Space>
             </Card>
-        </DefaultLayout>
+        </div>
+
     );
 
 };
