@@ -2,7 +2,7 @@ import type {NextPage} from 'next'
 import {NextRouter, useRouter} from "next/router";
 import {DefaultLayout} from "../components/layout";
 import React, {useEffect, useState} from "react";
-import {Button, Card, Radio, Rate, Result} from "antd";
+import {Button, Card, notification, Radio, Rate, Result} from "antd";
 import ProductGallery from "../components/product-gallery";
 import ProductCart from "../components/product-cart";
 import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
@@ -10,6 +10,7 @@ import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailRe
 import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import ProductComment from "../components/product-comment";
+import {RateResponseDTO} from "../models/rate/RateResponseAPI";
 
 export interface IProduct {
     id: string;
@@ -25,6 +26,7 @@ export interface IProductDetail {
     price: number,
     description: string;
     images: string[];
+    rate: number;
 }
 
 export interface IRetailer {
@@ -32,6 +34,7 @@ export interface IRetailer {
     firstName: string;
     lastName: string;
     phoneNumber: string;
+    username: string;
 }
 
 const ProductDetails: NextPage = () => {
@@ -44,8 +47,11 @@ const ProductDetails: NextPage = () => {
 
     const [isError, setIsError] = useState<boolean>(false);
 
+    const [rates, setRates] = useState<RateResponseDTO[]>([]);
+
     useEffect((): void => {
         getProductDetailById();
+        getRates();
     }, [router.isReady]);
 
     const getProductDetailById = (): void => {
@@ -53,7 +59,7 @@ const ProductDetails: NextPage = () => {
             axiosConfig.get(`/products/${pid}`)
                 .then(function (res: AxiosResponse<ProductResponseDTO>): void {
                     const product: ProductResponseDTO = res.data;
-
+                    console.log(res.data)
                     const productMapped: IProduct = {
                         id: product.id ?? "",
                         name: product.name ?? "",
@@ -63,11 +69,13 @@ const ProductDetails: NextPage = () => {
                             firstName: product.user.firstName ?? "",
                             lastName: product.user.lastName ?? "",
                             phoneNumber: product.user.phoneNumber ?? "",
+                            username: product.user.username ?? "",
                         } : {
                             avatar: "",
                             firstName: "",
                             lastName: "",
                             phoneNumber: "",
+                            username: "",
                         },
                         productDetails: product.productDetails && product.productDetails.map((productDetail: ProductDetailResponseDTO): IProductDetail => {
                             return {
@@ -75,11 +83,11 @@ const ProductDetails: NextPage = () => {
                                 name: productDetail.name ?? "",
                                 price: productDetail.price ?? 0,
                                 description: productDetail.description ?? "",
-                                images: productDetail.images ?? []
+                                images: productDetail.images ?? [],
+                                rate: productDetail.rate ?? 0,
                             }
                         }) || []
                     };
-
                     setProduct(productMapped);
                     setProductDetailSelected(productMapped.productDetails[0]);
                 })
@@ -89,9 +97,25 @@ const ProductDetails: NextPage = () => {
         }
     };
 
+    const getRates = () => {
+        axiosConfig.get(`/products/rate/${pid}`)
+            .then(function (res: AxiosResponse<RateResponseDTO[]>) {
+                console.log(res.data);
+                setRates(res.data);
+            })
+            .catch(function (res) {
+                notification.open({
+                    type: 'error',
+                    message: 'Order message',
+                    description: res.message
+                });
+            })
+    }
+
     const [productDetailSelected, setProductDetailSelected] = useState<IProductDetail>();
 
     const changeProductDetailSelected = (productDetail: IProductDetail): void => {
+        console.log(productDetail.rate)
         setProductDetailSelected(productDetail);
     }
 
@@ -148,7 +172,6 @@ const ProductDetails: NextPage = () => {
                                         <div style={{color: 'black'}}
                                              dangerouslySetInnerHTML={{__html: description || ''}}></div>
                                     </Card>
-
                                 </div>
 
                                 <ProductCart
@@ -158,7 +181,7 @@ const ProductDetails: NextPage = () => {
                                     name={product.name + ' - ' + productDetailName}
                                 />
                             </div>
-                            <ProductComment/>
+                            <ProductComment data={rates}/>
                         </div>
                     )}
                 </>

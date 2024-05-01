@@ -22,4 +22,6 @@ export interface ProductResponseDTO {
 
     categories?: CategoryResponseDTO[];
 
+    rate?: number;
+
 }

@@ -27,5 +27,19 @@ export interface PaymentInfo {
     method?: string;
 
     status?: string;
-
 }
+
+export interface RateDTO {
+    rate?: number,
+    message?: string,
+    images?: string[],
+}
+
+export const shippingAddress: ShippingAddress = {};
+
+export const paymentInfo: PaymentInfo = {};
+
+export const orderRequestDTO: OrderRequestDTO = {};
+
+// export const rateDTO: RateDTO = {};
+

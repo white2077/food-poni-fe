@@ -1,4 +1,5 @@
 import {ProductDetailResponseDTO} from "../product_detail/ProductDetailResponseAPI";
+import {RateResponseDTO} from "../rate/RateResponseAPI";
 
 export interface OrderItemResponseDTO {
 
@@ -11,5 +12,7 @@ export interface OrderItemResponseDTO {
     productDetail?: ProductDetailResponseDTO;
 
     note?: string;
+
+    rate?: RateResponseDTO;
 
 }

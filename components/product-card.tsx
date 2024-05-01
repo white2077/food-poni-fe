@@ -1,5 +1,5 @@
-import {Badge, Card, Divider, notification, Rate, Space} from "antd";
-import React, {useEffect, useState} from "react";
+import {Badge, Card, Divider, Rate, Space} from "antd";
+import React, {useState} from "react";
 import {IProductCard} from "./product-rows";
 import Link from "next/link";
 import axios, {AxiosResponse} from "axios";
@@ -32,7 +32,7 @@ export interface DistanceResponse {
     status: string;
 }
 
-const ProductCard = ({product}: { product: IProductCard }) => {
+    const ProductCard = ({product}: { product: IProductCard }) => {
 
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
@@ -72,6 +72,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
     //         originLat = shippingAddress.lat ?? 0;
     //         originLng = shippingAddress.lon ?? 0;
     //     }
+    // }, []);
     //
     //     if (originLng != null && originLat != null) {
     //         const productId: string = product.id;
@@ -90,6 +91,8 @@ const ProductCard = ({product}: { product: IProductCard }) => {
     //                     description: res.message
     //                 });
     //             });
+    //         });
+    // }, [selectedAddressData, currentUser, shippingAddress]);
     //     }
     // }, [selectedAddress, currentUser, shippingAddress]);
 
@@ -112,7 +115,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                         {product.name}
                     </div>
                     <div className='flex items-center'>
-                        <Rate allowHalf defaultValue={2.5} className='text-sm mr-1'/>
+                        <Rate disabled allowHalf value={product.rate} className='text-sm mr-1'/>
                     </div>
                     <div style={{textAlign: 'left', fontSize: '20px', fontWeight: 'bold'}}>${product.minPrice} -
                         ${product.maxPrice}</div>
