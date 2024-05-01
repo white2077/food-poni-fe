@@ -16,4 +16,6 @@ export interface ProductDetailResponseDTO {
 
     product?: ProductResponseDTO;
 
+    rate?: number;
+
 }

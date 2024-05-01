@@ -1,4 +1,3 @@
-
 export interface RateResponseDTO {
 
     rate?: number;
@@ -10,5 +9,9 @@ export interface RateResponseDTO {
     name?: string;
 
     thumbnail?: string;
+
+    username?: string;
+
+    avatar?: string;
 
 }

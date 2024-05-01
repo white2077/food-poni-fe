@@ -22,7 +22,6 @@ const RateRows = ({orderId}: { orderId: string }) => {
             }
         })
             .then(function (res: AxiosResponse<RateResponseDTO[]>) {
-                // console.log(res.data);
                 setRates(res.data);
             })
             .catch(function (res) {

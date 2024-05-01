@@ -30,7 +30,10 @@ export interface DistanceResponse {
     status: string;
 }
 
-const ProductCard = ({product, selectedAddressData}: { product: IProductCard, selectedAddressData: SearchResult | null }) => {
+const ProductCard = ({product, selectedAddressData}: {
+    product: IProductCard,
+    selectedAddressData: SearchResult | null
+}) => {
 
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
@@ -107,7 +110,7 @@ const ProductCard = ({product, selectedAddressData}: { product: IProductCard, se
                         {product.name}
                     </div>
                     <div className='flex items-center'>
-                        <Rate allowHalf defaultValue={2.5} className='text-sm mr-1'/>
+                        <Rate disabled allowHalf value={product.rate} className='text-sm mr-1'/>
                     </div>
                     <div style={{textAlign: 'left', fontSize: '20px', fontWeight: 'bold'}}>${product.minPrice} -
                         ${product.maxPrice}</div>

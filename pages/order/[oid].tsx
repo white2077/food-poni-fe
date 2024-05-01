@@ -67,6 +67,13 @@ const OrderDetails: NextPage = () => {
         console.log(id);
     }
 
+    const handleShowModalRate = (): void => {
+        console.log("hahahh")
+        // dispatch(setSelectedOrderItemRate(id));
+        dispatch(setShowModalRate(true));
+        // console.log(id);
+    }
+
     const getOrderItemById = (oid: string): void => {
         if (oid) {
             axiosConfig.get(`/customer/orders/${oid}`, {
@@ -162,7 +169,6 @@ const OrderDetails: NextPage = () => {
                                             <Col span={24} key={item.id}>
                                                 <Card hoverable style={{overflow: 'hidden'}}
                                                       onClick={() => {
-                                                          console.log(item.rate);
                                                           if (Object.keys(item.rate).length === 0) {
                                                               handleSetOrderItemRate(item.id);
                                                           }
@@ -209,7 +215,7 @@ const OrderDetails: NextPage = () => {
                                     <Divider/>
                                     <div style={{gap: "10px", display: "flex"}}>
                                         <Button style={{color: '#F36F24'}}
-                                                onClick={() => dispatch(setShowModalRate(true))}>Xem đánh giá</Button>
+                                                onClick={handleShowModalRate}>Xem đánh giá</Button>
                                         <Button style={{backgroundColor: '#F36F24', color: 'white'}}>Đặt lại</Button>
                                     </div>
                                 </Card>
