@@ -26,11 +26,7 @@ const SearchPosition = () => {
             axios
                 .get<SearchResult[]>(`https://nominatim.openstreetmap.org/search?q=${value}&format=json&addressdetails=1`)
                 .then((response: AxiosResponse<SearchResult[]>): void => {
-                    const results: {
-                        display_name: string,
-                        lon: number,
-                        lat: number
-                    }[] = response.data.map((item: SearchResult) => ({
+                    const results: SearchResult[] = response.data.map((item: SearchResult) => ({
                         display_name: item.display_name,
                         lon: item.lon,
                         lat: item.lat
@@ -54,6 +50,30 @@ const SearchPosition = () => {
         dispatch(setSelectedAddress(option.data));
     };
 
+    const getCurrentLocation = (): void => {
+        if (navigator.geolocation) {
+            setPending(true);
+            navigator.geolocation.getCurrentPosition(
+                (position: GeolocationPosition): void => {
+                    const searchResult: SearchResult = {
+                        display_name: null,
+                        lon: position.coords.longitude,
+                        lat: position.coords.latitude
+                    };
+
+                    dispatch(setSelectedAddress(searchResult));
+                    setPending(false);
+                },
+                (error: GeolocationPositionError): void => {
+                    console.error(error);
+                    setPending(false);
+                }
+            );
+        } else {
+            console.error('Geolocation is not supported by this browser.');
+        }
+    };
+
     return (
         <div className='absolute w-full md:w-2/3 lg:w-1/2 bottom-1 p-4 z-10'>
             <Space.Compact className='w-full'>
@@ -70,7 +90,7 @@ const SearchPosition = () => {
                     onSelect={onSelect}
                     size='large'
                 />
-                <Button size='large' icon={<AimOutlined/>} loading={pending} />
+                <Button size='large' icon={<AimOutlined/>} loading={pending} onClick={getCurrentLocation} />
             </Space.Compact>
         </div>
     );

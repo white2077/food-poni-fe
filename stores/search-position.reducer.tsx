@@ -1,7 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 
 export interface SearchResult {
-    display_name: string;
+    display_name: string | null;
     lon: number;
     lat: number;
 }
