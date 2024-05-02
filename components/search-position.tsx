@@ -83,7 +83,11 @@ const SearchPosition = () => {
 
     const renderOptions = (): React.ReactNodeArray => {
         if (noResult) {
-            return [<AutoComplete.Option key="no-result">Không tìm thấy dữ liệu</AutoComplete.Option>];
+            return [
+                <AutoComplete.Option key="no-result" value="Không tìm thấy dữ liệu" disabled>
+                    Không tìm thấy dữ liệu
+                </AutoComplete.Option>
+            ];
         }
 
         return dataSource.map((result: SearchResult, index: number) => (
