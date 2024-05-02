@@ -13,37 +13,44 @@ const SearchPosition = () => {
 
     const [pending, setPending] = useState<boolean>(false);
 
+    const [noResult, setNoResult] = useState<boolean>(false);
+
     let timeout: NodeJS.Timeout | null = null;
 
     const delayedSearch = (value: string): void => {
-        if (timeout) {
-            clearTimeout(timeout);
-        }
+        setPending(true);
 
-        timeout = setTimeout((): void => {
-            setPending(true);
+        axios
+            .get<SearchResult[]>(`https://nominatim.openstreetmap.org/search?q=${value}&format=json&addressdetails=1`)
+            .then((response: AxiosResponse<SearchResult[]>): void => {
+                const results: SearchResult[] = response.data.map((item: SearchResult) => ({
+                    display_name: item.display_name,
+                    lon: item.lon,
+                    lat: item.lat
+                }));
 
-            axios
-                .get<SearchResult[]>(`https://nominatim.openstreetmap.org/search?q=${value}&format=json&addressdetails=1`)
-                .then((response: AxiosResponse<SearchResult[]>): void => {
-                    const results: SearchResult[] = response.data.map((item: SearchResult) => ({
-                        display_name: item.display_name,
-                        lon: item.lon,
-                        lat: item.lat
-                    }));
-
-                    setDataSource(results);
-                    setPending(false);
-                })
-                .catch((error): void => {
-                    console.error(error);
-                    setPending(false);
-                });
-        }, 500);
+                setDataSource(results);
+                setNoResult(results.length === 0);
+                setPending(false);
+            })
+            .catch((error): void => {
+                console.error(error);
+                setPending(false);
+            });
     };
 
     const onSearch = (value: string): void => {
-        delayedSearch(value);
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        if (value !== '') {
+            timeout = setTimeout((): void => {
+                delayedSearch(value);
+            }, 500);
+        } else {
+            setDataSource([]);
+            setNoResult(false);
+        }
     };
 
     const onSelect = (value: string, option: { data: SearchResult }): void => {
@@ -74,6 +81,18 @@ const SearchPosition = () => {
         }
     };
 
+    const renderOptions = (): React.ReactNodeArray => {
+        if (noResult) {
+            return [<AutoComplete.Option key="no-result">Không tìm thấy dữ liệu</AutoComplete.Option>];
+        }
+
+        return dataSource.map((result: SearchResult, index: number) => (
+            <AutoComplete.Option key={index} value={result.display_name} data={result}>
+                {result.display_name}
+            </AutoComplete.Option>
+        ));
+    };
+
     return (
         <div className='absolute w-full md:w-2/3 lg:w-1/2 bottom-1 p-4 z-10'>
             <Space.Compact className='w-full'>
@@ -81,16 +100,12 @@ const SearchPosition = () => {
                     className='w-full'
                     placeholder="input your location here..."
                     onSearch={onSearch}
-                    options={dataSource.map((result: SearchResult, index: number) => ({
-                        value: result.display_name,
-                        label: result.display_name,
-                        data: result,
-                        key: index
-                    }))}
                     onSelect={onSelect}
                     size='large'
-                />
-                <Button size='large' icon={<AimOutlined/>} loading={pending} onClick={getCurrentLocation} />
+                >
+                    {renderOptions()}
+                </AutoComplete>
+                <Button size='large' icon={<AimOutlined/>} loading={pending} onClick={getCurrentLocation}/>
             </Space.Compact>
         </div>
     );
