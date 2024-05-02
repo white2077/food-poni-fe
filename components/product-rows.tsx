@@ -38,7 +38,7 @@ const ProductRows = () => {
                 const productList: IProductCard[] = [];
 
                 (res.data.content as ProductResponseDTO[]).map((product: ProductResponseDTO): void => {
-                    if (currentUser && currentUser.accessToken && currentUser.role === "RETAILER" && currentUser.id == product.user?.id) {
+                    if (currentUser.accessToken && currentUser.role === "RETAILER" && currentUser.id == product.user?.id) {
                         return;
                     }
 
