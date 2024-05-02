@@ -10,7 +10,7 @@ const OrderItems = () => {
 
     const dispatch = useDispatch();
 
-    const cartItems: ICartItem[] = useSelector((state: RootState) => state.cart.cartItems) as ICartItem[];
+    const cartItems: ICartItem[] = useSelector((state: RootState) => state.cart.cartItems);
 
     const onChangeQuantity = (id: string, value: number): void => {
         const payload: {id: string, value: number} = {id, value};

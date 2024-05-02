@@ -16,7 +16,7 @@ const ProductCart = ({id, price, thumbnail, name}: { id: string, price: number, 
 
     const [quantity, setQuantity] = useState<number>(1);
 
-    const cartItems: ICartItem[] = useSelector((state: RootState) => state.cart.cartItems) as ICartItem[];
+    const cartItems: ICartItem[] = useSelector((state: RootState) => state.cart.cartItems);
 
     const isExisted: boolean = cartItems.some(item => item.id === id);
 

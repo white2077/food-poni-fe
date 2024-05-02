@@ -34,7 +34,7 @@ const AddressAdd = () => {
                 .get<SearchResult[]>(`https://nominatim.openstreetmap.org/search?q=${value}&format=json&addressdetails=1`)
                 .then((response: AxiosResponse<SearchResult[]>): void => {
                     const results: {
-                        display_name: string,
+                        display_name: string | null,
                         lon: number,
                         lat: number
                     }[] = response.data.map((item: SearchResult) => ({

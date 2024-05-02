@@ -1,12 +1,10 @@
-import {Avatar, Button, Dropdown, Input, MenuProps, Space,} from 'antd';
+import {Avatar, Button, Dropdown, MenuProps,} from 'antd';
 import {useSelector} from 'react-redux';
 import {LogoutOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
 import {NextRouter, useRouter} from 'next/router';
 import {RootState} from '../stores';
 import React from "react";
 import {CurrentUser} from "../stores/user.reducer";
-import Search from "antd/lib/input/Search";
-import SearchComponent from "./search-position";
 import Cart from "./cart";
 import SearchKeyword from "./search-keyword";
 
