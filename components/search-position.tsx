@@ -21,7 +21,7 @@ const SearchPosition = () => {
         setPending(true);
 
         axios
-            .get<SearchResult[]>(`https://nominatim.openstreetmap.org/search?q=${value}&format=json&addressdetails=1`)
+            .get<SearchResult[]>(`https://nominatim.openstreetmap.org/search?q=${value}&format=json&addressdetails=1&countrycodes=vn`)
             .then((response: AxiosResponse<SearchResult[]>): void => {
                 const results: SearchResult[] = response.data.map((item: SearchResult) => ({
                     display_name: item.display_name,
