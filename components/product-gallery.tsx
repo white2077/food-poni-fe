@@ -21,6 +21,7 @@ const ProductGallery = ({images}: { images: string[] }) => {
                         label: <Avatar size={75} src={image}/>,
                         value: image
                     }))}
+                    value={selectedImage ?? (images[0] ?? '')}
                     onChange={(image: string) => setSelectedImage(image)}
                 />
             </div>
