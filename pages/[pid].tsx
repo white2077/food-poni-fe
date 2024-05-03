@@ -123,7 +123,6 @@ const ProductDetails: NextPage = () => {
     const [productDetailSelected, setProductDetailSelected] = useState<IProductDetail>();
 
     const changeProductDetailSelected = (productDetail: IProductDetail): void => {
-        console.log(productDetail.rate)
         setProductDetailSelected(productDetail);
     }
 
