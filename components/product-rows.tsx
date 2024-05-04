@@ -1,4 +1,4 @@
-import {Skeleton} from 'antd';
+import {Button, Result, Skeleton} from 'antd';
 import React, {useEffect} from 'react';
 import ProductCard from "./product-card";
 import {useDispatch, useSelector} from "react-redux";
@@ -10,6 +10,7 @@ import {Page} from "../models/Page";
 import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
 import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailResponseAPI";
 import {CurrentUser} from "../stores/user.reducer";
+import {SmileOutlined} from "@ant-design/icons";
 
 export interface IProductCard {
     id: string;
@@ -37,7 +38,7 @@ const ProductRows = () => {
     const getProducts = (): void => {
         let url: string = "/products?status=true";
         if (currentProductCategory && currentProductCategory !== "all") {
-            url += `&categoryId=${currentProductCategory}`;
+            url += '&categoryId=' + currentProductCategory;
         }
 
         axiosConfig.get(url)
@@ -62,9 +63,7 @@ const ProductRows = () => {
                         thumbnail: product.thumbnail ?? "",
                         minPrice: minPrice,
                         maxPrice: maxPrice,
-                        rate: product.rate ?? 0,
-                        // minPrice: Math.min(...product.productDetails.map((productDetail: ProductDetailResponseDTO) => productDetail.price)),
-                        // maxPrice: Math.max(...product.productDetails.map((productDetail: ProductDetailResponseDTO) => productDetail.price)),
+                        rate: product.rate ?? 0
                     };
 
                     productList.push(productCard);
@@ -79,12 +78,22 @@ const ProductRows = () => {
 
     return (
         <>
-            <Skeleton loading={isLoading} active/>
-            <div className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
-                {products.map((product: IProductCard) => (
-                    <ProductCard key={product.id} product={product}/>
-                ))}
-            </div>
+            {products.length ?
+                (
+                    <>
+                        <Skeleton loading={isLoading} active/>
+                        <div className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
+                            {products.map((product: IProductCard) => (
+                                <ProductCard key={product.id} product={product}/>
+                            ))}
+                        </div>
+                    </>
+                ) :
+                <Result
+                    icon={<SmileOutlined />}
+                    title="Oops! No product found"
+                />
+            }
         </>
     );
 
