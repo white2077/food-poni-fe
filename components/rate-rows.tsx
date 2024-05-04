@@ -10,12 +10,12 @@ import {RateResponseDTO} from "../models/rate/RateResponseAPI";
 import {AxiosResponse} from "axios";
 
 const RateRows = ({orderId}: { orderId: string }) => {
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
     const showModalRate: boolean = useSelector((state: RootState) => state.rate.showModalRate);
     const [rates, setRates] = useState<RateResponseDTO[]>([]);
     const dispatch = useDispatch();
 
-    const getRates = () => {
+    const getRates = (): void => {
         axiosConfig.get(`/customer/orders/rate/${orderId}`, {
             headers: {
                 Authorization: 'Bearer ' + currentUser.accessToken,
@@ -33,11 +33,11 @@ const RateRows = ({orderId}: { orderId: string }) => {
             })
     }
 
-    useEffect(() => {
+    useEffect((): void => {
         getRates();
     }, []);
 
-    const handleModalClose = () => {
+    const handleModalClose = (): void => {
         dispatch(setShowModalRate(false));
     }
 

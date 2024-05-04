@@ -7,76 +7,56 @@ import {OrderResponseDTO} from "../models/order/OrderResposeAPI";
 
 const OrderCard = ({order}: { order: OrderResponseDTO }) => {
     return (
-        <div style={{width: "100%"}}>
+        <div className="w-full">
             <Badge.Ribbon text={order.status} color="red">
                 <Card hoverable title={"#" + order.id?.substring(0, 7)} bordered={false}>
-                    <div style={{
-                        marginBottom: "5px",
-                        fontWeight: "bold",
-                        display: "flex",
-                        justifyContent: "space-between"
-                    }}>
+                    <div className="flex items-center justify-between mb-4 font-bold">
                         <div>{order?.shippingAddress?.fullName}</div>
                         <div>{order?.shippingAddress?.phoneNumber}</div>
                     </div>
                     <Row gutter={[16, 16]}>
                         {order?.orderItems?.map((item) => (
                             <Col span={24} key={item.id}>
-                                <Card style={{overflow: 'hidden'}}>
+                                <Card className="overflow-hidden" >
                                     <Row gutter={[16, 16]}>
                                         <Col span={6}>
-                                            <Image src={item?.productDetail?.product?.thumbnail ?? ""} style={{
+                                            <Image  src={item?.productDetail?.product?.thumbnail ?? ""} style={{
                                                 width: '120px',
                                                 height: '90px',
                                                 objectFit: 'cover'
                                             }}/>
                                         </Col>
-                                        <Col span={18}
-                                             style={{display: 'flex', justifyContent: 'space-between'}}>
-                                            <p
-                                                style={{fontSize: '20px'}}>{item.quantity} x {item.productDetail?.product?.name}</p>
-                                            <p style={{
-                                                fontSize: '20px',
-                                                color: 'green'
-                                            }}>{item.price} $</p>
+                                        <Col span={18} className="flex justify-between">
+                                            <p className="font-semibold text-xl">{item.quantity} x {item.productDetail?.product?.name}</p>
+                                            <p className="font-semibold text-xl text-green-700">{item.price} $</p>
                                         </Col>
                                     </Row>
                                 </Card>
                             </Col>
                         ))}
                     </Row>
-                    <div style={{margin: "10px 0"}}>
-                        <span style={{marginRight: "5px"}}><EnvironmentOutlined/></span>
+                    <div className="my-3" >
+                        <span className="mr-2"><EnvironmentOutlined/></span>
                         <span>{order.shippingAddress?.address}</span>
                     </div>
                     <div>
-                        <span style={{marginRight: "5px"}}><FieldTimeOutlined/></span>
+                        <span className="mr-2"><FieldTimeOutlined/></span>
                         <span>{format(new Date(order.createdDate ?? ""), "yyyy-MM-dd HH:mm:ss")}</span>
                     </div>
-                    <div style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginTop: "12px",
-                        fontWeight: "bold"
-                    }}>
+                    <div className="flex justify-between mt-4 text-xl font-bold" >
                         <div>Total Amount:</div>
                         <div>${order.totalAmount} </div>
                     </div>
                     <Divider/>
-                    <div style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginTop: "12px",
-                        fontWeight: "bold"
-                    }}>
-                        <div style={{gap: "10px", display: "flex"}}>
+                    <div className="flex justify-between mt-4 ">
+                        <div className="flex gap-2">
                             <Link href={`/order/${order.id}`}>
                                 <Button style={{backgroundColor: '#F36F24', color: 'white'}}>Chi tiết</Button>
                             </Link>
                             <Button style={{backgroundColor: '#F36F24', color: 'white'}}>Đặt lại</Button>
                         </div>
                     </div>
-                    <div style={{display: "flex", justifyContent: "left", marginTop: "12px", gap: "10px"}}>
+                    <div className="flex justify-self-start mt-4 gap-2">
                         <InfoCircleOutlined/>
                         <p>Đánh giá ngay để tích thưởng</p>
                     </div>

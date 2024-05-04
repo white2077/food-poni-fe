@@ -43,7 +43,7 @@ const OrderDetails: NextPage = () => {
 
     const router: NextRouter = useRouter();
 
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const isLoading: boolean = useSelector((state: RootState) => state.order.isLoadingOrderItem);
 
@@ -64,7 +64,7 @@ const OrderDetails: NextPage = () => {
     const handleSetOrderItemRate = (id: string): void => {
         dispatch(setSelectedOrderItemRate(id));
         dispatch(setShowModalAddRate(true));
-        console.log(id);
+        // console.log(id);
     }
 
     const handleShowModalRate = (): void => {
@@ -135,7 +135,7 @@ const OrderDetails: NextPage = () => {
             ) : (
                 <>
                     {order && (
-                        <Row justify="center" style={{width: '1400px', userSelect: 'none'}}>
+                        <Row className='lg:w-[1440px] px-2 mx-auto items-center'>
                             <Col span={20}>
                                 <Card title={`Order #${order.id}`} style={{marginTop: '20px'}}>
                                     <div style={{display: 'flex', justifyContent: 'space-between'}}>
@@ -201,14 +201,8 @@ const OrderDetails: NextPage = () => {
                                             </Col>
                                         ))}
                                     </Row>
-                                    <div style={{
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center',
-                                        paddingTop: '20px',
-                                        padding: '20px 20px 0 20px'
-                                    }}>
-                                        <Text style={{fontSize: '20px'}} strong>Item
+                                    <div className="flex justify-between items-center md:p-4" >
+                                        <Text className="hidden lg:flex text-lg" strong>Item
                                             Subtotal({order.orderItems.length + ' món'}):</Text>
                                         <Text style={{fontSize: '20px'}}>{order.tolalAmount}$</Text>
                                     </div>

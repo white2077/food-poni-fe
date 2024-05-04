@@ -10,9 +10,10 @@ const IconText = ({icon, text}: { icon: React.FC; text: string }) => (
     </Space>
 );
 
-const ProductComment = ({data}: { data: RateResponseDTO[] }) => (
+const ProductComment = ({data,isLoading}: { data: RateResponseDTO[], isLoading: boolean }) => (
     <Card size='small' title='Comment'>
         <List
+            loading={isLoading}
             itemLayout="vertical"
             size="large"
             pagination={{
