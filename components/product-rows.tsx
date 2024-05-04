@@ -28,12 +28,19 @@ const ProductRows = () => {
 
     const {products, isLoading} = useSelector((state: RootState) => state.productList);
 
+    const currentProductCategory: string = useSelector((state: RootState) => state.productCategory.currentProductCategory);
+
     useEffect((): void => {
         getProducts();
-    }, []);
+    }, [currentProductCategory]);
 
     const getProducts = (): void => {
-        axiosConfig.get("/products?status=true")
+        let url: string = "/products?status=true";
+        if (currentProductCategory && currentProductCategory !== "all") {
+            url += `&categoryId=${currentProductCategory}`;
+        }
+
+        axiosConfig.get(url)
             .then((res: AxiosResponse<Page<ProductResponseDTO[]>>): void => {
                 const productList: IProductCard[] = [];
 

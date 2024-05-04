@@ -49,14 +49,14 @@ const OrderCard = ({order}: { order: OrderResponseDTO }) => {
                     </div>
                     <Divider/>
                     <div className="flex justify-between mt-4 ">
-                        <div style={{gap: "10px", display: "flex"}}>
+                        <div className="flex gap-2">
                             <Link href={`/order/${order.id}`}>
                                 <Button style={{backgroundColor: '#F36F24', color: 'white'}}>Chi tiết</Button>
                             </Link>
                             <Button style={{backgroundColor: '#F36F24', color: 'white'}}>Đặt lại</Button>
                         </div>
                     </div>
-                    <div style={{display: "flex", justifyContent: "left", marginTop: "12px", gap: "10px"}}>
+                    <div className="flex justify-self-start mt-4 gap-2">
                         <InfoCircleOutlined/>
                         <p>Đánh giá ngay để tích thưởng</p>
                     </div>

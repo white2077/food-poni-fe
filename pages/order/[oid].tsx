@@ -135,7 +135,7 @@ const OrderDetails: NextPage = () => {
             ) : (
                 <>
                     {order && (
-                        <Row justify="center" style={{width: '1400px', userSelect: 'none'}}>
+                        <Row className='lg:w-[1440px] px-2 mx-auto items-center'>
                             <Col span={20}>
                                 <Card title={`Order #${order.id}`} style={{marginTop: '20px'}}>
                                     <div style={{display: 'flex', justifyContent: 'space-between'}}>

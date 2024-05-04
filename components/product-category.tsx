@@ -6,6 +6,8 @@ import {Page} from "../models/Page";
 import {AxiosResponse} from "axios";
 import {CategoryResponseDTO} from "../models/category/CategoryResponseAPI";
 import {NextPage} from "next";
+import {useDispatch} from "react-redux";
+import {setSelectedProductCategory} from "../stores/product-category.reducer";
 
 export interface ICategory {
     key: string;
@@ -13,6 +15,8 @@ export interface ICategory {
 }
 
 const ProductCategory = () => {
+
+    const dispatch = useDispatch();
 
     let items: ICategory[] = [{key: "all", label: <span style={{fontWeight: "bold"}}>All</span>}];
 
@@ -52,7 +56,7 @@ const ProductCategory = () => {
     };
 
     const onClick: MenuProps['onClick'] = (e): void => {
-        console.log('click ', e);
+        dispatch(setSelectedProductCategory(e.key));
     };
 
     return (

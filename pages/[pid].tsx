@@ -11,6 +11,10 @@ import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import ProductComment from "../components/product-comment";
 import {RateResponseDTO} from "../models/rate/RateResponseAPI";
+import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {useSelector} from "react-redux";
+import {RootState} from "../stores";
+import {CurrentUser} from "../stores/user.reducer";
 
 export interface IProduct {
     id: string;
@@ -43,6 +47,10 @@ const ProductDetails: NextPage = () => {
     const router: NextRouter = useRouter();
 
     const {pid} = router.query;
+
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
+
+    const currentShippingAddress: AddressResponseDTO = useSelector((state: RootState) => state.address.shippingAddress);
 
     const [product, setProduct] = useState<IProduct>();
 
@@ -122,7 +130,6 @@ const ProductDetails: NextPage = () => {
     const [productDetailSelected, setProductDetailSelected] = useState<IProductDetail>();
 
     const changeProductDetailSelected = (productDetail: IProductDetail): void => {
-        // console.log(productDetail.rate)
         setProductDetailSelected(productDetail);
         getRates(productDetail.id);
     }
@@ -169,9 +176,11 @@ const ProductDetails: NextPage = () => {
                                                 </Radio.Group>
                                         )}
                                     </Card>
-                                    <Card size='small' title='Shipping information'>
-                                        <div>Giao đến Q. Hoàn Kiếm, P. Hàng Trống, Hà Nội</div>
-                                    </Card>
+                                    {(currentUser.accessToken && currentShippingAddress) &&
+                                        <Card size='small' title='Shipping information'>
+                                            <div>{currentShippingAddress.address}</div>
+                                        </Card>
+                                    }
                                     <Card size='small' title='Short description'>
                                         <div style={{color: 'black'}}
                                              dangerouslySetInnerHTML={{__html: product.shortDescription || ''}}></div>
