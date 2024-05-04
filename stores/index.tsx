@@ -8,6 +8,7 @@ import orderReducer from "./order.reducer";
 import fileUploadsReducer from "./fileUploads.reducer";
 import searchPositionReducer from "./search-position.reducer";
 import rateReducer from "./rate.reducer";
+import productCategoryReducer from "./product-category.reducer";
 
 const rootReducer = combineReducers({
     user: userReducer,
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
     rate: rateReducer,
     order: orderReducer,
     fileUpload: fileUploadsReducer,
-    searchPosition: searchPositionReducer
+    searchPosition: searchPositionReducer,
+    productCategory: productCategoryReducer
 });
 
 const store = configureStore({
