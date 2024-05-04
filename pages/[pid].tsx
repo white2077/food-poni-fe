@@ -27,6 +27,7 @@ export interface IProductDetail {
     description: string;
     images: string[];
     rate: number;
+    sales: number;
 }
 
 export interface IRetailer {
@@ -47,11 +48,12 @@ const ProductDetails: NextPage = () => {
 
     const [isError, setIsError] = useState<boolean>(false);
 
+    const [isLoadingRate, setLoadingRate] = useState<boolean>(false);
+
     const [rates, setRates] = useState<RateResponseDTO[]>([]);
 
     useEffect((): void => {
         getProductDetailById();
-        getRates();
     }, [router.isReady]);
 
     const getProductDetailById = (): void => {
@@ -59,7 +61,7 @@ const ProductDetails: NextPage = () => {
             axiosConfig.get(`/products/${pid}`)
                 .then(function (res: AxiosResponse<ProductResponseDTO>): void {
                     const product: ProductResponseDTO = res.data;
-                    console.log(res.data)
+                    // console.log(res.data)
                     const productMapped: IProduct = {
                         id: product.id ?? "",
                         name: product.name ?? "",
@@ -85,9 +87,11 @@ const ProductDetails: NextPage = () => {
                                 description: productDetail.description ?? "",
                                 images: productDetail.images ?? [],
                                 rate: productDetail.rate ?? 0,
+                                sales: productDetail.sales ?? 0
                             }
                         }) || []
                     };
+                    getRates(productMapped.productDetails[0]?.id);
                     setProduct(productMapped);
                     setProductDetailSelected(productMapped.productDetails[0]);
                 })
@@ -97,10 +101,11 @@ const ProductDetails: NextPage = () => {
         }
     };
 
-    const getRates = () => {
-        axiosConfig.get(`/products/rate/${pid}`)
+    const getRates = (productDetailId : string | undefined) => {
+        setLoadingRate(true);
+        axiosConfig.get(`/products/rate/${productDetailId}`)
             .then(function (res: AxiosResponse<RateResponseDTO[]>) {
-                console.log(res.data);
+                // console.log(res.data);
                 setRates(res.data);
             })
             .catch(function (res) {
@@ -109,14 +114,17 @@ const ProductDetails: NextPage = () => {
                     message: 'Order message',
                     description: res.message
                 });
-            })
+            }).finally(() => {
+            setLoadingRate(false);
+        })
     }
 
     const [productDetailSelected, setProductDetailSelected] = useState<IProductDetail>();
 
     const changeProductDetailSelected = (productDetail: IProductDetail): void => {
-        console.log(productDetail.rate)
+        // console.log(productDetail.rate)
         setProductDetailSelected(productDetail);
+        getRates(productDetail.id);
     }
 
     const {
@@ -143,9 +151,9 @@ const ProductDetails: NextPage = () => {
                                 <div className='grid gap-4'>
                                     <Card size='small'>
                                         <h2 className='text-xl'>{product.name + (productDetailName ? ' - ' + productDetailName : '')}</h2>
-                                        <Rate allowHalf defaultValue={4.5}
+                                        <Rate allowHalf disabled value={productDetailSelected?.rate}
                                               style={{fontSize: '12px', marginRight: '8px'}}/>
-                                        <span>Đã bán 500</span>
+                                        <span>{productDetailSelected?.sales} lượt bán</span>
                                         <h3 className='text-2xl font-semibold'>${price}</h3>
                                     </Card>
                                     <Card size='small' title='Product type'>
@@ -181,7 +189,7 @@ const ProductDetails: NextPage = () => {
                                     name={product.name + ' - ' + productDetailName}
                                 />
                             </div>
-                            <ProductComment data={rates}/>
+                            <ProductComment data={rates} isLoading={isLoadingRate}/>
                         </div>
                     )}
                 </>

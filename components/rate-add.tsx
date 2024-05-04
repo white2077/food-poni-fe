@@ -11,10 +11,10 @@ import {setShowModalAddRate, setShowModalFileUpload} from "../stores/rate.reduce
 import {setSelectedFile} from "../stores/fileUploads.reducer";
 
 const RateAdd = () => {
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
     const showModalAddRate: boolean = useSelector((state: RootState) => state.rate.showModalAddRate);
     const orderItemId: string = useSelector((state: RootState) => state.rate.selecOrderItemRate);
-    const images = useSelector((state: RootState) => state.fileUpload.selectedFile);
+    const images: string[] = useSelector((state: RootState) => state.fileUpload.selectedFile);
     const [rate, setRate] = useState<number>(0);
     const [message, setMessage] = useState<string>('');
     const [previewOpen, setPreviewOpen] = useState(false);
@@ -70,28 +70,28 @@ const RateAdd = () => {
     }
 
     // Handler for rate change
-    const handleRateChange = (value: number) => {
+    const handleRateChange = (value: number): void => {
         setRate(value);
     };
 
     // Handler for message change
-    const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
         setMessage(e.target.value);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = (): void => {
         const rateDTO: RateDTO = createRateDTO(rate, message, images) ?? {};
         console.log(rateDTO); // You can use rateDTO for further processing
     };
 
-    const handleModalClose = () => {
+    const handleModalClose = (): void => {
         dispatch(setShowModalAddRate(false));
         dispatch(setSelectedFile([]));
         setRate(0);
         setMessage("");
     }
 
-    const handlePreview = (url: string) => {
+    const handlePreview = (url: string): void => {
         setPreviewImage(url);
         setPreviewOpen(true);
     };

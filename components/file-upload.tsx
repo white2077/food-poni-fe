@@ -25,11 +25,11 @@ const FileUploads = () => {
 
     const dispatch = useDispatch();
 
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
-    const fileUploads = useSelector((state: RootState) => state.fileUpload.filesUpload);
+    const fileUploads: FileUploadsResponseDTO[] = useSelector((state: RootState) => state.fileUpload.filesUpload);
 
-    const showModalFileUpload = useSelector((state: RootState) => state.rate.showModalFileUpload);
+    const showModalFileUpload: boolean = useSelector((state: RootState) => state.rate.showModalFileUpload);
 
 
     const [hoveredFile, setHoveredFile] = useState<string | null>(null);
@@ -57,7 +57,7 @@ const FileUploads = () => {
 
     };
 
-    const handleToggleFileSelect = (fileUrl: string) => {
+    const handleToggleFileSelect = (fileUrl: string): void => {
         setSelectedFiles(prevSelectedFiles => {
             // Kiểm tra xem fileUrl có trong danh sách đã chọn không
             const isSelected = prevSelectedFiles.includes(fileUrl);
@@ -71,7 +71,7 @@ const FileUploads = () => {
         });
     };
 
-    const uploadFile = async (options: any) => {
+    const uploadFile = async (options: any): Promise<void> => {
         const {file} = options;
         const formData = new FormData();
         formData.append('multipartFile', file);
@@ -106,7 +106,7 @@ const FileUploads = () => {
         showUploadList: false,
     };
 
-    const handleSetFileUpload = () => {
+    const handleSetFileUpload = (): void => {
         if(selectedFiles.length > 0) {
             dispatch(setSelectedFile(selectedFiles));
             dispatch(setShowModalFileUpload(false));

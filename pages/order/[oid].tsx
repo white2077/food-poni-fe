@@ -43,7 +43,7 @@ const OrderDetails: NextPage = () => {
 
     const router: NextRouter = useRouter();
 
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const isLoading: boolean = useSelector((state: RootState) => state.order.isLoadingOrderItem);
 
@@ -64,7 +64,7 @@ const OrderDetails: NextPage = () => {
     const handleSetOrderItemRate = (id: string): void => {
         dispatch(setSelectedOrderItemRate(id));
         dispatch(setShowModalAddRate(true));
-        console.log(id);
+        // console.log(id);
     }
 
     const handleShowModalRate = (): void => {
