@@ -9,6 +9,7 @@ import {RootState} from "../stores";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import axiosConfig from "../utils/axios-config";
 import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
+import {HistoryOutlined} from "@ant-design/icons";
 
 export interface ElementDistance {
     distance: {
@@ -121,7 +122,7 @@ export interface DistanceResponse {
                         ${product.maxPrice}</div>
                 </Space>
                 <Divider style={{margin: '12px 0px'}}/>
-                <div style={{fontSize: '14px'}}>Dự kiến giao lúc 22:30</div>
+                <div style={{fontSize: '14px'}}><HistoryOutlined /> Không xác định</div>
             </Card>
         </Link>
     );

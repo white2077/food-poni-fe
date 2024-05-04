@@ -67,8 +67,11 @@ const Home: NextPage = () => {
     return (
         <DefaultLayout>
             <div className='flex gap-4'>
-                <ProductCategory/>
                 <div className='grid gap-4'>
+                    <ProductCategory/>
+                    <img className='rounded-md' src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-GyDWnLZ77IVqwCBJYj3KSEafcAMiGAfJlj1kqG0U_Q&s" />
+                </div>
+                <div className='grid gap-4 h-fit'>
                     <div className='overflow-hidden relative'>
                         <SearchPosition/>
                         <CarouselBanner/>
