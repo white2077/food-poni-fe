@@ -201,14 +201,8 @@ const OrderDetails: NextPage = () => {
                                             </Col>
                                         ))}
                                     </Row>
-                                    <div style={{
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center',
-                                        paddingTop: '20px',
-                                        padding: '20px 20px 0 20px'
-                                    }}>
-                                        <Text style={{fontSize: '20px'}} strong>Item
+                                    <div className="flex justify-between items-center md:p-4" >
+                                        <Text className="hidden lg:flex text-lg" strong>Item
                                             Subtotal({order.orderItems.length + ' món'}):</Text>
                                         <Text style={{fontSize: '20px'}}>{order.tolalAmount}$</Text>
                                     </div>
