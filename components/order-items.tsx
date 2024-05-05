@@ -1,10 +1,10 @@
-import {Card, Checkbox, Col, InputNumber, Row} from "antd";
+import {Card, Checkbox, Col, Input, InputNumber, Row} from "antd";
 import {DeleteOutlined} from "@ant-design/icons";
-import TextArea from "antd/es/input/TextArea";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {deleteItem, ICartItem, setNote, setQuantity} from "../stores/cart.reducer";
 import {RootState} from "../stores";
+const {TextArea} = Input;
 
 const OrderItems = () => {
 
@@ -67,7 +67,7 @@ const OrderItems = () => {
                                 placeholder="Note"
                                 value={item.note}
                                 onChange={(e) => onChangeNote(item.id, e.target.value)}
-                                rows={2}
+                                allowClear
                             />
                         </Col>
                         <Col flex='2%'>

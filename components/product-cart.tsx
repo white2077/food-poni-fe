@@ -21,12 +21,16 @@ const ProductCart = ({id, price, thumbnail, name}: { id: string, price: number, 
     const isExisted: boolean = cartItems.some(item => item.id === id);
 
     const addToCart = (): void => {
-        const payload: ICartItem = {id, price, thumbnail, name, quantity} as ICartItem;
-        dispatch(addItem(payload));
+        if (currentUser.accessToken) {
+            const payload: ICartItem = {id, price, thumbnail, name, quantity} as ICartItem;
+            dispatch(addItem(payload));
+        } else {
+            router.push("/login");
+        }
     };
 
     const getCheckout = (): void => {
-        if (currentUser && currentUser.accessToken) {
+        if (currentUser.accessToken) {
             addToCart();
             router.push("/checkout");
         } else {

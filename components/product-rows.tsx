@@ -1,5 +1,5 @@
-import {Button, Result, Skeleton} from 'antd';
-import React, {useEffect} from 'react';
+import {Button, Result, Skeleton, Spin} from 'antd';
+import React, {useEffect, useState} from 'react';
 import ProductCard from "./product-card";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../stores";
@@ -32,11 +32,14 @@ const ProductRows = () => {
 
     const currentProductCategory: string = useSelector((state: RootState) => state.productCategory.currentProductCategory);
 
+    const [pending, setPending] = useState<boolean>(false);
+
     useEffect((): void => {
         getProducts();
     }, [currentProductCategory]);
 
     const getProducts = (): void => {
+        setPending(true);
         let url: string = "/products?status=true";
         if (currentProductCategory && currentProductCategory !== "all") {
             url += '&categoryId=' + currentProductCategory;
@@ -72,31 +75,44 @@ const ProductRows = () => {
                 });
 
                 dispatch(setProductList({products: productList, isLoading: false}));
+                setPending(false);
             })
             .catch(err => {
-                console.log(err)
+                setPending(false);
+                console.log(err);
             });
     };
 
     return (
-        <>
-            {products.length ?
-                (
-                    <>
-                        <Skeleton loading={isLoading} active/>
-                        <div className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
-                            {products.map((product: IProductCard) => (
-                                <ProductCard key={product.id} product={product}/>
-                            ))}
-                        </div>
-                    </>
-                ) :
-                <Result
-                    icon={<SmileOutlined />}
-                    title="Oops! No product found"
-                />
-            }
-        </>
+        pending ? (
+            <Spin style={{
+                width: '100%',
+                height: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+            }} size="large" />
+        ) : (
+            <>
+                {products.length ?
+                    (
+                        <>
+                            <Skeleton loading={isLoading} active/>
+                            <div
+                                className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
+                                {products.map((product: IProductCard) => (
+                                    <ProductCard key={product.id} product={product}/>
+                                ))}
+                            </div>
+                        </>
+                    ) :
+                    <Result
+                        icon={<SmileOutlined/>}
+                        title="Oops! No product found"
+                    />
+                }
+            </>
+        )
     );
 
 };
