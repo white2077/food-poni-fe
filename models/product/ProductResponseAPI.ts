@@ -24,4 +24,6 @@ export interface ProductResponseDTO {
 
     rate?: number;
 
+    sales?: number;
+
 }

@@ -17,12 +17,16 @@ import {setLoadingOrderItem} from "../../stores/order.reducer";
 import {OrderItemResponseDTO} from "../../models/order_item/OrderItemResponseAPI";
 import {OrderResponseDTO} from "../../models/order/OrderResposeAPI";
 import RateRows from "../../components/rate-rows";
+import {addItem, ICartItem} from "../../stores/cart.reducer";
+import boolean from "async-validator/dist-types/validator/boolean";
+import checkout from "../checkout";
+import {exists} from "node:fs";
 
 const {Text} = Typography;
 
 export interface IOrder {
     id: string;
-    tolalAmount: number;
+    totalAmount: number;
     status: string;
     user: UserResponseDTO;
     orderItems: IOrderItem[];
@@ -37,9 +41,10 @@ export interface IOrderItem {
     price: number;
     image: string;
     rate: RateDTO;
+    productDetailId: string;
 }
 
-const OrderDetails: NextPage = () => {
+const OrderDetails = () => {
 
     const router: NextRouter = useRouter();
 
@@ -55,6 +60,8 @@ const OrderDetails: NextPage = () => {
 
     const [isError, setIsError] = useState<boolean>(false);
 
+    const cartItems: ICartItem[] = useSelector((state: RootState) => state.cart.cartItems);
+
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -68,7 +75,7 @@ const OrderDetails: NextPage = () => {
     }
 
     const handleShowModalRate = (): void => {
-        console.log("hahahh")
+        // console.log("hahahh")
         // dispatch(setSelectedOrderItemRate(id));
         dispatch(setShowModalRate(true));
         // console.log(id);
@@ -76,7 +83,7 @@ const OrderDetails: NextPage = () => {
 
     const getOrderItemById = (oid: string): void => {
         if (oid) {
-            axiosConfig.get(`/customer/orders/${oid}`, {
+            axiosConfig.get('/customer/orders/' + oid , {
                 headers: {
                     Authorization: 'Bearer ' + currentUser.accessToken,
                 }
@@ -86,7 +93,7 @@ const OrderDetails: NextPage = () => {
                     const order: OrderResponseDTO = res.data;
                     const orderMapped: IOrder = {
                         id: order.id ?? "",
-                        tolalAmount: order.totalAmount ?? 0,
+                        totalAmount: order.totalAmount ?? 0,
                         status: order.status ?? "",
                         user: order.user ?? {},
                         shippingAddress: order.shippingAddress ?? {},
@@ -99,6 +106,7 @@ const OrderDetails: NextPage = () => {
                                 price: orderItem.price ?? 0,
                                 image: orderItem.productDetail?.product?.thumbnail ?? "",
                                 rate: orderItem.rate ?? {},
+                                productDetailId: orderItem.productDetail?.id ?? "",
                             }
                         }) ?? [],
                     };
@@ -109,6 +117,29 @@ const OrderDetails: NextPage = () => {
                     setIsError(true);
                 });
         }
+    };
+
+    const addOrderItemsCart = (): void => {
+        orderItems.forEach((orderItem: IOrderItem): void => {
+            let existItem : boolean = false;
+            // console.log(orderItem);
+            cartItems.forEach((cartItem: ICartItem): void => {
+                console.log(cartItem);
+                if (orderItem.productDetailId === cartItem.id) {
+                    existItem = true;
+                    return;
+                }
+            })
+            if(!existItem){
+                addToCart(orderItem.productDetailId, orderItem.price, orderItem.image, orderItem.name, orderItem.quantity);
+            }
+        })
+        router.push("/checkout");
+    }
+
+    const addToCart = (id: string, price : number, thumbnail: string, name: string, quantity: number): void => {
+        const payload: ICartItem = {id, price, thumbnail, name, quantity} as ICartItem;
+        dispatch(addItem(payload));
     };
 
     return (
@@ -137,7 +168,7 @@ const OrderDetails: NextPage = () => {
                     {order && (
                         <Row className='lg:w-[1440px] px-2 mx-auto items-center'>
                             <Col span={20}>
-                                <Card title={`Order #${order.id}`} style={{marginTop: '20px'}}>
+                                <Card title={'Order #' + order.id} style={{marginTop: '20px'}}>
                                     <div style={{display: 'flex', justifyContent: 'space-between'}}>
                                         <Text strong>
                                             {
@@ -153,7 +184,7 @@ const OrderDetails: NextPage = () => {
                                         <Text style={{fontSize: '18px'}} strong>Đồ ăn</Text>
                                         <br/>
                                         <br/>
-                                        <Text>{order.tolalAmount + '$ - ' + order.orderItems.length + ' món - '} {order.paymentMethod.method?.includes('CASH') ? 'Tiền mặt' : 'VNPay'}</Text>
+                                        <Text>{order.totalAmount + '$ - ' + order.orderItems.length + ' món - '} {order.paymentMethod.method?.includes('CASH') ? 'Tiền mặt' : 'VNPay'}</Text>
                                         <br/>
                                         <Text>{order.shippingAddress.fullName + ' - ' + order.shippingAddress.phoneNumber}</Text>
                                     </div>
@@ -204,13 +235,15 @@ const OrderDetails: NextPage = () => {
                                     <div className="flex justify-between items-center md:p-4" >
                                         <Text className="hidden lg:flex text-lg" strong>Item
                                             Subtotal({order.orderItems.length + ' món'}):</Text>
-                                        <Text style={{fontSize: '20px'}}>{order.tolalAmount}$</Text>
+                                        <Text style={{fontSize: '20px'}}>{order.totalAmount}$</Text>
                                     </div>
                                     <Divider/>
                                     <div style={{gap: "10px", display: "flex"}}>
                                         <Button style={{color: '#F36F24'}}
                                                 onClick={handleShowModalRate}>Xem đánh giá</Button>
-                                        <Button style={{backgroundColor: '#F36F24', color: 'white'}}>Đặt lại</Button>
+                                        <Button style={{backgroundColor: '#F36F24', color: 'white'}}
+                                                onClick={addOrderItemsCart}
+                                        >Đặt lại</Button>
                                     </div>
                                 </Card>
                             </Col>

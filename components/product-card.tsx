@@ -116,7 +116,13 @@ export interface DistanceResponse {
                         {product.name}
                     </div>
                     <div className='flex items-center'>
+                        {/*{product.sales!=0 && (*/}
+                        {/*    <span>{product.rate.toFixed(1) } </span>*/}
+                        {/*)}*/}
                         <Rate disabled allowHalf value={product.rate} className='text-sm mr-1'/>
+                        <span>
+                            {" " + product.sales} Lượt Bán
+                        </span>
                     </div>
                     <div style={{textAlign: 'left', fontSize: '20px', fontWeight: 'bold'}}>${product.minPrice} -
                         ${product.maxPrice}</div>
