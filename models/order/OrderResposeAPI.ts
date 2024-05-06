@@ -20,6 +20,6 @@ export interface OrderResponseDTO {
 
     payment?: PaymentInfo;
 
-    createdDate?: string;
+    createdDate?: Date;
 
 }

@@ -16,7 +16,7 @@ const ProductRate = ({productId}: { productId: string }) => {
     const dispatch = useDispatch();
 
     const getRates = () => {
-        axiosConfig.get(`/products/rate/${productId}`)
+        axiosConfig.get('/products/rate/' + productId)
             .then(function (res: AxiosResponse<Page<RateResponseDTO[]>>) {
                 console.log(res.data.content);
                 setRates(res.data.content);

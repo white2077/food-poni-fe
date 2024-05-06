@@ -43,7 +43,7 @@ const FileUploads = () => {
     }, []);
 
     const getFileUploads = (): void => {
-        axiosConfig.get(`/file-uploads`, {
+        axiosConfig.get('/file-uploads', {
             headers: {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }

@@ -20,4 +20,6 @@ export interface ProductDetailResponseDTO {
 
     sales?: number;
 
+    rateCount?: number;
+
 }

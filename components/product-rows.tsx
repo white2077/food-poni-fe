@@ -19,6 +19,7 @@ export interface IProductCard {
     minPrice: number;
     maxPrice: number;
     rate: number;
+    rateCount: number;
 }
 
 const ProductRows = () => {
@@ -47,7 +48,7 @@ const ProductRows = () => {
         axiosConfig.get(url)
             .then((res: AxiosResponse<Page<ProductResponseDTO[]>>): void => {
                 const productList: IProductCard[] = [];
-
+                console.log(res.data.content);
                 (res.data.content as ProductResponseDTO[]).map((product: ProductResponseDTO): void => {
                     if (currentUser.accessToken && currentUser.role === "RETAILER" && currentUser.id == product.user?.id) {
                         return;
@@ -66,7 +67,8 @@ const ProductRows = () => {
                         thumbnail: product.thumbnail ?? "",
                         minPrice: minPrice,
                         maxPrice: maxPrice,
-                        rate: product.rate ?? 0
+                        rate: product.rate ?? 0,
+                        rateCount: product.rateCount ?? 0
                     };
 
                     productList.push(productCard);

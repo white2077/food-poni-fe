@@ -48,8 +48,16 @@ const Orders = () => {
             }
         })
             .then(function (res: AxiosResponse<Page<OrderResponseDTO[]>>) {
-                // console.log(res.data);
-                setOrders(res.data.content);
+                // console.log(res.data.content);
+                const sortedOrders = res.data.content.map((order: OrderResponseDTO) => {
+                    const createdDate = new Date(order.createdDate ?? ""); // Chuyển đổi Timestamp thành đối tượng Date
+                    return { ...order, createdDate };
+                });
+
+                // Sắp xếp sortedOrders theo createdDate giảm dần
+                sortedOrders.sort((a, b) => b.createdDate.getTime() - a.createdDate.getTime());
+
+                setOrders(sortedOrders);
                 setIsLoading(false);
             })
             .catch(function (res) {
