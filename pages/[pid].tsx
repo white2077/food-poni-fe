@@ -32,6 +32,7 @@ export interface IProductDetail {
     images?: string[];
     rate?: number;
     sales?: number;
+    rateCount?: number;
 }
 
 export interface IRetailer {
@@ -91,7 +92,8 @@ const ProductDetails: NextPage = () => {
                                 description: productDetail.description ?? "",
                                 images: productDetail.images ?? [],
                                 rate: productDetail.rate ?? 0,
-                                sales: productDetail.sales ?? 0
+                                sales: productDetail.sales ?? 0,
+                                rateCount: productDetail.rateCount ?? 0,
                             }
                         })
                     };
@@ -105,7 +107,7 @@ const ProductDetails: NextPage = () => {
         }
     };
 
-    const getRates = (productDetailId : string | undefined) => {
+    const getRates = (productDetailId: string | undefined) => {
         setLoadingRate(true);
         axiosConfig.get(`/products/rate/${productDetailId}`)
             .then(function (res: AxiosResponse<RateResponseDTO[]>) {
@@ -154,22 +156,32 @@ const ProductDetails: NextPage = () => {
                                 <div className='grid gap-4'>
                                     <Card size='small'>
                                         <h2 className='text-xl'>{product.name + (productDetailName ? ' - ' + productDetailName : '')}</h2>
-                                        <Rate allowHalf disabled value={productDetailSelected?.rate}
-                                              style={{fontSize: '12px', marginRight: '8px'}}/>
-                                        <span>{productDetailSelected?.sales} lượt bán</span>
+                                        <div className="my-2">
+                                            <span className="border-r-2 py-1 pr-2">
+                                                <span className="m-1 border-b-2 text-lg">
+                                                    {(productDetailSelected?.rate ? productDetailSelected.rate.toFixed(1) : 0) + " "}
+                                                </span>
+                                                <Rate allowHalf disabled value={productDetailSelected?.rate}
+                                                      style={{fontSize: '12px', marginRight: '8px'}}/>
+                                            </span>
+                                            <span className="border-r-2 py-1 px-4 hidden md:inline">
+                                                <span className="text-lg m-1 border-b-2">{productDetailSelected?.rateCount}</span> Đánh Giá</span>
+                                            <span className="border-r-2 py-1 px-4">
+                                                <span className="text-lg m-1 border-b-2">{productDetailSelected?.sales}</span> Lượt Bán</span>
+                                        </div>
                                         <h3 className='text-2xl font-semibold'>${price}</h3>
                                     </Card>
                                     <Card size='small' title='Product type'>
                                         {(product.productDetails && product.productDetails.length > 1) && (
-                                                <Radio.Group defaultValue={productDetailName || "default"}>
-                                                    {(product?.productDetails || []).map((productDetail: IProductDetail) => (
-                                                        <Radio.Button key={productDetail.id}
-                                                                      value={productDetail.name || "default"}
-                                                                      onClick={() => changeProductDetailSelected(productDetail)}>
-                                                            {productDetail.name || "Default"}
-                                                        </Radio.Button>
-                                                    ))}
-                                                </Radio.Group>
+                                            <Radio.Group defaultValue={productDetailName || "default"}>
+                                                {(product?.productDetails || []).map((productDetail: IProductDetail) => (
+                                                    <Radio.Button key={productDetail.id}
+                                                                  value={productDetail.name || "default"}
+                                                                  onClick={() => changeProductDetailSelected(productDetail)}>
+                                                        {productDetail.name || "Default"}
+                                                    </Radio.Button>
+                                                ))}
+                                            </Radio.Group>
                                         )}
                                     </Card>
                                     {(currentUser.accessToken && currentShippingAddress) &&

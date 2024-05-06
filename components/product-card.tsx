@@ -2,13 +2,10 @@ import {Badge, Card, Divider, Rate, Space} from "antd";
 import React, {useState} from "react";
 import {IProductCard} from "./product-rows";
 import Link from "next/link";
-import axios, {AxiosResponse} from "axios";
 import {CurrentUser} from "../stores/user.reducer";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
-import axiosConfig from "../utils/axios-config";
-import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
 import {HistoryOutlined} from "@ant-design/icons";
 
 export interface ElementDistance {
@@ -33,7 +30,7 @@ export interface DistanceResponse {
     status: string;
 }
 
-    const ProductCard = ({product}: { product: IProductCard }) => {
+const ProductCard = ({product}: { product: IProductCard }) => {
 
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
@@ -116,7 +113,13 @@ export interface DistanceResponse {
                         {product.name}
                     </div>
                     <div className='flex items-center'>
+                      <span className="mr-2 border-r-2">
+                        <span>{product.rate !== 0 && product.rate.toFixed(1)}</span>
                         <Rate disabled allowHalf value={product.rate} className='text-sm mr-1'/>
+                      </span>
+                        <span>
+                        {" " + product.rateCount} Lượt Đánh Giá
+                      </span>
                     </div>
                     <div style={{textAlign: 'left', fontSize: '20px', fontWeight: 'bold'}}>${product.minPrice} -
                         ${product.maxPrice}</div>
