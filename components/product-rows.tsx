@@ -1,4 +1,4 @@
-import {Button, Result, Skeleton, Spin} from 'antd';
+import {Result, Skeleton, Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
 import ProductCard from "./product-card";
 import {useDispatch, useSelector} from "react-redux";
@@ -19,6 +19,7 @@ export interface IProductCard {
     minPrice: number;
     maxPrice: number;
     rate: number;
+    retailer: string;
 }
 
 const ProductRows = () => {
@@ -66,7 +67,8 @@ const ProductRows = () => {
                         thumbnail: product.thumbnail ?? "",
                         minPrice: minPrice,
                         maxPrice: maxPrice,
-                        rate: product.rate ?? 0
+                        rate: product.rate ?? 0,
+                        retailer: product.user?.username ?? ""
                     };
 
                     productList.push(productCard);

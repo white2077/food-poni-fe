@@ -16,7 +16,7 @@ import {
     Space
 } from "antd";
 import {useDispatch, useSelector} from "react-redux";
-import {deleteAllItem, ICartItem} from "../stores/cart.reducer";
+import {deleteAllItem, ICart, ICartItem} from "../stores/cart.reducer";
 import React, {useState} from "react";
 import axiosConfig from "../utils/axios-config";
 import {NextRouter, useRouter} from "next/router";
@@ -27,6 +27,7 @@ import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {OrderItemRequestDTO} from "../models/order_item/OrderItemRequest";
 import {OrderRequestDTO, PaymentInfo, ShippingAddress} from "../models/order/OrderRequest";
 import {CurrentUser} from "../stores/user.reducer";
+import cart from "../components/cart";
 
 const {TextArea} = Input;
 
@@ -36,13 +37,13 @@ const Checkout = () => {
 
     const dispatch = useDispatch();
 
-    const cartItems: ICartItem[] = useSelector((state: RootState) => state.cart.cartItems) as ICartItem[];
+    const carts: ICart[] = useSelector((state: RootState) => state.cart.carts);
 
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
-    const currentShippingAddress: AddressResponseDTO = useSelector((state: RootState) => state.address.shippingAddress) as AddressResponseDTO;
+    const currentShippingAddress: AddressResponseDTO = useSelector((state: RootState) => state.address.shippingAddress);
 
-    const deliveryInformationList: AddressResponseDTO[] = useSelector((state: RootState) => state.delivery.deliveryInformationList) as AddressResponseDTO[];
+    const deliveryInformationList: AddressResponseDTO[] = useSelector((state: RootState) => state.delivery.deliveryInformationList);
 
     const [pending, setPending] = useState<boolean>(false);
 
@@ -61,54 +62,57 @@ const Checkout = () => {
 
     const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
 
-    const totalAmount: number = cartItems.reduce((total: number, item: ICartItem) => total + (item.price * item.quantity), 0);
+    const totalAmount: number = carts.reduce((totalCart: number, cart: ICart) => {
+        const cartTotal: number = cart.cartItems.reduce((total: number, item: ICartItem) => total + item.price, 0);
+        return totalCart + cartTotal;
+    }, 0);
 
     const addToOrder = (values: any): void => {
-        setPending(true);
-        const orderItems: OrderItemRequestDTO[] = cartItems.map((item: ICartItem) => {
-            return {
-                quantity: item.quantity,
-                productDetail: item,
-                note: item.note
-            };
-        });
-        const note: string = values.note;
-
-        if (orderItems && shippingAddress && payment) {
-            const order: OrderRequestDTO = {orderItems, shippingAddress, note, payment} as OrderRequestDTO;
-
-            axiosConfig.post("/orders", order, {
-                headers: {
-                    Authorization: 'Bearer ' + currentUser.accessToken,
-                }
-            })
-                .then(function () {
-                    setPending(false);
-                    dispatch(deleteAllItem({}));
-                    notification.open({
-                        type: 'success',
-                        message: 'Order message',
-                        description: 'Create new order successfully!',
-                    });
-                    // redirect to home page
-                    router.push('/');
-                })
-                .catch(function (res) {
-                    setPending(false);
-                    notification.open({
-                        type: 'error',
-                        message: 'Order message',
-                        description: res.message
-                    });
-                });
-        } else {
-            setPending(false);
-            notification.open({
-                type: "error",
-                message: "Order message",
-                description: "Some information is missing. Please fill in all required fields."
-            });
-        }
+        // setPending(true);
+        // const orderItems: OrderItemRequestDTO[] = cartItems.map((item: ICartItem) => {
+        //     return {
+        //         quantity: item.quantity,
+        //         productDetail: item,
+        //         note: item.note
+        //     };
+        // });
+        // const note: string = values.note;
+        //
+        // if (orderItems && shippingAddress && payment) {
+        //     const order: OrderRequestDTO = {orderItems, shippingAddress, note, payment} as OrderRequestDTO;
+        //
+        //     axiosConfig.post("/orders", order, {
+        //         headers: {
+        //             Authorization: 'Bearer ' + currentUser.accessToken,
+        //         }
+        //     })
+        //         .then(function () {
+        //             setPending(false);
+        //             dispatch(deleteAllItem({}));
+        //             notification.open({
+        //                 type: 'success',
+        //                 message: 'Order message',
+        //                 description: 'Create new order successfully!',
+        //             });
+        //             // redirect to home page
+        //             router.push('/');
+        //         })
+        //         .catch(function (res) {
+        //             setPending(false);
+        //             notification.open({
+        //                 type: 'error',
+        //                 message: 'Order message',
+        //                 description: res.message
+        //             });
+        //         });
+        // } else {
+        //     setPending(false);
+        //     notification.open({
+        //         type: "error",
+        //         message: "Order message",
+        //         description: "Some information is missing. Please fill in all required fields."
+        //     });
+        // }
     };
 
     const onChange = (e: RadioChangeEvent): void => {

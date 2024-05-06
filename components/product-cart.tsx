@@ -1,12 +1,13 @@
 import {Avatar, Button, Card, Divider, Flex, InputNumber, List} from "antd";
 import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {addItem, deleteAllItem, ICartItem} from "../stores/cart.reducer";
+import {addItem, deleteAllItem, ICart, ICartItem} from "../stores/cart.reducer";
 import {NextRouter, useRouter} from "next/router";
 import {RootState} from "../stores";
 import {CurrentUser} from "../stores/user.reducer";
+import {IRetailer} from "../pages/[pid]";
 
-const ProductCart = ({id, price, thumbnail, name}: { id: string, price: number, thumbnail: string, name: string }) => {
+const ProductCart = ({id, price, thumbnail, name, retailer}: { id: string, price: number, thumbnail: string, name: string, retailer: IRetailer }) => {
 
     const router: NextRouter = useRouter();
 
@@ -16,13 +17,13 @@ const ProductCart = ({id, price, thumbnail, name}: { id: string, price: number, 
 
     const [quantity, setQuantity] = useState<number>(1);
 
-    const cartItems: ICartItem[] = useSelector((state: RootState) => state.cart.cartItems);
+    const carts: ICart[] = useSelector((state: RootState) => state.cart.carts);
 
-    const isExisted: boolean = cartItems.some(item => item.id === id);
+    const isExisted: boolean = carts.some(item => item.id === id);
 
     const addToCart = (): void => {
         if (currentUser.accessToken) {
-            const payload: ICartItem = {id, price, thumbnail, name, quantity} as ICartItem;
+            const payload: ICartItem = {id, price, thumbnail, name, quantity, retailer} as ICartItem;
             dispatch(addItem(payload));
         } else {
             router.push("/login");

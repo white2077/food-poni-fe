@@ -17,29 +17,30 @@ import {RootState} from "../stores";
 import {CurrentUser} from "../stores/user.reducer";
 
 export interface IProduct {
-    id: string;
-    name: string;
-    shortDescription: string;
-    productDetails: IProductDetail[];
-    retailer: IRetailer;
+    id?: string;
+    name?: string;
+    shortDescription?: string;
+    productDetails?: IProductDetail[];
+    retailer?: IRetailer;
 }
 
 export interface IProductDetail {
-    id: string;
-    name: string;
-    price: number,
-    description: string;
-    images: string[];
-    rate: number;
-    sales: number;
+    id?: string;
+    name?: string;
+    price?: number,
+    description?: string;
+    images?: string[];
+    rate?: number;
+    sales?: number;
 }
 
 export interface IRetailer {
-    avatar: string;
-    firstName: string;
-    lastName: string;
-    phoneNumber: string;
-    username: string;
+    id?: string;
+    avatar?: string;
+    firstName?: string;
+    lastName?: string;
+    phoneNumber?: string;
+    username?: string;
 }
 
 const ProductDetails: NextPage = () => {
@@ -74,18 +75,13 @@ const ProductDetails: NextPage = () => {
                         id: product.id ?? "",
                         name: product.name ?? "",
                         shortDescription: product.shortDescription ?? "",
-                        retailer: product.user ? {
+                        retailer: product.user && {
+                            id: product.user.id ?? "",
                             avatar: product.user.avatar ?? "",
                             firstName: product.user.firstName ?? "",
                             lastName: product.user.lastName ?? "",
                             phoneNumber: product.user.phoneNumber ?? "",
                             username: product.user.username ?? "",
-                        } : {
-                            avatar: "",
-                            firstName: "",
-                            lastName: "",
-                            phoneNumber: "",
-                            username: "",
                         },
                         productDetails: product.productDetails && product.productDetails.map((productDetail: ProductDetailResponseDTO): IProductDetail => {
                             return {
@@ -97,11 +93,11 @@ const ProductDetails: NextPage = () => {
                                 rate: productDetail.rate ?? 0,
                                 sales: productDetail.sales ?? 0
                             }
-                        }) || []
+                        })
                     };
-                    getRates(productMapped.productDetails[0]?.id);
+                    getRates(productMapped.productDetails && productMapped.productDetails[0].id);
                     setProduct(productMapped);
-                    setProductDetailSelected(productMapped.productDetails[0]);
+                    setProductDetailSelected(productMapped.productDetails && productMapped.productDetails[0]);
                 })
                 .catch(function (): void {
                     setIsError(true);
@@ -196,6 +192,7 @@ const ProductDetails: NextPage = () => {
                                     price={price!}
                                     thumbnail={images![0]}
                                     name={product.name + ' - ' + productDetailName}
+                                    retailer={product.retailer!}
                                 />
                             </div>
                             <ProductComment data={rates} isLoading={isLoadingRate}/>

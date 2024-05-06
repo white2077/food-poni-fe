@@ -122,7 +122,7 @@ export interface DistanceResponse {
                         ${product.maxPrice}</div>
                 </Space>
                 <Divider style={{margin: '12px 0px'}}/>
-                <div style={{fontSize: '14px'}}><HistoryOutlined /> Không xác định</div>
+                <div style={{fontSize: '14px'}}><HistoryOutlined /> Không xác định {product.retailer}</div>
             </Card>
         </Link>
     );
