@@ -16,7 +16,7 @@ const RateRows = ({orderId}: { orderId: string }) => {
     const dispatch = useDispatch();
 
     const getRates = (): void => {
-        axiosConfig.get(`/customer/orders/rate/${orderId}`, {
+        axiosConfig.get('/customer/orders/rate/' + orderId, {
             headers: {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }

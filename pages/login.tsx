@@ -2,10 +2,9 @@ import type {NextPage} from 'next'
 import {Avatar, Button, Card, Checkbox, Form, Input, notification, Space} from 'antd';
 import {DefaultLayout} from "../components/layout";
 import {GithubOutlined, GoogleOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import axiosConfig from "../utils/axios-config";
-
-import {deleteCookie, setCookie} from "cookies-next";
+import {deleteCookie, getCookie, setCookie} from "cookies-next";
 import {REFRESH_TOKEN, REMEMBER_ME} from "../utils/server";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch} from "react-redux";
@@ -27,7 +26,27 @@ const Login: NextPage = () => {
 
     const dispatch = useDispatch();
 
+    const [isLoading, setIsLoading] = useState(true);
+
+    const [username, setUsername] = useState('');
+
+    const [password, setPassword] = useState('');
+
     const [pending, setPending] = useState<boolean>(false);
+
+    useEffect(() => {
+        // Kiểm tra nếu cookie REMEMBER_ME tồn tại
+        const rememberMeCookie = getCookie(REMEMBER_ME);
+        if (rememberMeCookie) {
+            // Giải mã thông tin từ cookie REMEMBER_ME
+            const userRemember = JSON.parse(atob(rememberMeCookie));
+            // Đặt giá trị của username bằng userRemember.username
+            setUsername(userRemember.username || '');
+            setPassword(userRemember.password || '');
+        }
+        // Đã cập nhật username, đặt loading thành false
+        setIsLoading(false);
+    },[]);
 
     const onFinish = (values: any): void => {
         setPending(true);
@@ -79,7 +98,7 @@ const Login: NextPage = () => {
 
     return (
         <div className='bg-[url("/login-bg.png")] bg-cover bg-center bg-no-repeat h-screen'>
-            <Card style={{width: "500px", margin: "auto"}}>
+            <Card style={{width: "500px", margin: "auto"}} loading={isLoading}>
                 <Space direction="vertical" size="middle" style={{display: 'flex'}}>
                     <div>
                         <Avatar size={64} icon={<UserOutlined/>}/>
@@ -95,12 +114,14 @@ const Login: NextPage = () => {
                         <Form.Item
                             name="username"
                             rules={[{required: true, message: 'Please input your Username or Email!'}]}
+                            initialValue={username}
                         >
                             <Input prefix={<UserOutlined className="site-form-item-icon"/>} placeholder="Username"/>
                         </Form.Item>
                         <Form.Item
                             name="password"
                             rules={[{required: true, message: 'Please input your Password!'}]}
+                            initialValue={password}
                         >
                             <Input
                                 prefix={<LockOutlined className="site-form-item-icon"/>}

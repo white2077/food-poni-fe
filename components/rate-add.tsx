@@ -41,7 +41,7 @@ const RateAdd = () => {
             rateDTO.images = images;
         }
         dispatch(setLoadingOrderItem(true));
-        axiosConfig.post(`/order-items/rate/${orderItemId}`, rateDTO, {
+        axiosConfig.post('/order-items/rate/' + orderItemId, rateDTO, {
             headers: {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }
