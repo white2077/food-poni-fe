@@ -19,7 +19,7 @@ export interface IProductCard {
     minPrice: number;
     maxPrice: number;
     rate: number;
-    sales: number;
+    rateCount: number;
 }
 
 const ProductRows = () => {
@@ -68,7 +68,7 @@ const ProductRows = () => {
                         minPrice: minPrice,
                         maxPrice: maxPrice,
                         rate: product.rate ?? 0,
-                        sales: product.sales ?? 0
+                        rateCount: product.rateCount ?? 0
                     };
 
                     productList.push(productCard);

@@ -33,7 +33,7 @@ export interface DistanceResponse {
     status: string;
 }
 
-    const ProductCard = ({product}: { product: IProductCard }) => {
+const ProductCard = ({product}: { product: IProductCard }) => {
 
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
@@ -116,19 +116,19 @@ export interface DistanceResponse {
                         {product.name}
                     </div>
                     <div className='flex items-center'>
-                        {/*{product.sales!=0 && (*/}
-                        {/*    <span>{product.rate.toFixed(1) } </span>*/}
-                        {/*)}*/}
+                      <span className="mr-2 border-r-2">
+                        <span>{product.rate !== 0 && product.rate.toFixed(1)}</span>
                         <Rate disabled allowHalf value={product.rate} className='text-sm mr-1'/>
+                      </span>
                         <span>
-                            {" " + product.sales} Lượt Bán
-                        </span>
+                        {" " + product.rateCount} Lượt Đánh Giá
+                      </span>
                     </div>
                     <div style={{textAlign: 'left', fontSize: '20px', fontWeight: 'bold'}}>${product.minPrice} -
                         ${product.maxPrice}</div>
                 </Space>
                 <Divider style={{margin: '12px 0px'}}/>
-                <div style={{fontSize: '14px'}}><HistoryOutlined /> Không xác định</div>
+                <div style={{fontSize: '14px'}}><HistoryOutlined/> Không xác định</div>
             </Card>
         </Link>
     );
