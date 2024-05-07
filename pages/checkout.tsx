@@ -81,7 +81,7 @@ const Checkout = () => {
         // if (orderItems && shippingAddress && payment) {
         //     const order: OrderRequestDTO = {orderItems, shippingAddress, note, payment} as OrderRequestDTO;
         //
-        //     axiosConfig.post("/orders", order, {
+        //     axiosInterceptor.post("/orders", order, {
         //         headers: {
         //             Authorization: 'Bearer ' + currentUser.accessToken,
         //         }

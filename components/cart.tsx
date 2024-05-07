@@ -22,8 +22,8 @@ const Cart = () => {
         setOpen(false);
     };
 
-    const onChangeQuantity = (id: string, value: number): void => {
-        const payload: {id: string, value: number} = {id, value};
+    const onChangeQuantity = (id: string, retailerId: string, value: number): void => {
+        const payload: {id: string, retailerId: string, value: number} = {id, retailerId, value};
         dispatch(setQuantity(payload));
     };
 
@@ -66,7 +66,7 @@ const Cart = () => {
                                                      style={{maxWidth: '70px'}}
                                                      defaultValue={1}
                                                      value={item.quantity}
-                                                     onChange={(value: number | null) => onChangeQuantity(item.id, value!)}/>
+                                                     onChange={(value: number | null) => onChangeQuantity(item.id, item.retailer.id ?? '', value!)}/>
                                     </span>}
                                     />
                                     <div>${item.price * item.quantity}</div>

@@ -5,13 +5,13 @@ import React, {useState} from "react";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../stores";
-import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {setCurrentShippingAddress} from "../stores/address.reducer";
 import {deleteDeliveryInformationList} from "../stores/delivery.reducer";
 import {AddressIdDTO} from "../models/address/AddressRequest";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {CurrentUser, updateAddressId} from "../stores/user.reducer";
+import axiosInterceptor from "../utils/axiosInterceptor";
 
 export const AddressDeliveryInformation = () => {
 
@@ -33,7 +33,7 @@ export const AddressDeliveryInformation = () => {
         const addressId: string = currentUser.addressId ?? "";
 
         if (addressId !== "") {
-            axiosConfig.get(`/addresses/${addressId}`, {
+            axiosInterceptor.get(`/addresses/${addressId}`, {
                 headers: {
                     Authorization: 'Bearer ' + currentUser.accessToken,
                 }
@@ -52,7 +52,7 @@ export const AddressDeliveryInformation = () => {
     };
 
     const deleteDeliveryInformation = (addressId: string): void => {
-        axiosConfig.delete(`/addresses/${addressId}`, {
+        axiosInterceptor.delete(`/addresses/${addressId}`, {
             headers: {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }
@@ -74,7 +74,7 @@ export const AddressDeliveryInformation = () => {
             id: addressId
         };
 
-        axiosConfig.put("/users/update-address", addressIdDTO, {
+        axiosInterceptor.put("/users/update-address", addressIdDTO, {
             headers: {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }

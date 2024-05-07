@@ -1,13 +1,12 @@
 import React, {ReactElement, useEffect, useState} from 'react';
 import type {MenuProps} from 'antd';
 import {Menu, Skeleton} from 'antd';
-import axiosConfig from "../utils/axios-config";
 import {Page} from "../models/Page";
 import {AxiosResponse} from "axios";
 import {CategoryResponseDTO} from "../models/category/CategoryResponseAPI";
-import {NextPage} from "next";
 import {useDispatch} from "react-redux";
 import {setSelectedProductCategory} from "../stores/product-category.reducer";
+import axiosInterceptor from "../utils/axiosInterceptor";
 
 export interface ICategory {
     key: string;
@@ -32,7 +31,7 @@ const ProductCategory = () => {
 
         setIsLoading(true);
 
-        axiosConfig.get("/product-categories?onlyParent=true")
+        axiosInterceptor.get("/product-categories?onlyParent=true")
             .then((res: AxiosResponse<Page<CategoryResponseDTO[]>>) => {
                 res.data.content.forEach((category: CategoryResponseDTO) => {
                     convertCategory(category, '');

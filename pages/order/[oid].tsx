@@ -1,9 +1,7 @@
-import type {NextPage} from 'next'
 import {NextRouter, useRouter} from "next/router";
 import {DefaultLayout} from "../../components/layout";
 import React, {useEffect, useState} from "react";
 import {Button, Card, Col, Divider, Image, Result, Row, Spin, Typography} from "antd";
-import axiosConfig from "../../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import RateAdd from "../../components/rate-add";
@@ -17,10 +15,8 @@ import {setLoadingOrderItem} from "../../stores/order.reducer";
 import {OrderItemResponseDTO} from "../../models/order_item/OrderItemResponseAPI";
 import {OrderResponseDTO} from "../../models/order/OrderResposeAPI";
 import RateRows from "../../components/rate-rows";
-import {addItem, ICartItem} from "../../stores/cart.reducer";
-import boolean from "async-validator/dist-types/validator/boolean";
-import checkout from "../checkout";
-import {exists} from "node:fs";
+import {addItem, ICart, ICartItem} from "../../stores/cart.reducer";
+import axiosInterceptor from "../../utils/axiosInterceptor";
 
 const {Text} = Typography;
 
@@ -42,6 +38,7 @@ export interface IOrderItem {
     image: string;
     rate: RateDTO;
     productDetailId: string;
+    retailerId: string;
 }
 
 const OrderDetails = () => {
@@ -60,7 +57,7 @@ const OrderDetails = () => {
 
     const [isError, setIsError] = useState<boolean>(false);
 
-    const cartItems: ICartItem[] = useSelector((state: RootState) => state.cart.cartItems);
+    const carts: ICart[] = useSelector((state: RootState) => state.cart.carts);
 
     const dispatch = useDispatch();
 
@@ -83,7 +80,7 @@ const OrderDetails = () => {
 
     const getOrderItemById = (oid: string): void => {
         if (oid) {
-            axiosConfig.get('/customer/orders/' + oid , {
+            axiosInterceptor.get('/customer/orders/' + oid , {
                 headers: {
                     Authorization: 'Bearer ' + currentUser.accessToken,
                 }
@@ -107,6 +104,7 @@ const OrderDetails = () => {
                                 image: orderItem.productDetail?.product?.thumbnail ?? "",
                                 rate: orderItem.rate ?? {},
                                 productDetailId: orderItem.productDetail?.id ?? "",
+                                retailerId: orderItem.productDetail?.product?.user?.id ?? "",
                             }
                         }) ?? [],
                     };
@@ -123,13 +121,18 @@ const OrderDetails = () => {
         orderItems.forEach((orderItem: IOrderItem): void => {
             let existItem : boolean = false;
             // console.log(orderItem);
-            cartItems.forEach((cartItem: ICartItem): void => {
-                console.log(cartItem);
-                if (orderItem.productDetailId === cartItem.id) {
-                    existItem = true;
-                    return;
-                }
+            const cart = carts.find((cart: ICart): boolean => {
+                return cart.id === orderItem.retailerId;
             })
+            if (cart) {
+                cart.cartItems.forEach((cartItem: ICartItem): void => {
+                    console.log(cartItem);
+                    if (orderItem.productDetailId === cartItem.id) {
+                        existItem = true;
+                        return;
+                    }
+                })
+            }
             if(!existItem){
                 addToCart(orderItem.productDetailId, orderItem.price, orderItem.image, orderItem.name, orderItem.quantity);
             }

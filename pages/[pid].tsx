@@ -15,6 +15,7 @@ import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {CurrentUser} from "../stores/user.reducer";
+import axiosInterceptor from "../utils/axiosInterceptor";
 
 export interface IProduct {
     id?: string;
@@ -68,7 +69,7 @@ const ProductDetails: NextPage = () => {
 
     const getProductDetailById = (): void => {
         if (pid) {
-            axiosConfig.get(`/products/${pid}`)
+            axiosInterceptor.get(`/products/${pid}`)
                 .then(function (res: AxiosResponse<ProductResponseDTO>): void {
                     const product: ProductResponseDTO = res.data;
                     // console.log(res.data)
@@ -109,7 +110,7 @@ const ProductDetails: NextPage = () => {
 
     const getRates = (productDetailId: string | undefined) => {
         setLoadingRate(true);
-        axiosConfig.get(`/products/rate/${productDetailId}`)
+        axiosInterceptor.get(`/products/rate/${productDetailId}`)
             .then(function (res: AxiosResponse<RateResponseDTO[]>) {
                 // console.log(res.data);
                 setRates(res.data);

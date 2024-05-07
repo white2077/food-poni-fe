@@ -1,7 +1,6 @@
 import {Button, Card, Divider, List, message, Modal, notification, Upload} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {FileUploadsResponseDTO} from "../models/file/FileUploadsResponseAPI";
 import {UploadOutlined} from "@ant-design/icons";
@@ -10,6 +9,7 @@ import {setFileUploads, setSelectedFile} from "../stores/fileUploads.reducer";
 import {setShowModalFileUpload} from "../stores/rate.reducer";
 import {CurrentUser} from "../stores/user.reducer";
 import {RootState} from "../stores";
+import axiosInterceptor from "../utils/axiosInterceptor";
 
 export interface IFileUploadCard {
     id: string;
@@ -43,7 +43,7 @@ const FileUploads = () => {
     }, []);
 
     const getFileUploads = (): void => {
-        axiosConfig.get('/file-uploads', {
+        axiosInterceptor.get('/file-uploads', {
             headers: {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }
@@ -75,7 +75,7 @@ const FileUploads = () => {
         const {file} = options;
         const formData = new FormData();
         formData.append('multipartFile', file);
-        axiosConfig.post("/file-uploads", formData, {
+        axiosInterceptor.post("/file-uploads", formData, {
             headers: {
                 Authorization: 'Bearer ' + currentUser.accessToken,
                 'Content-Type': 'multipart/form-data'

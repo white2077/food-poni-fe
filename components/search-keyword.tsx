@@ -1,8 +1,6 @@
-import Search from 'antd/lib/input/Search';
 import {NextRouter, useRouter} from 'next/router';
 import {Button, Input, Space} from 'antd';
 import React from 'react';
-import {NextPage} from "next";
 
 const SearchKeyword = () => {
 

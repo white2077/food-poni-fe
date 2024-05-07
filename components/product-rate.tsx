@@ -2,12 +2,12 @@ import {CurrentUser} from "../stores/user.reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {RateResponseDTO} from "../models/rate/RateResponseAPI";
 import React, {useEffect, useState} from "react";
-import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {Col, Divider, Image, notification, Rate, Row} from "antd";
 import {setShowModalRate} from "../stores/rate.reducer";
 import {RootState} from "../stores";
 import {Page} from "../models/Page";
+import axiosInterceptor from "../utils/axiosInterceptor";
 
 
 const ProductRate = ({productId}: { productId: string }) => {
@@ -16,7 +16,7 @@ const ProductRate = ({productId}: { productId: string }) => {
     const dispatch = useDispatch();
 
     const getRates = () => {
-        axiosConfig.get('/products/rate/' + productId)
+        axiosInterceptor.get('/products/rate/' + productId)
             .then(function (res: AxiosResponse<Page<RateResponseDTO[]>>) {
                 console.log(res.data.content);
                 setRates(res.data.content);

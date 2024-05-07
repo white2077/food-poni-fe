@@ -1,9 +1,7 @@
 import type {NextPage} from 'next'
 import {Avatar, Button, Card, Checkbox, Form, Input, notification, Space} from 'antd';
-import {DefaultLayout} from "../components/layout";
 import {GithubOutlined, GoogleOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
 import {useEffect, useState} from "react";
-import axiosConfig from "../utils/axios-config";
 import {deleteCookie, getCookie, setCookie} from "cookies-next";
 import {REFRESH_TOKEN, REMEMBER_ME} from "../utils/server";
 import {NextRouter, useRouter} from "next/router";
@@ -13,6 +11,7 @@ import {AuthenticationResponse} from "../models/auth/AuthenticationResponse";
 import {AxiosResponse} from "axios";
 import jwtDecode from "jwt-decode";
 import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
+import axiosInterceptor from "../utils/axiosInterceptor";
 
 export interface IUserRemember {
     username: string;
@@ -54,7 +53,7 @@ const Login: NextPage = () => {
             ? {username: null, email: values.username, password: values.password}
             : {username: values.username, email: null, password: values.password}
 
-        axiosConfig.post("/auth/login", user)
+        axiosInterceptor.post("/auth/login", user)
             .then(function (res: AxiosResponse<AuthenticationResponse>): void {
                 setPending(false);
 

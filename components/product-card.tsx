@@ -75,7 +75,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
     //     if (originLng != null && originLat != null) {
     //         const productId: string = product.id;
     //
-    //         axiosConfig.get(`/products/${productId}`)
+    //         axiosInterceptor.get(`/products/${productId}`)
     //             .then(function (res: AxiosResponse<ProductResponseDTO>): void {
     //                 destLat = res.data.user?.address?.lat ?? 0;
     //                 destLng = res.data.user?.address?.lon ?? 0;

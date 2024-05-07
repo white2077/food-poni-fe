@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {Button, Input, Modal, notification, Rate} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
-import axiosConfig from "../utils/axios-config";
 import FileUploads from "./file-upload";
 import {CurrentUser} from "../stores/user.reducer";
 import {RootState} from "../stores";
@@ -9,6 +8,7 @@ import {RateDTO} from "../models/order/OrderRequest";
 import {setLoadingOrderItem} from "../stores/order.reducer";
 import {setShowModalAddRate, setShowModalFileUpload} from "../stores/rate.reducer";
 import {setSelectedFile} from "../stores/fileUploads.reducer";
+import axiosInterceptor from "../utils/axiosInterceptor";
 
 const RateAdd = () => {
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
@@ -41,7 +41,7 @@ const RateAdd = () => {
             rateDTO.images = images;
         }
         dispatch(setLoadingOrderItem(true));
-        axiosConfig.post('/order-items/rate/' + orderItemId, rateDTO, {
+        axiosInterceptor.post('/order-items/rate/' + orderItemId, rateDTO, {
             headers: {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }

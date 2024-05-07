@@ -1,7 +1,6 @@
 import {useState} from 'react';
 import {AutoComplete, Button, Form, Input, notification} from 'antd';
 import axios, {AxiosResponse} from "axios";
-import axiosConfig from "../utils/axios-config";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {addDeliveryInformationList} from "../stores/delivery.reducer";
@@ -9,6 +8,7 @@ import {AddressRequestDTO} from "../models/address/AddressRequest";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {CurrentUser} from "../stores/user.reducer";
 import {SearchResult} from "../stores/search-position.reducer";
+import axiosInterceptor from "../utils/axiosInterceptor";
 
 const AddressAdd = () => {
 
@@ -73,7 +73,7 @@ const AddressAdd = () => {
             lat: selectedAddress?.lat || 0
         };
 
-        axiosConfig.post("/addresses", deliveryInfo, {
+        axiosInterceptor.post("/addresses", deliveryInfo, {
             headers: {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }

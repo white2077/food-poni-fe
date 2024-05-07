@@ -5,7 +5,6 @@ import ProductRows from "../components/product-rows";
 import CarouselBanner from "../components/carousel-banner";
 import MenuMain from "../components/menu-main";
 import ProductCategory from "../components/product-category";
-import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {setCurrentShippingAddress} from "../stores/address.reducer";
 import {NextRouter, useRouter} from "next/router";
@@ -16,6 +15,7 @@ import {setDeliveryInformationList} from "../stores/delivery.reducer";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {CurrentUser} from "../stores/user.reducer";
 import SearchPosition from "../components/search-position";
+import axiosInterceptor from "../utils/axiosInterceptor";
 
 const Home: NextPage = () => {
 
@@ -29,7 +29,7 @@ const Home: NextPage = () => {
         const addressId: string = currentUser.addressId ?? "";
 
         if (addressId !== "") {
-            axiosConfig.get(`/addresses/${addressId}`, {
+            axiosInterceptor.get(`/addresses/${addressId}`, {
                 headers: {
                     Authorization: 'Bearer ' + currentUser.accessToken,
                 }
@@ -45,7 +45,7 @@ const Home: NextPage = () => {
 
     const getDeliveryInformationList = (): void => {
         if (currentUser && currentUser.accessToken) {
-            axiosConfig.get("/addresses", {
+            axiosInterceptor.get("/addresses", {
                 headers: {
                     Authorization: 'Bearer ' + currentUser.accessToken,
                 }

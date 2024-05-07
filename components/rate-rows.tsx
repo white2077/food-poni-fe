@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {Divider, Image, Modal, notification, Rate} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
-import axiosConfig from "../utils/axios-config";
 import FileUploads from "./file-upload";
 import {CurrentUser} from "../stores/user.reducer";
 import {RootState} from "../stores";
 import {setShowModalRate} from "../stores/rate.reducer";
 import {RateResponseDTO} from "../models/rate/RateResponseAPI";
 import {AxiosResponse} from "axios";
+import axiosInterceptor from "../utils/axiosInterceptor";
 
 const RateRows = ({orderId}: { orderId: string }) => {
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
@@ -16,7 +16,7 @@ const RateRows = ({orderId}: { orderId: string }) => {
     const dispatch = useDispatch();
 
     const getRates = (): void => {
-        axiosConfig.get('/customer/orders/rate/' + orderId, {
+        axiosInterceptor.get('/customer/orders/rate/' + orderId, {
             headers: {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }

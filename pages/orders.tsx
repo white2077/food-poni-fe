@@ -1,7 +1,6 @@
 import {DefaultLayout} from "../components/layout";
-import {Button, GetProp, List, notification, Result, Segmented, UploadFile, UploadProps} from "antd";
+import {Button, GetProp, List, notification, Result, Segmented, UploadProps} from "antd";
 import React, {useEffect, useState} from "react";
-import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {useSelector} from "react-redux";
 import OrderCard from "../components/order-card";
@@ -10,6 +9,8 @@ import {Page} from "../models/Page";
 import {NextRouter, useRouter} from "next/router";
 import {CurrentUser} from "../stores/user.reducer";
 import {OrderResponseDTO} from "../models/order/OrderResposeAPI";
+import axiosInterceptor from "../utils/axiosInterceptor";
+
 enum OrderStatus {
     PENDING,
     APPROVED,
@@ -42,7 +43,7 @@ const Orders = () => {
 
 
     const getOrders = () => {
-        axiosConfig.get("/customer/orders", {
+        axiosInterceptor.get("/customer/orders", {
             headers: {
                 Authorization: 'Bearer ' + currentUser.accessToken,
             }

@@ -4,13 +4,13 @@ import ProductCard from "./product-card";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {setProductList} from "../stores/product.reducer";
-import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {Page} from "../models/Page";
 import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
 import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailResponseAPI";
 import {CurrentUser} from "../stores/user.reducer";
 import {SmileOutlined} from "@ant-design/icons";
+import axiosInterceptor from "../utils/axiosInterceptor";
 
 export interface IProductCard {
     id: string;
@@ -46,7 +46,7 @@ const ProductRows = () => {
             url += '&categoryId=' + currentProductCategory;
         }
 
-        axiosConfig.get(url)
+        axiosInterceptor.get(url)
             .then((res: AxiosResponse<Page<ProductResponseDTO[]>>): void => {
                 const productList: IProductCard[] = [];
                 console.log(res.data.content);
