@@ -19,7 +19,7 @@ axiosInterceptor.interceptors.request.use(
         if (refreshTokenCurrent && accessTokenCurrent !== "") {
             const accessTokenDecode: JwtPayload = jwtDecode(accessTokenCurrent);
 
-            if (accessTokenDecode.exp !== undefined && accessTokenDecode.exp < Math.floor(Date.now() / 1000)) {
+            if (accessTokenDecode.exp && accessTokenDecode.exp < Math.floor(Date.now() / 1000)) {
                 try {
                     // Lay token
                     const response = await axios.post(
