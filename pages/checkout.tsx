@@ -5,10 +5,10 @@ import {
     Col,
     Collapse,
     Divider,
-    Form, Input,
+    Form,
+    Input,
     List,
     Modal,
-    notification,
     Radio,
     RadioChangeEvent,
     Result,
@@ -16,18 +16,15 @@ import {
     Space
 } from "antd";
 import {useDispatch, useSelector} from "react-redux";
-import {deleteAllItem, ICart, ICartItem} from "../stores/cart.reducer";
+import {ICart, ICartItem} from "../stores/cart.reducer";
 import React, {useState} from "react";
-import axiosConfig from "../utils/axios-config";
 import {NextRouter, useRouter} from "next/router";
 import OrderItems from "../components/order-items";
 import AddressAdd from "../components/address-add";
 import {RootState} from "../stores";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
-import {OrderItemRequestDTO} from "../models/order_item/OrderItemRequest";
-import {OrderRequestDTO, PaymentInfo, ShippingAddress} from "../models/order/OrderRequest";
+import {PaymentInfo, ShippingAddress} from "../models/order/OrderRequest";
 import {CurrentUser} from "../stores/user.reducer";
-import cart from "../components/cart";
 
 const {TextArea} = Input;
 

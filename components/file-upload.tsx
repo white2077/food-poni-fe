@@ -10,6 +10,7 @@ import {setShowModalFileUpload} from "../stores/rate.reducer";
 import {CurrentUser} from "../stores/user.reducer";
 import {RootState} from "../stores";
 import axiosInterceptor from "../utils/axiosInterceptor";
+import {getAccessToken} from "../utils/auth";
 
 export interface IFileUploadCard {
     id: string;
@@ -45,7 +46,7 @@ const FileUploads = () => {
     const getFileUploads = (): void => {
         axiosInterceptor.get('/file-uploads', {
             headers: {
-                Authorization: 'Bearer ' + currentUser.accessToken,
+                Authorization: 'Bearer ' + getAccessToken(),
             }
         })
             .then((res: AxiosResponse<Page<FileUploadsResponseDTO[]>>): void => {
@@ -77,7 +78,7 @@ const FileUploads = () => {
         formData.append('multipartFile', file);
         axiosInterceptor.post("/file-uploads", formData, {
             headers: {
-                Authorization: 'Bearer ' + currentUser.accessToken,
+                Authorization: 'Bearer ' + getAccessToken(),
                 'Content-Type': 'multipart/form-data'
             }
         })

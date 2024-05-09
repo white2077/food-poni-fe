@@ -8,6 +8,7 @@ import {setShowModalRate} from "../stores/rate.reducer";
 import {RateResponseDTO} from "../models/rate/RateResponseAPI";
 import {AxiosResponse} from "axios";
 import axiosInterceptor from "../utils/axiosInterceptor";
+import {getAccessToken} from "../utils/auth";
 
 const RateRows = ({orderId}: { orderId: string }) => {
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
@@ -18,7 +19,7 @@ const RateRows = ({orderId}: { orderId: string }) => {
     const getRates = (): void => {
         axiosInterceptor.get('/customer/orders/rate/' + orderId, {
             headers: {
-                Authorization: 'Bearer ' + currentUser.accessToken,
+                Authorization: 'Bearer ' + getAccessToken(),
             }
         })
             .then(function (res: AxiosResponse<RateResponseDTO[]>) {

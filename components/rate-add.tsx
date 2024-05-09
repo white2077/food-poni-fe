@@ -9,6 +9,7 @@ import {setLoadingOrderItem} from "../stores/order.reducer";
 import {setShowModalAddRate, setShowModalFileUpload} from "../stores/rate.reducer";
 import {setSelectedFile} from "../stores/fileUploads.reducer";
 import axiosInterceptor from "../utils/axiosInterceptor";
+import {getAccessToken} from "../utils/auth";
 
 const RateAdd = () => {
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
@@ -43,7 +44,7 @@ const RateAdd = () => {
         dispatch(setLoadingOrderItem(true));
         axiosInterceptor.post('/order-items/rate/' + orderItemId, rateDTO, {
             headers: {
-                Authorization: 'Bearer ' + currentUser.accessToken,
+                Authorization: 'Bearer ' + getAccessToken(),
             }
         })
             .then(() => {

@@ -9,6 +9,7 @@ import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {CurrentUser} from "../stores/user.reducer";
 import {SearchResult} from "../stores/search-position.reducer";
 import axiosInterceptor from "../utils/axiosInterceptor";
+import {getAccessToken} from "../utils/auth";
 
 const AddressAdd = () => {
 
@@ -75,7 +76,7 @@ const AddressAdd = () => {
 
         axiosInterceptor.post("/addresses", deliveryInfo, {
             headers: {
-                Authorization: 'Bearer ' + currentUser.accessToken,
+                Authorization: 'Bearer ' + getAccessToken(),
             }
         })
             .then(function (res: AxiosResponse<AddressResponseDTO>) {

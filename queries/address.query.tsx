@@ -1,8 +1,3 @@
-import axiosConfig from "../utils/axios-config";
-import {useQuery} from "react-query";
-import {AxiosResponse} from "axios";
-import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
-import {setCurrentShippingAddress} from "../stores/address.reducer";
 // import {useDispatch, useSelector} from "react-redux";
 // import {RootState} from "../stores";
 // import {CurrentUser} from "../stores/user.reducer";

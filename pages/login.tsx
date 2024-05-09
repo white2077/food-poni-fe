@@ -12,6 +12,7 @@ import {AxiosResponse} from "axios";
 import jwtDecode from "jwt-decode";
 import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
 import axiosInterceptor from "../utils/axiosInterceptor";
+import {setAccessToken} from "../utils/auth";
 
 export interface IUserRemember {
     username: string;
@@ -61,8 +62,8 @@ const Login: NextPage = () => {
 
                 if (accessToken) {
                     const payload: CurrentUser = jwtDecode(accessToken);
-                    payload.accessToken = accessToken;
                     dispatch(setCurrentUser(payload));
+                    setAccessToken(accessToken);
 
                     // set refresh token
                     setCookie(REFRESH_TOKEN, res.data.refreshToken, {

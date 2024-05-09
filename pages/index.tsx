@@ -16,6 +16,7 @@ import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {CurrentUser} from "../stores/user.reducer";
 import SearchPosition from "../components/search-position";
 import axiosInterceptor from "../utils/axiosInterceptor";
+import {getAccessToken} from "../utils/auth";
 
 const Home: NextPage = () => {
 
@@ -31,7 +32,7 @@ const Home: NextPage = () => {
         if (addressId !== "") {
             axiosInterceptor.get(`/addresses/${addressId}`, {
                 headers: {
-                    Authorization: 'Bearer ' + currentUser.accessToken,
+                    Authorization: 'Bearer ' + getAccessToken(),
                 }
             })
                 .then(function (res: AxiosResponse<AddressResponseDTO>): void {
@@ -44,10 +45,10 @@ const Home: NextPage = () => {
     };
 
     const getDeliveryInformationList = (): void => {
-        if (currentUser && currentUser.accessToken) {
+        if (getAccessToken()) {
             axiosInterceptor.get("/addresses", {
                 headers: {
-                    Authorization: 'Bearer ' + currentUser.accessToken,
+                    Authorization: 'Bearer ' + getAccessToken(),
                 }
             })
                 .then(function (res: AxiosResponse<Page<AddressResponseDTO[]>>): void {

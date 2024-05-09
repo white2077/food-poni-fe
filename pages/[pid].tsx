@@ -7,7 +7,6 @@ import ProductGallery from "../components/product-gallery";
 import ProductCart from "../components/product-cart";
 import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
 import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailResponseAPI";
-import axiosConfig from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import ProductComment from "../components/product-comment";
 import {RateResponseDTO} from "../models/rate/RateResponseAPI";
@@ -16,6 +15,7 @@ import {useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {CurrentUser} from "../stores/user.reducer";
 import axiosInterceptor from "../utils/axiosInterceptor";
+import {getAccessToken} from "../utils/auth";
 
 export interface IProduct {
     id?: string;
@@ -185,7 +185,7 @@ const ProductDetails: NextPage = () => {
                                             </Radio.Group>
                                         )}
                                     </Card>
-                                    {(currentUser.accessToken && currentShippingAddress) &&
+                                    {(getAccessToken() && currentShippingAddress) &&
                                         <Card size='small' title='Shipping information'>
                                             <div>{currentShippingAddress.address}</div>
                                         </Card>

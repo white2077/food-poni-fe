@@ -12,6 +12,7 @@ import {AddressIdDTO} from "../models/address/AddressRequest";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {CurrentUser, updateAddressId} from "../stores/user.reducer";
 import axiosInterceptor from "../utils/axiosInterceptor";
+import {getAccessToken} from "../utils/auth";
 
 export const AddressDeliveryInformation = () => {
 
@@ -35,7 +36,7 @@ export const AddressDeliveryInformation = () => {
         if (addressId !== "") {
             axiosInterceptor.get(`/addresses/${addressId}`, {
                 headers: {
-                    Authorization: 'Bearer ' + currentUser.accessToken,
+                    Authorization: 'Bearer ' + getAccessToken(),
                 }
             })
                 .then(function (res: AxiosResponse<AddressResponseDTO>): void {
@@ -54,7 +55,7 @@ export const AddressDeliveryInformation = () => {
     const deleteDeliveryInformation = (addressId: string): void => {
         axiosInterceptor.delete(`/addresses/${addressId}`, {
             headers: {
-                Authorization: 'Bearer ' + currentUser.accessToken,
+                Authorization: 'Bearer ' + getAccessToken(),
             }
         })
             .then(function (): void {
@@ -76,7 +77,7 @@ export const AddressDeliveryInformation = () => {
 
         axiosInterceptor.put("/users/update-address", addressIdDTO, {
             headers: {
-                Authorization: 'Bearer ' + currentUser.accessToken,
+                Authorization: 'Bearer ' + getAccessToken(),
             }
         })
             .then(function (): void {

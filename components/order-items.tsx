@@ -4,6 +4,7 @@ import React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {deleteItem, ICart, ICartItem, setNote, setQuantity} from "../stores/cart.reducer";
 import {RootState} from "../stores";
+
 const {TextArea} = Input;
 
 const OrderItems = () => {

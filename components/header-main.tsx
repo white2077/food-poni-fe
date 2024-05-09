@@ -7,6 +7,7 @@ import React from "react";
 import {CurrentUser} from "../stores/user.reducer";
 import Cart from "./cart";
 import SearchKeyword from "./search-keyword";
+import {getAccessToken} from "../utils/auth";
 
 const HeaderMain = () => {
 
@@ -51,7 +52,7 @@ const HeaderMain = () => {
     ];
 
     const handleItemClick = (path: string): void => {
-        if (currentUser.accessToken) {
+        if (getAccessToken()) {
             router.push(path);
         } else {
             router.push('/login');

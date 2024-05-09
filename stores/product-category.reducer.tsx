@@ -1,5 +1,4 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {SearchResult} from "./search-position.reducer";
 
 export interface IProductCategoryState {
     currentProductCategory: string;

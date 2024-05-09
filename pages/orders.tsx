@@ -10,6 +10,7 @@ import {NextRouter, useRouter} from "next/router";
 import {CurrentUser} from "../stores/user.reducer";
 import {OrderResponseDTO} from "../models/order/OrderResposeAPI";
 import axiosInterceptor from "../utils/axiosInterceptor";
+import {getAccessToken} from "../utils/auth";
 
 enum OrderStatus {
     PENDING,
@@ -45,7 +46,7 @@ const Orders = () => {
     const getOrders = () => {
         axiosInterceptor.get("/customer/orders", {
             headers: {
-                Authorization: 'Bearer ' + currentUser.accessToken,
+                Authorization: 'Bearer ' + getAccessToken(),
             }
         })
             .then(function (res: AxiosResponse<Page<OrderResponseDTO[]>>) {

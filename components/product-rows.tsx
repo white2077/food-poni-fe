@@ -11,6 +11,7 @@ import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailRe
 import {CurrentUser} from "../stores/user.reducer";
 import {SmileOutlined} from "@ant-design/icons";
 import axiosInterceptor from "../utils/axiosInterceptor";
+import {getAccessToken} from "../utils/auth";
 
 export interface IProductCard {
     id: string;
@@ -51,7 +52,7 @@ const ProductRows = () => {
                 const productList: IProductCard[] = [];
                 console.log(res.data.content);
                 (res.data.content as ProductResponseDTO[]).map((product: ProductResponseDTO): void => {
-                    if (currentUser.accessToken && currentUser.role === "RETAILER" && currentUser.id == product.user?.id) {
+                    if (getAccessToken() && currentUser.role === "RETAILER" && currentUser.id == product.user?.id) {
                         return;
                     }
 

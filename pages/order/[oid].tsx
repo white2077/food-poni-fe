@@ -17,6 +17,7 @@ import {OrderResponseDTO} from "../../models/order/OrderResposeAPI";
 import RateRows from "../../components/rate-rows";
 import {addItem, ICart, ICartItem} from "../../stores/cart.reducer";
 import axiosInterceptor from "../../utils/axiosInterceptor";
+import {getAccessToken} from "../../utils/auth";
 
 const {Text} = Typography;
 
@@ -82,7 +83,7 @@ const OrderDetails = () => {
         if (oid) {
             axiosInterceptor.get('/customer/orders/' + oid , {
                 headers: {
-                    Authorization: 'Bearer ' + currentUser.accessToken,
+                    Authorization: 'Bearer ' + getAccessToken(),
                 }
             })
                 .then(function (res: AxiosResponse<OrderResponseDTO>): void {

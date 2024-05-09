@@ -4,6 +4,7 @@ import {format} from "date-fns";
 import Link from "next/link";
 import {OrderResponseDTO} from "../models/order/OrderResposeAPI";
 import React from "react";
+
 const {Text} = Typography;
 
 const OrderCard = ({order}: { order: OrderResponseDTO }) => {

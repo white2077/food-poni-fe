@@ -1,4 +1,4 @@
-import {Avatar, Button, Card, Divider, Flex, InputNumber, List} from "antd";
+import {Button, Card, Divider, Flex, InputNumber} from "antd";
 import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {addItem, deleteAllItem, ICart, ICartItem} from "../stores/cart.reducer";
@@ -6,6 +6,7 @@ import {NextRouter, useRouter} from "next/router";
 import {RootState} from "../stores";
 import {CurrentUser} from "../stores/user.reducer";
 import {IRetailer} from "../pages/[pid]";
+import {getAccessToken} from "../utils/auth";
 
 const ProductCart = ({id, price, thumbnail, name, retailer}: { id: string, price: number, thumbnail: string, name: string, retailer: IRetailer }) => {
 
@@ -22,7 +23,7 @@ const ProductCart = ({id, price, thumbnail, name, retailer}: { id: string, price
     const isExisted: boolean = carts.some(item => item.id === id);
 
     const addToCart = (): void => {
-        if (currentUser.accessToken) {
+        if (getAccessToken()) {
             const payload: ICartItem = {id, price, thumbnail, name, quantity, retailer} as ICartItem;
             dispatch(addItem(payload));
         } else {
@@ -31,7 +32,7 @@ const ProductCart = ({id, price, thumbnail, name, retailer}: { id: string, price
     };
 
     const getCheckout = (): void => {
-        if (currentUser.accessToken) {
+        if (getAccessToken()) {
             addToCart();
             router.push("/checkout");
         } else {

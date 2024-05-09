@@ -10,7 +10,6 @@ export interface CurrentUser {
     email?: string;
     phoneNumber?: string;
     username?: string;
-    accessToken?: string;
     addressId?: string;
 }
 
