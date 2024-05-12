@@ -1,5 +1,5 @@
 import type {NextPage} from 'next'
-import {Avatar, Button, Card, Checkbox, Form, Input, notification, Space} from 'antd';
+import {Avatar, Button, Card, Form, Input, notification, Space} from 'antd';
 import {
     GithubOutlined,
     GoogleOutlined,
@@ -8,18 +8,13 @@ import {
     UnlockOutlined,
     UserOutlined
 } from "@ant-design/icons";
-import {useEffect, useRef, useState} from "react";
-import {deleteCookie, getCookie, setCookie} from "cookies-next";
-import {REFRESH_TOKEN, REMEMBER_ME} from "../utils/server";
+import {useEffect, useState} from "react";
+import {setCookie} from "cookies-next";
+import {REMEMBER_ME} from "../utils/server";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch} from "react-redux";
-import {AuthenticationRequest} from "../models/auth/AuthenticationRequest";
-import {AuthenticationResponse} from "../models/auth/AuthenticationResponse";
 import {AxiosResponse} from "axios";
-import jwtDecode from "jwt-decode";
-import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
 import axiosInterceptor from "../utils/axiosInterceptor";
-import {setAccessToken} from "../utils/auth";
 import {UserCreationRequestDTO} from "../models/user/UserRequest";
 import {UserResponseDTO} from "../models/user/UserResponseAPI";
 
@@ -37,30 +32,15 @@ const Signup: NextPage = () => {
 
     const [isLoading, setIsLoading] = useState(true);
 
-    const [username, setUsername] = useState('');
-
-    const [password, setPassword] = useState('');
-
     const [pending, setPending] = useState<boolean>(false);
-
-    const formRef = useRef(null);
-
-    const validateConfirmPassword = (_: any,value: string) => {
-        const getFieldValue  = formRef.current;
-        console.log(getFieldValue('password'))
-        if (value !== getFieldValue('password')) {
-            return Promise.reject(new Error('Passwords do not match'));
-        }
-        return Promise.resolve();
-    };
 
     useEffect(() => {
         setIsLoading(false);
-    },[]);
+    }, []);
 
     const onFinish = (values: any): void => {
         setPending(true);
-        let user: UserCreationRequestDTO ={username: values.username, email: values.email, password: values.password}
+        let user: UserCreationRequestDTO = {username: values.username, email: values.email, password: values.password}
         axiosInterceptor.post("/users", user)
             .then(function (res: AxiosResponse<UserResponseDTO>): void {
                 setPending(false);
@@ -101,7 +81,6 @@ const Signup: NextPage = () => {
                     <Form
                         name="normal_login"
                         className="login-form"
-                        form={formRef.current}
                         initialValues={{remember: true}}
                         onFinish={onFinish}
                     >
@@ -114,8 +93,8 @@ const Signup: NextPage = () => {
                         <Form.Item
                             name="email"
                             rules={[
-                                { required: true, message: 'Please input your Email!' },
-                                { type: 'email', message: 'Please enter a valid email address' }
+                                {required: true, message: 'Please input your Email!'},
+                                {type: 'email', message: 'Please enter a valid email address'}
                             ]}
                         >
                             <Input prefix={<MailOutlined className="site-form-item-icon"/>} placeholder="Email"/>
@@ -134,8 +113,8 @@ const Signup: NextPage = () => {
                             name="rePassword"
                             dependencies={['password']}
                             rules={[
-                                { required: true, message: 'Please input your Password!' },
-                                ({ getFieldValue }) => ({
+                                {required: true, message: 'Please input your Password!'},
+                                ({getFieldValue}) => ({
                                     validator(_, value) {
                                         if (!value || getFieldValue('password') === value) {
                                             return Promise.resolve();
