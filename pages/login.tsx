@@ -65,11 +65,7 @@ const Login: NextPage = () => {
                     dispatch(setCurrentUser(payload));
                     setAccessToken(accessToken);
 
-                    // set refresh token
-                    setCookie(REFRESH_TOKEN, res.data.refreshToken, {
-                        expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
-                    });
-
+                    deleteCookie(REMEMBER_ME);
                     //set user remembered and delete
                     if (values.remember) {
                         const userRemember: IUserRemember = {
