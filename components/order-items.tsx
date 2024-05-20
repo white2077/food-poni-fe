@@ -1,8 +1,16 @@
-import {Card, Checkbox, Col, Input, InputNumber, Row} from "antd";
-import {DeleteOutlined} from "@ant-design/icons";
+import {Card, Checkbox, Col, Divider, Input, InputNumber, Popconfirm, Row} from "antd";
+import {DeleteOutlined, RightOutlined} from "@ant-design/icons";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {deleteItem, ICart, ICartItem, setNote, setQuantity} from "../stores/cart.reducer";
+import {
+    deleteItem, deleteSelectedSoldItems,
+    ICart,
+    ICartItem,
+    setNote,
+    setQuantity, setSelectedAll,
+    setSelectedICart,
+    setSelectedICartItem
+} from "../stores/cart.reducer";
 import {RootState} from "../stores";
 
 const {TextArea} = Input;
@@ -22,12 +30,28 @@ const OrderItems = () => {
         dispatch(setNote({id: itemId, retailerId, note}));
     };
 
+    const handleSetSelectedICartItem = (id: string): void => {
+        dispatch(setSelectedICartItem(id));
+    }
+
+    const handleSetSelectedICart = (id: string): void => {
+        dispatch(setSelectedICart(id));
+    }
+
+    const handleSetSelectedAll = (): void => {
+        dispatch(setSelectedAll());
+    }
+
+    const handleDeleteSelectedAll = (): void => {
+        dispatch(deleteSelectedSoldItems());
+    };
+
     return (
         <div>
             <Card style={{marginBottom: "16px"}}>
                 <Row>
                     <Col flex='2%'>
-                        <Checkbox></Checkbox>
+                        <Checkbox onClick={handleSetSelectedAll}></Checkbox>
                     </Col>
                     <Col flex='40%'>Tất cả</Col>
                     <Col flex='10%'>Đơn giá</Col>
@@ -35,17 +59,30 @@ const OrderItems = () => {
                     <Col flex='10%'>Thành tiền</Col>
                     <Col flex='26%'>Ghi chú</Col>
                     <Col flex='2%'>
-                        <DeleteOutlined/>
+                        <Popconfirm
+                            title="Bạn có chắc chắn muốn xóa không?"
+                            onConfirm={handleDeleteSelectedAll}
+                            okText="Đồng ý"
+                            cancelText="Hủy"
+                        >
+                            <DeleteOutlined style={{ cursor: 'pointer' }} />
+                        </Popconfirm>
                     </Col>
                 </Row>
             </Card>
             {
-                carts.map((cart: ICart) => (
-                    <Card key={cart.id}>
+                carts.filter(cart => cart.cartItems.length!=0).map((cart: ICart) => (
+                    <Card key={cart.id} className="my-2">
+                        <Row>
+                            <Checkbox onClick={() => handleSetSelectedICart(cart.id)} checked={cart.isSelectedICart}></Checkbox>
+                            <div className="font-bold text-xl mx-2">{cart.name}</div>
+                            <RightOutlined />
+                        </Row>
+                        <Divider />
                         {cart.cartItems.map((item: ICartItem, index: number) => (
                             <Row key={index} style={{margin: '16px 0', alignItems: 'center'}}>
                                 <Col flex='2%'>
-                                    <Checkbox checked></Checkbox>
+                                    <Checkbox onClick={() => handleSetSelectedICartItem(item.id)} checked={item.isSelectedICartItem}></Checkbox>
                                 </Col>
                                 <Col flex='40%'>
                                     <div style={{display: 'flex', alignItems: 'center'}}>

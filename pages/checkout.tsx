@@ -9,6 +9,7 @@ import {
     Input,
     List,
     Modal,
+    notification,
     Radio,
     RadioChangeEvent,
     Result,
@@ -16,15 +17,18 @@ import {
     Space
 } from "antd";
 import {useDispatch, useSelector} from "react-redux";
-import {ICart, ICartItem} from "../stores/cart.reducer";
+import {deleteSelectedSoldItems, ICart, ICartItem} from "../stores/cart.reducer";
 import React, {useState} from "react";
 import {NextRouter, useRouter} from "next/router";
 import OrderItems from "../components/order-items";
 import AddressAdd from "../components/address-add";
 import {RootState} from "../stores";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
-import {PaymentInfo, ShippingAddress} from "../models/order/OrderRequest";
+import {OrderRequestDTO, PaymentInfo, ShippingAddress} from "../models/order/OrderRequest";
 import {CurrentUser} from "../stores/user.reducer";
+import {OrderItemRequestDTO} from "../models/order_item/OrderItemRequest";
+import axiosInterceptor from "../utils/axiosInterceptor";
+import {getAccessToken} from "../utils/auth";
 
 const {TextArea} = Input;
 
@@ -43,6 +47,8 @@ const Checkout = () => {
     const deliveryInformationList: AddressResponseDTO[] = useSelector((state: RootState) => state.delivery.deliveryInformationList);
 
     const [pending, setPending] = useState<boolean>(false);
+
+    // const cartItems: ICartItem[] = useSelector((state: RootState) => state.cart.carts);
 
     const [payment, setPayment] = useState<PaymentInfo>({
         method: "CASH",
@@ -64,53 +70,127 @@ const Checkout = () => {
         return totalCart + cartTotal;
     }, 0);
 
-    const addToOrder = (values: any): void => {
-        // setPending(true);
-        // const orderItems: OrderItemRequestDTO[] = cartItems.map((item: ICartItem) => {
-        //     return {
-        //         quantity: item.quantity,
-        //         productDetail: item,
-        //         note: item.note
-        //     };
-        // });
-        // const note: string = values.note;
-        //
-        // if (orderItems && shippingAddress && payment) {
-        //     const order: OrderRequestDTO = {orderItems, shippingAddress, note, payment} as OrderRequestDTO;
-        //
-        //     axiosInterceptor.post("/orders", order, {
-        //         headers: {
-        //             Authorization: 'Bearer ' + currentUser.accessToken,
-        //         }
-        //     })
-        //         .then(function () {
-        //             setPending(false);
-        //             dispatch(deleteAllItem({}));
-        //             notification.open({
-        //                 type: 'success',
-        //                 message: 'Order message',
-        //                 description: 'Create new order successfully!',
-        //             });
-        //             // redirect to home page
-        //             router.push('/');
-        //         })
-        //         .catch(function (res) {
-        //             setPending(false);
-        //             notification.open({
-        //                 type: 'error',
-        //                 message: 'Order message',
-        //                 description: res.message
-        //             });
-        //         });
-        // } else {
-        //     setPending(false);
-        //     notification.open({
-        //         type: "error",
-        //         message: "Order message",
-        //         description: "Some information is missing. Please fill in all required fields."
-        //     });
-        // }
+    // const addToOrder = (values: any): void => {
+    //     setPending(true);
+    //     const orderItems: OrderItemRequestDTO[] = cartItems.map((item: ICartItem) => {
+    //         return {
+    //             quantity: item.quantity,
+    //             productDetail: item,
+    //             note: item.note
+    //         };
+    //     });
+    //     const note: string = values.note;
+    //
+    //     if (orderItems && shippingAddress && payment) {
+    //         const order: OrderRequestDTO = {orderItems, shippingAddress, note, payment} as OrderRequestDTO;
+    //
+    //         axiosInterceptor.post("/orders", order, {
+    //             headers: {
+    //                 Authorization: 'Bearer ' + getAccessToken(),
+    //             }
+    //         })
+    //             .then(function () {
+    //                 setPending(false);
+    //                 dispatch(deleteAllItem({}));
+    //                 notification.open({
+    //                     type: 'success',
+    //                     message: 'Order message',
+    //                     description: 'Create new order successfully!',
+    //                 });
+    //                 // redirect to home page
+    //                 router.push('/');
+    //             })
+    //             .catch(function (res) {
+    //                 setPending(false);
+    //                 notification.open({
+    //                     type: 'error',
+    //                     message: 'Order message',
+    //                     description: res.message
+    //                 });
+    //             });
+    //     } else {
+    //         setPending(false);
+    //         notification.open({
+    //             type: "error",
+    //             message: "Order message",
+    //             description: "Some information is missing. Please fill in all required fields."
+    //         });
+    //     }
+    // };
+
+    const addMultipleOrders = (orders: any[]): void => {
+        let check = false;
+        carts.forEach((cart: ICart) => {
+            cart.cartItems.forEach((item: ICartItem) => {
+                if (item.isSelectedICartItem) {
+                    check = true;
+                    return;
+                }
+            })
+        })
+        if (!check) {
+            notification.open({
+                type: "warning",
+                message: "Order message",
+                description: "Please select at least one item."
+            });
+            return;
+        }
+        setPending(true);
+        const requests = carts.map((values: any) => {
+            const orderItems: OrderItemRequestDTO[] = values.cartItems.filter((item: ICartItem) => item.isSelectedICartItem).map((item: ICartItem) => {
+                return {
+                    quantity: item.quantity,
+                    productDetail: item,
+                    note: item.note
+                };
+            });
+            const note: string = values.note;
+
+            if(orderItems.length==0){
+                return;
+            }
+
+            if (orderItems && shippingAddress && payment) {
+                const order: OrderRequestDTO = {
+                    orderItems,
+                    shippingAddress: shippingAddress,
+                    note,
+                    payment: payment
+                } as OrderRequestDTO;
+
+                return axiosInterceptor.post("/orders", order, {
+                    headers: {
+                        Authorization: 'Bearer ' + getAccessToken(),
+                    }
+                });
+            } else {
+                return Promise.reject(new Error("Some information is missing for this order."));
+            }
+        });
+
+        Promise.all(requests)
+            .then(function () {
+                setPending(false);
+                dispatch(deleteSelectedSoldItems());
+                notification.open({
+                    type: 'success',
+                    message: 'Order message',
+                    description: 'All orders created successfully!',
+                });
+                // Redirect to home page or any other appropriate action
+                router.push('/');
+            })
+            .catch(function (error) {
+                setPending(false);
+                notification.open({
+                    type: 'error',
+                    message: 'Order message',
+                    description: error.message
+                });
+            });
     };
+
 
     const onChange = (e: RadioChangeEvent): void => {
         setPayment(prevPaymentInfo => ({...prevPaymentInfo, method: e.target.value}));
@@ -221,12 +301,12 @@ const Checkout = () => {
                                     name="normal_login"
                                     className="login-form"
                                     initialValues={{remember: true}}
-                                    onFinish={addToOrder}
+                                    onFinish={addMultipleOrders}
                                 >
                                     <Form.Item
                                         name="note"
                                     >
-                                        <TextArea placeholder="Note" allowClear />
+                                        <TextArea placeholder="Note" allowClear/>
                                     </Form.Item>
 
                                     <Form.Item>
