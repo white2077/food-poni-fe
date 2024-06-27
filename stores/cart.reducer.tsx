@@ -1,6 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {IRetailer} from "../pages/[pid]";
-import cart from "../components/cart";
 
 export interface ICart {
 

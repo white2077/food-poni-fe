@@ -1,22 +1,20 @@
-import {CurrentUser} from "../stores/user.reducer";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {RateResponseDTO} from "../models/rate/RateResponseAPI";
 import React, {useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
 import {Col, Divider, Image, notification, Rate, Row} from "antd";
 import {setShowModalRate} from "../stores/rate.reducer";
-import {RootState} from "../stores";
 import {Page} from "../models/Page";
-import axiosInterceptor from "../utils/axiosInterceptor";
-
+import {api} from "../utils/axios-config";
 
 const ProductRate = ({productId}: { productId: string }) => {
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser) as CurrentUser;
-    const [rates, setRates] = useState<RateResponseDTO[]>([]);
+
     const dispatch = useDispatch();
 
+    const [rates, setRates] = useState<RateResponseDTO[]>([]);
+
     const getRates = () => {
-        axiosInterceptor.get('/products/rate/' + productId)
+        api.get('/products/rate/' + productId)
             .then(function (res: AxiosResponse<Page<RateResponseDTO[]>>) {
                 console.log(res.data.content);
                 setRates(res.data.content);

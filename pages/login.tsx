@@ -1,23 +1,41 @@
-import type {NextPage} from 'next'
+import type {NextApiRequest, NextApiResponse, NextPage} from 'next'
 import {Avatar, Button, Card, Checkbox, Form, Input, notification, Space} from 'antd';
 import {GithubOutlined, GoogleOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
 import {useEffect, useState} from "react";
 import {deleteCookie, getCookie, setCookie} from "cookies-next";
-import {REFRESH_TOKEN, REMEMBER_ME} from "../utils/server";
+import {REFRESH_TOKEN, REMEMBER_ME, server} from "../utils/server";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch} from "react-redux";
 import {AuthenticationRequest} from "../models/auth/AuthenticationRequest";
 import {AuthenticationResponse} from "../models/auth/AuthenticationResponse";
-import {AxiosResponse} from "axios";
+import {AxiosError, AxiosResponse} from "axios";
 import jwtDecode from "jwt-decode";
 import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
-import axiosInterceptor from "../utils/axiosInterceptor";
-import {setAccessToken} from "../utils/auth";
+import {ErrorApiResponse} from "../models/ErrorApiResponse";
+import {api} from "../utils/axios-config";
+import {clientId, redirectUri, responseType, scopes} from "../utils/oauth2";
 
 export interface IUserRemember {
     username: string;
     password: string;
     avatar: string;
+}
+
+export const getServerSideProps = async ({req, res}: { req: NextApiRequest, res: NextApiResponse }) => {
+    const refreshToken = getCookie(REFRESH_TOKEN, {req, res});
+
+    if (refreshToken) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false
+            }
+        }
+    }
+
+    return {
+        props: {}
+    }
 }
 
 const Login: NextPage = () => {
@@ -27,6 +45,8 @@ const Login: NextPage = () => {
     const dispatch = useDispatch();
 
     const [isLoading, setIsLoading] = useState(true);
+
+    const [isLoadingGoogle, setLoadingGoogle] = useState(false);
 
     const [username, setUsername] = useState('');
 
@@ -54,7 +74,7 @@ const Login: NextPage = () => {
             ? {username: null, email: values.username, password: values.password}
             : {username: values.username, email: null, password: values.password}
 
-        axiosInterceptor.post("/auth/login", user)
+        api.post("/auth/login", user)
             .then(function (res: AxiosResponse<AuthenticationResponse>): void {
                 setPending(false);
 
@@ -63,7 +83,10 @@ const Login: NextPage = () => {
                 if (accessToken) {
                     const payload: CurrentUser = jwtDecode(accessToken);
                     dispatch(setCurrentUser(payload));
-                    setAccessToken(accessToken);
+
+                    setCookie(REFRESH_TOKEN, res.data.refreshToken, {
+                        expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
+                    });
 
                     deleteCookie(REMEMBER_ME);
                     //set user remembered and delete
@@ -82,7 +105,7 @@ const Login: NextPage = () => {
                 }
 
             })
-            .catch(function (res): void {
+            .catch(function (res: AxiosError<ErrorApiResponse>): void {
                 setPending(false);
                 notification.open({
                     type: 'error',
@@ -91,6 +114,37 @@ const Login: NextPage = () => {
                 });
             });
     };
+
+    function handleGoogleLogin() {
+        let h: number = 600
+        let w: number = 500
+        let left: number = (screen.width / 2) - (w / 2);
+        let top: number = (screen.height / 2) - (h / 2);
+        setLoadingGoogle(true);
+        const googleLoginWindow: Window | null = window.open(
+            "https://accounts.google.com/o/oauth2/v2/auth?&client_id=" + clientId
+            + "&redirect_uri=" + redirectUri + "&response_type=" + responseType + "&scope=" + scopes.join("+"),
+            "Google Login",
+            "width=" + w + ",height=" + h + ",top=" + top + ", left=" + left
+        );
+
+        const getMessage = (event: MessageEvent<string>) => {
+            if (server.startsWith(event.origin)) {
+                if (event.data) {
+                    setCookie("refreshToken", event.data, {
+                        maxAge: 60 * 60 * 24 * 30,
+                        path: "/"
+                    });
+                    router.push("/");
+                }
+                window.removeEventListener("message", getMessage);
+                setLoadingGoogle(false);
+            }
+        };
+
+        window.addEventListener("message", getMessage);
+
+    }
 
     return (
         <div className='bg-[url("/login-bg.png")] bg-cover bg-center bg-no-repeat h-screen'>
@@ -147,7 +201,7 @@ const Login: NextPage = () => {
                             <Space>
                                 Other login method
                                 <GithubOutlined/>
-                                <GoogleOutlined/>
+                                <GoogleOutlined onClick={() => handleGoogleLogin()} disabled={isLoadingGoogle} />
                             </Space>
                         </div>
                         <a className='float-right' onClick={() => router.push('/signup')}>Register now</a>

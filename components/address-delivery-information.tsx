@@ -5,14 +5,14 @@ import React, {useState} from "react";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../stores";
-import {AxiosResponse} from "axios";
-import {setCurrentShippingAddress} from "../stores/address.reducer";
-import {deleteDeliveryInformationList} from "../stores/delivery.reducer";
 import {AddressIdDTO} from "../models/address/AddressRequest";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {CurrentUser, updateAddressId} from "../stores/user.reducer";
-import axiosInterceptor from "../utils/axiosInterceptor";
-import {getAccessToken} from "../utils/auth";
+import {refreshToken} from "../utils/server";
+import {accessToken, apiWithToken} from "../utils/axios-config";
+import {AxiosResponse} from "axios";
+import {setCurrentShippingAddress} from "../stores/address.reducer";
+import {deleteDeliveryInformationList} from "../stores/delivery.reducer";
 
 export const AddressDeliveryInformation = () => {
 
@@ -33,10 +33,10 @@ export const AddressDeliveryInformation = () => {
     const getShippingAddress = (): void => {
         const addressId: string = currentUser.addressId ?? "";
 
-        if (addressId !== "") {
-            axiosInterceptor.get(`/addresses/${addressId}`, {
+        if (addressId !== "" && refreshToken) {
+            apiWithToken(refreshToken).get(`/addresses/${addressId}`, {
                 headers: {
-                    Authorization: 'Bearer ' + getAccessToken(),
+                    Authorization: 'Bearer ' + accessToken,
                 }
             })
                 .then(function (res: AxiosResponse<AddressResponseDTO>): void {
@@ -53,53 +53,56 @@ export const AddressDeliveryInformation = () => {
     };
 
     const deleteDeliveryInformation = (addressId: string): void => {
-        axiosInterceptor.delete(`/addresses/${addressId}`, {
-            headers: {
-                Authorization: 'Bearer ' + getAccessToken(),
-            }
-        })
-            .then(function (): void {
-                dispatch(deleteDeliveryInformationList(addressId));
+        if (refreshToken) {
+            apiWithToken(refreshToken).delete(`/addresses/${addressId}`, {
+                headers: {
+                    Authorization: 'Bearer ' + accessToken,
+                }
             })
-            .catch(function (res): void {
-                notification.open({
-                    type: 'error',
-                    message: 'Delivery information message',
-                    description: res.message
-                });
-            })
+                .then(function (): void {
+                    dispatch(deleteDeliveryInformationList(addressId));
+                })
+                .catch(function (res): void {
+                    notification.open({
+                        type: 'error',
+                        message: 'Delivery information message',
+                        description: res.message
+                    });
+                })
+        }
     };
 
     const updateShippingAddress = (addressId: string): void => {
         const addressIdDTO: AddressIdDTO = {
             id: addressId
         };
-
-        axiosInterceptor.put("/users/update-address", addressIdDTO, {
-            headers: {
-                Authorization: 'Bearer ' + getAccessToken(),
-            }
-        })
-            .then(function (): void {
-                dispatch(updateAddressId(addressId));
-
-                getShippingAddress();
-
-                notification.open({
-                    type: 'success',
-                    message: 'Shipping address message',
-                    description: "Update shipping address successfully"
-                });
-
-                router.push("/account-information")
+        if (refreshToken) {
+            apiWithToken(refreshToken).put("/users/update-address", addressIdDTO, {
+                headers: {
+                    Authorization: 'Bearer ' + accessToken,
+                }
             })
-            .catch(function (res): void {
-                notification.open({
-                    type: 'error',
-                    message: 'Shipping address message',
-                    description: res.message
+                .then(function (): void {
+                    dispatch(updateAddressId(addressId));
+
+                    getShippingAddress();
+
+                    notification.open({
+                        type: 'success',
+                        message: 'Shipping address message',
+                        description: "Update shipping address successfully"
+                    });
+
+                    router.push("/account-information")
+                })
+                .catch(function (res): void {
+                    notification.open({
+                        type: 'error',
+                        message: 'Shipping address message',
+                        description: res.message
+                    });
                 });
-            });
+        }
     };
 
     return (

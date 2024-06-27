@@ -1,16 +1,17 @@
 import {Button, Card, Divider, List, message, Modal, notification, Upload} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {AxiosResponse} from "axios";
 import {FileUploadsResponseDTO} from "../models/file/FileUploadsResponseAPI";
 import {UploadOutlined} from "@ant-design/icons";
-import {Page} from "../models/Page";
 import {setFileUploads, setSelectedFile} from "../stores/fileUploads.reducer";
 import {setShowModalFileUpload} from "../stores/rate.reducer";
 import {CurrentUser} from "../stores/user.reducer";
 import {RootState} from "../stores";
-import axiosInterceptor from "../utils/axiosInterceptor";
-import {getAccessToken} from "../utils/auth";
+import {accessToken, apiWithToken} from "../utils/axios-config";
+import {refreshToken} from "../utils/server";
+import {AxiosError, AxiosResponse} from "axios";
+import {Page} from "../models/Page";
+import {ErrorApiResponse} from "../models/ErrorApiResponse";
 
 export interface IFileUploadCard {
     id: string;
@@ -21,7 +22,6 @@ export interface IFileUploadCard {
     url: string;
 }
 
-
 const FileUploads = () => {
 
     const dispatch = useDispatch();
@@ -31,7 +31,6 @@ const FileUploads = () => {
     const fileUploads: FileUploadsResponseDTO[] = useSelector((state: RootState) => state.fileUpload.filesUpload);
 
     const showModalFileUpload: boolean = useSelector((state: RootState) => state.rate.showModalFileUpload);
-
 
     const [hoveredFile, setHoveredFile] = useState<string | null>(null);
 
@@ -44,18 +43,19 @@ const FileUploads = () => {
     }, []);
 
     const getFileUploads = (): void => {
-        axiosInterceptor.get('/file-uploads', {
-            headers: {
-                Authorization: 'Bearer ' + getAccessToken(),
-            }
-        })
-            .then((res: AxiosResponse<Page<FileUploadsResponseDTO[]>>): void => {
-                dispatch(setFileUploads(res.data.content));
+        if (refreshToken) {
+            apiWithToken(refreshToken).get('/file-uploads', {
+                headers: {
+                    Authorization: 'Bearer ' + accessToken,
+                }
             })
-            .catch(err => {
-                console.log(err)
-            });
-
+                .then((res: AxiosResponse<Page<FileUploadsResponseDTO[]>>): void => {
+                    dispatch(setFileUploads(res.data.content));
+                })
+                .catch(function (err: AxiosError<ErrorApiResponse>) {
+                    console.log(err)
+                });
+        }
     };
 
     const handleToggleFileSelect = (fileUrl: string): void => {
@@ -76,30 +76,33 @@ const FileUploads = () => {
         const {file} = options;
         const formData = new FormData();
         formData.append('multipartFile', file);
-        axiosInterceptor.post("/file-uploads", formData, {
-            headers: {
-                Authorization: 'Bearer ' + getAccessToken(),
-                'Content-Type': 'multipart/form-data'
-            }
-        })
-            .then(function () {
-                // setPending(false);
-                // dispatch(deleteAllItem({}));
-                notification.open({
-                    type: 'success',
-                    message: 'Rate',
-                    description: 'Rate success!',
-                });
-                getFileUploads();
+
+        if (refreshToken) {
+            apiWithToken(refreshToken).post("/file-uploads", formData, {
+                headers: {
+                    Authorization: 'Bearer ' + accessToken,
+                    'Content-Type': 'multipart/form-data'
+                }
             })
-            .catch(function (res) {
-                // setPending(false);
-                notification.open({
-                    type: 'error',
-                    message: 'Rate message',
-                    description: res.message
+                .then(function () {
+                    // setPending(false);
+                    // dispatch(deleteAllItem({}));
+                    notification.open({
+                        type: 'success',
+                        message: 'Rate',
+                        description: 'Rate success!',
+                    });
+                    getFileUploads();
+                })
+                .catch(function (res) {
+                    // setPending(false);
+                    notification.open({
+                        type: 'error',
+                        message: 'Rate message',
+                        description: res.message
+                    });
                 });
-            });
+        }
     };
 
     const props = {
@@ -108,10 +111,10 @@ const FileUploads = () => {
     };
 
     const handleSetFileUpload = (): void => {
-        if(selectedFiles.length > 0) {
+        if (selectedFiles.length > 0) {
             dispatch(setSelectedFile(selectedFiles));
             dispatch(setShowModalFileUpload(false));
-        }else {
+        } else {
             messageApi.open({
                 type: 'warning',
                 content: 'You have not selected any images.',

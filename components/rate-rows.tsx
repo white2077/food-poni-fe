@@ -2,36 +2,39 @@ import React, {useEffect, useState} from 'react';
 import {Divider, Image, Modal, notification, Rate} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import FileUploads from "./file-upload";
-import {CurrentUser} from "../stores/user.reducer";
 import {RootState} from "../stores";
 import {setShowModalRate} from "../stores/rate.reducer";
 import {RateResponseDTO} from "../models/rate/RateResponseAPI";
 import {AxiosResponse} from "axios";
-import axiosInterceptor from "../utils/axiosInterceptor";
-import {getAccessToken} from "../utils/auth";
+import {accessToken, apiWithToken} from "../utils/axios-config";
+import {refreshToken} from "../utils/server";
 
 const RateRows = ({orderId}: { orderId: string }) => {
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
-    const showModalRate: boolean = useSelector((state: RootState) => state.rate.showModalRate);
-    const [rates, setRates] = useState<RateResponseDTO[]>([]);
+
     const dispatch = useDispatch();
 
+    const showModalRate: boolean = useSelector((state: RootState) => state.rate.showModalRate);
+
+    const [rates, setRates] = useState<RateResponseDTO[]>([]);
+
     const getRates = (): void => {
-        axiosInterceptor.get('/customer/orders/rate/' + orderId, {
-            headers: {
-                Authorization: 'Bearer ' + getAccessToken(),
-            }
-        })
-            .then(function (res: AxiosResponse<RateResponseDTO[]>) {
-                setRates(res.data);
+        if (refreshToken) {
+            apiWithToken(refreshToken).get('/customer/orders/rate/' + orderId, {
+                headers: {
+                    Authorization: 'Bearer ' + accessToken,
+                }
             })
-            .catch(function (res) {
-                notification.open({
-                    type: 'error',
-                    message: 'Order message',
-                    description: res.message
-                });
-            })
+                .then(function (res: AxiosResponse<RateResponseDTO[]>) {
+                    setRates(res.data);
+                })
+                .catch(function (res) {
+                    notification.open({
+                        type: 'error',
+                        message: 'Order message',
+                        description: res.message
+                    });
+                })
+        }
     }
 
     useEffect((): void => {
@@ -43,7 +46,7 @@ const RateRows = ({orderId}: { orderId: string }) => {
     }
 
     return (
-        <Modal title="Đánh giá của bạn" visible={showModalRate} footer={null} onCancel={handleModalClose}
+        <Modal title="Đánh giá của bạn" open={showModalRate} footer={null} onCancel={handleModalClose}
                style={{userSelect: 'none'}}>
             <div style={{padding: '20px 0'}}>
                 {rates.length != 0 ? rates.map((rate, index) => (

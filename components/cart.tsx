@@ -5,7 +5,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {deleteItem, ICart, ICartItem, setQuantity} from "../stores/cart.reducer";
 import {RootState} from "../stores";
 
-
 const Cart = () => {
 
     const dispatch = useDispatch();

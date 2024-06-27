@@ -1,17 +1,21 @@
 import {Avatar, Button, Dropdown, MenuProps,} from 'antd';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {LogoutOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
 import {NextRouter, useRouter} from 'next/router';
 import {RootState} from '../stores';
 import React from "react";
-import {CurrentUser} from "../stores/user.reducer";
+import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
 import Cart from "./cart";
 import SearchKeyword from "./search-keyword";
-import {getAccessToken} from "../utils/auth";
+import {deleteCookie} from "cookies-next";
+import {REFRESH_TOKEN} from "../utils/server";
+import Notification from "./notification";
 
 const HeaderMain = () => {
 
     const router: NextRouter = useRouter();
+
+    const dispatch = useDispatch();
 
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
@@ -52,9 +56,14 @@ const HeaderMain = () => {
     ];
 
     const handleItemClick = (path: string): void => {
-        if (getAccessToken()) {
+        if (currentUser.id) {
+            if (path === '/login') {
+                deleteCookie(REFRESH_TOKEN);
+                dispatch(setCurrentUser({}));
+            }
             router.push(path);
         } else {
+            deleteCookie(REFRESH_TOKEN);
             router.push('/login');
         }
     };
@@ -66,6 +75,7 @@ const HeaderMain = () => {
             <div className='flex items-center justify-end gap-4'>
                 {currentUser.id ? (
                         <>
+                            <Notification />
                             <Cart/>
                             <Dropdown menu={{items}} placement='bottomRight'>
                                 <a>

@@ -1,16 +1,14 @@
 import {DefaultLayout} from "../components/layout";
-import {Button, GetProp, List, notification, Result, Segmented, UploadProps} from "antd";
+import {GetProp, List, Segmented, UploadProps} from "antd";
 import React, {useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
-import {useSelector} from "react-redux";
 import OrderCard from "../components/order-card";
-import {RootState} from "../stores";
-import {Page} from "../models/Page";
-import {NextRouter, useRouter} from "next/router";
-import {CurrentUser} from "../stores/user.reducer";
+import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
 import {OrderResponseDTO} from "../models/order/OrderResposeAPI";
-import axiosInterceptor from "../utils/axiosInterceptor";
-import {getAccessToken} from "../utils/auth";
+import {NextApiRequest, NextApiResponse} from "next";
+import {CookieValueTypes, getCookie} from "cookies-next";
+import {accessToken, apiWithToken} from "../utils/axios-config";
+import {REFRESH_TOKEN} from "../utils/server";
 
 enum OrderStatus {
     PENDING,
@@ -28,52 +26,55 @@ const getBase64 = (file: FileType): Promise<string> =>
         reader.onerror = (error) => reject(error);
     });
 
-const Orders = () => {
+export async function getServerSideProps({req, res}: { req: NextApiRequest, res: NextApiResponse }) {
+    const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req, res});
+    if (refreshToken) {
+        try {
+            const res: AxiosResponse<Page<OrderResponseDTO[]>> = await apiWithToken(refreshToken).get('/customer/orders', {
+                headers: {
+                    Authorization: "Bearer " + accessToken
+                }
+            });
 
-    const router: NextRouter = useRouter();
+            return {
+                props: {
+                    ePage: res.data,
+                },
+            };
+        } catch (error) {
+            console.error('Error fetching page:', error);
+        }
+    }
 
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
+    return {
+        redirect: {
+            destination: '/login',
+            permanent: false,
+        },
+    }
+}
+
+const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderResponseDTO[]> }) => {
 
     const [orders, setOrders] = useState<OrderResponseDTO[]>([]);
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    useEffect((): void => {
-        getOrders();
-    }, []);
+    useEffect(() => {
+        const sortedOrders = ePage.content.map((order: OrderResponseDTO) => {
+            const createdDate = new Date(order.createdDate ?? ""); // Chuyển đổi Timestamp thành đối tượng Date
+            return { ...order, createdDate };
+        });
 
+        // Sắp xếp sortedOrders theo createdDate giảm dần
+        sortedOrders.sort((a, b) => b.createdDate.getTime() - a.createdDate.getTime());
 
-    const getOrders = () => {
-        axiosInterceptor.get("/customer/orders", {
-            headers: {
-                Authorization: 'Bearer ' + getAccessToken(),
-            }
-        })
-            .then(function (res: AxiosResponse<Page<OrderResponseDTO[]>>) {
-                // console.log(res.data.content);
-                const sortedOrders = res.data.content.map((order: OrderResponseDTO) => {
-                    const createdDate = new Date(order.createdDate ?? ""); // Chuyển đổi Timestamp thành đối tượng Date
-                    return { ...order, createdDate };
-                });
-
-                // Sắp xếp sortedOrders theo createdDate giảm dần
-                sortedOrders.sort((a, b) => b.createdDate.getTime() - a.createdDate.getTime());
-
-                setOrders(sortedOrders);
-                setIsLoading(false);
-            })
-            .catch(function (res) {
-                notification.open({
-                    type: 'error',
-                    message: 'Order message',
-                    description: res.message
-                });
-            })
-    };
+        setOrders(sortedOrders);
+        setIsLoading(false);
+    }, [ePage]);
 
     const handleChange = (value: string) => {
-        console.log(OrderStatus[value as keyof typeof OrderStatus]);
-        // Xử lý logic tại đây nếu cần
+        // console.log(OrderStatus[value as keyof typeof OrderStatus]);
     };
 
     const getStatusText = (status: OrderStatus) => {
@@ -98,34 +99,22 @@ const Orders = () => {
 
     return (
         <DefaultLayout>
-            {
-                currentUser.id ? (
-                    <div style={{color: "black", textAlign: "left", width: "1440px"}}>
-                        <div style={{textAlign: "left", width: "100%", marginBottom: "20px"}}>
-                            <Segmented<string>
-                                options={orderStatusOptions}
-                                onChange={handleChange}
-                                style={{width: "100%"}}
-                            />
-                        </div>
-                        <List loading={isLoading}
-                              dataSource={orders}
-                              renderItem={(order) => (
-                                  <List.Item>
-                                      <OrderCard order={order}></OrderCard>
-                                  </List.Item>
-                              )}
-                        />
-                    </div>
-                ) : (
-                    <Result
-                        status="403"
-                        title="403"
-                        subTitle="Sorry, you are not authorized to access this page."
-                        extra={<Button type="primary" onClick={() => router.push('/')}>Back Home</Button>}
+            <div style={{color: "black", textAlign: "left", width: "1440px"}}>
+                <div style={{textAlign: "left", width: "100%", marginBottom: "20px"}}>
+                    <Segmented<string>
+                        options={orderStatusOptions}
+                        onChange={handleChange}
+                        style={{width: "100%"}}
                     />
-                )
-            }
+                </div>
+                <List dataSource={orders} loading={isLoading}
+                      renderItem={(order) => (
+                          <List.Item>
+                              <OrderCard order={order}></OrderCard>
+                          </List.Item>
+                      )}
+                />
+            </div>
         </DefaultLayout>
     );
 

@@ -27,8 +27,8 @@ import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {OrderRequestDTO, PaymentInfo, ShippingAddress} from "../models/order/OrderRequest";
 import {CurrentUser} from "../stores/user.reducer";
 import {OrderItemRequestDTO} from "../models/order_item/OrderItemRequest";
-import axiosInterceptor from "../utils/axiosInterceptor";
-import {getAccessToken} from "../utils/auth";
+import {accessToken, apiWithToken} from "../utils/axios-config";
+import {refreshToken} from "../utils/server";
 
 const {TextArea} = Input;
 
@@ -86,7 +86,7 @@ const Checkout = () => {
     //
     //         axiosInterceptor.post("/orders", order, {
     //             headers: {
-    //                 Authorization: 'Bearer ' + getAccessToken(),
+    //                 Authorization: 'Bearer ' + tokens.accessToken,
     //             }
     //         })
     //             .then(function () {
@@ -118,7 +118,7 @@ const Checkout = () => {
     //     }
     // };
 
-    const addMultipleOrders = (orders: any[]): void => {
+    const addMultipleOrders = (): void => {
         let check = false;
         carts.forEach((cart: ICart) => {
             cart.cartItems.forEach((item: ICartItem) => {
@@ -151,7 +151,7 @@ const Checkout = () => {
                 return;
             }
 
-            if (orderItems && shippingAddress && payment) {
+            if (orderItems && shippingAddress && payment && refreshToken) {
                 const order: OrderRequestDTO = {
                     orderItems,
                     shippingAddress: shippingAddress,
@@ -159,9 +159,9 @@ const Checkout = () => {
                     payment: payment
                 } as OrderRequestDTO;
 
-                return axiosInterceptor.post("/orders", order, {
+                return apiWithToken(refreshToken).post("/orders", order, {
                     headers: {
-                        Authorization: 'Bearer ' + getAccessToken(),
+                        Authorization: 'Bearer ' + accessToken,
                     }
                 });
             } else {

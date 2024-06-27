@@ -1,23 +1,25 @@
 import {NextRouter, useRouter} from "next/router";
 import {DefaultLayout} from "../../components/layout";
 import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Divider, Image, Result, Row, Spin, Typography} from "antd";
+import {Button, Card, Col, Divider, Image, Row, Spin, Typography} from "antd";
 import {AxiosResponse} from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import RateAdd from "../../components/rate-add";
 import {MessageOutlined} from "@ant-design/icons";
 import {UserResponseDTO} from "../../models/user/UserResponseAPI";
 import {PaymentInfo, RateDTO, ShippingAddress} from "../../models/order/OrderRequest";
-import {CurrentUser} from "../../stores/user.reducer";
 import {RootState} from "../../stores";
 import {setSelectedOrderItemRate, setShowModalAddRate, setShowModalRate} from "../../stores/rate.reducer";
-import {setLoadingOrderItem} from "../../stores/order.reducer";
 import {OrderItemResponseDTO} from "../../models/order_item/OrderItemResponseAPI";
 import {OrderResponseDTO} from "../../models/order/OrderResposeAPI";
 import RateRows from "../../components/rate-rows";
 import {addItem, ICart, ICartItem} from "../../stores/cart.reducer";
-import axiosInterceptor from "../../utils/axiosInterceptor";
-import {getAccessToken} from "../../utils/auth";
+import {ParsedUrlQuery} from "querystring";
+import {setLoadingOrderItem} from "../../stores/order.reducer";
+import type {NextApiRequest, NextApiResponse} from "next";
+import {CookieValueTypes, getCookie} from "cookies-next";
+import {accessToken, apiWithToken} from "../../utils/axios-config";
+import {REFRESH_TOKEN} from "../../utils/server";
 
 const {Text} = Typography;
 
@@ -31,6 +33,41 @@ export interface IOrder {
     paymentMethod: PaymentInfo;
 }
 
+export const INITIAL_IORDER = {
+    id: "",
+    totalAmount: 0,
+    status: "",
+    user: {
+        id: "",
+        avatar: "",
+        email: "",
+        firstName: "",
+        lastName: "",
+        phoneNumber: "",
+        username: "",
+        role: "",
+        status: false,
+        address: {
+            id: "",
+            fullName: "",
+            phoneNumber: "",
+            address: "",
+            lon: 0,
+            lat: 0
+        }
+    },
+    orderItems: [],
+    shippingAddress: {
+        fullName: "",
+        phoneNumber: "",
+        address: ""
+    },
+    paymentMethod: {
+        method: "",
+        status: ""
+    }
+};
+
 export interface IOrderItem {
     id: string;
     name: string;
@@ -42,86 +79,92 @@ export interface IOrderItem {
     retailerId: string;
 }
 
-const OrderDetails = () => {
+export async function getServerSideProps(context: { params: ParsedUrlQuery, req: NextApiRequest, res: NextApiResponse }) {
+    const {oid} = context.params;
+    const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req: context.req, res: context.res});
+    if (refreshToken) {
+        try {
+            const res: AxiosResponse<OrderResponseDTO> = await apiWithToken(refreshToken).get('/customer/orders/' + oid, {
+                headers: {
+                    Authorization: "Bearer " + accessToken
+                }
+            });
+            const order: OrderResponseDTO = res.data;
+
+            const orderMapped: IOrder = {
+                id: order.id ?? "",
+                totalAmount: order.totalAmount ?? 0,
+                status: order.status ?? "",
+                user: order.user ?? {},
+                shippingAddress: order.shippingAddress ?? {},
+                paymentMethod: order.payment ?? {},
+                orderItems: order.orderItems?.map((orderItem: OrderItemResponseDTO): IOrderItem => {
+                    return {
+                        id: orderItem.id ?? "",
+                        name: orderItem.productDetail?.product?.name ?? "",
+                        quantity: orderItem.quantity ?? 0,
+                        price: orderItem.price ?? 0,
+                        image: orderItem.productDetail?.product?.thumbnail ?? "",
+                        rate: orderItem.rate ?? {},
+                        productDetailId: orderItem.productDetail?.id ?? "",
+                        retailerId: orderItem.productDetail?.product?.user?.id ?? "",
+                    }
+                }) ?? [],
+            };
+            return {
+                props: {
+                    order: orderMapped,
+                },
+            };
+        } catch (error) {
+            console.error('Error fetching order:', error);
+            return {
+                props: {
+                    order: null,
+                },
+            };
+        }
+    }
+
+    return {
+        redirect: {
+            destination: '/login',
+            permanent: false,
+        },
+    }
+}
+
+const OrderDetails = ({order = INITIAL_IORDER}: {order: IOrder}) => {
 
     const router: NextRouter = useRouter();
 
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
-
     const isLoading: boolean = useSelector((state: RootState) => state.order.isLoadingOrderItem);
 
-    const {oid} = router.query;
-
-    const [order, seOrder] = useState<IOrder>();
-
-    const [orderItems, seOrderItems] = useState<IOrderItem[]>([]);
-
-    const [isError, setIsError] = useState<boolean>(false);
+    const [orderItems, setOrderItems] = useState<IOrderItem[]>([]);
 
     const carts: ICart[] = useSelector((state: RootState) => state.cart.carts);
 
     const dispatch = useDispatch();
 
     useEffect(() => {
-        getOrderItemById(oid as string);
-    }, [isLoading]);
+        if (order && order.orderItems) {
+            dispatch(setLoadingOrderItem(false));
+            setOrderItems(order.orderItems);
+        }
+    },[order]);
 
     const handleSetOrderItemRate = (id: string): void => {
         dispatch(setSelectedOrderItemRate(id));
         dispatch(setShowModalAddRate(true));
-        // console.log(id);
     }
 
     const handleShowModalRate = (): void => {
-        // console.log("hahahh")
-        // dispatch(setSelectedOrderItemRate(id));
         dispatch(setShowModalRate(true));
-        // console.log(id);
     }
-
-    const getOrderItemById = (oid: string): void => {
-        if (oid) {
-            axiosInterceptor.get('/customer/orders/' + oid , {
-                headers: {
-                    Authorization: 'Bearer ' + getAccessToken(),
-                }
-            })
-                .then(function (res: AxiosResponse<OrderResponseDTO>): void {
-                    dispatch(setLoadingOrderItem(false));
-                    const order: OrderResponseDTO = res.data;
-                    const orderMapped: IOrder = {
-                        id: order.id ?? "",
-                        totalAmount: order.totalAmount ?? 0,
-                        status: order.status ?? "",
-                        user: order.user ?? {},
-                        shippingAddress: order.shippingAddress ?? {},
-                        paymentMethod: order.payment ?? {},
-                        orderItems: order.orderItems?.map((orderItem: OrderItemResponseDTO): IOrderItem => {
-                            return {
-                                id: orderItem.id ?? "",
-                                name: orderItem.productDetail?.product?.name ?? "",
-                                quantity: orderItem.quantity ?? 0,
-                                price: orderItem.price ?? 0,
-                                image: orderItem.productDetail?.product?.thumbnail ?? "",
-                                rate: orderItem.rate ?? {},
-                                productDetailId: orderItem.productDetail?.id ?? "",
-                                retailerId: orderItem.productDetail?.product?.user?.id ?? "",
-                            }
-                        }) ?? [],
-                    };
-                    seOrder(orderMapped);
-                    seOrderItems(orderMapped.orderItems);
-                })
-                .catch(function (): void {
-                    setIsError(true);
-                });
-        }
-    };
 
     const addOrderItemsCart = (): void => {
         orderItems.forEach((orderItem: IOrderItem): void => {
             let existItem : boolean = false;
-            // console.log(orderItem);
             const cart = carts.find((cart: ICart): boolean => {
                 return cart.id === orderItem.retailerId;
             })
@@ -148,18 +191,7 @@ const OrderDetails = () => {
 
     return (
         <DefaultLayout>
-            {isError ? (
-                <Result
-                    status="404"
-                    title="404"
-                    subTitle="Sorry, the page you visited does not exist."
-                    extra={
-                        <Button type="primary" onClick={() => router.push('/')}>
-                            Back Home
-                        </Button>
-                    }
-                />
-            ) : isLoading ? (
+            {isLoading ? (
                 <Spin style={{
                     width: '100%',
                     height: '100vh',

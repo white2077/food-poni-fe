@@ -14,9 +14,9 @@ import {REMEMBER_ME} from "../utils/server";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch} from "react-redux";
 import {AxiosResponse} from "axios";
-import axiosInterceptor from "../utils/axiosInterceptor";
 import {UserCreationRequestDTO} from "../models/user/UserRequest";
 import {UserResponseDTO} from "../models/user/UserResponseAPI";
+import {api} from "../utils/axios-config";
 
 export interface IUserRemember {
     username: string;
@@ -27,8 +27,6 @@ export interface IUserRemember {
 const Signup: NextPage = () => {
 
     const router: NextRouter = useRouter();
-
-    const dispatch = useDispatch();
 
     const [isLoading, setIsLoading] = useState(true);
 
@@ -41,7 +39,7 @@ const Signup: NextPage = () => {
     const onFinish = (values: any): void => {
         setPending(true);
         let user: UserCreationRequestDTO = {username: values.username, email: values.email, password: values.password}
-        axiosInterceptor.post("/users", user)
+        api.post("/users", user)
             .then(function (res: AxiosResponse<UserResponseDTO>): void {
                 setPending(false);
                 notification.open({

@@ -2,17 +2,15 @@ import React, {useState} from 'react';
 import {Button, Input, Modal, notification, Rate} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import FileUploads from "./file-upload";
-import {CurrentUser} from "../stores/user.reducer";
 import {RootState} from "../stores";
 import {RateDTO} from "../models/order/OrderRequest";
 import {setLoadingOrderItem} from "../stores/order.reducer";
 import {setShowModalAddRate, setShowModalFileUpload} from "../stores/rate.reducer";
 import {setSelectedFile} from "../stores/fileUploads.reducer";
-import axiosInterceptor from "../utils/axiosInterceptor";
-import {getAccessToken} from "../utils/auth";
+import {accessToken, apiWithToken} from "../utils/axios-config";
+import {refreshToken} from "../utils/server";
 
 const RateAdd = () => {
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
     const showModalAddRate: boolean = useSelector((state: RootState) => state.rate.showModalAddRate);
     const orderItemId: string = useSelector((state: RootState) => state.rate.selecOrderItemRate);
     const images: string[] = useSelector((state: RootState) => state.fileUpload.selectedFile);
@@ -42,31 +40,33 @@ const RateAdd = () => {
             rateDTO.images = images;
         }
         dispatch(setLoadingOrderItem(true));
-        axiosInterceptor.post('/order-items/rate/' + orderItemId, rateDTO, {
-            headers: {
-                Authorization: 'Bearer ' + getAccessToken(),
-            }
-        })
-            .then(() => {
-                notification.open({
-                    type: 'success',
-                    message: 'Rate',
-                    description: 'Rate success!',
-                });
-                handleModalClose();
+        if (refreshToken) {
+            apiWithToken(refreshToken).post('/order-items/rate/' + orderItemId, rateDTO, {
+                headers: {
+                    Authorization: 'Bearer ' + accessToken,
+                }
             })
-            .catch((res) => {
-                notification.open({
-                    type: 'error',
-                    message: 'Rate message',
-                    description: res.message
-                });
-            }).finally(() => {
-                setTimeout(() => {
-                    dispatch(setLoadingOrderItem(false));
-                }, 1000)
-            }
-        );
+                .then(() => {
+                    notification.open({
+                        type: 'success',
+                        message: 'Rate',
+                        description: 'Rate success!',
+                    });
+                    handleModalClose();
+                })
+                .catch((res) => {
+                    notification.open({
+                        type: 'error',
+                        message: 'Rate message',
+                        description: res.message
+                    });
+                }).finally(() => {
+                    setTimeout(() => {
+                        dispatch(setLoadingOrderItem(false));
+                    }, 1000)
+                }
+            );
+        }
         return rateDTO;
     }
 
@@ -99,7 +99,7 @@ const RateAdd = () => {
 
     // Render
     return (
-        <Modal title="Đánh giá sản phẩm" visible={showModalAddRate} footer={null} onCancel={handleModalClose}>
+        <Modal title="Đánh giá sản phẩm" open={showModalAddRate} footer={null} onCancel={handleModalClose}>
             <div style={{padding: "20px 0"}}>
                 <div style={{display: "flex", justifyContent: "center"}}>
                     <Rate value={rate} style={{fontSize: '50px'}} onChange={handleRateChange}/>

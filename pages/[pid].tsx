@@ -1,4 +1,3 @@
-import type {NextPage} from 'next'
 import {NextRouter, useRouter} from "next/router";
 import {DefaultLayout} from "../components/layout";
 import React, {useEffect, useState} from "react";
@@ -13,9 +12,8 @@ import {RateResponseDTO} from "../models/rate/RateResponseAPI";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
-import {CurrentUser} from "../stores/user.reducer";
-import axiosInterceptor from "../utils/axiosInterceptor";
-import {getAccessToken} from "../utils/auth";
+import {ParsedUrlQuery} from "querystring";
+import {accessToken, api} from "../utils/axios-config";
 
 export interface IProduct {
     id?: string;
@@ -45,17 +43,53 @@ export interface IRetailer {
     username?: string;
 }
 
-const ProductDetails: NextPage = () => {
+export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
+    const {pid} = context.params;
+    try {
+        const res: AxiosResponse<ProductResponseDTO> = await api.get('/products/' + pid);
+        const product: ProductResponseDTO = res.data;
+
+        const productMapped: IProduct = {
+            id: product.id ?? "",
+            name: product.name ?? "",
+            shortDescription: product.shortDescription ?? "",
+            retailer: product.user && {
+                id: product.user.id ?? "",
+                avatar: product.user.avatar ?? "",
+                firstName: product.user.firstName ?? "",
+                lastName: product.user.lastName ?? "",
+                phoneNumber: product.user.phoneNumber ?? "",
+                username: product.user.username ?? "",
+            },
+            productDetails: product.productDetails && product.productDetails.map((productDetail: ProductDetailResponseDTO): IProductDetail => {
+                return {
+                    id: productDetail.id ?? "",
+                    name: productDetail.name ?? "",
+                    price: productDetail.price ?? 0,
+                    description: productDetail.description ?? "",
+                    images: productDetail.images ?? [],
+                    rate: productDetail.rate ?? 0,
+                    sales: productDetail.sales ?? 0,
+                    rateCount: productDetail.rateCount ?? 0,
+                }
+            })
+        };
+
+        return {
+            props: {
+                product: productMapped,
+            },
+        };
+    } catch (error) {
+        console.error('Error fetching product:', error);
+    }
+}
+
+const ProductDetails = ({product}: {product: IProduct}) => {
 
     const router: NextRouter = useRouter();
 
-    const {pid} = router.query;
-
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
-
     const currentShippingAddress: AddressResponseDTO = useSelector((state: RootState) => state.address.shippingAddress);
-
-    const [product, setProduct] = useState<IProduct>();
 
     const [isError, setIsError] = useState<boolean>(false);
 
@@ -63,54 +97,16 @@ const ProductDetails: NextPage = () => {
 
     const [rates, setRates] = useState<RateResponseDTO[]>([]);
 
-    useEffect((): void => {
-        getProductDetailById();
-    }, [router.isReady]);
-
-    const getProductDetailById = (): void => {
-        if (pid) {
-            axiosInterceptor.get(`/products/${pid}`)
-                .then(function (res: AxiosResponse<ProductResponseDTO>): void {
-                    const product: ProductResponseDTO = res.data;
-                    // console.log(res.data)
-                    const productMapped: IProduct = {
-                        id: product.id ?? "",
-                        name: product.name ?? "",
-                        shortDescription: product.shortDescription ?? "",
-                        retailer: product.user && {
-                            id: product.user.id ?? "",
-                            avatar: product.user.avatar ?? "",
-                            firstName: product.user.firstName ?? "",
-                            lastName: product.user.lastName ?? "",
-                            phoneNumber: product.user.phoneNumber ?? "",
-                            username: product.user.username ?? "",
-                        },
-                        productDetails: product.productDetails && product.productDetails.map((productDetail: ProductDetailResponseDTO): IProductDetail => {
-                            return {
-                                id: productDetail.id ?? "",
-                                name: productDetail.name ?? "",
-                                price: productDetail.price ?? 0,
-                                description: productDetail.description ?? "",
-                                images: productDetail.images ?? [],
-                                rate: productDetail.rate ?? 0,
-                                sales: productDetail.sales ?? 0,
-                                rateCount: productDetail.rateCount ?? 0,
-                            }
-                        })
-                    };
-                    getRates(productMapped.productDetails && productMapped.productDetails[0].id);
-                    setProduct(productMapped);
-                    setProductDetailSelected(productMapped.productDetails && productMapped.productDetails[0]);
-                })
-                .catch(function (): void {
-                    setIsError(true);
-                });
+    useEffect(() => {
+        if (product && product.productDetails && product.productDetails.length > 0) {
+            setProductDetailSelected(product.productDetails[0]);
+            getRates(product.productDetails && product.productDetails[0].id);
         }
-    };
+    }, [product]);
 
     const getRates = (productDetailId: string | undefined) => {
         setLoadingRate(true);
-        axiosInterceptor.get(`/products/rate/${productDetailId}`)
+        api.get(`/products/rate/${productDetailId}`)
             .then(function (res: AxiosResponse<RateResponseDTO[]>) {
                 // console.log(res.data);
                 setRates(res.data);
@@ -174,7 +170,7 @@ const ProductDetails: NextPage = () => {
                                     </Card>
                                     <Card size='small' title='Product type'>
                                         {(product.productDetails && product.productDetails.length > 1) && (
-                                            <Radio.Group defaultValue={productDetailName || "default"}>
+                                            <Radio.Group defaultValue={product.productDetails[0].name || "default"}>
                                                 {(product?.productDetails || []).map((productDetail: IProductDetail) => (
                                                     <Radio.Button key={productDetail.id}
                                                                   value={productDetail.name || "default"}
@@ -185,7 +181,7 @@ const ProductDetails: NextPage = () => {
                                             </Radio.Group>
                                         )}
                                     </Card>
-                                    {(getAccessToken() && currentShippingAddress) &&
+                                    {(accessToken && currentShippingAddress) &&
                                         <Card size='small' title='Shipping information'>
                                             <div>{currentShippingAddress.address}</div>
                                         </Card>
@@ -203,7 +199,8 @@ const ProductDetails: NextPage = () => {
                                 <ProductCart
                                     id={id!}
                                     price={price!}
-                                    thumbnail={images![0]}
+                                    // thumbnail={images![0]}
+                                    thumbnail={images && images.length > 0 ? images[0] : ""}
                                     name={product.name + ' - ' + productDetailName}
                                     retailer={product.retailer!}
                                 />

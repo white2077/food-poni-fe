@@ -13,3 +13,12 @@ export type Page<T> = {
     first: boolean,
 
 }
+
+export const INITIAL_PAGE_API_RESPONSE: Page<any> = {
+    content: [],
+    first: true,
+    number: 0,
+    size: 0,
+    totalElements: 0,
+    totalPages: 0
+}

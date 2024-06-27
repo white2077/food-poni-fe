@@ -3,11 +3,13 @@ import {DeleteOutlined, RightOutlined} from "@ant-design/icons";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {
-    deleteItem, deleteSelectedSoldItems,
+    deleteItem,
+    deleteSelectedSoldItems,
     ICart,
     ICartItem,
     setNote,
-    setQuantity, setSelectedAll,
+    setQuantity,
+    setSelectedAll,
     setSelectedICart,
     setSelectedICartItem
 } from "../stores/cart.reducer";

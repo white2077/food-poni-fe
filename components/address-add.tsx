@@ -1,21 +1,20 @@
 import {useState} from 'react';
 import {AutoComplete, Button, Form, Input, notification} from 'antd';
-import axios, {AxiosResponse} from "axios";
+import axios, {AxiosError, AxiosResponse} from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../stores";
-import {addDeliveryInformationList} from "../stores/delivery.reducer";
 import {AddressRequestDTO} from "../models/address/AddressRequest";
-import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {CurrentUser} from "../stores/user.reducer";
 import {SearchResult} from "../stores/search-position.reducer";
-import axiosInterceptor from "../utils/axiosInterceptor";
-import {getAccessToken} from "../utils/auth";
+import {accessToken, apiWithToken} from "../utils/axios-config";
+import {refreshToken} from "../utils/server";
+import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {addDeliveryInformationList} from "../stores/delivery.reducer";
+import {ErrorApiResponse} from "../models/ErrorApiResponse";
 
 const AddressAdd = () => {
 
     const dispatch = useDispatch();
-
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const [pending, setPending] = useState<boolean>(false);
 
@@ -74,30 +73,32 @@ const AddressAdd = () => {
             lat: selectedAddress?.lat || 0
         };
 
-        axiosInterceptor.post("/addresses", deliveryInfo, {
-            headers: {
-                Authorization: 'Bearer ' + getAccessToken(),
-            }
-        })
-            .then(function (res: AxiosResponse<AddressResponseDTO>) {
-                setPending(false);
-
-                dispatch(addDeliveryInformationList(res.data));
-
-                notification.open({
-                    type: 'success',
-                    message: 'Add address message',
-                    description: "Add new address successfully!",
-                });
+        if (refreshToken) {
+            apiWithToken(refreshToken).post("/addresses", deliveryInfo, {
+                headers: {
+                    Authorization: 'Bearer ' + accessToken,
+                }
             })
-            .catch(function (res) {
-                setPending(false);
-                notification.open({
-                    type: 'error',
-                    message: 'Add address message',
-                    description: res.message,
+                .then(function (res: AxiosResponse<AddressResponseDTO>) {
+                    setPending(false);
+
+                    dispatch(addDeliveryInformationList(res.data));
+
+                    notification.open({
+                        type: 'success',
+                        message: 'Add address message',
+                        description: "Add new address successfully!",
+                    });
+                })
+                .catch(function (res: AxiosError<ErrorApiResponse>) {
+                    setPending(false);
+                    notification.open({
+                        type: 'error',
+                        message: 'Add address message',
+                        description: res.message,
+                    });
                 });
-            });
+        }
     };
 
     return (

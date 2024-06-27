@@ -10,8 +10,7 @@ import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
 import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailResponseAPI";
 import {CurrentUser} from "../stores/user.reducer";
 import {SmileOutlined} from "@ant-design/icons";
-import axiosInterceptor from "../utils/axiosInterceptor";
-import {getAccessToken} from "../utils/auth";
+import {accessToken, api} from "../utils/axios-config";
 
 export interface IProductCard {
     id: string;
@@ -47,12 +46,11 @@ const ProductRows = () => {
             url += '&categoryId=' + currentProductCategory;
         }
 
-        axiosInterceptor.get(url)
+        api.get(url)
             .then((res: AxiosResponse<Page<ProductResponseDTO[]>>): void => {
                 const productList: IProductCard[] = [];
-                console.log(res.data.content);
                 (res.data.content as ProductResponseDTO[]).map((product: ProductResponseDTO): void => {
-                    if (getAccessToken() && currentUser.role === "RETAILER" && currentUser.id == product.user?.id) {
+                    if (accessToken && currentUser.role === "RETAILER" && currentUser.id == product.user?.id) {
                         return;
                     }
 
