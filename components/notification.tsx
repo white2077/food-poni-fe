@@ -32,10 +32,10 @@ const Notification = ({ePage}: { ePage: Page<NotificationAPIResponse> }) => {
         }
     }, []);
 
-    const menu = (
+    const menu = notification.data.length > 0 ? (
         <div className="rounded-lg">
             <div className="bg-white px-4 py-4 text-2xl font-bold">Notifications</div>
-            <Menu className="max-h-96 overflow-y-auto scrollbar-thin rounded-b-lg shadow-none">
+            <Menu className="max-h-96 overflow-y-auto scrollbar-thin !rounded-none !rounded-b-lg !shadow-none">
                 {notification.data.map(
                     (notification: NotificationAPIResponse, index: number) => (
                         <Menu.Item key={index}>
@@ -63,6 +63,14 @@ const Notification = ({ePage}: { ePage: Page<NotificationAPIResponse> }) => {
                         </Menu.Item>
                     )
                 )}
+            </Menu>
+        </div>
+    ) : (
+        <div className="rounded-lg">
+            <Menu className="max-h-96 overflow-y-auto scrollbar-thin rounded-b-lg shadow-none">
+                <Menu.Item>
+                    <p className="font-semibold text-sm text-gray-900 text-center">You have no notifications</p>
+                </Menu.Item>
             </Menu>
         </div>
     );
