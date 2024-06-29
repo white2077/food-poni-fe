@@ -1,20 +1,17 @@
 import {useState} from 'react';
 import {AutoComplete, Button, Form, Input, notification} from 'antd';
 import axios, {AxiosError, AxiosResponse} from "axios";
-import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../stores";
 import {AddressRequestDTO} from "../models/address/AddressRequest";
-import {CurrentUser} from "../stores/user.reducer";
 import {SearchResult} from "../stores/search-position.reducer";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {refreshToken} from "../utils/server";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
-import {addDeliveryInformationList} from "../stores/delivery.reducer";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
+import {NextRouter, useRouter} from "next/router";
 
-const AddressAdd = () => {
+const AddressCheckoutAdd = () => {
 
-    const dispatch = useDispatch();
+    const router: NextRouter = useRouter();
 
     const [pending, setPending] = useState<boolean>(false);
 
@@ -81,9 +78,6 @@ const AddressAdd = () => {
             })
                 .then(function (res: AxiosResponse<AddressResponseDTO>) {
                     setPending(false);
-
-                    dispatch(addDeliveryInformationList(res.data));
-
                     notification.open({
                         type: 'success',
                         message: 'Add address message',
@@ -136,8 +130,7 @@ const AddressAdd = () => {
                 </AutoComplete>
             </Form.Item>
             <Form.Item>
-                <Button type="primary" htmlType="submit" className="add-address-form-button" loading={pending}
-                        block>
+                <Button type="primary" htmlType="submit" className="add-address-form-button" loading={pending} block>
                     Add address
                 </Button>
             </Form.Item>
@@ -146,4 +139,4 @@ const AddressAdd = () => {
 
 };
 
-export default AddressAdd;
+export default AddressCheckoutAdd;
