@@ -107,7 +107,7 @@ const HeaderMain = () => {
                         <>
                             <Cart/>
                             <Notification ePage={INITIAL_PAGE_API_RESPONSE} />
-                            <Dropdown menu={{items}} placement='bottomRight'>
+                            <Dropdown menu={{items}} placement='bottomRight' trigger={['click']}>
                                 <a>
                                     {currentUser.avatar
                                         ? <Avatar src={server + currentUser.avatar} size='large'/>
