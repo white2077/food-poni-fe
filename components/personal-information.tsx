@@ -4,6 +4,7 @@ import {MailOutlined, PhoneOutlined} from "@ant-design/icons";
 import {CurrentUser} from "../stores/user.reducer";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
+import {server} from "../utils/server";
 
 const options = ['Nam', 'Nữ', 'Khác'];
 export const PersonalInformation = () => {
@@ -19,7 +20,7 @@ export const PersonalInformation = () => {
                                 width={200}
                                 height={200}
                                 className="object-center rounded-full shadow-lg border-2 border-gray-100 "
-                                src={currentUser.avatar}
+                                src={server + currentUser.avatar}
                             />
                             <Button className="mt-2">Cập nhật</Button>
                         </div>

@@ -4,14 +4,18 @@ import axios, {AxiosError, AxiosResponse} from "axios";
 import {AddressRequestDTO} from "../models/address/AddressRequest";
 import {SearchResult} from "../stores/search-position.reducer";
 import {accessToken, apiWithToken} from "../utils/axios-config";
-import {refreshToken} from "../utils/server";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
 import {NextRouter, useRouter} from "next/router";
+import {getCookie} from "cookies-next";
+import {REFRESH_TOKEN} from "../utils/server";
+import store from "../stores";
 
-const AddressCheckoutAdd = () => {
+const AddressDeliveryInformationAdd = () => {
 
     const router: NextRouter = useRouter();
+
+    const refreshToken = getCookie(REFRESH_TOKEN);
 
     const [pending, setPending] = useState<boolean>(false);
 
@@ -71,13 +75,14 @@ const AddressCheckoutAdd = () => {
         };
 
         if (refreshToken) {
-            apiWithToken(refreshToken).post("/addresses", deliveryInfo, {
+            apiWithToken(store.dispatch, refreshToken).post("/addresses", deliveryInfo, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }
             })
                 .then(function (res: AxiosResponse<AddressResponseDTO>) {
                     setPending(false);
+                    router.push('/account-information');
                     notification.open({
                         type: 'success',
                         message: 'Add address message',
@@ -139,4 +144,4 @@ const AddressCheckoutAdd = () => {
 
 };
 
-export default AddressCheckoutAdd;
+export default AddressDeliveryInformationAdd;

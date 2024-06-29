@@ -1,6 +1,6 @@
 import React, {ReactElement, useEffect, useState} from 'react';
 import type {MenuProps} from 'antd';
-import {Menu, Skeleton} from 'antd';
+import {Menu} from 'antd';
 import {CategoryResponseDTO} from "../models/category/CategoryResponseAPI";
 import {useDispatch} from "react-redux";
 import {setSelectedProductCategory} from "../stores/product-category.reducer";

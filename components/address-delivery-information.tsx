@@ -1,30 +1,31 @@
 import {Button, Card, List, notification} from "antd";
-import AddressAdd from "./address-add";
 import {CheckCircleOutlined, DeleteOutlined} from "@ant-design/icons";
 import React, {useState} from "react";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../stores";
+import store, {RootState} from "../stores";
 import {AddressIdDTO} from "../models/address/AddressRequest";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {CurrentUser, updateAddressId} from "../stores/user.reducer";
-import {refreshToken} from "../utils/server";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {setCurrentShippingAddress} from "../stores/address.reducer";
-import {deleteDeliveryInformationList} from "../stores/delivery.reducer";
+import {Page} from "../models/Page";
+import AddressDeliveryInformationAdd from "./address-delivery-information-add";
+import {getCookie} from "cookies-next";
+import {REFRESH_TOKEN} from "../utils/server";
 
-export const AddressDeliveryInformation = () => {
+export const AddressDeliveryInformation = ({deliveryInformation}: { deliveryInformation: Page<AddressResponseDTO[]> }) => {
 
     const router: NextRouter = useRouter();
 
     const dispatch = useDispatch();
 
+    const refreshToken = getCookie(REFRESH_TOKEN);
+
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
-
-    const deliveryInformationList: AddressResponseDTO[] = useSelector((state: RootState) => state.delivery.deliveryInformationList) as AddressResponseDTO[];
 
     const handleAddAddressClick = (): void => {
         setShowAddAddress(!showAddAddress);
@@ -34,7 +35,7 @@ export const AddressDeliveryInformation = () => {
         const addressId: string = currentUser.addressId ?? "";
 
         if (addressId !== "" && refreshToken) {
-            apiWithToken(refreshToken).get(`/addresses/${addressId}`, {
+            apiWithToken(store.dispatch, refreshToken).get(`/addresses/${addressId}`, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }
@@ -54,13 +55,13 @@ export const AddressDeliveryInformation = () => {
 
     const deleteDeliveryInformation = (addressId: string): void => {
         if (refreshToken) {
-            apiWithToken(refreshToken).delete(`/addresses/${addressId}`, {
+            apiWithToken(store.dispatch, refreshToken).delete(`/addresses/${addressId}`, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }
             })
                 .then(function (): void {
-                    dispatch(deleteDeliveryInformationList(addressId));
+                    router.push("/account-information");
                 })
                 .catch(function (res): void {
                     notification.open({
@@ -77,23 +78,21 @@ export const AddressDeliveryInformation = () => {
             id: addressId
         };
         if (refreshToken) {
-            apiWithToken(refreshToken).put("/users/update-address", addressIdDTO, {
+            apiWithToken(store.dispatch, refreshToken).put("/users/update-address", addressIdDTO, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }
             })
                 .then(function (): void {
                     dispatch(updateAddressId(addressId));
-
                     getShippingAddress();
+                    router.push("/account-information");
 
                     notification.open({
                         type: 'success',
                         message: 'Shipping address message',
                         description: "Update shipping address successfully"
                     });
-
-                    router.push("/account-information")
                 })
                 .catch(function (res): void {
                     notification.open({
@@ -111,12 +110,12 @@ export const AddressDeliveryInformation = () => {
                 style={{margin: '16px 0'}}
                 onClick={handleAddAddressClick}>{showAddAddress ? "Cancel" : "Add address"}</Button>
             {showAddAddress && (
-                <div style={{width: '600px', margin: '0 auto'}}><AddressAdd/></div>
+                <div style={{width: '600px', margin: '0 auto'}}><AddressDeliveryInformationAdd/></div>
             )}
             {!showAddAddress && (
                 <List
                     grid={{gutter: 16, column: 1}}
-                    dataSource={deliveryInformationList}
+                    dataSource={deliveryInformation.content}
                     renderItem={(item: AddressResponseDTO) => (
                         <List.Item>
                             <Card>

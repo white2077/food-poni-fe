@@ -1,4 +1,4 @@
-import type {NextPage} from 'next'
+import {NextApiRequest, NextApiResponse} from 'next'
 import React, {useState} from "react";
 import {DefaultLayout} from "../components/layout";
 import {Button, Col, Flex, Menu, MenuProps, Result} from "antd";
@@ -7,8 +7,14 @@ import {EnvironmentOutlined, UserOutlined} from "@ant-design/icons";
 import PersonalInformation from "../components/personal-information";
 import {CurrentUser} from "../stores/user.reducer";
 import {useSelector} from "react-redux";
-import {RootState} from "../stores";
+import store, {RootState} from "../stores";
 import {NextRouter, useRouter} from "next/router";
+import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
+import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {CookieValueTypes, getCookie} from "cookies-next";
+import {REFRESH_TOKEN} from "../utils/server";
+import {AxiosResponse} from "axios";
+import {accessToken, apiWithToken} from "../utils/axios-config";
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -33,7 +39,27 @@ const items: MenuProps['items'] = [
     getItem('Delivery address', '2', <EnvironmentOutlined />)
 ];
 
-const AccountInformation: NextPage = () => {
+export async function getServerSideProps({req, res}: { req: NextApiRequest, res: NextApiResponse }) {
+    const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req, res});
+    if (refreshToken) {
+        try {
+            const res: AxiosResponse<Page<AddressResponseDTO[]>> = await apiWithToken(store.dispatch, refreshToken).get('/addresses', {
+                headers: {
+                    Authorization: "Bearer " + accessToken
+                }
+            });
+            return {
+                props: {
+                    deliveryInformation: res.data
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching category page:', error);
+        }
+    }
+}
+
+const AccountInformation = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {deliveryInformation: Page<AddressResponseDTO[]>}) => {
 
     const router: NextRouter = useRouter();
 
@@ -48,7 +74,7 @@ const AccountInformation: NextPage = () => {
 
     const contentMap: { [key: string]: React.ReactNode } = {
         '1': <PersonalInformation />,
-        '2': <AddressDeliveryInformation />
+        '2': <AddressDeliveryInformation deliveryInformation={deliveryInformation} />
     };
 
     return (

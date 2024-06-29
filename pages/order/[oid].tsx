@@ -6,11 +6,10 @@ import {AxiosResponse} from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import RateAdd from "../../components/rate-add";
 import {MessageOutlined} from "@ant-design/icons";
-import {UserResponseDTO} from "../../models/user/UserResponseAPI";
-import {PaymentInfo, RateDTO, ShippingAddress} from "../../models/order/OrderRequest";
-import {RootState} from "../../stores";
+import {INITIAL_USER_API_RESPONSE, UserResponseDTO} from "../../models/user/UserResponseAPI";
+import {paymentInfo, PaymentInfo, RateDTO, shippingAddress, ShippingAddress} from "../../models/order/OrderRequest";
+import store, {RootState} from "../../stores";
 import {setSelectedOrderItemRate, setShowModalAddRate, setShowModalRate} from "../../stores/rate.reducer";
-import {OrderItemResponseDTO} from "../../models/order_item/OrderItemResponseAPI";
 import {OrderResponseDTO} from "../../models/order/OrderResposeAPI";
 import RateRows from "../../components/rate-rows";
 import {addItem, ICart, ICartItem} from "../../stores/cart.reducer";
@@ -19,7 +18,7 @@ import {setLoadingOrderItem} from "../../stores/order.reducer";
 import type {NextApiRequest, NextApiResponse} from "next";
 import {CookieValueTypes, getCookie} from "cookies-next";
 import {accessToken, apiWithToken} from "../../utils/axios-config";
-import {REFRESH_TOKEN} from "../../utils/server";
+import {REFRESH_TOKEN, server} from "../../utils/server";
 
 const {Text} = Typography;
 
@@ -37,36 +36,17 @@ export const INITIAL_IORDER = {
     id: "",
     totalAmount: 0,
     status: "",
-    user: {
-        id: "",
-        avatar: "",
-        email: "",
-        firstName: "",
-        lastName: "",
-        phoneNumber: "",
-        username: "",
-        role: "",
-        status: false,
-        address: {
-            id: "",
-            fullName: "",
-            phoneNumber: "",
-            address: "",
-            lon: 0,
-            lat: 0
-        }
-    },
+    user: INITIAL_USER_API_RESPONSE,
     orderItems: [],
-    shippingAddress: {
-        fullName: "",
-        phoneNumber: "",
-        address: ""
-    },
-    paymentMethod: {
-        method: "",
-        status: ""
-    }
+    shippingAddress: shippingAddress,
+    paymentMethod: paymentInfo
 };
+
+export interface IProductDetailOrderItem {
+    id: string;
+    name: string;
+    price: number;
+}
 
 export interface IOrderItem {
     id: string;
@@ -75,7 +55,7 @@ export interface IOrderItem {
     price: number;
     image: string;
     rate: RateDTO;
-    productDetailId: string;
+    productDetail: IProductDetailOrderItem;
     retailerId: string;
 }
 
@@ -84,7 +64,7 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery, req:
     const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req: context.req, res: context.res});
     if (refreshToken) {
         try {
-            const res: AxiosResponse<OrderResponseDTO> = await apiWithToken(refreshToken).get('/customer/orders/' + oid, {
+            const res: AxiosResponse<OrderResponseDTO> = await apiWithToken(store.dispatch, refreshToken).get('/customer/orders/' + oid, {
                 headers: {
                     Authorization: "Bearer " + accessToken
                 }
@@ -95,10 +75,10 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery, req:
                 id: order.id ?? "",
                 totalAmount: order.totalAmount ?? 0,
                 status: order.status ?? "",
-                user: order.user ?? {},
+                user: order.user ?? INITIAL_USER_API_RESPONSE,
                 shippingAddress: order.shippingAddress ?? {},
                 paymentMethod: order.payment ?? {},
-                orderItems: order.orderItems?.map((orderItem: OrderItemResponseDTO): IOrderItem => {
+                orderItems: order.orderItems?.map((orderItem): IOrderItem => {
                     return {
                         id: orderItem.id ?? "",
                         name: orderItem.productDetail?.product?.name ?? "",
@@ -106,7 +86,11 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery, req:
                         price: orderItem.price ?? 0,
                         image: orderItem.productDetail?.product?.thumbnail ?? "",
                         rate: orderItem.rate ?? {},
-                        productDetailId: orderItem.productDetail?.id ?? "",
+                        productDetail: {
+                            id: orderItem.productDetail?.id ?? "",
+                            name: orderItem.productDetail?.name ?? "",
+                            price: orderItem.productDetail?.price ?? 0
+                        },
                         retailerId: orderItem.productDetail?.product?.user?.id ?? "",
                     }
                 }) ?? [],
@@ -138,13 +122,13 @@ const OrderDetails = ({order = INITIAL_IORDER}: {order: IOrder}) => {
 
     const router: NextRouter = useRouter();
 
-    const isLoading: boolean = useSelector((state: RootState) => state.order.isLoadingOrderItem);
-
-    const [orderItems, setOrderItems] = useState<IOrderItem[]>([]);
+    const dispatch = useDispatch();
 
     const carts: ICart[] = useSelector((state: RootState) => state.cart.carts);
 
-    const dispatch = useDispatch();
+    const isLoading: boolean = useSelector((state: RootState) => state.order.isLoadingOrderItem);
+
+    const [orderItems, setOrderItems] = useState<IOrderItem[]>([]);
 
     useEffect(() => {
         if (order && order.orderItems) {
@@ -171,14 +155,14 @@ const OrderDetails = ({order = INITIAL_IORDER}: {order: IOrder}) => {
             if (cart) {
                 cart.cartItems.forEach((cartItem: ICartItem): void => {
                     console.log(cartItem);
-                    if (orderItem.productDetailId === cartItem.id) {
+                    if (orderItem.productDetail.id === cartItem.id) {
                         existItem = true;
                         return;
                     }
                 })
             }
             if(!existItem){
-                addToCart(orderItem.productDetailId, orderItem.price, orderItem.image, orderItem.name, orderItem.quantity);
+                addToCart(orderItem.productDetail.id, orderItem.price, orderItem.image, orderItem.name, orderItem.quantity);
             }
         })
         router.push("/checkout");
@@ -204,7 +188,7 @@ const OrderDetails = ({order = INITIAL_IORDER}: {order: IOrder}) => {
                     {order && (
                         <Row className='lg:w-[1440px] px-2 mx-auto items-center'>
                             <Col span={20}>
-                                <Card title={'Order #' + order.id} style={{marginTop: '20px'}}>
+                                <Card title={'Order #' + order.id?.substring(0, 7)} style={{marginTop: '20px'}}>
                                     <div style={{display: 'flex', justifyContent: 'space-between'}}>
                                         <Text strong>
                                             {
@@ -225,14 +209,14 @@ const OrderDetails = ({order = INITIAL_IORDER}: {order: IOrder}) => {
                                         <Text>{order.shippingAddress.fullName + ' - ' + order.shippingAddress.phoneNumber}</Text>
                                     </div>
                                     <div style={{marginTop: '20px'}}>
-                                        <Text style={{fontSize: '18px'}} strong>Shipping Address:</Text>
+                                        <Text style={{fontSize: '18px'}} strong>Shipping address:</Text>
                                         <br/>
                                         <br/>
                                         <Text>{order.shippingAddress.address}</Text>
                                     </div>
                                     <Divider/>
                                     <Row gutter={[16, 16]}>
-                                        {orderItems.map((item) => (
+                                        {orderItems.map((item: IOrderItem) => (
                                             <Col span={24} key={item.id}>
                                                 <Card hoverable style={{overflow: 'hidden'}}
                                                       onClick={() => {
@@ -248,7 +232,7 @@ const OrderDetails = ({order = INITIAL_IORDER}: {order: IOrder}) => {
                                                     )}
                                                     <Row gutter={[16, 16]}>
                                                         <Col span={6}>
-                                                            <Image src={item.image} style={{
+                                                            <Image src={server + item.image} style={{
                                                                 width: '200px',
                                                                 height: '150px',
                                                                 objectFit: 'cover'
@@ -257,7 +241,7 @@ const OrderDetails = ({order = INITIAL_IORDER}: {order: IOrder}) => {
                                                         <Col span={18}
                                                              style={{display: 'flex', justifyContent: 'space-between'}}>
                                                             <Text strong
-                                                                  style={{fontSize: '20px'}}>{item.quantity} x {item.name}</Text>
+                                                                  style={{fontSize: '20px'}}>{item.quantity} x {item.name} {item.productDetail.name ? "- " + item.productDetail.name : ""}</Text>
                                                             <Text strong style={{
                                                                 fontSize: '20px',
                                                                 color: 'green'

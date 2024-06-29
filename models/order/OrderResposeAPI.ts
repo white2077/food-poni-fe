@@ -1,25 +1,47 @@
-import {UserResponseDTO} from "../user/UserResponseAPI";
+import {INITIAL_USER_API_RESPONSE, UserResponseDTO} from "../user/UserResponseAPI";
 import {OrderItemResponseDTO} from "../order_item/OrderItemResponseAPI";
-import {PaymentInfo, ShippingAddress} from "./OrderRequest";
+import {paymentInfo, PaymentInfo, shippingAddress, ShippingAddress} from "./OrderRequest";
 
 export interface OrderResponseDTO {
 
-    id?: string;
+    id: string;
 
-    totalAmount?: number;
+    totalAmount: number;
 
-    user?: UserResponseDTO;
+    user: UserResponseDTO;
 
-    orderItems?: OrderItemResponseDTO[];
+    orderItems: OrderItemResponseDTO[];
 
-    shippingAddress?: ShippingAddress;
+    shippingAddress: ShippingAddress;
 
-    status?: string;
+    status: string;
 
-    note?: string;
+    note: string;
 
-    payment?: PaymentInfo;
+    payment: PaymentInfo;
 
-    createdDate?: Date;
+    createdDate: Date;
+
+}
+
+export const INITIAL_ORDER_RESPONSE_DTO: OrderResponseDTO = {
+
+    id: '',
+
+    totalAmount: 0,
+
+    user: INITIAL_USER_API_RESPONSE,
+
+    orderItems: [],
+
+    shippingAddress: shippingAddress,
+
+    status: '',
+
+    note: '',
+
+    payment: paymentInfo,
+
+    createdDate: new Date()
 
 }

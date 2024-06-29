@@ -4,6 +4,8 @@ import {format} from "date-fns";
 import Link from "next/link";
 import {OrderResponseDTO} from "../models/order/OrderResposeAPI";
 import React from "react";
+import {server} from "../utils/server";
+import {OrderItemResponseDTO} from "../models/order_item/OrderItemResponseAPI";
 
 const {Text} = Typography;
 
@@ -17,7 +19,7 @@ const OrderCard = ({order}: { order: OrderResponseDTO }) => {
                         <div>{order?.shippingAddress?.phoneNumber}</div>
                     </div>
                     <Row gutter={[16, 16]}>
-                        {order?.orderItems?.map((item) => (
+                        {order?.orderItems?.map((item: OrderItemResponseDTO) => (
                             <Col span={24} key={item.id}>
                                 <Card className="overflow-hidden">
                                     {Object.keys(item.rate ?? {}).length !== 0 && (
@@ -28,14 +30,14 @@ const OrderCard = ({order}: { order: OrderResponseDTO }) => {
                                     )}
                                     <Row gutter={[16, 16]}>
                                         <Col span={6}>
-                                            <Image src={item?.productDetail?.product?.thumbnail ?? ""} style={{
+                                            <Image src={item?.productDetail?.product?.thumbnail ? server + item.productDetail.product.thumbnail : ""} style={{
                                                 width: '120px',
                                                 height: '90px',
                                                 objectFit: 'cover'
                                             }}/>
                                         </Col>
                                         <Col span={18} className="flex justify-between">
-                                            <p className="font-semibold text-xl">{item.quantity} x {item.productDetail?.product?.name}</p>
+                                            <p className="font-semibold text-xl">{item.quantity} x {item.productDetail?.product?.name} {item.productDetail?.name ? "- " + item.productDetail?.name : ""}</p>
                                             <p className="font-semibold text-xl text-green-700">{item.price} $</p>
                                         </Col>
                                     </Row>
@@ -52,7 +54,7 @@ const OrderCard = ({order}: { order: OrderResponseDTO }) => {
                         <span>{format(new Date(order.createdDate ?? ""), "yyyy-MM-dd HH:mm:ss")}</span>
                     </div>
                     <div className="flex justify-between mt-4 text-xl font-bold">
-                        <div>Total Amount:</div>
+                        <div>Total amount:</div>
                         <div>${order.totalAmount} </div>
                     </div>
                     <Divider/>

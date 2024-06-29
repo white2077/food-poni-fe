@@ -2,23 +2,34 @@ import React, {useState} from 'react';
 import {Button, Input, Modal, notification, Rate} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import FileUploads from "./file-upload";
-import {RootState} from "../stores";
+import store, {RootState} from "../stores";
 import {RateDTO} from "../models/order/OrderRequest";
 import {setLoadingOrderItem} from "../stores/order.reducer";
 import {setShowModalAddRate, setShowModalFileUpload} from "../stores/rate.reducer";
 import {setSelectedFile} from "../stores/fileUploads.reducer";
 import {accessToken, apiWithToken} from "../utils/axios-config";
-import {refreshToken} from "../utils/server";
+import {getCookie} from "cookies-next";
+import {REFRESH_TOKEN} from "../utils/server";
 
 const RateAdd = () => {
-    const showModalAddRate: boolean = useSelector((state: RootState) => state.rate.showModalAddRate);
-    const orderItemId: string = useSelector((state: RootState) => state.rate.selecOrderItemRate);
-    const images: string[] = useSelector((state: RootState) => state.fileUpload.selectedFile);
-    const [rate, setRate] = useState<number>(0);
-    const [message, setMessage] = useState<string>('');
-    const [previewOpen, setPreviewOpen] = useState(false);
-    const [previewImage, setPreviewImage] = useState('');
+
     const dispatch = useDispatch();
+
+    const refreshToken = getCookie(REFRESH_TOKEN);
+
+    const showModalAddRate: boolean = useSelector((state: RootState) => state.rate.showModalAddRate);
+
+    const orderItemId: string = useSelector((state: RootState) => state.rate.selecOrderItemRate);
+
+    const images: string[] = useSelector((state: RootState) => state.fileUpload.selectedFile);
+
+    const [rate, setRate] = useState<number>(0);
+
+    const [message, setMessage] = useState<string>('');
+
+    const [previewOpen, setPreviewOpen] = useState(false);
+
+    const [previewImage, setPreviewImage] = useState('');
 
     const createRateDTO = (rate: number, message: string, images: string[]) => {
         // Thêm các trường vào đối tượng RateDTO nếu chúng được cung cấp
@@ -41,7 +52,7 @@ const RateAdd = () => {
         }
         dispatch(setLoadingOrderItem(true));
         if (refreshToken) {
-            apiWithToken(refreshToken).post('/order-items/rate/' + orderItemId, rateDTO, {
+            apiWithToken(store.dispatch, refreshToken).post('/order-items/rate/' + orderItemId, rateDTO, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }

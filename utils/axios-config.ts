@@ -1,19 +1,21 @@
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {server} from "./server";
 import {AuthenticationResponse} from "../models/auth/AuthenticationResponse";
+import {Dispatch} from "redux";
+import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
+import jwtDecode from "jwt-decode";
 
 export let accessToken: string | null;
 
 export const api = axios.create({
-    baseURL: server,
-    timeout: 10000, // 10 seconds
+    baseURL: server + '/api/v1',
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
     },
 });
 
-export const apiWithToken = (refreshToken: string) => {
+export const apiWithToken = (dispatch: Dispatch, refreshToken: string) => {
     api.interceptors.response.use((response: AxiosResponse) => {
         return response;
     }, (error: AxiosError) => {
@@ -23,6 +25,8 @@ export const apiWithToken = (refreshToken: string) => {
                 .then((res: AxiosResponse<AuthenticationResponse>) => {
                     accessToken = res.data.accessToken;
                     if (error.config) {
+                        const currentUser: CurrentUser = jwtDecode(accessToken);
+                        dispatch(setCurrentUser(currentUser));
                         error.config.headers.Authorization = `Bearer ${accessToken}`;
 
                         return api(error.config);

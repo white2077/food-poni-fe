@@ -1,17 +1,35 @@
 export interface RateResponseDTO {
 
-    rate?: number;
+    rate: number;
 
-    message?: string;
+    message: string;
 
-    images?: string[];
+    images: string[];
 
-    name?: string;
+    name: string;
 
-    thumbnail?: string;
+    thumbnail: string;
 
-    username?: string;
+    username: string;
 
-    avatar?: string;
+    avatar: string;
+
+}
+
+export const INITIAL_RATE_API_RESPONSE: RateResponseDTO = {
+
+    rate: 0,
+
+    message: '',
+
+    images: [],
+
+    name: '',
+
+    thumbnail: '',
+
+    username: '',
+
+    avatar: '',
 
 }

@@ -7,6 +7,7 @@ import {useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {HistoryOutlined} from "@ant-design/icons";
+import {server} from "../utils/server";
 
 export interface ElementDistance {
     distance: {
@@ -101,7 +102,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                 hoverable
                 cover={<img alt="example"
                             style={{aspectRatio: '1', objectFit: 'cover'}}
-                            src={product.thumbnail ? product.thumbnail : fallback}/>}
+                            src={product.thumbnail ? server + product.thumbnail : fallback}/>}
             >
                 <Space direction="vertical" size="small" style={{display: 'flex'}}>
                     <div className='flex items-center overflow-hidden'>

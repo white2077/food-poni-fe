@@ -2,16 +2,19 @@ import React, {useEffect, useState} from 'react';
 import {Divider, Image, Modal, notification, Rate} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import FileUploads from "./file-upload";
-import {RootState} from "../stores";
+import store, {RootState} from "../stores";
 import {setShowModalRate} from "../stores/rate.reducer";
 import {RateResponseDTO} from "../models/rate/RateResponseAPI";
 import {AxiosResponse} from "axios";
 import {accessToken, apiWithToken} from "../utils/axios-config";
-import {refreshToken} from "../utils/server";
+import {getCookie} from "cookies-next";
+import {REFRESH_TOKEN} from "../utils/server";
 
 const RateRows = ({orderId}: { orderId: string }) => {
 
     const dispatch = useDispatch();
+
+    const refreshToken = getCookie(REFRESH_TOKEN);
 
     const showModalRate: boolean = useSelector((state: RootState) => state.rate.showModalRate);
 
@@ -19,7 +22,7 @@ const RateRows = ({orderId}: { orderId: string }) => {
 
     const getRates = (): void => {
         if (refreshToken) {
-            apiWithToken(refreshToken).get('/customer/orders/rate/' + orderId, {
+            apiWithToken(store.dispatch, refreshToken).get('/customer/orders/rate/' + orderId, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }

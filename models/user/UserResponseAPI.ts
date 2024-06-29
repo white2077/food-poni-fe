@@ -1,25 +1,49 @@
-import {AddressResponseDTO} from "../address/AddressResponseAPI";
+import {AddressResponseDTO, INITIAL_ADDRESS_API_RESPONSE} from "../address/AddressResponseAPI";
 
 export interface UserResponseDTO {
 
-    id?: string;
+    id: string;
 
-    avatar?: string;
+    avatar: string;
 
-    email?: string;
+    email: string;
 
-    firstName?: string;
+    firstName: string;
 
-    lastName?: string;
+    lastName: string;
 
-    phoneNumber?: string;
+    phoneNumber: string;
 
-    username?: string;
+    username: string;
 
-    role?: string;
+    role: string;
 
-    status?: boolean;
+    status: boolean;
 
-    address?: AddressResponseDTO;
+    address: AddressResponseDTO;
+
+}
+
+export const INITIAL_USER_API_RESPONSE: UserResponseDTO = {
+
+    id: '',
+
+    avatar: '',
+
+    email: '',
+
+    firstName: '',
+
+    lastName: '',
+
+    phoneNumber: '',
+
+    username: '',
+
+    role: '',
+
+    status: false,
+
+    address: INITIAL_ADDRESS_API_RESPONSE
 
 }

@@ -21,30 +21,54 @@ import {deleteSelectedSoldItems, ICart, ICartItem} from "../stores/cart.reducer"
 import React, {useState} from "react";
 import {NextRouter, useRouter} from "next/router";
 import OrderItems from "../components/order-items";
-import AddressAdd from "../components/address-add";
-import {RootState} from "../stores";
+import store, {RootState} from "../stores";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {OrderRequestDTO, PaymentInfo, ShippingAddress} from "../models/order/OrderRequest";
 import {CurrentUser} from "../stores/user.reducer";
 import {OrderItemRequestDTO} from "../models/order_item/OrderItemRequest";
 import {accessToken, apiWithToken} from "../utils/axios-config";
-import {refreshToken} from "../utils/server";
+import {REFRESH_TOKEN} from "../utils/server";
+import {NextApiRequest, NextApiResponse} from "next";
+import {CookieValueTypes, getCookie} from "cookies-next";
+import {AxiosResponse} from "axios";
+import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
+import AddressCheckoutAdd from "../components/address-checkout-add";
 
 const {TextArea} = Input;
 
-const Checkout = () => {
+export async function getServerSideProps({req, res}: { req: NextApiRequest, res: NextApiResponse }) {
+    const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req, res});
+    if (refreshToken) {
+        try {
+            const res: AxiosResponse<Page<AddressResponseDTO[]>> = await apiWithToken(store.dispatch, refreshToken).get('/addresses', {
+                headers: {
+                    Authorization: "Bearer " + accessToken
+                }
+            });
+            return {
+                props: {
+                    deliveryInformation: res.data
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching category page:', error);
+        }
+    }
+}
+
+const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {deliveryInformation: Page<AddressResponseDTO[]>}) => {
 
     const router: NextRouter = useRouter();
 
     const dispatch = useDispatch();
+
+    const refreshToken = getCookie(REFRESH_TOKEN);
 
     const carts: ICart[] = useSelector((state: RootState) => state.cart.carts);
 
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const currentShippingAddress: AddressResponseDTO = useSelector((state: RootState) => state.address.shippingAddress);
-
-    const deliveryInformationList: AddressResponseDTO[] = useSelector((state: RootState) => state.delivery.deliveryInformationList);
 
     const [pending, setPending] = useState<boolean>(false);
 
@@ -159,7 +183,7 @@ const Checkout = () => {
                     payment: payment
                 } as OrderRequestDTO;
 
-                return apiWithToken(refreshToken).post("/orders", order, {
+                return apiWithToken(store.dispatch, refreshToken).post("/orders", order, {
                     headers: {
                         Authorization: 'Bearer ' + accessToken,
                     }
@@ -190,7 +214,6 @@ const Checkout = () => {
                 });
             });
     };
-
 
     const onChange = (e: RadioChangeEvent): void => {
         setPayment(prevPaymentInfo => ({...prevPaymentInfo, method: e.target.value}));
@@ -228,13 +251,13 @@ const Checkout = () => {
                                         >
                                             <Button
                                                 onClick={handleAddAddressClick}>{showAddAddress ? "Cancel" : "Add address"}</Button>
-                                            {showAddAddress && <AddressAdd/>}
+                                            {showAddAddress && <AddressCheckoutAdd/>}
                                             {!showAddAddress && (
                                                 <Radio.Group style={{width: '100%'}}
-                                                             defaultValue={deliveryInformationList.find(item => item.id === currentUser.addressId)}
+                                                             defaultValue={deliveryInformation.content.find(item => item.id === currentUser.addressId)}
                                                              onChange={(e: RadioChangeEvent) => setShippingAddress(e.target.value)}>
                                                     <List
-                                                        dataSource={deliveryInformationList}
+                                                        dataSource={deliveryInformation.content}
                                                         renderItem={(item: AddressResponseDTO, index: number) => (
                                                             <Collapse
                                                                 style={{margin: '16px 0'}}

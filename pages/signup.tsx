@@ -12,7 +12,6 @@ import {useEffect, useState} from "react";
 import {setCookie} from "cookies-next";
 import {REMEMBER_ME} from "../utils/server";
 import {NextRouter, useRouter} from "next/router";
-import {useDispatch} from "react-redux";
 import {AxiosResponse} from "axios";
 import {UserCreationRequestDTO} from "../models/user/UserRequest";
 import {UserResponseDTO} from "../models/user/UserResponseAPI";

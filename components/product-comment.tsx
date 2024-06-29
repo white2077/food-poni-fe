@@ -2,6 +2,7 @@ import React from 'react';
 import {LikeOutlined, MessageOutlined, StarOutlined} from '@ant-design/icons';
 import {Avatar, Card, Image, List, Rate, Space} from 'antd';
 import {RateResponseDTO} from "../models/rate/RateResponseAPI";
+import {server} from "../utils/server";
 
 const IconText = ({icon, text}: { icon: React.FC; text: string }) => (
     <Space>
@@ -40,7 +41,7 @@ const ProductComment = ({data,isLoading}: { data: RateResponseDTO[], isLoading: 
                     // }
                 >
                     <List.Item.Meta
-                        avatar={<Avatar src={item.avatar} style={{width: '40px', height: '40px'}}/>}
+                        avatar={<Avatar src={server + item.avatar} style={{width: '40px', height: '40px'}}/>}
                         title={<a href={item.username}>{item.username} <br/>
                             <Rate allowHalf disabled value={item.rate}/></a>}
                     />

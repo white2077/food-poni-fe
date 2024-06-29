@@ -1,18 +1,37 @@
-import {ProductDetailResponseDTO} from "../product_detail/ProductDetailResponseAPI";
-import {RateResponseDTO} from "../rate/RateResponseAPI";
+import {
+    INITIAL_PRODUCT_DETAIL_RESPONSE_DTO,
+    ProductDetailResponseDTO
+} from "../product_detail/ProductDetailResponseAPI";
+import {INITIAL_RATE_API_RESPONSE, RateResponseDTO} from "../rate/RateResponseAPI";
 
 export interface OrderItemResponseDTO {
 
-    id?: string;
+    id: string;
 
-    quantity?: number;
+    quantity: number;
 
-    price?: number;
+    price: number;
 
-    productDetail?: ProductDetailResponseDTO;
+    productDetail: ProductDetailResponseDTO;
 
-    note?: string;
+    note: string;
 
-    rate?: RateResponseDTO;
+    rate: RateResponseDTO;
+
+}
+
+export const INITIAL_ORDER_ITEM_API_RESPONSE: OrderItemResponseDTO = {
+
+    id: '',
+
+    quantity: 0,
+
+    price: 0,
+
+    productDetail: INITIAL_PRODUCT_DETAIL_RESPONSE_DTO,
+
+    note: '',
+
+    rate: INITIAL_RATE_API_RESPONSE
 
 }

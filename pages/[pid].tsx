@@ -14,6 +14,7 @@ import {useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {ParsedUrlQuery} from "querystring";
 import {accessToken, api} from "../utils/axios-config";
+import {server} from "../utils/server";
 
 export interface IProduct {
     id?: string;
@@ -200,8 +201,8 @@ const ProductDetails = ({product}: {product: IProduct}) => {
                                     id={id!}
                                     price={price!}
                                     // thumbnail={images![0]}
-                                    thumbnail={images && images.length > 0 ? images[0] : ""}
-                                    name={product.name + ' - ' + productDetailName}
+                                    thumbnail={images && images.length > 0 ? server + images[0] : ""}
+                                    name={product.name + (productDetailName ? ' - ' + productDetailName : '')}
                                     retailer={product.retailer!}
                                 />
                             </div>

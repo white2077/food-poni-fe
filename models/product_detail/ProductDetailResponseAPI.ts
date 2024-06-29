@@ -1,25 +1,49 @@
-import {ProductResponseDTO} from "../product/ProductResponseAPI";
+import {INITIAL_PRODUCT_API_RESPONSE, ProductResponseDTO} from "../product/ProductResponseAPI";
 
 export interface ProductDetailResponseDTO {
 
-    id?: string;
+    id: string;
 
-    name?: string;
+    name: string;
 
-    price?: number;
+    price: number;
 
-    description?: string;
+    description: string;
 
-    status?: boolean;
+    status: boolean;
 
-    images?: string[];
+    images: string[];
 
-    product?: ProductResponseDTO;
+    product: ProductResponseDTO;
 
-    rate?: number;
+    rate: number;
 
-    sales?: number;
+    sales: number;
 
-    rateCount?: number;
+    rateCount: number;
+
+}
+
+export const INITIAL_PRODUCT_DETAIL_RESPONSE_DTO: ProductDetailResponseDTO = {
+
+    id: '',
+
+    name: '',
+
+    price: 0,
+
+    description: '',
+
+    status: false,
+
+    images: [],
+
+    product: INITIAL_PRODUCT_API_RESPONSE,
+
+    rate: 0,
+
+    sales: 0,
+
+    rateCount: 0
 
 }

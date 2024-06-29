@@ -9,6 +9,7 @@ import {NextApiRequest, NextApiResponse} from "next";
 import {CookieValueTypes, getCookie} from "cookies-next";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {REFRESH_TOKEN} from "../utils/server";
+import store from "../stores";
 
 enum OrderStatus {
     PENDING,
@@ -27,10 +28,10 @@ const getBase64 = (file: FileType): Promise<string> =>
     });
 
 export async function getServerSideProps({req, res}: { req: NextApiRequest, res: NextApiResponse }) {
-    const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req, res});
+    const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req});
     if (refreshToken) {
         try {
-            const res: AxiosResponse<Page<OrderResponseDTO[]>> = await apiWithToken(refreshToken).get('/customer/orders', {
+            const res: AxiosResponse<Page<OrderResponseDTO[]>> = await apiWithToken(store.dispatch, refreshToken).get('/customer/orders', {
                 headers: {
                     Authorization: "Bearer " + accessToken
                 }
@@ -108,7 +109,7 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderResponse
                     />
                 </div>
                 <List dataSource={orders} loading={isLoading}
-                      renderItem={(order) => (
+                      renderItem={(order: OrderResponseDTO) => (
                           <List.Item>
                               <OrderCard order={order}></OrderCard>
                           </List.Item>

@@ -41,5 +41,3 @@ export const paymentInfo: PaymentInfo = {};
 
 export const orderRequestDTO: OrderRequestDTO = {};
 
-// export const rateDTO: RateDTO = {};
-

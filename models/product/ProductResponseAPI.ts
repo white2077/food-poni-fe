@@ -1,29 +1,55 @@
-import {UserResponseDTO} from "../user/UserResponseAPI";
+import {INITIAL_USER_API_RESPONSE, UserResponseDTO} from "../user/UserResponseAPI";
 import {CategoryResponseDTO} from "../category/CategoryResponseAPI";
 import {ProductDetailResponseDTO} from "../product_detail/ProductDetailResponseAPI";
 
 export interface ProductResponseDTO {
 
-    id?: string;
+    id: string;
 
-    name?: string;
+    name: string;
 
-    slug?: string;
+    slug: string;
 
-    shortDescription?: string;
+    shortDescription: string;
 
-    thumbnail?: string;
+    thumbnail: string;
 
-    status?: boolean;
+    status: boolean;
 
-    user?: UserResponseDTO;
+    user: UserResponseDTO;
 
-    productDetails?: ProductDetailResponseDTO[];
+    productDetails: ProductDetailResponseDTO[];
 
-    categories?: CategoryResponseDTO[];
+    categories: CategoryResponseDTO[];
 
-    rate?: number;
+    rate: number;
 
-    rateCount?: number;
+    rateCount: number;
+
+}
+
+export const INITIAL_PRODUCT_API_RESPONSE: ProductResponseDTO = {
+
+    id: "",
+
+    name: "",
+
+    slug: "",
+
+    shortDescription: "",
+
+    thumbnail: "",
+
+    status: false,
+
+    user: INITIAL_USER_API_RESPONSE,
+
+    productDetails: [],
+
+    categories: [],
+
+    rate: 0,
+
+    rateCount: 0
 
 }

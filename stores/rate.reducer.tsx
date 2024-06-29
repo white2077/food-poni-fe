@@ -1,6 +1,6 @@
 // import {rateDTO, RateDTO} from "../models/order/OrderRequest";
 import {createSlice} from "@reduxjs/toolkit";
-import {RateResponseDTO} from "../models/rate/RateResponseAPI";
+import {INITIAL_RATE_API_RESPONSE, RateResponseDTO} from "../models/rate/RateResponseAPI";
 
 export interface IRateState {
     rates: RateResponseDTO;
@@ -11,7 +11,7 @@ export interface IRateState {
 }
 
 const initialState: IRateState = {
-    rates: {},
+    rates: INITIAL_RATE_API_RESPONSE,
     showModalAddRate: false,
     selecOrderItemRate: "",
     showModalFileUpload: false,

@@ -3,13 +3,20 @@ import {useDispatch, useSelector} from 'react-redux';
 import {LogoutOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
 import {NextRouter, useRouter} from 'next/router';
 import {RootState} from '../stores';
-import React from "react";
+import React, {useEffect} from "react";
 import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
 import Cart from "./cart";
 import SearchKeyword from "./search-keyword";
 import {deleteCookie} from "cookies-next";
-import {REFRESH_TOKEN} from "../utils/server";
+import {REFRESH_TOKEN, server} from "../utils/server";
 import Notification from "./notification";
+import {INITIAL_PAGE_API_RESPONSE} from "../models/Page";
+import SockJS from "sockjs-client";
+import {Client, IMessage} from "@stomp/stompjs";
+import {addNotification} from "../stores/notification.reducer";
+import {NotificationAPIResponse} from "../models/notification/NotificationResponseAPI";
+
+let sock: any = null;
 
 const HeaderMain = () => {
 
@@ -68,6 +75,29 @@ const HeaderMain = () => {
         }
     };
 
+    useEffect(() => {
+        if (!sock) {
+            console.log("Connect to socket successfully...");
+            sock = new SockJS(server + "/notification-register?client-id=e3a57bd0-fa44-45ae-93ac-d777e480aa1a");
+
+            const client = new Client({
+                webSocketFactory: () => sock,
+                onConnect: () => {
+                    client.subscribe('/topic/global-notifications', (message: IMessage) => {
+                        dispatch(addNotification(JSON.parse(message.body) as NotificationAPIResponse));
+                    });
+                    client.subscribe('/user/topic/client-notifications', (message: any) => {
+                        dispatch(addNotification(JSON.parse(message.body) as NotificationAPIResponse));
+                    });
+                },
+                onStompError: (frame: any) => {
+                    console.log("Error connecting to Websocket server", frame)
+                }
+            });
+            client.activate();
+        }
+    }, []);
+
     return (
         <div className='lg:w-[1440px] grid grid-cols-2 md:grid-cols-[1fr_2fr_1fr] px-2 mx-auto items-center py-2 gap-4'>
             <a className='font-bold text-2xl h-[unset]' onClick={() => router.push('/')}>FoodPoni</a>
@@ -75,12 +105,12 @@ const HeaderMain = () => {
             <div className='flex items-center justify-end gap-4'>
                 {currentUser.id ? (
                         <>
-                            <Notification />
                             <Cart/>
+                            <Notification ePage={INITIAL_PAGE_API_RESPONSE} />
                             <Dropdown menu={{items}} placement='bottomRight'>
                                 <a>
                                     {currentUser.avatar
-                                        ? <Avatar src={currentUser.avatar} size='large'/>
+                                        ? <Avatar src={server + currentUser.avatar} size='large'/>
                                         : <Avatar icon={<UserOutlined/>} size='large'/>}
                                 </a>
                             </Dropdown>

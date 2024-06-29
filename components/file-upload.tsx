@@ -5,13 +5,13 @@ import {FileUploadsResponseDTO} from "../models/file/FileUploadsResponseAPI";
 import {UploadOutlined} from "@ant-design/icons";
 import {setFileUploads, setSelectedFile} from "../stores/fileUploads.reducer";
 import {setShowModalFileUpload} from "../stores/rate.reducer";
-import {CurrentUser} from "../stores/user.reducer";
-import {RootState} from "../stores";
+import store, {RootState} from "../stores";
 import {accessToken, apiWithToken} from "../utils/axios-config";
-import {refreshToken} from "../utils/server";
 import {AxiosError, AxiosResponse} from "axios";
 import {Page} from "../models/Page";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
+import {getCookie} from "cookies-next";
+import {REFRESH_TOKEN} from "../utils/server";
 
 export interface IFileUploadCard {
     id: string;
@@ -26,7 +26,7 @@ const FileUploads = () => {
 
     const dispatch = useDispatch();
 
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
+    const refreshToken = getCookie(REFRESH_TOKEN);
 
     const fileUploads: FileUploadsResponseDTO[] = useSelector((state: RootState) => state.fileUpload.filesUpload);
 
@@ -44,7 +44,7 @@ const FileUploads = () => {
 
     const getFileUploads = (): void => {
         if (refreshToken) {
-            apiWithToken(refreshToken).get('/file-uploads', {
+            apiWithToken(store.dispatch, refreshToken).get('/file-uploads', {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }
@@ -78,7 +78,7 @@ const FileUploads = () => {
         formData.append('multipartFile', file);
 
         if (refreshToken) {
-            apiWithToken(refreshToken).post("/file-uploads", formData, {
+            apiWithToken(store.dispatch, refreshToken).post("/file-uploads", formData, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                     'Content-Type': 'multipart/form-data'
