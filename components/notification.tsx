@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {Avatar, Badge, Dropdown, Menu, MenuProps} from 'antd';
+import {Avatar, Badge, Dropdown, Menu} from 'antd';
 import {BellOutlined} from "@ant-design/icons";
 import {Page} from "../models/Page";
 import {NotificationAPIResponse} from "../models/notification/NotificationResponseAPI";
