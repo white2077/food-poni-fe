@@ -99,7 +99,7 @@ const ProductRows = () => {
                 {products.length ?
                     (
                         <div className="p-4 bg-white rounded-lg">
-                            <div>Top Deal - Super Cheap</div>
+                            <div>Top Deal - Siêu rẻ</div>
                             <Skeleton loading={isLoading} active/>
                             <MenuMain/>
                             <div

@@ -13,8 +13,8 @@ const SearchKeyword = () => {
 
     return (
         <Space.Compact className='w-full hidden md:flex'>
-            <Input size='large' placeholder='input keyword here...'/>
-            <Button size='large' type='primary' onClick={() => search('') }>Search</Button>
+            <Input size='large' placeholder='Bạn tìm gì hôm nay?'/>
+            <Button size='large' type='primary' onClick={() => search('') }>Tìm kiếm</Button>
         </Space.Compact>
     );
 

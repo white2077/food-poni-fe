@@ -40,7 +40,7 @@ const Cart = () => {
                     <Avatar shape="square" icon={<ShoppingCartOutlined/>} size='large'/>
                 </Badge>
             </a>
-            <Drawer title="Cart Items" onClose={onClose} open={open}>
+            <Drawer title="Giỏ hàng" onClose={onClose} open={open}>
                 {
                     carts.map((cart: ICart) => (
                         cart.cartItems.length > 0 ? (
@@ -87,7 +87,7 @@ const Cart = () => {
                     ))
                 }
                 <Button className="my-5" type='primary' danger block hidden={carts.length === 0} onClick={() => router.push('/checkout')}>
-                    Go to checkout
+                    Thanh toán ngay
                 </Button>
             </Drawer>
         </>

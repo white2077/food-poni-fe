@@ -78,7 +78,6 @@ const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<CategoryRespons
                         <CarouselBanner/>
                         <SearchPosition/>
                     </div>
-
                     <ProductRows/>
                 </div>
             </div>

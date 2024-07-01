@@ -169,7 +169,7 @@ const ProductDetails = ({product}: {product: IProduct}) => {
                                         </div>
                                         <h3 className='text-2xl font-semibold'>${price}</h3>
                                     </Card>
-                                    <Card size='small' title='Product type'>
+                                    <Card hidden={product.productDetails?.length == 1} size='small' title='Loại sản phẩm'>
                                         {(product.productDetails && product.productDetails.length > 1) && (
                                             <Radio.Group defaultValue={product.productDetails[0].name || "default"}>
                                                 {(product?.productDetails || []).map((productDetail: IProductDetail) => (

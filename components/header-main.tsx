@@ -1,6 +1,6 @@
 import {Avatar, Button, Dropdown, MenuProps,} from 'antd';
 import {useDispatch, useSelector} from 'react-redux';
-import {LogoutOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
+import {LogoutOutlined, QuestionCircleOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
 import {NextRouter, useRouter} from 'next/router';
 import {RootState} from '../stores';
 import React, {useEffect} from "react";
@@ -37,7 +37,7 @@ const HeaderMain = () => {
                     <span style={{marginRight: '5px'}}>
                         <UserOutlined/>
                     </span>
-                    <span>Account management</span>
+                    <span>Thông tin tài khoản</span>
                 </span>
             ),
         },
@@ -48,18 +48,29 @@ const HeaderMain = () => {
                     <span style={{marginRight: '5px'}}>
                         <ShoppingOutlined/>
                     </span>
-                    <span>Your orders</span>
+                    <span>Đơn hàng của bạn</span>
                 </span>
             ),
         },
         {
-            key: '3',
+            key: '2',
+            label: (
+                <span id='aaa' onClick={() => handleItemClick('/')}>
+                    <span style={{marginRight: '5px'}}>
+                        <QuestionCircleOutlined />
+                    </span>
+                    <span>Trung tâm hỗ trợ</span>
+                </span>
+            ),
+        },
+        {
+            key: '4',
             label: (
                 <span id='logout' onClick={() => handleItemClick('/login')}>
                     <span style={{marginRight: '5px'}}>
                         <LogoutOutlined/>
                     </span>
-                    <span>Logout</span>
+                    <span>Đăng xuất</span>
                 </span>
             ),
         },
@@ -132,7 +143,8 @@ const HeaderMain = () => {
                         </>
                     )
                     : <Button type='primary' onClick={() => router.push('/login')} icon={<UserOutlined/>}
-                              size='large'>Sign In
+                              size='large'>
+                        Đăng nhập
                     </Button>
                 }
             </div>

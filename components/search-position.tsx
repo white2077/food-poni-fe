@@ -102,7 +102,7 @@ const SearchPosition = () => {
             <Space.Compact className='w-full'>
                 <AutoComplete
                     className='w-full'
-                    placeholder="input your location here..."
+                    placeholder="Nhập địa chỉ của bạn tại đây..."
                     onSearch={onSearch}
                     onSelect={onSelect}
                     size='large'

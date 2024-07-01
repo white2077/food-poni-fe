@@ -51,7 +51,7 @@ const ProductCategory = ({categoryList}: { categoryList: CategoryResponseDTO[] }
         <div className='hidden md:block'>
             {/*<Skeleton loading={isLoading} active></Skeleton>*/}
             <div className="p-4 bg-white rounded-lg">
-                <div className="mb-4">Categories</div>
+                <div className="mb-4">Danh mục</div>
                 <Menu
                     onClick={onClick}
                     style={{minWidth: 256, borderRadius: '8px', border: 'none'}}
