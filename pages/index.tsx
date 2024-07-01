@@ -18,6 +18,7 @@ import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
 import {CategoryResponseDTO} from "../models/category/CategoryResponseAPI";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
+import {Card} from "antd";
 
 export async function getServerSideProps() {
     try {
@@ -77,7 +78,7 @@ const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<CategoryRespons
                         <CarouselBanner/>
                         <SearchPosition/>
                     </div>
-                    <MenuMain/>
+
                     <ProductRows/>
                 </div>
             </div>
