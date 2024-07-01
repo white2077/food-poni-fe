@@ -19,7 +19,7 @@ const ProductCart = ({id, price, thumbnail, name, retailer}: { id: string, price
 
     const carts: ICart[] = useSelector((state: RootState) => state.cart.carts);
 
-    const isExisted: boolean = carts.some(item => item.id === id);
+    const isExisted: boolean = carts.some(item => item.cartItems.some(cartItem => cartItem.id === id));
 
     const addToCart = (): void => {
         if (currentUser.id) {
@@ -44,21 +44,21 @@ const ProductCart = ({id, price, thumbnail, name, retailer}: { id: string, price
         <Card className='text-left text-black h-fit' size='small'>
             <div>retailer here</div>
             <Divider/>
-            <div className='text-md font-medium'>Số lượng</div>
+            <div className='text-md font-medium'>Quantity</div>
             <InputNumber
                 min={1}
                 max={20}
                 defaultValue={1}
                 value={quantity}
                 onChange={(value: number | null) => setQuantity(value ?? 1)} disabled={isExisted}/>
-            <div className='text-md font-medium'>Tạm tính</div>
+            <div className='text-md font-medium'>Subtotal</div>
             <div className='text-2xl font-semibold'>${price * quantity}</div>
             <Flex vertical gap='small' style={{width: '100%'}}>
                 <Button type='primary' danger block onClick={getCheckout}>
-                    Mua ngay
+                    Buy now
                 </Button>
                 <Button block onClick={addToCart}
-                        disabled={isExisted}>{isExisted ? 'Sản phẩm đã có trong giỏ hàng' : 'Thêm vào giỏ hàng'}</Button>
+                        disabled={isExisted}>{isExisted ? 'Product existed in cart' : 'Add to cart'}</Button>
             </Flex>
         </Card>
     );

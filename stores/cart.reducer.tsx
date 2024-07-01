@@ -62,9 +62,15 @@ const cartSlide = createSlice({
             }
         },
         deleteItem: (state, action: { payload: { id: string, retailerId: string } }): void => {
-            const {id, retailerId} = action.payload;
-            const cart = state.carts.find(cart => cart.id === retailerId);
-            if (cart) cart.cartItems = cart.cartItems.filter(item => item.id !== id);
+            const { id, retailerId } = action.payload;
+            const cartIndex = state.carts.findIndex(cart => cart.id === retailerId);
+            if (cartIndex !== -1) {
+                const cart = state.carts[cartIndex];
+                cart.cartItems = cart.cartItems.filter(item => item.id !== id);
+                if (cart.cartItems.length === 0) {
+                    state.carts.splice(cartIndex, 1);
+                }
+            }
         },
         deleteSelectedSoldItems: (state): void => {
             state.carts.forEach(cart => {
