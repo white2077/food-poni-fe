@@ -8,7 +8,7 @@ import RateAdd from "../../components/rate-add";
 import {MessageOutlined} from "@ant-design/icons";
 import {INITIAL_USER_API_RESPONSE, UserResponseDTO} from "../../models/user/UserResponseAPI";
 import {paymentInfo, PaymentInfo, RateDTO, shippingAddress, ShippingAddress} from "../../models/order/OrderRequest";
-import store, {RootState} from "../../stores";
+import {RootState} from "../../stores";
 import {setSelectedOrderItemRate, setShowModalAddRate, setShowModalRate} from "../../stores/rate.reducer";
 import {OrderResponseDTO} from "../../models/order/OrderResposeAPI";
 import RateRows from "../../components/rate-rows";
@@ -64,7 +64,7 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery, req:
     const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req: context.req, res: context.res});
     if (refreshToken) {
         try {
-            const res: AxiosResponse<OrderResponseDTO> = await apiWithToken(store.dispatch, refreshToken).get('/customer/orders/' + oid, {
+            const res: AxiosResponse<OrderResponseDTO> = await apiWithToken(refreshToken).get('/customer/orders/' + oid, {
                 headers: {
                     Authorization: "Bearer " + accessToken
                 }

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Divider, Image, Modal, notification, Rate} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import FileUploads from "./file-upload";
-import store, {RootState} from "../stores";
+import {RootState} from "../stores";
 import {setShowModalRate} from "../stores/rate.reducer";
 import {RateResponseDTO} from "../models/rate/RateResponseAPI";
 import {AxiosResponse} from "axios";
@@ -22,7 +22,7 @@ const RateRows = ({orderId}: { orderId: string }) => {
 
     const getRates = (): void => {
         if (refreshToken) {
-            apiWithToken(store.dispatch, refreshToken).get('/customer/orders/rate/' + orderId, {
+            apiWithToken(refreshToken).get('/customer/orders/rate/' + orderId, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }

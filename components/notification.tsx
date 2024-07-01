@@ -8,7 +8,7 @@ import {AxiosResponse} from "axios";
 import {REFRESH_TOKEN, server} from "../utils/server";
 import {format} from "date-fns";
 import {getCookie} from "cookies-next";
-import store, {RootState} from "../stores";
+import {RootState} from "../stores";
 import {useDispatch, useSelector} from "react-redux";
 import {setNotifications} from "../stores/notification.reducer";
 
@@ -21,7 +21,7 @@ const Notification = ({ePage}: { ePage: Page<NotificationAPIResponse> }) => {
     useEffect(() => {
         const refreshToken = getCookie(REFRESH_TOKEN);
         if (refreshToken) {
-            apiWithToken(store.dispatch, refreshToken).get('/notifications', {
+            apiWithToken(refreshToken).get('/notifications', {
                 headers: {
                     Authorization: "Bearer " + accessToken
                 }

@@ -3,7 +3,7 @@ import {CheckCircleOutlined, DeleteOutlined} from "@ant-design/icons";
 import React, {useState} from "react";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch, useSelector} from "react-redux";
-import store, {RootState} from "../stores";
+import {RootState} from "../stores";
 import {AddressIdDTO} from "../models/address/AddressRequest";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {CurrentUser, updateAddressId} from "../stores/user.reducer";
@@ -35,7 +35,7 @@ export const AddressDeliveryInformation = ({deliveryInformation}: { deliveryInfo
         const addressId: string = currentUser.addressId ?? "";
 
         if (addressId !== "" && refreshToken) {
-            apiWithToken(store.dispatch, refreshToken).get(`/addresses/${addressId}`, {
+            apiWithToken(refreshToken).get(`/addresses/${addressId}`, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }
@@ -55,7 +55,7 @@ export const AddressDeliveryInformation = ({deliveryInformation}: { deliveryInfo
 
     const deleteDeliveryInformation = (addressId: string): void => {
         if (refreshToken) {
-            apiWithToken(store.dispatch, refreshToken).delete(`/addresses/${addressId}`, {
+            apiWithToken(refreshToken).delete(`/addresses/${addressId}`, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }
@@ -78,7 +78,7 @@ export const AddressDeliveryInformation = ({deliveryInformation}: { deliveryInfo
             id: addressId
         };
         if (refreshToken) {
-            apiWithToken(store.dispatch, refreshToken).put("/users/update-address", addressIdDTO, {
+            apiWithToken(refreshToken).put("/users/update-address", addressIdDTO, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }

@@ -5,7 +5,7 @@ import {FileUploadsResponseDTO} from "../models/file/FileUploadsResponseAPI";
 import {UploadOutlined} from "@ant-design/icons";
 import {setFileUploads, setSelectedFile} from "../stores/fileUploads.reducer";
 import {setShowModalFileUpload} from "../stores/rate.reducer";
-import store, {RootState} from "../stores";
+import {RootState} from "../stores";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {AxiosError, AxiosResponse} from "axios";
 import {Page} from "../models/Page";
@@ -44,7 +44,7 @@ const FileUploads = () => {
 
     const getFileUploads = (): void => {
         if (refreshToken) {
-            apiWithToken(store.dispatch, refreshToken).get('/file-uploads', {
+            apiWithToken(refreshToken).get('/file-uploads', {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }
@@ -78,7 +78,7 @@ const FileUploads = () => {
         formData.append('multipartFile', file);
 
         if (refreshToken) {
-            apiWithToken(store.dispatch, refreshToken).post("/file-uploads", formData, {
+            apiWithToken(refreshToken).post("/file-uploads", formData, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                     'Content-Type': 'multipart/form-data'

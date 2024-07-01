@@ -7,7 +7,7 @@ import {EnvironmentOutlined, UserOutlined} from "@ant-design/icons";
 import PersonalInformation from "../components/personal-information";
 import {CurrentUser} from "../stores/user.reducer";
 import {useSelector} from "react-redux";
-import store, {RootState} from "../stores";
+import {RootState} from "../stores";
 import {NextRouter, useRouter} from "next/router";
 import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
@@ -43,7 +43,7 @@ export async function getServerSideProps({req, res}: { req: NextApiRequest, res:
     const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req, res});
     if (refreshToken) {
         try {
-            const res: AxiosResponse<Page<AddressResponseDTO[]>> = await apiWithToken(store.dispatch, refreshToken).get('/addresses', {
+            const res: AxiosResponse<Page<AddressResponseDTO[]>> = await apiWithToken(refreshToken).get('/addresses', {
                 headers: {
                     Authorization: "Bearer " + accessToken
                 }

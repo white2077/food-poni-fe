@@ -21,7 +21,7 @@ import {deleteSelectedSoldItems, ICart, ICartItem} from "../stores/cart.reducer"
 import React, {useState} from "react";
 import {NextRouter, useRouter} from "next/router";
 import OrderItems from "../components/order-items";
-import store, {RootState} from "../stores";
+import {RootState} from "../stores";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {OrderRequestDTO, PaymentInfo, ShippingAddress} from "../models/order/OrderRequest";
 import {CurrentUser} from "../stores/user.reducer";
@@ -40,7 +40,7 @@ export async function getServerSideProps({req, res}: { req: NextApiRequest, res:
     const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req, res});
     if (refreshToken) {
         try {
-            const res: AxiosResponse<Page<AddressResponseDTO[]>> = await apiWithToken(store.dispatch, refreshToken).get('/addresses', {
+            const res: AxiosResponse<Page<AddressResponseDTO[]>> = await apiWithToken(refreshToken).get('/addresses', {
                 headers: {
                     Authorization: "Bearer " + accessToken
                 }
@@ -183,7 +183,7 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {deliveryIn
                     payment: payment
                 } as OrderRequestDTO;
 
-                return apiWithToken(store.dispatch, refreshToken).post("/orders", order, {
+                return apiWithToken(refreshToken).post("/orders", order, {
                     headers: {
                         Authorization: 'Bearer ' + accessToken,
                     }

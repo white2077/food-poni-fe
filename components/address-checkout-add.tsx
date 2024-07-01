@@ -11,7 +11,6 @@ import {useDispatch} from "react-redux";
 import {setCurrentShippingAddress} from "../stores/address.reducer";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
-import store from "../stores";
 
 export const AddressCheckoutAdd = () => {
 
@@ -79,7 +78,7 @@ export const AddressCheckoutAdd = () => {
         };
 
         if (refreshToken) {
-            apiWithToken(store.dispatch, refreshToken).post("/addresses", deliveryInfo, {
+            apiWithToken(refreshToken).post("/addresses", deliveryInfo, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }

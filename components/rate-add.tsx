@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Button, Input, Modal, notification, Rate} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import FileUploads from "./file-upload";
-import store, {RootState} from "../stores";
+import {RootState} from "../stores";
 import {RateDTO} from "../models/order/OrderRequest";
 import {setLoadingOrderItem} from "../stores/order.reducer";
 import {setShowModalAddRate, setShowModalFileUpload} from "../stores/rate.reducer";
@@ -52,7 +52,7 @@ const RateAdd = () => {
         }
         dispatch(setLoadingOrderItem(true));
         if (refreshToken) {
-            apiWithToken(store.dispatch, refreshToken).post('/order-items/rate/' + orderItemId, rateDTO, {
+            apiWithToken(refreshToken).post('/order-items/rate/' + orderItemId, rateDTO, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }

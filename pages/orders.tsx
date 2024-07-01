@@ -9,7 +9,6 @@ import {NextApiRequest, NextApiResponse} from "next";
 import {CookieValueTypes, getCookie} from "cookies-next";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {REFRESH_TOKEN} from "../utils/server";
-import store from "../stores";
 
 enum OrderStatus {
     PENDING,
@@ -31,7 +30,7 @@ export async function getServerSideProps({req, res}: { req: NextApiRequest, res:
     const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req});
     if (refreshToken) {
         try {
-            const res: AxiosResponse<Page<OrderResponseDTO[]>> = await apiWithToken(store.dispatch, refreshToken).get('/customer/orders', {
+            const res: AxiosResponse<Page<OrderResponseDTO[]>> = await apiWithToken(refreshToken).get('/customer/orders', {
                 headers: {
                     Authorization: "Bearer " + accessToken
                 }

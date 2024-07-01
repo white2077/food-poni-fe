@@ -8,7 +8,7 @@ import SearchPosition from "../components/search-position";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch, useSelector} from "react-redux";
 import {CurrentUser} from "../stores/user.reducer";
-import store, {RootState} from "../stores";
+import {RootState} from "../stores";
 import {accessToken, api, apiWithToken} from "../utils/axios-config";
 import {AxiosError, AxiosResponse} from "axios";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
@@ -46,7 +46,7 @@ const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<CategoryRespons
         const addressId: string = currentUser.addressId ?? "";
 
         if (addressId !== "" && refreshToken) {
-            apiWithToken(store.dispatch, refreshToken).get(`/addresses/${addressId}`, {
+            apiWithToken(refreshToken).get(`/addresses/${addressId}`, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }

@@ -9,7 +9,6 @@ import {ErrorApiResponse} from "../models/ErrorApiResponse";
 import {NextRouter, useRouter} from "next/router";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
-import store from "../stores";
 
 const AddressDeliveryInformationAdd = () => {
 
@@ -75,7 +74,7 @@ const AddressDeliveryInformationAdd = () => {
         };
 
         if (refreshToken) {
-            apiWithToken(store.dispatch, refreshToken).post("/addresses", deliveryInfo, {
+            apiWithToken(refreshToken).post("/addresses", deliveryInfo, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }
