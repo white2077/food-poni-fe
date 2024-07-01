@@ -54,6 +54,13 @@ export async function getServerSideProps({req, res}: { req: NextApiRequest, res:
             console.error('Error fetching category page:', error);
         }
     }
+
+    return {
+        redirect: {
+            destination: '/login',
+            permanent: false,
+        },
+    }
 }
 
 const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {deliveryInformation: Page<AddressResponseDTO[]>}) => {

@@ -7,7 +7,7 @@ import React, {useEffect} from "react";
 import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
 import Cart from "./cart";
 import SearchKeyword from "./search-keyword";
-import {deleteCookie} from "cookies-next";
+import {deleteCookie, getCookie} from "cookies-next";
 import {REFRESH_TOKEN, server} from "../utils/server";
 import Notification from "./notification";
 import {INITIAL_PAGE_API_RESPONSE} from "../models/Page";
@@ -15,6 +15,7 @@ import SockJS from "sockjs-client";
 import {Client, IMessage} from "@stomp/stompjs";
 import {addNotification} from "../stores/notification.reducer";
 import {NotificationAPIResponse} from "../models/notification/NotificationResponseAPI";
+import jwtDecode from "jwt-decode";
 
 let sock: any = null;
 
@@ -25,6 +26,8 @@ const HeaderMain = () => {
     const dispatch = useDispatch();
 
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
+
+    const refreshToken = getCookie(REFRESH_TOKEN);
 
     const items: MenuProps['items'] = [
         {
@@ -67,6 +70,9 @@ const HeaderMain = () => {
             if (path === '/login') {
                 deleteCookie(REFRESH_TOKEN);
                 dispatch(setCurrentUser({}));
+                setTimeout(() => {
+                    window.location.href = path;
+                }, 0);
             }
             router.push(path);
         } else {
@@ -75,7 +81,16 @@ const HeaderMain = () => {
         }
     };
 
+    const changeCurrentUser = (refreshToken: string): void => {
+        const payload: CurrentUser = jwtDecode(refreshToken);
+        dispatch(setCurrentUser(payload));
+    }
+
     useEffect(() => {
+        if (refreshToken) {
+            changeCurrentUser(refreshToken);
+        }
+
         if (!sock) {
             console.log("Connect to socket successfully...");
             sock = new SockJS(server + "/notification-register?client-id=e3a57bd0-fa44-45ae-93ac-d777e480aa1a");

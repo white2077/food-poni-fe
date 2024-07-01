@@ -4,12 +4,7 @@ export interface CurrentUser {
     id?: string;
     sub?: string;
     role?: string;
-    firstName?: string;
-    lastName?: string;
     avatar?: string;
-    email?: string;
-    phoneNumber?: string;
-    username?: string;
     addressId?: string;
 }
 

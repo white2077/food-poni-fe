@@ -78,31 +78,29 @@ const Login: NextPage = () => {
             .then(function (res: AxiosResponse<AuthenticationResponse>): void {
                 setPending(false);
 
-                const accessToken: string = res.data.accessToken ?? "";
+                const refreshToken: string = res.data.refreshToken ?? "";
 
-                if (accessToken) {
-                    const payload: CurrentUser = jwtDecode(accessToken);
-                    dispatch(setCurrentUser(payload));
+                const payload: CurrentUser = jwtDecode(refreshToken);
+                dispatch(setCurrentUser(payload));
 
-                    setCookie(REFRESH_TOKEN, res.data.refreshToken, {
+                setCookie(REFRESH_TOKEN, res.data.refreshToken, {
+                    expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
+                });
+
+                deleteCookie(REMEMBER_ME);
+                //set user remembered and delete
+                if (values.remember) {
+                    const userRemember: IUserRemember = {
+                        username: user.username ? user.username! : user.email!,
+                        password: user.password,
+                        avatar: "currentUser.avatar"
+                    }
+                    setCookie(REMEMBER_ME, btoa(JSON.stringify(userRemember)), {
                         expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
                     });
+                } else deleteCookie(REMEMBER_ME);
 
-                    deleteCookie(REMEMBER_ME);
-                    //set user remembered and delete
-                    if (values.remember) {
-                        const userRemember: IUserRemember = {
-                            username: user.username ? user.username! : user.email!,
-                            password: user.password,
-                            avatar: "currentUser.avatar"
-                        }
-                        setCookie(REMEMBER_ME, btoa(JSON.stringify(userRemember)), {
-                            expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
-                        });
-                    } else deleteCookie(REMEMBER_ME);
-
-                    router.push('/');
-                }
+                router.push('/');
 
             })
             .catch(function (res: AxiosError<ErrorApiResponse>): void {

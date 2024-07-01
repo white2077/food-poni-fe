@@ -8,6 +8,7 @@ import {server} from "../utils/server";
 
 const options = ['Nam', 'Nữ', 'Khác'];
 export const PersonalInformation = () => {
+
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     return (
@@ -28,7 +29,7 @@ export const PersonalInformation = () => {
                             <div className="flex flex-col justify-items-start align-top w-full">
                                 <div className="px-4 py-4 sm:grid sm:grid-cols-[1fr,2fr] sm:gap-4 sm:px-0">
                                     <dt className="text-lg font-serif leading-6 text-gray-600">Họ và tên</dt>
-                                    <Input value={currentUser.username}></Input>
+                                    {/*<Input value={currentUser.username}></Input>*/}
                                 </div>
                                 <div className="px-4 py-4 sm:grid sm:grid-cols-[1fr,2fr] sm:gap-4 sm:px-0">
                                     <dt className="text-lg font-serif leading-6 text-gray-600">Nickname</dt>
@@ -61,7 +62,7 @@ export const PersonalInformation = () => {
                                     <div>
                                         <dt className="text-lg font-serif leading-6 text-gray-600">Số điện thoại
                                         </dt>
-                                        <dt>{currentUser.phoneNumber}</dt>
+                                        {/*<dt>{currentUser.phoneNumber}</dt>*/}
                                     </div>
                                 </div>
                                 <Button>Cập nhật</Button>
