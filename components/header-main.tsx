@@ -100,7 +100,7 @@ const HeaderMain = () => {
 
     return (
         <div className='lg:w-[1440px] grid grid-cols-2 md:grid-cols-[1fr_2fr_1fr] px-2 mx-auto items-center py-2 gap-4'>
-            <a className='font-bold text-2xl h-[unset]' onClick={() => router.push('/')}>FoodPoni</a>
+            <a className='font-bold text-2xl h-[unset] cu' onClick={() => router.push('/')}>FoodPoni</a>
             <SearchKeyword/>
             <div className='flex items-center justify-end gap-4'>
                 {currentUser.id ? (

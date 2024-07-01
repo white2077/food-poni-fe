@@ -10,7 +10,7 @@ const images: string[] = [
 
 const CarouselBanner = () => {
     return (
-        <Carousel autoplay dotPosition='right' style={{height: '400px', overflow: 'hidden'}}>
+        <Carousel autoplay dotPosition='right'>
             {images.map((image, index) => (
                 <div key={index}>
                     <img
