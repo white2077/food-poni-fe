@@ -1,4 +1,4 @@
-import {Result, Skeleton, Spin} from 'antd';
+import {Card, Result, Skeleton, Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
 import ProductCard from "./product-card";
 import {useDispatch, useSelector} from "react-redux";
@@ -11,6 +11,7 @@ import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailRe
 import {CurrentUser} from "../stores/user.reducer";
 import {SmileOutlined} from "@ant-design/icons";
 import {accessToken, api} from "../utils/axios-config";
+import MenuMain from "./menu-main";
 
 export interface IProductCard {
     id: string;
@@ -97,15 +98,17 @@ const ProductRows = () => {
             <>
                 {products.length ?
                     (
-                        <>
+                        <div className="p-4 bg-white rounded-lg">
+                            <div>Top Deal - Super Cheap</div>
                             <Skeleton loading={isLoading} active/>
+                            <MenuMain/>
                             <div
                                 className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
                                 {products.map((product: IProductCard) => (
                                     <ProductCard key={product.id} product={product}/>
                                 ))}
                             </div>
-                        </>
+                        </div>
                     ) :
                     <Result
                         icon={<SmileOutlined/>}

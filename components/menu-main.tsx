@@ -13,7 +13,7 @@ const MenuMain = () => {
     };
 
     return (
-        <div className='overflow-hidden'>
+        <div className='overflow-hidden mb-4'>
             <Menu style={{borderRadius: '8px'}} onClick={onClick} selectedKeys={[current]} mode='horizontal'
                   items={items}/>
         </div>

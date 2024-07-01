@@ -1,6 +1,6 @@
 import React, {ReactElement, useEffect, useState} from 'react';
 import type {MenuProps} from 'antd';
-import {Menu} from 'antd';
+import {Card, Menu} from 'antd';
 import {CategoryResponseDTO} from "../models/category/CategoryResponseAPI";
 import {useDispatch} from "react-redux";
 import {setSelectedProductCategory} from "../stores/product-category.reducer";
@@ -10,7 +10,7 @@ export interface ICategory {
     label: ReactElement;
 }
 
-const ProductCategory = ({categoryList}: { categoryList: CategoryResponseDTO[]}) => {
+const ProductCategory = ({categoryList}: { categoryList: CategoryResponseDTO[] }) => {
 
     const dispatch = useDispatch();
 
@@ -32,7 +32,10 @@ const ProductCategory = ({categoryList}: { categoryList: CategoryResponseDTO[]})
     };
 
     const convertCategory = (category: CategoryResponseDTO, tab: string): void => {
-        items.push({key: category.id ?? "", label: <span dangerouslySetInnerHTML={{ __html: tab + category.categoryName ?? "" }}></span>});
+        items.push({
+            key: category.id ?? "",
+            label: <span dangerouslySetInnerHTML={{__html: tab + category.categoryName ?? ""}}></span>
+        });
 
         if (category.categories?.length)
             category.categories.forEach((subCategory: CategoryResponseDTO): void => {
@@ -46,15 +49,17 @@ const ProductCategory = ({categoryList}: { categoryList: CategoryResponseDTO[]})
 
     return (
         <div className='hidden md:block'>
-
             {/*<Skeleton loading={isLoading} active></Skeleton>*/}
-            <Menu
-                onClick={onClick}
-                style={{minWidth: 256, borderRadius: '8px'}}
-                defaultSelectedKeys={['all']}
-                mode='inline'
-                items={categories}
-            />
+            <div className="p-4 bg-white rounded-lg">
+                <div className="mb-4">Categories</div>
+                <Menu
+                    onClick={onClick}
+                    style={{minWidth: 256, borderRadius: '8px', border: 'none'}}
+                    defaultSelectedKeys={['all']}
+                    mode='inline'
+                    items={categories}
+                />
+            </div>
         </div>
     );
 };
