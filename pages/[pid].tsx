@@ -169,13 +169,15 @@ const ProductDetails = ({product}: {product: IProduct}) => {
                                         </div>
                                         <h3 className='text-2xl font-semibold'>${price}</h3>
                                     </Card>
-                                    <Card hidden={product.productDetails?.length == 1} size='small' title='Loại sản phẩm'>
+                                    <Card hidden={product.productDetails?.length == 1} size='small' title='Loại sản phẩm' className="static">
                                         {(product.productDetails && product.productDetails.length > 1) && (
                                             <Radio.Group defaultValue={product.productDetails[0].name || "default"}>
                                                 {(product?.productDetails || []).map((productDetail: IProductDetail) => (
                                                     <Radio.Button key={productDetail.id}
                                                                   value={productDetail.name || "default"}
-                                                                  onClick={() => changeProductDetailSelected(productDetail)}>
+                                                                  onClick={() => changeProductDetailSelected(productDetail)}
+                                                                  className="!rounded-lg m-2 static hover:static border-[1px]"
+                                                    >
                                                         {productDetail.name || "Default"}
                                                     </Radio.Button>
                                                 ))}
@@ -200,7 +202,6 @@ const ProductDetails = ({product}: {product: IProduct}) => {
                                 <ProductCart
                                     id={id!}
                                     price={price!}
-                                    // thumbnail={images![0]}
                                     thumbnail={images && images.length > 0 ? server + images[0] : ""}
                                     name={product.name + (productDetailName ? ' - ' + productDetailName : '')}
                                     retailer={product.retailer!}
