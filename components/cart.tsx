@@ -61,7 +61,6 @@ const Cart = () => {
                                                 }))}/>
                                         ]}
                                     >
-                                        {/*<Skeleton avatar>*/}
                                         <List.Item.Meta
                                             avatar={<Avatar src={item.thumbnail}/>}
                                             title={<span>{item.name}</span>}
@@ -77,7 +76,6 @@ const Cart = () => {
                                                 </span>}
                                         />
                                         <div>${item.price * item.quantity}</div>
-                                        {/*</Skeleton>*/}
                                     </List.Item>
                                 )}
                             />

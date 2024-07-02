@@ -16,6 +16,11 @@ import {Client, IMessage} from "@stomp/stompjs";
 import {addNotification} from "../stores/notification.reducer";
 import {NotificationAPIResponse} from "../models/notification/NotificationResponseAPI";
 import jwtDecode from "jwt-decode";
+import {accessToken, apiWithToken} from "../utils/axios-config";
+import {AxiosError, AxiosResponse} from "axios";
+import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {setCurrentShippingAddress} from "../stores/address.reducer";
+import {ErrorApiResponse} from "../models/ErrorApiResponse";
 
 let sock: any = null;
 
@@ -53,7 +58,7 @@ const HeaderMain = () => {
             ),
         },
         {
-            key: '2',
+            key: '3',
             label: (
                 <span id='aaa' onClick={() => handleItemClick('/')}>
                     <span style={{marginRight: '5px'}}>
@@ -92,6 +97,24 @@ const HeaderMain = () => {
         }
     };
 
+    const getShippingAddress = (): void => {
+        const addressId: string = currentUser.addressId ?? "";
+
+        if (addressId !== "" && refreshToken) {
+            apiWithToken(refreshToken).get(`/addresses/${addressId}`, {
+                headers: {
+                    Authorization: 'Bearer ' + accessToken,
+                }
+            })
+                .then(function (res: AxiosResponse<AddressResponseDTO>): void {
+                    dispatch(setCurrentShippingAddress(res.data));
+                })
+                .catch(function (res: AxiosError<ErrorApiResponse>): void {
+                    console.log("Shipping address message: ", res.message);
+                });
+        }
+    };
+
     const changeCurrentUser = (refreshToken: string): void => {
         const payload: CurrentUser = jwtDecode(refreshToken);
         dispatch(setCurrentUser(payload));
@@ -123,6 +146,10 @@ const HeaderMain = () => {
             client.activate();
         }
     }, []);
+
+    useEffect(() => {
+        getShippingAddress();
+    }, [currentUser]);
 
     return (
         <div className='lg:w-[1440px] grid grid-cols-2 md:grid-cols-[1fr_2fr_1fr] px-2 mx-auto items-center py-2 gap-4'>

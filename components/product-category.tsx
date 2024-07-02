@@ -54,7 +54,7 @@ const ProductCategory = ({categoryList}: { categoryList: CategoryResponseDTO[] }
                 <div className="mb-4">Danh mục</div>
                 <Menu
                     onClick={onClick}
-                    style={{minWidth: 256, borderRadius: '8px', border: 'none'}}
+                    className="min-w-[256px] rounded-[8px] !border-none"
                     defaultSelectedKeys={['all']}
                     mode='inline'
                     items={categories}

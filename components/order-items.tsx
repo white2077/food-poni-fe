@@ -50,7 +50,7 @@ const OrderItems = () => {
 
     return (
         <div>
-            <Card style={{marginBottom: "16px"}}>
+            <Card className="mb-[16px]">
                 <Row>
                     <Col flex='2%'>
                         <Checkbox onClick={handleSetSelectedAll}></Checkbox>
@@ -67,7 +67,7 @@ const OrderItems = () => {
                             okText="Đồng ý"
                             cancelText="Hủy"
                         >
-                            <DeleteOutlined style={{ cursor: 'pointer' }} />
+                            <DeleteOutlined className="cursor-pointer" />
                         </Popconfirm>
                     </Col>
                 </Row>
@@ -82,23 +82,23 @@ const OrderItems = () => {
                         </Row>
                         <Divider />
                         {cart.cartItems.map((item: ICartItem, index: number) => (
-                            <Row key={index} style={{margin: '16px 0', alignItems: 'center'}}>
+                            <Row key={index} className="my-[16px] items-center">
                                 <Col flex='2%'>
                                     <Checkbox onClick={() => handleSetSelectedICartItem(item.id)} checked={item.isSelectedICartItem}></Checkbox>
                                 </Col>
                                 <Col flex='40%'>
-                                    <div style={{display: 'flex', alignItems: 'center'}}>
+                                    <div className="flex items-center">
                                         <div>
-                                            <img src={item.thumbnail} style={{width: "100px"}} alt="Product"/>
+                                            <img src={item.thumbnail} className="w-[100px]" alt="Product"/>
                                         </div>
-                                        <div style={{marginLeft: '16px'}}>{item.name}</div>
+                                        <div className="ml-[16px]">{item.name}</div>
                                     </div>
                                 </Col>
                                 <Col flex='10%'>${item.price}</Col>
                                 <Col flex='10%'>
                                     <InputNumber min={1}
                                                  max={20}
-                                                 style={{maxWidth: '70px'}}
+                                                 className="max-w-[70px]"
                                                  defaultValue={1}
                                                  value={item.quantity}
                                                  onChange={(value: number | null) => onChangeQuantity(item.id, item.retailer.id ?? '', value!)}/>
@@ -106,7 +106,7 @@ const OrderItems = () => {
                                 <Col flex='10%'>${item.price * item.quantity}</Col>
                                 <Col flex='26%'>
                                     <TextArea
-                                        placeholder="Note"
+                                        placeholder="Ghi chú"
                                         value={item.note}
                                         onChange={(e) => onChangeNote(item.id, item.retailer.id ?? '', e.target.value)}
                                         allowClear

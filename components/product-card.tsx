@@ -101,7 +101,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                 size='small'
                 hoverable
                 cover={<img alt="example"
-                            style={{aspectRatio: '1', objectFit: 'cover'}}
+                            className="aspect-square object-cover"
                             src={product.thumbnail ? server + product.thumbnail : fallback}/>}
             >
                 <Space direction="vertical" size="small" style={{display: 'flex'}}>
@@ -122,8 +122,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                         {" " + product.rateCount} Lượt Đánh Giá
                       </span>
                     </div>
-                    <div style={{textAlign: 'left', fontSize: '20px', fontWeight: 'bold'}}>${product.minPrice} -
-                        ${product.maxPrice}</div>
+                    <div className="text-left text-[20px] font-bold">${product.minPrice}{product.maxPrice === product.minPrice ? "" : " - $" + product.maxPrice}</div>
                 </Space>
                 <Divider style={{margin: '12px 0px'}}/>
                 <div style={{fontSize: '14px'}}><HistoryOutlined /> Không xác định {product.retailer}</div>

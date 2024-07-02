@@ -12,7 +12,7 @@ export const PersonalInformation = () => {
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     return (
-        <div  className='lg:w-[1000px] px-2 mx-auto items-center' >
+        <div className='lg:w-[1000px] px-2 mx-auto items-center' >
             <div className="mt-4">
                 <div className="grid lg:grid-cols-3 grid-cols-1 gap-4">
                     <div className="flex col-span-2">

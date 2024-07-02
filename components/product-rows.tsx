@@ -34,17 +34,22 @@ const ProductRows = () => {
 
     const currentProductCategory: string = useSelector((state: RootState) => state.productCategory.currentProductCategory);
 
+    const currentMainMenu: string = useSelector((state: RootState) => state.mainMenu.currentMainMenu);
+
     const [pending, setPending] = useState<boolean>(false);
 
     useEffect((): void => {
         getProducts();
-    }, [currentProductCategory]);
+    }, [currentProductCategory, currentMainMenu]);
 
     const getProducts = (): void => {
         setPending(true);
         let url: string = "/products?status=true";
         if (currentProductCategory && currentProductCategory !== "all") {
             url += '&categoryId=' + currentProductCategory;
+        }
+        if (currentMainMenu && currentMainMenu != "all") {
+            url += '&sortBy=' + currentMainMenu;
         }
 
         api.get(url)
@@ -112,7 +117,7 @@ const ProductRows = () => {
                     ) :
                     <Result
                         icon={<SmileOutlined/>}
-                        title="Oops! No product found"
+                        title="Không tìm thấy sản phẩm nào!"
                     />
                 }
             </>

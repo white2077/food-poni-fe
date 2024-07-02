@@ -9,6 +9,7 @@ import searchPositionReducer from "./search-position.reducer";
 import rateReducer from "./rate.reducer";
 import productCategoryReducer from "./product-category.reducer";
 import notificationReducer from "./notification.reducer";
+import mainMenuReducer from "./main-menu.reducer";
 
 const rootReducer = combineReducers({
     user: userReducer,
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
     fileUpload: fileUploadsReducer,
     searchPosition: searchPositionReducer,
     productCategory: productCategoryReducer,
+    mainMenu: mainMenuReducer,
     notification: notificationReducer
 });
 

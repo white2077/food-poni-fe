@@ -307,7 +307,7 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {deliveryIn
                                     </div>
                                     <Radio.Group onChange={onChange} value={payment.method}>
                                         <Space direction="vertical">
-                                            <Radio value="CASH">CASH</Radio>
+                                            <Radio value="CASH">Tiền mặt</Radio>
                                             <Radio value="VNPAY">VNPAY</Radio>
                                         </Space>
                                     </Radio.Group>
@@ -336,7 +336,7 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {deliveryIn
                                     <Form.Item
                                         name="note"
                                     >
-                                        <TextArea placeholder="Note" allowClear/>
+                                        <TextArea placeholder="Ghi chú" allowClear/>
                                     </Form.Item>
 
                                     <Form.Item>

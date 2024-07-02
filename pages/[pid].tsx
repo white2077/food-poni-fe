@@ -15,6 +15,7 @@ import {RootState} from "../stores";
 import {ParsedUrlQuery} from "querystring";
 import {accessToken, api} from "../utils/axios-config";
 import {server} from "../utils/server";
+import {CurrentUser} from "../stores/user.reducer";
 
 export interface IProduct {
     id?: string;
@@ -89,6 +90,8 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
 const ProductDetails = ({product}: {product: IProduct}) => {
 
     const router: NextRouter = useRouter();
+
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const currentShippingAddress: AddressResponseDTO = useSelector((state: RootState) => state.address.shippingAddress);
 
@@ -184,17 +187,15 @@ const ProductDetails = ({product}: {product: IProduct}) => {
                                             </Radio.Group>
                                         )}
                                     </Card>
-                                    {(accessToken && currentShippingAddress) &&
-                                        <Card size='small' title='Shipping information'>
-                                            <div>{currentShippingAddress.address}</div>
-                                        </Card>
-                                    }
-                                    <Card size='small' title='Short description'>
-                                        <div style={{color: 'black'}}
+                                    <Card size='small' title='Thông tin vận chuyển' loading={Object.keys(currentShippingAddress).length === 0}>
+                                        <div>{currentShippingAddress.address}</div>
+                                    </Card>
+                                    <Card size='small' title='Mô tả ngắn'>
+                                        <div className="text-black"
                                              dangerouslySetInnerHTML={{__html: product.shortDescription || ''}}></div>
                                     </Card>
-                                    <Card size='small' title='Description'>
-                                        <div style={{color: 'black'}}
+                                    <Card size='small' title='Mô tả'>
+                                        <div className="text-black"
                                              dangerouslySetInnerHTML={{__html: description || ''}}></div>
                                     </Card>
                                 </div>
