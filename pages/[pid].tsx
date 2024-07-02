@@ -156,16 +156,16 @@ const ProductDetails = ({product}: {product: IProduct}) => {
                                         <h2 className='text-xl'>{product.name + (productDetailName ? ' - ' + productDetailName : '')}</h2>
                                         <div className="my-2">
                                             <span className="border-r-2 py-1 pr-2">
-                                                <span className="m-1 border-b-2 text-lg">
-                                                    {(productDetailSelected?.rate ? productDetailSelected.rate.toFixed(1) : 0) + " "}
-                                                </span>
+                                                <span className="m-1 border-b-2 text-lg">{(productDetailSelected?.rate ? productDetailSelected.rate.toFixed(1) : 0) + ""}</span>
+                                                <span> </span>
                                                 <Rate allowHalf disabled value={productDetailSelected?.rate}
-                                                      style={{fontSize: '12px', marginRight: '8px'}}/>
+                                                      className="text-xs mr-[8px]"
+                                                />
                                             </span>
                                             <span className="border-r-2 py-1 px-4 hidden md:inline">
-                                                <span className="text-lg m-1 border-b-2">{productDetailSelected?.rateCount}</span> Đánh Giá</span>
+                                                <span className="text-lg m-1 border-b-2">{productDetailSelected?.rateCount}</span> Đánh giá</span>
                                             <span className="border-r-2 py-1 px-4">
-                                                <span className="text-lg m-1 border-b-2">{productDetailSelected?.sales}</span> Lượt Bán</span>
+                                                <span className="text-lg m-1 border-b-2">{productDetailSelected?.sales}</span> Lượt bán</span>
                                         </div>
                                         <h3 className='text-2xl font-semibold'>${price}</h3>
                                     </Card>
