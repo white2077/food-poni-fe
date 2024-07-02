@@ -9,10 +9,6 @@ import "nprogress/nprogress.css";
 import {px2remTransformer, StyleProvider} from '@ant-design/cssinjs';
 import {useEffect, useState} from "react";
 
-const px2rem = px2remTransformer({
-    rootValue: 32, // 32px = 1rem; @default 16
-});
-
 nProgress.configure({showSpinner: false});
 Router.events.on('routeChangeStart', () => nProgress.start());
 Router.events.on("routeChangeComplete", () => nProgress.done());
@@ -27,7 +23,6 @@ function MyApp({Component, pageProps}: AppProps) {
             document.getElementById('holderStyle')!.remove();
         };
     }
-
 
     return (
         <Provider store={store}>
