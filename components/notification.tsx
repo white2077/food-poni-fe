@@ -31,19 +31,25 @@ const Notification = ({ePage}: { ePage: Page<NotificationAPIResponse> }) => {
         }
     }, []);
 
-    const items = notification.data.length > 0 ? (
+    const sortedNotifications = [...notification.data].sort((a, b) => {
+        const dateA = new Date(a.createdDate);
+        const dateB = new Date(b.createdDate);
+        return dateB.getTime() - dateA.getTime();
+    });
+
+    const items = sortedNotifications.length > 0 ? (
         <>
             <div className="rounded-lg">
                 <div className="bg-white py-3 px-6 text-xl font-bold rounded-t-lg">Thông báo</div>
                 <Menu className="max-h-96 overflow-y-auto scrollbar-thin !rounded-none !rounded-b-lg !shadow-none">
-                    {notification.data.map(
-                        (notification: NotificationAPIResponse, index: number) => (
+                    {sortedNotifications.map(
+                        (noti: NotificationAPIResponse, index: number) => (
                             <Menu.Item key={index}
                                        onClick={() => {
-                                           dispatch(markIsReadNotification(notification.id));
+                                           dispatch(markIsReadNotification(noti.id));
                                            const refreshToken = getCookie(REFRESH_TOKEN);
                                            if (refreshToken) {
-                                               apiWithToken(refreshToken).post('/retailer/notifications/' + notification.id, {
+                                               apiWithToken(refreshToken).post('/retailer/notifications/' + noti.id, {
                                                    headers: {
                                                        Authorization: "Bearer " + accessToken
                                                    }
@@ -56,20 +62,20 @@ const Notification = ({ePage}: { ePage: Page<NotificationAPIResponse> }) => {
                                     <div className="relative w-10">
                                         <img
                                             className="flex-none rounded-full bg-gray-50 object-cover aspect-square"
-                                            src={server + notification.fromUser.avatar}
+                                            src={server + noti.fromUser.avatar}
                                             alt=""/>
                                     </div>
                                     <div className="flex-auto ms-3 text-sm font-normal">
                                         <p className="h-10 leading-5 line-clamp-2">
                                             <span
-                                                className="font-semibold text-sm text-gray-900">{notification.fromUser.address.fullName}</span>{'\u00A0'}<span
+                                                className="font-semibold text-sm text-gray-900">{noti.fromUser.address.fullName}</span>{'\u00A0'}<span
                                             className="text-gray-600 text-sm">
-                                            {notification.message}</span>
+                                            {noti.message}</span>
                                         </p>
-                                        <p className={`mt-1 truncate text-xs leading-4 text-${notification.isRead ? "gray-500" : "primary"}`}>{format(notification.createdDate, "yyyy-MM-dd HH:mm:ss")}</p>
+                                        <p className={`mt-1 truncate text-xs leading-4 text-${noti.read ? "gray-500" : "primary"}`}>{format(noti.createdDate, "yyyy-MM-dd HH:mm:ss")}</p>
                                     </div>
                                     <div className="w-5 h-5 flex items-center justify-center">
-                                        <div hidden={notification.isRead}
+                                        <div hidden={noti.read}
                                              className="w-2 h-2 bg-primary rounded-full"></div>
                                     </div>
                                 </div>
@@ -95,7 +101,7 @@ const Notification = ({ePage}: { ePage: Page<NotificationAPIResponse> }) => {
     return (
         <>
             <Dropdown overlay={items} placement="bottomRight" trigger={['click']}>
-                <Badge count={notification.data.length > 0 ? notification.data.length : 0}>
+                <Badge count={sortedNotifications.filter(item => !item.read).length > 0 ? sortedNotifications.filter(item => !item.read).length : 0}>
                     <Avatar shape="square" icon={<BellOutlined/>} size="large"/>
                 </Badge>
             </Dropdown>

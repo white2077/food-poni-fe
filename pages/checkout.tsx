@@ -18,7 +18,7 @@ import {
 } from "antd";
 import {useDispatch, useSelector} from "react-redux";
 import {deleteSelectedSoldItems, ICart, ICartItem} from "../stores/cart.reducer";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {NextRouter, useRouter} from "next/router";
 import OrderItems from "../components/order-items";
 import {RootState} from "../stores";
@@ -101,6 +101,17 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {deliveryIn
         return totalCart + cartTotal;
     }, 0);
 
+    useEffect(() => {
+        if (carts.length == 0) {
+            router.push("/");
+            notification.open({
+                type: "warning",
+                message: "Đơn hàng",
+                description: "Vui lòng chọn ít nhất một sản phẩm!"
+            });
+        }
+    }, [carts]);
+
     // const addToOrder = (values: any): void => {
     //     setPending(true);
     //     const orderItems: OrderItemRequestDTO[] = cartItems.map((item: ICartItem) => {
@@ -162,8 +173,8 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {deliveryIn
         if (!check) {
             notification.open({
                 type: "warning",
-                message: "Order message",
-                description: "Please select at least one item."
+                message: "Đơn hàng",
+                description: "Vui lòng chọn ít nhất một sản phẩm!"
             });
             return;
         }
@@ -206,8 +217,8 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {deliveryIn
                 dispatch(deleteSelectedSoldItems());
                 notification.open({
                     type: 'success',
-                    message: 'Order message',
-                    description: 'All orders created successfully!',
+                    message: 'Đơn hàng',
+                    description: 'Bạn vừa tạo đơn hàng thành công!',
                 });
                 // Redirect to home page or any other appropriate action
                 router.push('/');
@@ -216,7 +227,7 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {deliveryIn
                 setPending(false);
                 notification.open({
                     type: 'error',
-                    message: 'Order message',
+                    message: 'Đơn hàng',
                     description: error.message
                 });
             });

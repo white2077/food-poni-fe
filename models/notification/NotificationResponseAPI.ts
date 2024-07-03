@@ -8,9 +8,11 @@ export interface NotificationAPIResponse {
 
     fromUser: UserResponseDTO,
 
+    type: string,
+
     message: string,
 
-    isRead: boolean,
+    read: boolean,
 
     createdDate: Date
 
@@ -24,9 +26,11 @@ export const INITIAL_NOTIFICATION_API_RESPONSE: NotificationAPIResponse = {
 
     fromUser: INITIAL_USER_API_RESPONSE,
 
+    type: "",
+
     message: "",
 
-    isRead: false,
+    read: false,
 
     createdDate: new Date()
 

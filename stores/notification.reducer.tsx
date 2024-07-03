@@ -26,7 +26,7 @@ export const notificationsSlice = createSlice({
         },
         markIsReadNotification: (state, action: PayloadAction<string>) => {
             let noti: NotificationAPIResponse = state.data.find((item: NotificationAPIResponse) => item.id === action.payload)!;
-            noti.isRead = true;
+            noti.read = true;
             return state;
         }
     },
