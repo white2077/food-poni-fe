@@ -4,7 +4,7 @@ import {LogoutOutlined, QuestionCircleOutlined, ShoppingOutlined, UserOutlined} 
 import {NextRouter, useRouter} from 'next/router';
 import {RootState} from '../stores';
 import React, {useEffect} from "react";
-import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
+import {CurrentUser, setCurrentUser, updateAddressId} from "../stores/user.reducer";
 import Cart from "./cart";
 import SearchKeyword from "./search-keyword";
 import {deleteCookie, getCookie} from "cookies-next";
@@ -16,12 +16,12 @@ import {Client, IMessage} from "@stomp/stompjs";
 import {addNotification} from "../stores/notification.reducer";
 import {NotificationAPIResponse} from "../models/notification/NotificationResponseAPI";
 import jwtDecode from "jwt-decode";
-import {accessToken, apiWithToken} from "../utils/axios-config";
+import {accessToken, api, apiWithToken} from "../utils/axios-config";
 import {AxiosError, AxiosResponse} from "axios";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {setCurrentShippingAddress} from "../stores/address.reducer";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
-import {log} from "node:util";
+import {UserResponseDTO} from "../models/user/UserResponseAPI";
 
 let sock: any = null;
 
@@ -63,7 +63,7 @@ const HeaderMain = () => {
             label: (
                 <span id='aaa' onClick={() => handleItemClick('/')}>
                     <span style={{marginRight: '5px'}}>
-                        <QuestionCircleOutlined />
+                        <QuestionCircleOutlined/>
                     </span>
                     <span>Trung tâm hỗ trợ</span>
                 </span>
@@ -117,9 +117,26 @@ const HeaderMain = () => {
     };
 
     useEffect(() => {
+        getShippingAddress();
+    }, [currentUser]);
+
+    useEffect(() => {
         if (refreshToken) {
-            const currentUser: CurrentUser = jwtDecode(refreshToken);
-            dispatch(setCurrentUser(currentUser));
+            if (!currentUser.id) {
+                const user: CurrentUser = jwtDecode(refreshToken);
+                api.get("/users/" + user.id)
+                    .then(function (res) {
+                        const userResponseDTO: UserResponseDTO = res.data;
+                        const currentUser: CurrentUser = {
+                            id: userResponseDTO.id,
+                            sub: userResponseDTO.id,
+                            role: userResponseDTO.role,
+                            avatar: userResponseDTO.avatar,
+                            addressId: userResponseDTO.address.id
+                        };
+                        dispatch(setCurrentUser(currentUser));
+                    })
+            }
 
             if (!sock) {
                 console.log("Connect to socket successfully..." + currentUser.id);
@@ -152,7 +169,7 @@ const HeaderMain = () => {
                                 message: notificationResponse.fromUser.address.fullName,
                                 description: notificationResponse.message,
                                 btn: (
-                                    <Button type="primary" onClick={() => console.log("hihihihihiih")}>
+                                    <Button type="primary" onClick={() => console.log("Click vao thong bao")}>
                                         Xem ngay
                                     </Button>
                                 )
@@ -168,10 +185,6 @@ const HeaderMain = () => {
         }
     }, []);
 
-    useEffect(() => {
-        getShippingAddress();
-    }, [currentUser]);
-
     return (
         <div className='lg:w-[1440px] grid grid-cols-2 md:grid-cols-[1fr_2fr_1fr] px-2 mx-auto items-center py-2 gap-4'>
             <a className='font-bold text-2xl h-[unset] cu' onClick={() => router.push('/')}>FoodPoni</a>
@@ -180,7 +193,7 @@ const HeaderMain = () => {
                 {currentUser.id ? (
                         <>
                             <Cart/>
-                            <Notification ePage={INITIAL_PAGE_API_RESPONSE} />
+                            <Notification ePage={INITIAL_PAGE_API_RESPONSE}/>
                             <Dropdown menu={{items}} placement='bottomRight' trigger={['click']}>
                                 <a>
                                     {currentUser.avatar

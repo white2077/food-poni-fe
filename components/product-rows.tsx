@@ -40,7 +40,7 @@ const ProductRows = () => {
 
     useEffect((): void => {
         getProducts();
-    }, [currentProductCategory, currentMainMenu]);
+    }, [currentProductCategory]);
 
     const getProducts = (): void => {
         setPending(true);
@@ -48,9 +48,9 @@ const ProductRows = () => {
         if (currentProductCategory && currentProductCategory !== "all") {
             url += '&categoryId=' + currentProductCategory;
         }
-        if (currentMainMenu && currentMainMenu != "all") {
-            url += '&sortBy=' + currentMainMenu;
-        }
+        // if (currentMainMenu && currentMainMenu != "all") {
+        //     url += '&sortBy=' + currentMainMenu;
+        // }
 
         api.get(url)
             .then((res: AxiosResponse<Page<ProductResponseDTO[]>>): void => {

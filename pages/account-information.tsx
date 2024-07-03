@@ -35,8 +35,8 @@ function getItem(
 }
 
 const items: MenuProps['items'] = [
-    getItem('Personal information', '1', <UserOutlined />),
-    getItem('Delivery address', '2', <EnvironmentOutlined />)
+    getItem('Thông tin tài khoản', '1', <UserOutlined />),
+    getItem('Sổ địa chỉ', '2', <EnvironmentOutlined />)
 ];
 
 export async function getServerSideProps({req, res}: { req: NextApiRequest, res: NextApiResponse }) {

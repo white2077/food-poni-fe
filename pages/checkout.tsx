@@ -63,7 +63,9 @@ export async function getServerSideProps({req, res}: { req: NextApiRequest, res:
     }
 }
 
-const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {deliveryInformation: Page<AddressResponseDTO[]>}) => {
+const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {
+    deliveryInformation: Page<AddressResponseDTO[]>
+}) => {
 
     const router: NextRouter = useRouter();
 
@@ -141,7 +143,7 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {deliveryIn
             });
             const note: string = values.note;
 
-            if(orderItems.length==0){
+            if (orderItems.length == 0) {
                 return;
             }
 
@@ -195,131 +197,126 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {deliveryIn
 
     return (
         <DefaultLayout>
-            {
-                currentUser.id ? (
-                    <div style={{color: "black", textAlign: "left"}}>
-                        <h1>GIỎ HÀNG</h1>
-                        <Row gutter={16}>
-                            <Col flex='auto'>
-                                <OrderItems></OrderItems>
-                            </Col>
-                            <Col flex='400px'>
-                                <Card style={{marginBottom: "16px"}}>
-                                    <div>
-                                        Giao tới
-                                        <Button id="button-change-address" type='link' style={{float: 'right'}}
-                                                onClick={() => {
-                                                    setModal2Open(true);
-                                                }}>Thay đổi</Button>
-                                        <Modal
-                                            title="Your address"
-                                            centered
-                                            open={modal2Open}
-                                            onOk={() => setModal2Open(false)}
-                                            onCancel={() => setModal2Open(false)}
-                                            footer={null}
-                                        >
-                                            <Button
-                                                onClick={handleAddAddressClick}>{showAddAddress ? "Cancel" : "Add address"}</Button>
-                                            {showAddAddress && <AddressCheckoutAdd/>}
-                                            {!showAddAddress && (
-                                                <Radio.Group style={{width: '100%'}}
-                                                             defaultValue={deliveryInformation.content.find(item => item.id === currentUser.addressId)}
-                                                             onChange={(e: RadioChangeEvent) => setShippingAddress(e.target.value)}>
-                                                    <List
-                                                        dataSource={deliveryInformation.content}
-                                                        renderItem={(item: AddressResponseDTO, index: number) => (
-                                                            <Collapse
-                                                                style={{margin: '16px 0'}}
-                                                                expandIconPosition={"end"}
-                                                                collapsible={"icon"}
-                                                                items={[{
-                                                                    key: index,
-                                                                    label: <Radio id={`radio-${index}`} value={item}>
-                                                                        <div><span
-                                                                            style={{fontWeight: 'bold'}}>{item.fullName}</span> | {item.phoneNumber}
-                                                                        </div>
-                                                                        <div>{item.address}</div>
-                                                                    </Radio>,
-                                                                    children: <p>aaaaaaaaaaaaaaaa</p>
-                                                                }]}
-                                                            />
-                                                        )}
-                                                    />
-                                                </Radio.Group>
-                                            )}
-                                        </Modal>
-                                    </div>
-                                    <div>
-                                        {shippingAddress && (
-                                            <>
-                                                <div><span
-                                                    style={{fontWeight: 'bold'}}>{shippingAddress.fullName}</span> | {shippingAddress.phoneNumber}
-                                                </div>
-                                                <div>{shippingAddress.address}</div>
-                                            </>)
-                                        }
-                                        {!shippingAddress && (
-                                            <div style={{color: 'red'}}>Vui lòng chọn thông tin vận chuyển</div>
-                                        )}
-                                    </div>
-                                </Card>
-                                <Card style={{marginBottom: "16px"}}>
-                                    <div>
-                                        Thông tin thanh toán
-                                    </div>
-                                    <Radio.Group onChange={onChange} value={payment.method}>
-                                        <Space direction="vertical">
-                                            <Radio value="CASH">Tiền mặt</Radio>
-                                            <Radio value="VNPAY">VNPAY</Radio>
-                                        </Space>
-                                    </Radio.Group>
-                                </Card>
-                                <Card style={{marginBottom: "16px"}}>
-                                    <div>
-                                        Tạm tính
-                                        <span style={{float: 'right'}}>${totalAmount}</span>
-                                    </div>
-                                    <div>
-                                        Giảm giá
-                                        <span style={{float: 'right'}}>$0</span>
-                                    </div>
-                                    <Divider/>
-                                    <div>
-                                        Tổng tiền
-                                        <span style={{float: 'right'}}>${totalAmount}</span>
-                                    </div>
-                                </Card>
-                                <Form
-                                    name="normal_login"
-                                    className="login-form"
-                                    initialValues={{remember: true}}
-                                    onFinish={addMultipleOrders}
+            <div style={{color: "black", textAlign: "left"}}>
+                <h1>GIỎ HÀNG</h1>
+                <Row gutter={16}>
+                    <Col flex='auto'>
+                        <OrderItems></OrderItems>
+                    </Col>
+                    <Col flex='400px'>
+                        <Card style={{marginBottom: "16px"}}>
+                            <div>
+                                Giao tới
+                                <Button id="button-change-address" type='link' style={{float: 'right'}}
+                                        onClick={() => {
+                                            setModal2Open(true);
+                                        }}>Thay đổi</Button>
+                                <Modal
+                                    title="Địa chỉ của bạn"
+                                    centered
+                                    open={modal2Open}
+                                    onOk={() => setModal2Open(false)}
+                                    onCancel={() => setModal2Open(false)}
+                                    footer={null}
                                 >
-                                    <Form.Item
-                                        name="note"
-                                    >
-                                        <TextArea placeholder="Ghi chú" allowClear/>
-                                    </Form.Item>
+                                    <Button
+                                        onClick={handleAddAddressClick}>{showAddAddress ? "Quay lại" : "Thêm địa chỉ"}</Button>
+                                    {showAddAddress && <AddressCheckoutAdd/>}
+                                    {!showAddAddress && (
+                                        <Radio.Group style={{width: '100%'}}
+                                                     defaultValue={deliveryInformation.content.find(item => item.id === currentUser.addressId)}
+                                                     onChange={(e: RadioChangeEvent) => setShippingAddress(e.target.value)}>
+                                            <List
+                                                dataSource={deliveryInformation.content}
+                                                renderItem={(item: AddressResponseDTO, index: number) => (
+                                                    <Collapse
+                                                        style={{margin: '16px 0'}}
+                                                        expandIconPosition={"end"}
+                                                        collapsible={"icon"}
+                                                        items={[{
+                                                            key: index,
+                                                            label: <Radio id={`radio-${index}`} value={item}>
+                                                                <div><span
+                                                                    style={{fontWeight: 'bold'}}>{item.fullName}</span> | {item.phoneNumber}
+                                                                </div>
+                                                                <div>{item.address}</div>
+                                                            </Radio>,
+                                                            children: <p>aaaaaaaaaaaaaaaa</p>
+                                                        }]}
+                                                    />
+                                                )}
+                                            />
+                                        </Radio.Group>
+                                    )}
+                                </Modal>
+                            </div>
+                            <div>
+                                {shippingAddress && (
+                                    <>
+                                        <div><span
+                                            style={{fontWeight: 'bold'}}>{shippingAddress.fullName}</span> | {shippingAddress.phoneNumber}
+                                        </div>
+                                        <div>{shippingAddress.address}</div>
+                                    </>)
+                                }
+                                {!shippingAddress && (
+                                    <div style={{color: 'red'}}>Vui lòng chọn thông tin vận chuyển</div>
+                                )}
+                            </div>
+                        </Card>
+                        <Card style={{marginBottom: "16px"}}>
+                            <div>
+                                Thông tin thanh toán
+                            </div>
+                            <Radio.Group onChange={onChange} value={payment.method}>
+                                <Space direction="vertical">
+                                    <Radio value="CASH">Tiền mặt</Radio>
+                                    <Radio value="VNPAY">VNPAY</Radio>
+                                </Space>
+                            </Radio.Group>
+                        </Card>
+                        <Card style={{marginBottom: "16px"}}>
+                            <div>
+                                Tạm tính
+                                <span style={{float: 'right'}}>${totalAmount}</span>
+                            </div>
+                            <div>
+                                Giảm giá
+                                <span style={{float: 'right'}}>$0</span>
+                            </div>
+                            <Divider/>
+                            <div>
+                                Tổng tiền
+                                <span style={{float: 'right'}}>${totalAmount}</span>
+                            </div>
+                        </Card>
+                        <Form
+                            name="normal_login"
+                            className="login-form"
+                            initialValues={{remember: true}}
+                            onFinish={addMultipleOrders}
+                        >
+                            <Form.Item
+                                name="note"
+                            >
+                                <TextArea placeholder="Ghi chú" allowClear/>
+                            </Form.Item>
 
-                                    <Form.Item>
-                                        <Button type="primary" htmlType="submit" danger block loading={pending}>
-                                            Thanh toán
-                                        </Button>
-                                    </Form.Item>
-                                </Form>
-                            </Col>
-                        </Row>
-                    </div>
-                ) : (
-                    <Result
-                        status="403"
-                        title="403"
-                        subTitle="Sorry, you are not authorized to access this page."
-                        extra={<Button type="primary" onClick={() => router.push('/')}>Back Home</Button>}
-                    />
-                )
-            }
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit" danger block loading={pending}>
+                                    Thanh toán
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                    </Col>
+                </Row>
+            </div>
+            {/*<Result*/}
+            {/*    status="403"*/}
+            {/*    title="403"*/}
+            {/*    subTitle="Sorry, you are not authorized to access this page."*/}
+            {/*    extra={<Button type="primary" onClick={() => router.push('/')}>Back Home</Button>}*/}
+            {/*/>*/}
         </DefaultLayout>
     );
 

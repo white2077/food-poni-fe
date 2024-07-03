@@ -21,7 +21,7 @@ const Notification = ({ePage}: { ePage: Page<NotificationAPIResponse> }) => {
     useEffect(() => {
         const refreshToken = getCookie(REFRESH_TOKEN);
         if (refreshToken) {
-            apiWithToken(refreshToken).get('/retailer/notifications', {
+            apiWithToken(refreshToken).get('/notifications', {
                 headers: {
                     Authorization: "Bearer " + accessToken
                 }
@@ -31,29 +31,29 @@ const Notification = ({ePage}: { ePage: Page<NotificationAPIResponse> }) => {
         }
     }, []);
 
-    const sortedNotifications = [...notification.data].sort((a, b) => {
-        const dateA = new Date(a.createdDate);
-        const dateB = new Date(b.createdDate);
-        return dateB.getTime() - dateA.getTime();
-    });
-
-    const items = sortedNotifications.length > 0 ? (
+    const items = notification.data.length > 0 ? (
         <>
             <div className="rounded-lg">
                 <div className="bg-white py-3 px-6 text-xl font-bold rounded-t-lg">Thông báo</div>
                 <Menu className="max-h-96 overflow-y-auto scrollbar-thin !rounded-none !rounded-b-lg !shadow-none">
-                    {sortedNotifications.map(
+                    {[...notification.data].sort((a: NotificationAPIResponse, b: NotificationAPIResponse) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime())
+                        .map(
                         (noti: NotificationAPIResponse, index: number) => (
                             <Menu.Item key={index}
                                        onClick={() => {
-                                           dispatch(markIsReadNotification(noti.id));
-                                           const refreshToken = getCookie(REFRESH_TOKEN);
-                                           if (refreshToken) {
-                                               apiWithToken(refreshToken).post('/retailer/notifications/' + noti.id, {
-                                                   headers: {
-                                                       Authorization: "Bearer " + accessToken
-                                                   }
-                                               })
+                                           if (!noti.read) {
+                                               dispatch(markIsReadNotification(noti.id));
+                                               const refreshToken = getCookie(REFRESH_TOKEN);
+                                               if (refreshToken) {
+                                                   apiWithToken(refreshToken).patch("/notifications/update-read", {
+                                                       id: noti.id,
+                                                       read: true
+                                                   }, {
+                                                       headers: {
+                                                           Authorization: "Bearer " + accessToken
+                                                       }
+                                                   });
+                                               }
                                            }
                                        }}
                             >
@@ -101,7 +101,7 @@ const Notification = ({ePage}: { ePage: Page<NotificationAPIResponse> }) => {
     return (
         <>
             <Dropdown overlay={items} placement="bottomRight" trigger={['click']}>
-                <Badge count={sortedNotifications.filter(item => !item.read).length > 0 ? sortedNotifications.filter(item => !item.read).length : 0}>
+                <Badge count={notification.data.filter(item => !item.read).length > 0 ? notification.data.filter(item => !item.read).length : 0}>
                     <Avatar shape="square" icon={<BellOutlined/>} size="large"/>
                 </Badge>
             </Dropdown>
