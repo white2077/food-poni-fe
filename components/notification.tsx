@@ -10,7 +10,7 @@ import {format} from "date-fns";
 import {getCookie} from "cookies-next";
 import {RootState} from "../stores";
 import {useDispatch, useSelector} from "react-redux";
-import {setNotifications} from "../stores/notification.reducer";
+import {markIsReadNotification, setNotifications} from "../stores/notification.reducer";
 
 const Notification = ({ePage}: { ePage: Page<NotificationAPIResponse> }) => {
 
@@ -21,7 +21,7 @@ const Notification = ({ePage}: { ePage: Page<NotificationAPIResponse> }) => {
     useEffect(() => {
         const refreshToken = getCookie(REFRESH_TOKEN);
         if (refreshToken) {
-            apiWithToken(refreshToken).get('/notifications', {
+            apiWithToken(refreshToken).get('/retailer/notifications', {
                 headers: {
                     Authorization: "Bearer " + accessToken
                 }
@@ -34,37 +34,50 @@ const Notification = ({ePage}: { ePage: Page<NotificationAPIResponse> }) => {
     const items = notification.data.length > 0 ? (
         <>
             <div className="rounded-lg">
-                <Card title="Thông báo">
-                    <Menu className="max-h-96 overflow-y-auto scrollbar-thin !shadow-none">
-                        {notification.data.map(
-                            (notification: NotificationAPIResponse, index: number) => (
-                                <Menu.Item key={index}>
-                                    <div
-                                        className="flex items-center gap-2 cursor-pointer hover:bg-muted/50 p-2 rounded-sm">
-                                        <div className="relative w-10">
-                                            <img className="flex-none rounded-full bg-gray-50 object-cover aspect-square"
-                                                 src={server + notification.fromUser.avatar}
-                                                 alt=""/>
-                                        </div>
-                                        <div className="min-w-0 flex-auto">
-                                            <p className="leading-5">
-                                            <span
-                                                className="font-semibold text-sm text-gray-900">{notification.fromUser.address?.fullName ? notification.fromUser.address.fullName : ""}</span>
-                                                <span className="text-gray-600 text-sm"> {notification.message}</span>
-                                            </p>
-                                            <p className={`mt-1 truncate text-xs leading-4 text-${notification.isRead ? "gray-500" : "primary"}`}>{format(notification.createdDate, "yyyy-MM-dd HH:mm:ss")}</p>
-                                        </div>
-                                        <div className="w-5 h-5 flex items-center justify-center">
-                                            <div hidden={notification.isRead}
-                                                 className="w-2 h-2 bg-primary rounded-full"></div>
-                                        </div>
+                <div className="bg-white py-3 px-6 text-xl font-bold rounded-t-lg">Thông báo</div>
+                <Menu className="max-h-96 overflow-y-auto scrollbar-thin !rounded-none !rounded-b-lg !shadow-none">
+                    {notification.data.map(
+                        (notification: NotificationAPIResponse, index: number) => (
+                            <Menu.Item key={index}
+                                       onClick={() => {
+                                           dispatch(markIsReadNotification(notification.id));
+                                           const refreshToken = getCookie(REFRESH_TOKEN);
+                                           if (refreshToken) {
+                                               apiWithToken(refreshToken).post('/retailer/notifications/' + notification.id, {
+                                                   headers: {
+                                                       Authorization: "Bearer " + accessToken
+                                                   }
+                                               })
+                                           }
+                                       }}
+                            >
+                                <div
+                                    className="flex items-center gap-2 cursor-pointer hover:bg-muted/50 p-2 rounded-sm">
+                                    <div className="relative w-10">
+                                        <img
+                                            className="flex-none rounded-full bg-gray-50 object-cover aspect-square"
+                                            src={server + notification.fromUser.avatar}
+                                            alt=""/>
                                     </div>
-                                    <div className="my-2"></div>
-                                </Menu.Item>
-                            )
-                        )}
-                    </Menu>
-                </Card>
+                                    <div className="flex-auto ms-3 text-sm font-normal">
+                                        <p className="h-10 leading-5 line-clamp-2">
+                                            <span
+                                                className="font-semibold text-sm text-gray-900">{notification.fromUser.address.fullName}</span>{'\u00A0'}<span
+                                            className="text-gray-600 text-sm">
+                                            {notification.message}</span>
+                                        </p>
+                                        <p className={`mt-1 truncate text-xs leading-4 text-${notification.isRead ? "gray-500" : "primary"}`}>{format(notification.createdDate, "yyyy-MM-dd HH:mm:ss")}</p>
+                                    </div>
+                                    <div className="w-5 h-5 flex items-center justify-center">
+                                        <div hidden={notification.isRead}
+                                             className="w-2 h-2 bg-primary rounded-full"></div>
+                                    </div>
+                                </div>
+                                <div className="my-2"></div>
+                            </Menu.Item>
+                        )
+                    )}
+                </Menu>
             </div>
         </>
     ) : (

@@ -23,9 +23,14 @@ export const notificationsSlice = createSlice({
         addNotification: (state, action: PayloadAction<NotificationAPIResponse>) => {
             state.data.push(action.payload);
             return state;
+        },
+        markIsReadNotification: (state, action: PayloadAction<string>) => {
+            let noti: NotificationAPIResponse = state.data.find((item: NotificationAPIResponse) => item.id === action.payload)!;
+            noti.isRead = true;
+            return state;
         }
     },
 });
 
-export const {addNotification, setNotifications} = notificationsSlice.actions;
+export const {addNotification, setNotifications, markIsReadNotification} = notificationsSlice.actions;
 export default notificationsSlice.reducer;

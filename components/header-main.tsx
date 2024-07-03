@@ -1,4 +1,4 @@
-import {Avatar, Button, Dropdown, MenuProps,} from 'antd';
+import {Avatar, Button, Dropdown, MenuProps, notification} from 'antd';
 import {useDispatch, useSelector} from 'react-redux';
 import {LogoutOutlined, QuestionCircleOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
 import {NextRouter, useRouter} from 'next/router';
@@ -21,6 +21,7 @@ import {AxiosError, AxiosResponse} from "axios";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {setCurrentShippingAddress} from "../stores/address.reducer";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
+import {log} from "node:util";
 
 let sock: any = null;
 
@@ -115,35 +116,55 @@ const HeaderMain = () => {
         }
     };
 
-    const changeCurrentUser = (refreshToken: string): void => {
-        const payload: CurrentUser = jwtDecode(refreshToken);
-        dispatch(setCurrentUser(payload));
-    }
-
     useEffect(() => {
         if (refreshToken) {
-            changeCurrentUser(refreshToken);
-        }
+            const currentUser: CurrentUser = jwtDecode(refreshToken);
+            dispatch(setCurrentUser(currentUser));
 
-        if (!sock) {
-            console.log("Connect to socket successfully...");
-            sock = new SockJS(server + "/notification-register?client-id=e3a57bd0-fa44-45ae-93ac-d777e480aa1a");
+            if (!sock) {
+                console.log("Connect to socket successfully..." + currentUser.id);
+                sock = new SockJS(server + "/notification-register?client-id=" + currentUser.id);
 
-            const client = new Client({
-                webSocketFactory: () => sock,
-                onConnect: () => {
-                    client.subscribe('/topic/global-notifications', (message: IMessage) => {
-                        dispatch(addNotification(JSON.parse(message.body) as NotificationAPIResponse));
-                    });
-                    client.subscribe('/user/topic/client-notifications', (message: any) => {
-                        dispatch(addNotification(JSON.parse(message.body) as NotificationAPIResponse));
-                    });
-                },
-                onStompError: (frame: any) => {
-                    console.log("Error connecting to Websocket server", frame)
-                }
-            });
-            client.activate();
+                const client = new Client({
+                    webSocketFactory: () => sock,
+                    onConnect: () => {
+                        client.subscribe('/topic/global-notifications', (message: IMessage) => {
+                            const notificationResponse: NotificationAPIResponse = JSON.parse(message.body);
+                            dispatch(addNotification(notificationResponse));
+                            notification.open({
+                                type: "success",
+                                placement: 'bottomRight',
+                                message: notificationResponse.fromUser.address.fullName,
+                                description: notificationResponse.message,
+                                btn: (
+                                    <Button type="primary" onClick={() => console.log("Click vao thong bao")}>
+                                        Xem ngay
+                                    </Button>
+                                )
+                            });
+                        });
+                        client.subscribe('/user/topic/client-notifications', (message: any) => {
+                            const notificationResponse: NotificationAPIResponse = JSON.parse(message.body);
+                            dispatch(addNotification(notificationResponse));
+                            notification.open({
+                                type: "success",
+                                placement: 'bottomRight',
+                                message: notificationResponse.fromUser.address.fullName,
+                                description: notificationResponse.message,
+                                btn: (
+                                    <Button type="primary" onClick={() => console.log("hihihihihiih")}>
+                                        Xem ngay
+                                    </Button>
+                                )
+                            });
+                        });
+                    },
+                    onStompError: (frame) => {
+                        console.log("Error connecting to Websocket server", frame)
+                    }
+                });
+                client.activate();
+            }
         }
     }, []);
 
