@@ -112,54 +112,6 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {deliveryIn
         }
     }, [carts]);
 
-    // const addToOrder = (values: any): void => {
-    //     setPending(true);
-    //     const orderItems: OrderItemRequestDTO[] = cartItems.map((item: ICartItem) => {
-    //         return {
-    //             quantity: item.quantity,
-    //             productDetail: item,
-    //             note: item.note
-    //         };
-    //     });
-    //     const note: string = values.note;
-    //
-    //     if (orderItems && shippingAddress && payment) {
-    //         const order: OrderRequestDTO = {orderItems, shippingAddress, note, payment} as OrderRequestDTO;
-    //
-    //         axiosInterceptor.post("/orders", order, {
-    //             headers: {
-    //                 Authorization: 'Bearer ' + tokens.accessToken,
-    //             }
-    //         })
-    //             .then(function () {
-    //                 setPending(false);
-    //                 dispatch(deleteAllItem({}));
-    //                 notification.open({
-    //                     type: 'success',
-    //                     message: 'Order message',
-    //                     description: 'Create new order successfully!',
-    //                 });
-    //                 // redirect to home page
-    //                 router.push('/');
-    //             })
-    //             .catch(function (res) {
-    //                 setPending(false);
-    //                 notification.open({
-    //                     type: 'error',
-    //                     message: 'Order message',
-    //                     description: res.message
-    //                 });
-    //             });
-    //     } else {
-    //         setPending(false);
-    //         notification.open({
-    //             type: "error",
-    //             message: "Order message",
-    //             description: "Some information is missing. Please fill in all required fields."
-    //         });
-    //     }
-    // };
-
     const addMultipleOrders = (): void => {
         let check = false;
         carts.forEach((cart: ICart) => {
