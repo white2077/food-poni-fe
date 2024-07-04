@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {AppstoreOutlined, DollarOutlined, EnvironmentOutlined, StarOutlined, TagOutlined} from '@ant-design/icons';
+import {
+    AppstoreOutlined,
+    CrownOutlined,
+    DollarOutlined,
+    EnvironmentOutlined,
+    StarOutlined,
+    TagOutlined
+} from '@ant-design/icons';
 import type {MenuProps} from 'antd';
 import {Menu} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
@@ -52,7 +59,7 @@ const items: MenuProps['items'] = [
     {
         label: 'Bán chạy nhất',
         key: 'bestsellers',
-        icon: <EnvironmentOutlined/>,
+        icon: <CrownOutlined />,
     },
     {
         label: 'Đánh giá hàng đầu',

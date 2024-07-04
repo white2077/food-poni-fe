@@ -16,33 +16,34 @@ import {ParsedUrlQuery} from "querystring";
 import {accessToken, api} from "../utils/axios-config";
 import {server} from "../utils/server";
 import {CurrentUser} from "../stores/user.reducer";
+import {OrderItemResponseDTO} from "../models/order_item/OrderItemResponseAPI";
 
 export interface IProduct {
-    id?: string;
-    name?: string;
-    shortDescription?: string;
-    productDetails?: IProductDetail[];
-    retailer?: IRetailer;
+    id: string;
+    name: string;
+    shortDescription: string;
+    productDetails: IProductDetail[];
+    retailer: IRetailer;
 }
 
 export interface IProductDetail {
-    id?: string;
-    name?: string;
-    price?: number,
-    description?: string;
-    images?: string[];
-    rate?: number;
-    sales?: number;
-    rateCount?: number;
+    id: string;
+    name: string;
+    price: number,
+    description: string;
+    images: string[];
+    rate: number;
+    rateCount: number;
+    quantityCount: number;
 }
 
 export interface IRetailer {
-    id?: string;
-    avatar?: string;
-    firstName?: string;
-    lastName?: string;
-    phoneNumber?: string;
-    username?: string;
+    id: string;
+    avatar: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    username: string;
 }
 
 export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
@@ -64,15 +65,30 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
                 username: product.user.username ?? "",
             },
             productDetails: product.productDetails && product.productDetails.map((productDetail: ProductDetailResponseDTO): IProductDetail => {
+                let rateSum: number = 0;
+                let rateCount: number = 0;
+                let quantityCount: number = 0;
+
+                productDetail.orderItems?.forEach((orderItem: OrderItemResponseDTO) => {
+                    const quantity: number = orderItem.quantity ?? 0;
+                    quantityCount += quantity;
+
+                    if (orderItem.rate) {
+                        rateSum += orderItem.rate.rate;
+                        rateCount++;
+                    }
+                });
+
+                const averageRate: number = rateCount > 0 ? rateSum / rateCount : 0;
                 return {
                     id: productDetail.id ?? "",
                     name: productDetail.name ?? "",
                     price: productDetail.price ?? 0,
                     description: productDetail.description ?? "",
                     images: productDetail.images ?? [],
-                    rate: productDetail.rate ?? 0,
-                    sales: productDetail.sales ?? 0,
-                    rateCount: productDetail.rateCount ?? 0,
+                    rate: averageRate,
+                    rateCount: rateCount,
+                    quantityCount: quantityCount,
                 }
             })
         };
@@ -90,8 +106,6 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
 const ProductDetails = ({product}: {product: IProduct}) => {
 
     const router: NextRouter = useRouter();
-
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const currentShippingAddress: AddressResponseDTO = useSelector((state: RootState) => state.address.shippingAddress);
 
@@ -112,7 +126,6 @@ const ProductDetails = ({product}: {product: IProduct}) => {
         setLoadingRate(true);
         api.get(`/products/rate/${productDetailId}`)
             .then(function (res: AxiosResponse<RateResponseDTO[]>) {
-                // console.log(res.data);
                 setRates(res.data);
             })
             .catch(function (res) {
@@ -168,7 +181,7 @@ const ProductDetails = ({product}: {product: IProduct}) => {
                                             <span className="border-r-2 py-1 px-4 hidden md:inline">
                                                 <span className="text-lg m-1 border-b-2">{productDetailSelected?.rateCount}</span> Đánh giá</span>
                                             <span className="border-r-2 py-1 px-4">
-                                                <span className="text-lg m-1 border-b-2">{productDetailSelected?.sales}</span> Lượt bán</span>
+                                                <span className="text-lg m-1 border-b-2">{productDetailSelected?.quantityCount}</span> Lượt bán</span>
                                         </div>
                                         <h3 className='text-2xl font-semibold'>${price}</h3>
                                     </Card>

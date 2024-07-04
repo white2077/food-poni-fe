@@ -8,7 +8,6 @@ const SearchKeyword = () => {
 
     const search = (value: string): void => {
         router.push('/products?search=' + value);
-        console.log('search')
     };
 
     return (

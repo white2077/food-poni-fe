@@ -1,4 +1,5 @@
 import {INITIAL_PRODUCT_API_RESPONSE, ProductResponseDTO} from "../product/ProductResponseAPI";
+import {OrderItemResponseDTO} from "../order_item/OrderItemResponseAPI";
 
 export interface ProductDetailResponseDTO {
 
@@ -16,11 +17,7 @@ export interface ProductDetailResponseDTO {
 
     product: ProductResponseDTO;
 
-    rate: number;
-
-    sales: number;
-
-    rateCount: number;
+    orderItems: OrderItemResponseDTO[];
 
 }
 
@@ -40,10 +37,6 @@ export const INITIAL_PRODUCT_DETAIL_RESPONSE_DTO: ProductDetailResponseDTO = {
 
     product: INITIAL_PRODUCT_API_RESPONSE,
 
-    rate: 0,
-
-    sales: 0,
-
-    rateCount: 0
+    orderItems: []
 
 }

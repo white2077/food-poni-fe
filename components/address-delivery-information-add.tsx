@@ -102,9 +102,8 @@ const AddressDeliveryInformationAdd = () => {
     return (
         <Form
             name="normal_add_address"
-            className="add-address-form"
+            className="add-address-form my-[16px]"
             onFinish={onFinish}
-            style={{margin: '16px 0'}}
         >
             <Form.Item
                 name="fullname"

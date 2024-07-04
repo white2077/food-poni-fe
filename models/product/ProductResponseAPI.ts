@@ -22,9 +22,7 @@ export interface ProductResponseDTO {
 
     categories: CategoryResponseDTO[];
 
-    rate: number;
-
-    rateCount: number;
+    createdDate: Date;
 
 }
 
@@ -48,8 +46,6 @@ export const INITIAL_PRODUCT_API_RESPONSE: ProductResponseDTO = {
 
     categories: [],
 
-    rate: 0,
-
-    rateCount: 0
+    createdDate: new Date()
 
 }

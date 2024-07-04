@@ -12,6 +12,7 @@ import {CurrentUser} from "../stores/user.reducer";
 import {SmileOutlined} from "@ant-design/icons";
 import {accessToken, api} from "../utils/axios-config";
 import MenuMain from "./menu-main";
+import {OrderItemResponseDTO} from "../models/order_item/OrderItemResponseAPI";
 
 export interface IProductCard {
     id: string;
@@ -22,6 +23,8 @@ export interface IProductCard {
     rate: number;
     retailer: string;
     rateCount: number;
+    quantityCount: number;
+    createdDate: Date;
 }
 
 const ProductRows = () => {
@@ -40,7 +43,7 @@ const ProductRows = () => {
 
     useEffect((): void => {
         getProducts();
-    }, [currentProductCategory]);
+    }, [currentProductCategory, currentMainMenu]);
 
     const getProducts = (): void => {
         setPending(true);
@@ -48,9 +51,6 @@ const ProductRows = () => {
         if (currentProductCategory && currentProductCategory !== "all") {
             url += '&categoryId=' + currentProductCategory;
         }
-        // if (currentMainMenu && currentMainMenu != "all") {
-        //     url += '&sortBy=' + currentMainMenu;
-        // }
 
         api.get(url)
             .then((res: AxiosResponse<Page<ProductResponseDTO[]>>): void => {
@@ -67,27 +67,101 @@ const ProductRows = () => {
                     const minPrice: number = prices.length > 0 ? Math.min(...prices) : 0;
                     const maxPrice: number = prices.length > 0 ? Math.max(...prices) : 0;
 
+                    let rateSum: number = 0;
+                    let rateCount: number = 0;
+                    let quantityCount: number = 0;
+
+                    productDetails.forEach((productDetail: ProductDetailResponseDTO) => {
+                        productDetail.orderItems?.forEach((orderItem: OrderItemResponseDTO) => {
+                            const quantity: number = orderItem.quantity ?? 0;
+                            quantityCount += quantity;
+
+                            if (orderItem.rate) {
+                                rateSum += orderItem.rate.rate;
+                                rateCount++;
+                            }
+                        });
+                    });
+
+                    const averageRate: number = rateCount > 0 ? rateSum / rateCount : 0;
+
                     const productCard: IProductCard = {
                         id: product.id ?? "",
                         name: product.name ?? "",
                         thumbnail: product.thumbnail ?? "",
                         minPrice: minPrice,
                         maxPrice: maxPrice,
-                        rate: product.rate ?? 0,
+                        rate: averageRate,
                         retailer: product.user?.username ?? "",
-                        rateCount: product.rateCount ?? 0
+                        rateCount: rateCount,
+                        quantityCount: quantityCount,
+                        createdDate: product.createdDate
                     };
 
                     productList.push(productCard);
                 });
 
-                dispatch(setProductList({products: productList, isLoading: false}));
+                let filteredProductList: IProductCard[] = productList;
+
+                if (currentMainMenu && currentMainMenu != "all") {
+                    switch (currentMainMenu) {
+                        case "nearby":
+                            // Logic để lọc sản phẩm gần bạn
+                            filteredProductList = filterByNearby(productList);
+                            console.log(currentMainMenu);
+                            break;
+                        case "promotion":
+                            // Logic để lọc sản phẩm khuyến mãi
+                            filteredProductList = filterByPromotion(productList);
+                            console.log(currentMainMenu);
+                            break;
+                        case "bestnews":
+                            // Logic để lọc sản phẩm mới nhất
+                            filteredProductList = filterByNewest(productList);
+                            console.log(currentMainMenu);
+                            break;
+                        case "bestsellers":
+                            // Logic để lọc sản phẩm bán chạy nhất
+                            filteredProductList = filterByBestSellers(productList);
+                            console.log(currentMainMenu);
+                            break;
+                        case "toprates":
+                            // Logic để lọc sản phẩm đánh giá hàng đầu
+                            filteredProductList = filterByTopRates(productList);
+                            console.log(currentMainMenu);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                dispatch(setProductList({products: filteredProductList, isLoading: false}));
                 setPending(false);
             })
             .catch(err => {
                 setPending(false);
                 console.log(err);
             });
+    };
+
+    const filterByNearby = (products: IProductCard[]): IProductCard[] => {
+        return products;
+    };
+
+    const filterByPromotion = (products: IProductCard[]): IProductCard[] => {
+        return products;
+    };
+
+    const filterByNewest = (products: IProductCard[]): IProductCard[] => {
+        return products.sort((a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime());
+    };
+
+    const filterByBestSellers = (products: IProductCard[]): IProductCard[] => {
+        return products.sort((a, b) => b.quantityCount - a.quantityCount);
+    };
+
+    const filterByTopRates = (products: IProductCard[]): IProductCard[] => {
+        return products.sort((a, b) => b.rate - a.rate);
     };
 
     return (

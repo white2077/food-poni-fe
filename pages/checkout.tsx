@@ -33,6 +33,7 @@ import {CookieValueTypes, getCookie} from "cookies-next";
 import {AxiosResponse} from "axios";
 import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
 import AddressCheckoutAdd from "../components/address-checkout-add";
+import AddressCheckoutUpdate from "../components/address-checkout-update";
 
 const {TextArea} = Input;
 
@@ -223,25 +224,25 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {
                                         onClick={handleAddAddressClick}>{showAddAddress ? "Quay lại" : "Thêm địa chỉ"}</Button>
                                     {showAddAddress && <AddressCheckoutAdd/>}
                                     {!showAddAddress && (
-                                        <Radio.Group style={{width: '100%'}}
+                                        <Radio.Group className="w-full"
                                                      defaultValue={deliveryInformation.content.find(item => item.id === currentUser.addressId)}
                                                      onChange={(e: RadioChangeEvent) => setShippingAddress(e.target.value)}>
                                             <List
                                                 dataSource={deliveryInformation.content}
                                                 renderItem={(item: AddressResponseDTO, index: number) => (
                                                     <Collapse
-                                                        style={{margin: '16px 0'}}
+                                                        className="my-[16px]"
                                                         expandIconPosition={"end"}
                                                         collapsible={"icon"}
                                                         items={[{
-                                                            key: index,
-                                                            label: <Radio id={`radio-${index}`} value={item}>
+                                                            key: item.id,
+                                                            label: <Radio id={`radio-${item.id}`} value={item}>
                                                                 <div><span
                                                                     style={{fontWeight: 'bold'}}>{item.fullName}</span> | {item.phoneNumber}
                                                                 </div>
                                                                 <div>{item.address}</div>
                                                             </Radio>,
-                                                            children: <p>aaaaaaaaaaaaaaaa</p>
+                                                            children: <AddressCheckoutUpdate address={item}/>
                                                         }]}
                                                     />
                                                 )}

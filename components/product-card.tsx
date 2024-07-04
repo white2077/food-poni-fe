@@ -1,5 +1,5 @@
-import {Badge, Card, Divider, Rate, Space} from "antd";
-import React, {useState} from "react";
+import {Badge, Card, Divider, notification, Rate, Skeleton, Space} from "antd";
+import React, {useEffect, useState} from "react";
 import {IProductCard} from "./product-rows";
 import Link from "next/link";
 import {CurrentUser} from "../stores/user.reducer";
@@ -8,6 +8,9 @@ import {RootState} from "../stores";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {HistoryOutlined} from "@ant-design/icons";
 import {server} from "../utils/server";
+import axios, {AxiosResponse} from "axios";
+import {api} from "../utils/axios-config";
+import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
 
 export interface ElementDistance {
     distance: {
@@ -43,6 +46,8 @@ const ProductCard = ({product}: { product: IProductCard }) => {
 
     const [distance, setDistance] = useState<string>("");
 
+    const [time, setTime] = useState<string>("")
+
     // const getDistanceMatrix = async (originLat: number, originLng: number, destLat: number, destLng: number) => {
     //     const apiKey: string = 'dXWhFMOOlIYRZhbprENdNjcoAtYSFZOwWZiTSJEY0H1zoYNCDjk0ZfBlBOmyRYw0';
     //     const apiUrl: string = `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${originLat},${originLng}&destinations=${destLat},${destLng}&key=${apiKey}`;
@@ -50,8 +55,11 @@ const ProductCard = ({product}: { product: IProductCard }) => {
     //     axios
     //         .get<DistanceResponse>(apiUrl)
     //         .then((response: AxiosResponse<DistanceResponse>): void => {
+    //             console.log(response.data)
     //             const distance: string = response.data.rows[0].elements[0].distance.text;
     //             setDistance(distance);
+    //             const time = Math.round(response.data.rows[0].elements[0].duration.value / 60) ;
+    //             setTime(time.toString());
     //         })
     //         .catch((error): void => {
     //             console.error(error);
@@ -67,16 +75,15 @@ const ProductCard = ({product}: { product: IProductCard }) => {
     //     if (selectedAddress != null) {
     //         originLat = selectedAddress.lat;
     //         originLng = selectedAddress.lon;
-    //     } else if (currentUser && currentUser.accessToken && selectedAddress == null) {
+    //     } else if (currentUser && currentUser.id && selectedAddress == null) {
     //         originLat = shippingAddress.lat ?? 0;
     //         originLng = shippingAddress.lon ?? 0;
     //     }
-    // }, []);
     //
     //     if (originLng != null && originLat != null) {
     //         const productId: string = product.id;
     //
-    //         axiosInterceptor.get(`/products/${productId}`)
+    //         api.get(`/products/${productId}`)
     //             .then(function (res: AxiosResponse<ProductResponseDTO>): void {
     //                 destLat = res.data.user?.address?.lat ?? 0;
     //                 destLng = res.data.user?.address?.lon ?? 0;
@@ -90,8 +97,6 @@ const ProductCard = ({product}: { product: IProductCard }) => {
     //                     description: res.message
     //                 });
     //             });
-    //         });
-    // }, [selectedAddressData, currentUser, shippingAddress]);
     //     }
     // }, [selectedAddress, currentUser, shippingAddress]);
 
@@ -107,25 +112,29 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                 <Space direction="vertical" size="small" style={{display: 'flex'}}>
                     <div className='flex items-center overflow-hidden'>
                         <Badge className='mr-1 overflow-hidden'
-                               count={(distance !== "") ? `Khoảng ${distance}` : "Khoảng cách không xác định"}
+                               count={distance !== "" ? `Khoảng ${distance}` : "Khoảng cách không xác định"}
                                color='#F36F24'/>
                     </div>
-                    <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>
-                        {product.name}
+                    <div className="flex justify-between">
+                        <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>
+                            {product.name}
+                        </div>
+                        <div>Đã bán: {product.quantityCount}</div>
                     </div>
                     <div className='flex items-center'>
-                      <span className="mr-2 border-r-2">
-                        <span>{product.rate !== 0 && product.rate.toFixed(1)}</span>
-                        <Rate disabled allowHalf value={product.rate} className='text-sm mr-1'/>
-                      </span>
-                        <span>
-                        {" " + product.rateCount} Lượt Đánh Giá
-                      </span>
+                        <span className="mr-2">
+                            <span className="mr-2">{product.rate !== 0 && product.rate.toFixed(1)}</span>
+                            <Rate disabled allowHalf value={product.rate} className='text-sm mr-2'/>
+                            <span>({" " + product.rateCount} đánh giá)</span>
+                        </span>
                     </div>
-                    <div className="text-left text-[20px] font-bold">${product.minPrice}{product.maxPrice === product.minPrice ? "" : " - $" + product.maxPrice}</div>
+                    <div
+                        className="text-left text-[20px] font-bold">${product.minPrice}{product.maxPrice === product.minPrice ? "" : " - $" + product.maxPrice}</div>
                 </Space>
                 <Divider style={{margin: '12px 0px'}}/>
-                <div style={{fontSize: '14px'}}><HistoryOutlined /> Không xác định {product.retailer}</div>
+                <div style={{fontSize: '14px'}}>
+                    <HistoryOutlined/> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"} {product.retailer}
+                </div>
             </Card>
         </Link>
     );
