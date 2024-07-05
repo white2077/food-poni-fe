@@ -49,7 +49,6 @@ const ProductCategory = ({categoryList}: { categoryList: CategoryResponseDTO[] }
 
     return (
         <div className='hidden md:block'>
-            {/*<Skeleton loading={isLoading} active></Skeleton>*/}
             <div className="p-4 bg-white rounded-lg">
                 <div className="mb-4">Danh mục</div>
                 <Menu

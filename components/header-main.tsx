@@ -132,7 +132,9 @@ const HeaderMain = () => {
                             sub: userResponseDTO.id,
                             role: userResponseDTO.role,
                             avatar: userResponseDTO.avatar,
-                            addressId: userResponseDTO.address.id
+                            addressId: userResponseDTO.address.id,
+                            username: userResponseDTO.username,
+                            email: userResponseDTO.email
                         };
                         dispatch(setCurrentUser(currentUser));
                     })

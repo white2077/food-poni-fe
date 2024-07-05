@@ -115,21 +115,22 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                                count={distance !== "" ? `Khoảng ${distance}` : "Khoảng cách không xác định"}
                                color='#F36F24'/>
                     </div>
-                    <div className="flex justify-between">
-                        <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>
-                            {product.name}
-                        </div>
-                        <div>Đã bán: {product.quantityCount}</div>
+                    <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>
+                        {product.name}
                     </div>
-                    <div className='flex items-center'>
+                    <div className='flex justify-between items-center'>
                         <span className="mr-2">
                             <span className="mr-2">{product.rate !== 0 && product.rate.toFixed(1)}</span>
                             <Rate disabled allowHalf value={product.rate} className='text-sm mr-2'/>
-                            <span>({" " + product.rateCount} đánh giá)</span>
                         </span>
+                        <span>{product.rateCount} đánh giá</span>
                     </div>
-                    <div
-                        className="text-left text-[20px] font-bold">${product.minPrice}{product.maxPrice === product.minPrice ? "" : " - $" + product.maxPrice}</div>
+                    <div className="flex justify-between items-center">
+                        <div className="text-left text-[20px] font-bold">
+                            ${product.minPrice}{product.maxPrice === product.minPrice ? "" : " - $" + product.maxPrice}
+                        </div>
+                        <div>Đã bán: {product.quantityCount}</div>
+                    </div>
                 </Space>
                 <Divider style={{margin: '12px 0px'}}/>
                 <div style={{fontSize: '14px'}}>

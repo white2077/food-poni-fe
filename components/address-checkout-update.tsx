@@ -16,8 +16,6 @@ export const AddressCheckoutUpdate = ({address}: {address: AddressResponseDTO}) 
 
     const router: NextRouter = useRouter();
 
-    const dispatch = useDispatch();
-
     const refreshToken = getCookie(REFRESH_TOKEN);
 
     const [pending, setPending] = useState<boolean>(false);
