@@ -82,8 +82,6 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {
 
     const [pending, setPending] = useState<boolean>(false);
 
-    // const cartItems: ICartItem[] = useSelector((state: RootState) => state.cart.carts);
-
     const [payment, setPayment] = useState<PaymentInfo>({
         method: "CASH",
         status: "PAYING"
@@ -168,7 +166,6 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {
 
         Promise.all(requests)
             .then(function () {
-                setPending(false);
                 dispatch(deleteSelectedSoldItems());
                 notification.open({
                     type: 'success',
@@ -176,15 +173,17 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {
                     description: 'Bạn vừa tạo đơn hàng thành công!',
                 });
                 // Redirect to home page or any other appropriate action
-                router.push('/');
+                router.push('/').then(() => {
+                    setPending(false);
+                });
             })
             .catch(function (error) {
-                setPending(false);
                 notification.open({
                     type: 'error',
                     message: 'Đơn hàng',
                     description: error.message
                 });
+                setPending(false);
             });
     };
 
@@ -304,7 +303,7 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {
                             </Form.Item>
 
                             <Form.Item>
-                                <Button type="primary" htmlType="submit" danger block loading={pending}>
+                                <Button type="primary" htmlType="submit" danger block disabled={pending} loading={pending}>
                                     Thanh toán
                                 </Button>
                             </Form.Item>

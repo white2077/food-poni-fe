@@ -8,7 +8,13 @@ import {CurrentUser} from "../stores/user.reducer";
 import {IRetailer} from "../pages/[pid]";
 import {server} from "../utils/server";
 
-const ProductCart = ({id, price, thumbnail, name, retailer}: { id: string, price: number, thumbnail: string, name: string, retailer: IRetailer }) => {
+const ProductCart = ({id, price, thumbnail, name, retailer}: {
+    id: string,
+    price: number,
+    thumbnail: string,
+    name: string,
+    retailer: IRetailer
+}) => {
 
     const router: NextRouter = useRouter();
 
@@ -22,6 +28,8 @@ const ProductCart = ({id, price, thumbnail, name, retailer}: { id: string, price
 
     const isExisted: boolean = carts.some(item => item.cartItems.some(cartItem => cartItem.id === id));
 
+    const [pending, setPending] = useState<boolean>(false);
+
     const addToCart = (): void => {
         if (currentUser.id) {
             const payload: ICartItem = {id, price, thumbnail, name, quantity, retailer} as ICartItem;
@@ -32,12 +40,16 @@ const ProductCart = ({id, price, thumbnail, name, retailer}: { id: string, price
     };
 
     const getCheckout = (): void => {
+        setPending(true);
         if (currentUser.id) {
             addToCart();
-            router.push("/checkout");
+            router.push("/checkout").then(() => {
+                setPending(false);
+            });
         } else {
             dispatch(deleteAllItem({}));
             router.push("/login");
+            setPending(false);
         }
     };
 
@@ -66,7 +78,7 @@ const ProductCart = ({id, price, thumbnail, name, retailer}: { id: string, price
                 </div>
             </div>
             <Flex vertical gap='small' style={{width: '100%'}}>
-                <Button type='primary' danger block onClick={getCheckout}>
+                <Button type='primary' danger block disabled={pending} loading={pending} onClick={getCheckout}>
                     Mua ngay
                 </Button>
                 <Button block onClick={addToCart}

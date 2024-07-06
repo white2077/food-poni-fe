@@ -2,9 +2,10 @@ import React, {useState} from "react";
 import {Avatar, Badge, Button, Drawer, InputNumber, List} from 'antd';
 import {CloseOutlined, ShoppingCartOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
-import {deleteItem, ICart, ICartItem, setQuantity} from "../stores/cart.reducer";
+import {deleteAllItem, deleteItem, ICart, ICartItem, setQuantity} from "../stores/cart.reducer";
 import {RootState} from "../stores";
 import {NextRouter, useRouter} from "next/router";
+import {CurrentUser} from "../stores/user.reducer";
 
 const Cart = () => {
 
@@ -12,9 +13,13 @@ const Cart = () => {
 
     const dispatch = useDispatch();
 
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
+
     const [open, setOpen] = useState<boolean>(false);
 
     const carts: ICart[] = useSelector((state: RootState) => state.cart.carts);
+
+    const [pending, setPending] = useState<boolean>(false);
 
     const showDrawer = (): void => {
         setOpen(true);
@@ -32,6 +37,19 @@ const Cart = () => {
     const totalCartItems: number = carts.reduce((total: number, cart: ICart) => {
         return total + cart.cartItems.length;
     }, 0);
+
+    const goToCheckout = () => {
+        setPending(true);
+        if (currentUser.id) {
+            router.push("/checkout").then(() => {
+                setPending(false);
+            });
+        } else {
+            dispatch(deleteAllItem({}));
+            router.push("/login");
+            setPending(false);
+        }
+    }
 
     return (
         <>
@@ -84,7 +102,7 @@ const Cart = () => {
                         )
                     ))
                 }
-                <Button className="my-5" type='primary' danger block hidden={carts.length === 0} onClick={() => router.push('/checkout')}>
+                <Button className="my-5" type='primary' danger block disabled={pending} loading={pending} hidden={carts.length === 0} onClick={goToCheckout}>
                     Thanh toán ngay
                 </Button>
             </Drawer>
