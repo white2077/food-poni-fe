@@ -1,10 +1,10 @@
-import {Card, Result, Skeleton, Spin} from 'antd';
+import {Card, notification, Result, Skeleton, Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
-import ProductCard from "./product-card";
+import ProductCard, {DistanceResponse} from "./product-card";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {setProductList} from "../stores/product.reducer";
-import {AxiosResponse} from "axios";
+import axios, {AxiosResponse} from "axios";
 import {Page} from "../models/Page";
 import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
 import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailResponseAPI";
@@ -13,6 +13,7 @@ import {SmileOutlined} from "@ant-design/icons";
 import {accessToken, api} from "../utils/axios-config";
 import MenuMain from "./menu-main";
 import {OrderItemResponseDTO} from "../models/order_item/OrderItemResponseAPI";
+import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 
 export interface IProductCard {
     id: string;
@@ -41,6 +42,10 @@ const ProductRows = () => {
 
     const [pending, setPending] = useState<boolean>(false);
 
+    const shippingAddress: AddressResponseDTO = useSelector((state: RootState) => state.address.shippingAddress);
+
+    const selectedAddress = useSelector((state: RootState) => state.searchPosition.searchPosition);
+
     useEffect((): void => {
         getProducts();
     }, [currentProductCategory, currentMainMenu]);
@@ -56,7 +61,7 @@ const ProductRows = () => {
             .then((res: AxiosResponse<Page<ProductResponseDTO[]>>): void => {
                 const productList: IProductCard[] = [];
                 (res.data.content as ProductResponseDTO[]).map((product: ProductResponseDTO): void => {
-                    if (accessToken && currentUser.role === "RETAILER" && currentUser.id == product.user?.id) {
+                    if (currentUser.role === "RETAILER" && currentUser.id == product.user?.id) {
                         return;
                     }
 
@@ -145,6 +150,7 @@ const ProductRows = () => {
     };
 
     const filterByNearby = (products: IProductCard[]): IProductCard[] => {
+        // return products.sort((a, b) => parseFloat(b.distance) - parseFloat(a.distance));
         return products;
     };
 

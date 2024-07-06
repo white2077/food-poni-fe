@@ -1,23 +1,21 @@
 import {Button, Card, List, notification} from "antd";
 import {CheckCircleOutlined, DeleteOutlined} from "@ant-design/icons";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {AddressIdDTO} from "../models/address/AddressRequest";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {CurrentUser, updateAddressId} from "../stores/user.reducer";
-import {accessToken, api, apiWithToken} from "../utils/axios-config";
+import {accessToken, apiWithToken} from "../utils/axios-config";
 import {AxiosError, AxiosResponse} from "axios";
 import {setCurrentShippingAddress} from "../stores/address.reducer";
-import {Page} from "../models/Page";
 import AddressDeliveryInformationAdd from "./address-delivery-information-add";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
-import jwtDecode from "jwt-decode";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
 
-export const AddressDeliveryInformation = ({deliveryInformation}: { deliveryInformation: Page<AddressResponseDTO[]> }) => {
+export const AddressDeliveryInformation = () => {
 
     const router: NextRouter = useRouter();
 
@@ -28,6 +26,28 @@ export const AddressDeliveryInformation = ({deliveryInformation}: { deliveryInfo
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
+
+    const [deliveryInformation, setDeliveryInformation] = useState<AddressResponseDTO[]>([]);
+
+    useEffect(() => {
+        getDeliveryInformation();
+    }, []);
+
+    const getDeliveryInformation = () => {
+        if (refreshToken) {
+            apiWithToken(refreshToken).get('/addresses', {
+                headers: {
+                    Authorization: 'Bearer ' + accessToken,
+                }
+            })
+                .then((res) => {
+                    setDeliveryInformation(res.data.content);
+                })
+                .catch((res: AxiosError<ErrorApiResponse>) => {
+                    console.log("Shipping address message: ", res.message);
+                });
+        }
+    }
 
     const handleAddAddressClick = (): void => {
         setShowAddAddress(!showAddAddress);
@@ -113,7 +133,7 @@ export const AddressDeliveryInformation = ({deliveryInformation}: { deliveryInfo
             {!showAddAddress && (
                 <List
                     grid={{gutter: 16, column: 1}}
-                    dataSource={deliveryInformation.content}
+                    dataSource={deliveryInformation}
                     renderItem={(item: AddressResponseDTO) => (
                         <List.Item>
                             <Card>

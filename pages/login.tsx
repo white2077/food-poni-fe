@@ -78,9 +78,9 @@ const Login: NextPage = () => {
             .then(function (res: AxiosResponse<AuthenticationResponse>): void {
                 setPending(false);
 
-                const accessToken: string = res.data.accessToken ?? "";
+                const refreshToken: string = res.data.refreshToken ?? "";
 
-                const payload: CurrentUser = jwtDecode(accessToken);
+                const payload: CurrentUser = jwtDecode(refreshToken);
                 dispatch(setCurrentUser(payload));
 
                 setCookie(REFRESH_TOKEN, res.data.refreshToken, {
