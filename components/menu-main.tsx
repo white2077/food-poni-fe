@@ -1,57 +1,67 @@
-import React, {useState} from 'react';
-import {AppstoreOutlined, EnvironmentOutlined, HomeOutlined, StarOutlined} from '@ant-design/icons';
+import React, {useEffect, useState} from 'react';
+import {
+    AppstoreOutlined,
+    CrownOutlined,
+    DollarOutlined,
+    EnvironmentOutlined,
+    StarOutlined,
+    TagOutlined
+} from '@ant-design/icons';
 import type {MenuProps} from 'antd';
 import {Menu} from 'antd';
+import {useDispatch, useSelector} from "react-redux";
+import {setSelectedMainMenu} from "../stores/main-menu.reducer";
+import {RootState} from "../stores";
 
-const MenuMain = () => {
+export default function MenuMain() {
 
-    const [current, setCurrent] = useState<string>('random');
+    const dispatch = useDispatch();
 
-    const onClick: MenuProps['onClick'] = (e): void => {
-        console.log('click ', e);
-        setCurrent(e.key);
+    const currentMainMenu: string = useSelector((state: RootState) => state.mainMenu.currentMainMenu);
+
+    const onClick: MenuProps['onClick'] = (e) => {
+        dispatch(setSelectedMainMenu(e.key));
     };
 
     return (
-        <div className='overflow-hidden mb-4'>
-            <Menu style={{borderRadius: '8px'}} onClick={onClick} selectedKeys={[current]} mode='horizontal'
+            <Menu className="block rounded-lg mb-4"
+                  onClick={onClick}
+                  selectedKeys={[currentMainMenu]}
+                  mode='horizontal'
                   items={items}/>
-        </div>
     );
 
 };
 
 const items: MenuProps['items'] = [
     {
-        label: 'Random',
-        key: 'random',
+        label: 'Tất cả',
+        key: 'all',
         icon: <AppstoreOutlined/>,
     },
     {
-        label: 'Nearby',
+        label: 'Gần bạn',
         key: 'nearby',
         icon: <EnvironmentOutlined/>,
     },
     {
-        label: 'Promotion',
+        label: 'Khuyến mãi',
         key: 'promotion',
-        icon: <EnvironmentOutlined/>,
+        icon: <DollarOutlined />,
     },
     {
-        label: 'Newcomers',
-        key: 'newcomers',
-        icon: <HomeOutlined/>,
+        label: 'Mới nhất',
+        key: 'bestnews',
+        icon: <TagOutlined />,
     },
     {
-        label: 'Best Sellers',
+        label: 'Bán chạy nhất',
         key: 'bestsellers',
-        icon: <EnvironmentOutlined/>,
+        icon: <CrownOutlined />,
     },
     {
-        label: 'Top Rates',
+        label: 'Đánh giá hàng đầu',
         key: 'toprates',
         icon: <StarOutlined/>,
     }
 ];
-
-export default MenuMain;

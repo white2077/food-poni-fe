@@ -1,4 +1,4 @@
-import {Button, Card, Divider, Flex, InputNumber} from "antd";
+import {Avatar, Button, Card, Divider, Flex, InputNumber} from "antd";
 import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {addItem, deleteAllItem, ICart, ICartItem} from "../stores/cart.reducer";
@@ -6,8 +6,15 @@ import {NextRouter, useRouter} from "next/router";
 import {RootState} from "../stores";
 import {CurrentUser} from "../stores/user.reducer";
 import {IRetailer} from "../pages/[pid]";
+import {server} from "../utils/server";
 
-const ProductCart = ({id, price, thumbnail, name, retailer}: { id: string, price: number, thumbnail: string, name: string, retailer: IRetailer }) => {
+const ProductCart = ({id, price, thumbnail, name, retailer}: {
+    id: string,
+    price: number,
+    thumbnail: string,
+    name: string,
+    retailer: IRetailer
+}) => {
 
     const router: NextRouter = useRouter();
 
@@ -21,6 +28,8 @@ const ProductCart = ({id, price, thumbnail, name, retailer}: { id: string, price
 
     const isExisted: boolean = carts.some(item => item.cartItems.some(cartItem => cartItem.id === id));
 
+    const [pending, setPending] = useState<boolean>(false);
+
     const addToCart = (): void => {
         if (currentUser.id) {
             const payload: ICartItem = {id, price, thumbnail, name, quantity, retailer} as ICartItem;
@@ -31,34 +40,49 @@ const ProductCart = ({id, price, thumbnail, name, retailer}: { id: string, price
     };
 
     const getCheckout = (): void => {
+        setPending(true);
         if (currentUser.id) {
             addToCart();
-            router.push("/checkout");
+            router.push("/checkout").then(() => {
+                setPending(false);
+            });
         } else {
             dispatch(deleteAllItem({}));
             router.push("/login");
+            setPending(false);
         }
     };
 
     return (
         <Card className='text-left text-black h-fit' size='small'>
-            <div>retailer here</div>
+            <div>
+                <Avatar src={server + retailer.avatar} size='large'/>
+                <span className="mx-2">{retailer.username}</span>
+            </div>
             <Divider/>
-            <div className='text-md font-medium'>Quantity</div>
-            <InputNumber
-                min={1}
-                max={20}
-                defaultValue={1}
-                value={quantity}
-                onChange={(value: number | null) => setQuantity(value ?? 1)} disabled={isExisted}/>
-            <div className='text-md font-medium'>Subtotal</div>
-            <div className='text-2xl font-semibold'>${price * quantity}</div>
+            <div className="flex gap-24 mb-6">
+                <div>
+                    <div className='text-md font-medium mb-2'>Số lượng</div>
+                    <InputNumber
+                        min={1}
+                        max={20}
+                        defaultValue={1}
+                        value={quantity}
+                        onChange={(value: number | null) => setQuantity(value ?? 1)} disabled={isExisted}/>
+                </div>
+                <div>
+                    <div className='text-md font-medium mb-2'>Tạm tính</div>
+                    <div>
+                        <div className='text-2xl font-semibold'>${price * quantity}</div>
+                    </div>
+                </div>
+            </div>
             <Flex vertical gap='small' style={{width: '100%'}}>
-                <Button type='primary' danger block onClick={getCheckout}>
-                    Buy now
+                <Button type='primary' danger block disabled={pending} loading={pending} onClick={getCheckout}>
+                    Mua ngay
                 </Button>
                 <Button block onClick={addToCart}
-                        disabled={isExisted}>{isExisted ? 'Product existed in cart' : 'Add to cart'}</Button>
+                        disabled={isExisted}>{isExisted ? 'Sản phẩm đã có trong giỏ hàng' : 'Thêm vào giỏ hàng'}</Button>
             </Flex>
         </Card>
     );

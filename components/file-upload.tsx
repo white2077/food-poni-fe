@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {FileUploadsResponseDTO} from "../models/file/FileUploadsResponseAPI";
 import {UploadOutlined} from "@ant-design/icons";
-import {setFileUploads, setSelectedFile} from "../stores/fileUploads.reducer";
+import {setFileUploads, setSelectedFile} from "../stores/file-uploads.reducer";
 import {setShowModalFileUpload} from "../stores/rate.reducer";
 import {RootState} from "../stores";
 import {accessToken, apiWithToken} from "../utils/axios-config";
@@ -89,8 +89,8 @@ const FileUploads = () => {
                     // dispatch(deleteAllItem({}));
                     notification.open({
                         type: 'success',
-                        message: 'Rate',
-                        description: 'Rate success!',
+                        message: 'Đánh giá',
+                        description: 'Đánh giá thành công',
                     });
                     getFileUploads();
                 })
@@ -98,7 +98,7 @@ const FileUploads = () => {
                     // setPending(false);
                     notification.open({
                         type: 'error',
-                        message: 'Rate message',
+                        message: 'Đánh giá',
                         description: res.message
                     });
                 });
@@ -117,13 +117,13 @@ const FileUploads = () => {
         } else {
             messageApi.open({
                 type: 'warning',
-                content: 'You have not selected any images.',
+                content: 'Bạn chưa chọn ảnh nào!',
             });
         }
     }
 
     return (
-        <Modal title="Upload Files" visible={showModalFileUpload} footer={null}
+        <Modal title="Upload Files" open={showModalFileUpload} footer={null}
                onCancel={() => dispatch(setShowModalFileUpload(false))}>
             <List
                 grid={{gutter: 16, xs: 1, sm: 2, md: 2, lg: 4, xl: 4, xxl: 4}}
@@ -132,7 +132,7 @@ const FileUploads = () => {
                     <List.Item style={{padding: 0}}>
                         <Card
                             onClick={() => handleToggleFileSelect(file.url)}
-                            style={{position: 'relative', height: '100px'}} // Đặt chiều cao cố định cho thẻ Card
+                            className="relative h-[100px]"
                             hoverable
                             cover={<img src={file.url} alt={file.name} style={{maxWidth: '100%', height: '100px'}}/>}
                             onMouseEnter={() => setHoveredFile(file.url)}
@@ -141,7 +141,7 @@ const FileUploads = () => {
                             {selectedFiles.includes(file.url) && (
                                 <Button
                                     type="primary"
-                                    style={{position: 'absolute', top: '10px', right: '10px'}}
+                                    className="absolute top-[10px] right-[10px]"
                                     onClick={() => handleToggleFileSelect(file.url)}
                                 >
                                     ✓
@@ -150,7 +150,7 @@ const FileUploads = () => {
                             {hoveredFile === file.url && (
                                 <Button
                                     type="primary"
-                                    style={{position: 'absolute', top: '10px', right: '10px'}}
+                                    className="absolute top-[10px] right-[10px]"
                                 >
                                     ✓
                                 </Button>

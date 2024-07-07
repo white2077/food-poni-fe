@@ -1,6 +1,6 @@
 import {Button, Card, List, notification} from "antd";
 import {CheckCircleOutlined, DeleteOutlined} from "@ant-design/icons";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../stores";
@@ -8,14 +8,14 @@ import {AddressIdDTO} from "../models/address/AddressRequest";
 import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 import {CurrentUser, updateAddressId} from "../stores/user.reducer";
 import {accessToken, apiWithToken} from "../utils/axios-config";
-import {AxiosResponse} from "axios";
+import {AxiosError, AxiosResponse} from "axios";
 import {setCurrentShippingAddress} from "../stores/address.reducer";
-import {Page} from "../models/Page";
 import AddressDeliveryInformationAdd from "./address-delivery-information-add";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
+import {ErrorApiResponse} from "../models/ErrorApiResponse";
 
-export const AddressDeliveryInformation = ({deliveryInformation}: { deliveryInformation: Page<AddressResponseDTO[]> }) => {
+export const AddressDeliveryInformation = () => {
 
     const router: NextRouter = useRouter();
 
@@ -26,6 +26,28 @@ export const AddressDeliveryInformation = ({deliveryInformation}: { deliveryInfo
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
+
+    const [deliveryInformation, setDeliveryInformation] = useState<AddressResponseDTO[]>([]);
+
+    useEffect(() => {
+        getDeliveryInformation();
+    }, []);
+
+    const getDeliveryInformation = () => {
+        if (refreshToken) {
+            apiWithToken(refreshToken).get('/addresses', {
+                headers: {
+                    Authorization: 'Bearer ' + accessToken,
+                }
+            })
+                .then((res) => {
+                    setDeliveryInformation(res.data.content);
+                })
+                .catch((res: AxiosError<ErrorApiResponse>) => {
+                    console.log("Shipping address message: ", res.message);
+                });
+        }
+    }
 
     const handleAddAddressClick = (): void => {
         setShowAddAddress(!showAddAddress);
@@ -43,12 +65,8 @@ export const AddressDeliveryInformation = ({deliveryInformation}: { deliveryInfo
                 .then(function (res: AxiosResponse<AddressResponseDTO>): void {
                     dispatch(setCurrentShippingAddress(res.data));
                 })
-                .catch(function (res): void {
-                    notification.open({
-                        type: 'error',
-                        message: 'Shipping address message',
-                        description: res.message
-                    });
+                .catch(function (res: AxiosError<ErrorApiResponse>): void {
+                    console.log("Shipping address message: ", res.message);
                 });
         }
     };
@@ -66,7 +84,7 @@ export const AddressDeliveryInformation = ({deliveryInformation}: { deliveryInfo
                 .catch(function (res): void {
                     notification.open({
                         type: 'error',
-                        message: 'Delivery information message',
+                        message: 'Địa chỉ',
                         description: res.message
                     });
                 })
@@ -85,19 +103,19 @@ export const AddressDeliveryInformation = ({deliveryInformation}: { deliveryInfo
             })
                 .then(function (): void {
                     dispatch(updateAddressId(addressId));
-                    getShippingAddress();
                     router.push("/account-information");
+                    getShippingAddress();
 
                     notification.open({
                         type: 'success',
-                        message: 'Shipping address message',
-                        description: "Update shipping address successfully"
+                        message: 'Địa chỉ',
+                        description: "Thay đổi địa chỉ mặc định thành công!"
                     });
                 })
                 .catch(function (res): void {
                     notification.open({
                         type: 'error',
-                        message: 'Shipping address message',
+                        message: 'Địa chỉ',
                         description: res.message
                     });
                 });
@@ -105,40 +123,38 @@ export const AddressDeliveryInformation = ({deliveryInformation}: { deliveryInfo
     };
 
     return (
-        <div style={{width: '1000px', margin: '0 auto'}}>
+        <div className="w-[1000px] mx-auto">
             <Button
-                style={{margin: '16px 0'}}
-                onClick={handleAddAddressClick}>{showAddAddress ? "Cancel" : "Add address"}</Button>
+                className="my-[16px]"
+                onClick={handleAddAddressClick}>{showAddAddress ? "Quay lại" : "Thêm địa chỉ"}</Button>
             {showAddAddress && (
-                <div style={{width: '600px', margin: '0 auto'}}><AddressDeliveryInformationAdd/></div>
+                <div className="w-[600px] mx-auto"><AddressDeliveryInformationAdd/></div>
             )}
             {!showAddAddress && (
                 <List
                     grid={{gutter: 16, column: 1}}
-                    dataSource={deliveryInformation.content}
+                    dataSource={deliveryInformation}
                     renderItem={(item: AddressResponseDTO) => (
                         <List.Item>
                             <Card>
-                                <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                <div className="flex justify-between">
                                     <div>
                                         <div>
-                                            <span
-                                                style={{fontWeight: 'bold', marginRight: '8px'}}>{item.fullName}</span>
-                                            <span style={{marginRight: '8px'}}>|</span>
-                                            <span style={{marginRight: '8px'}}>{item.phoneNumber}</span>
+                                            <span className="font-bold mr-[8px]">{item.fullName}</span>
+                                            <span className="mr-[8px]">|</span>
+                                            <span className="mr-[8px]">{item.phoneNumber}</span>
                                             {(item.id === currentUser.addressId) &&
-                                                <span
-                                                    style={{color: 'green'}}><CheckCircleOutlined/> Địa chỉ mặc định</span>
+                                                <span className="text-green-600"><CheckCircleOutlined/> Địa chỉ mặc định</span>
                                             }
                                         </div>
                                         <div>{item.address}</div>
                                     </div>
                                     <div>
-                                        <Button type="text" style={{color: 'blueviolet'}}
+                                        <Button type="text" className="text-purple-600"
                                                 onClick={() => updateShippingAddress(item.id ?? "")}>
                                             Đặt làm mặc định
                                         </Button>
-                                        <span style={{marginLeft: '16px'}}><DeleteOutlined
+                                        <span className="ml-[16px]"><DeleteOutlined
                                             onClick={() => deleteDeliveryInformation(item.id ?? "")}/></span>
                                     </div>
                                 </div>

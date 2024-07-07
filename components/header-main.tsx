@@ -1,4 +1,4 @@
-import {Avatar, Button, Dropdown, MenuProps,} from 'antd';
+import {Avatar, Button, Dropdown, MenuProps, notification} from 'antd';
 import {useDispatch, useSelector} from 'react-redux';
 import {LogoutOutlined, QuestionCircleOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
 import {NextRouter, useRouter} from 'next/router';
@@ -16,10 +16,17 @@ import {Client, IMessage} from "@stomp/stompjs";
 import {addNotification} from "../stores/notification.reducer";
 import {NotificationAPIResponse} from "../models/notification/NotificationResponseAPI";
 import jwtDecode from "jwt-decode";
+import {accessToken, api, apiWithToken} from "../utils/axios-config";
+import {AxiosError, AxiosResponse} from "axios";
+import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {setCurrentShippingAddress} from "../stores/address.reducer";
+import {ErrorApiResponse} from "../models/ErrorApiResponse";
+import {UserResponseDTO} from "../models/user/UserResponseAPI";
+import Link from "next/link";
+import MenuMobile from "./menu-mobile";
 
 let sock: any = null;
-
-const HeaderMain = () => {
+export default function HeaderMain() {
 
     const router: NextRouter = useRouter();
 
@@ -53,11 +60,11 @@ const HeaderMain = () => {
             ),
         },
         {
-            key: '2',
+            key: '3',
             label: (
                 <span id='aaa' onClick={() => handleItemClick('/')}>
                     <span style={{marginRight: '5px'}}>
-                        <QuestionCircleOutlined />
+                        <QuestionCircleOutlined/>
                     </span>
                     <span>Trung tâm hỗ trợ</span>
                 </span>
@@ -92,47 +99,107 @@ const HeaderMain = () => {
         }
     };
 
-    const changeCurrentUser = (refreshToken: string): void => {
-        const payload: CurrentUser = jwtDecode(refreshToken);
-        dispatch(setCurrentUser(payload));
-    }
+    const getShippingAddress = (): void => {
+        const addressId: string = currentUser.addressId ?? "";
+
+        if (addressId !== "" && refreshToken) {
+            apiWithToken(refreshToken).get(`/addresses/${addressId}`, {
+                headers: {
+                    Authorization: 'Bearer ' + accessToken,
+                }
+            })
+                .then(function (res: AxiosResponse<AddressResponseDTO>): void {
+                    dispatch(setCurrentShippingAddress(res.data));
+                })
+                .catch(function (res: AxiosError<ErrorApiResponse>): void {
+                    console.log("Shipping address message: ", res.message);
+                });
+        }
+    };
+
+    useEffect(() => {
+        getShippingAddress();
+    }, [currentUser]);
 
     useEffect(() => {
         if (refreshToken) {
-            changeCurrentUser(refreshToken);
-        }
+            if (!currentUser.id) {
+                const user: CurrentUser = jwtDecode(refreshToken);
+                api.get("/users/" + user.id)
+                    .then(function (res) {
+                        const userResponseDTO: UserResponseDTO = res.data;
+                        const currentUser: CurrentUser = {
+                            id: userResponseDTO.id,
+                            sub: userResponseDTO.id,
+                            role: userResponseDTO.role,
+                            avatar: userResponseDTO.avatar,
+                            addressId: userResponseDTO.address.id,
+                            username: userResponseDTO.username,
+                            email: userResponseDTO.email
+                        };
+                        dispatch(setCurrentUser(currentUser));
+                    })
+            }
 
-        if (!sock) {
-            console.log("Connect to socket successfully...");
-            sock = new SockJS(server + "/notification-register?client-id=e3a57bd0-fa44-45ae-93ac-d777e480aa1a");
+            if (!sock) {
+                console.log("Connect to socket successfully..." + currentUser.id);
+                sock = new SockJS(server + "/notification-register?client-id=" + currentUser.id);
 
-            const client = new Client({
-                webSocketFactory: () => sock,
-                onConnect: () => {
-                    client.subscribe('/topic/global-notifications', (message: IMessage) => {
-                        dispatch(addNotification(JSON.parse(message.body) as NotificationAPIResponse));
-                    });
-                    client.subscribe('/user/topic/client-notifications', (message: any) => {
-                        dispatch(addNotification(JSON.parse(message.body) as NotificationAPIResponse));
-                    });
-                },
-                onStompError: (frame: any) => {
-                    console.log("Error connecting to Websocket server", frame)
-                }
-            });
-            client.activate();
+                const client = new Client({
+                    webSocketFactory: () => sock,
+                    onConnect: () => {
+                        client.subscribe('/topic/global-notifications', (message: IMessage) => {
+                            const notificationResponse: NotificationAPIResponse = JSON.parse(message.body);
+                            dispatch(addNotification(notificationResponse));
+                            notification.open({
+                                type: "success",
+                                placement: 'bottomRight',
+                                message: notificationResponse.fromUser.address.fullName,
+                                description: notificationResponse.message,
+                                btn: (
+                                    <Button type="primary" onClick={() => console.log("Click vao thong bao")}>
+                                        Xem ngay
+                                    </Button>
+                                )
+                            });
+                        });
+                        client.subscribe('/user/topic/client-notifications', (message: any) => {
+                            const notificationResponse: NotificationAPIResponse = JSON.parse(message.body);
+                            dispatch(addNotification(notificationResponse));
+                            notification.open({
+                                type: "success",
+                                placement: 'bottomRight',
+                                message: notificationResponse.fromUser.address.fullName,
+                                description: notificationResponse.message,
+                                btn: (
+                                    <Button type="primary" onClick={() => console.log("Click vao thong bao")}>
+                                        Xem ngay
+                                    </Button>
+                                )
+                            });
+                        });
+                    },
+                    onStompError: (frame) => {
+                        console.log("Error connecting to Websocket server", frame)
+                    }
+                });
+                client.activate();
+            }
         }
     }, []);
 
+    // onClick={() => router.push('/')
+
     return (
-        <div className='lg:w-[1440px] grid grid-cols-2 md:grid-cols-[1fr_2fr_1fr] px-2 mx-auto items-center py-2 gap-4'>
-            <a className='font-bold text-2xl h-[unset] cu' onClick={() => router.push('/')}>FoodPoni</a>
+        <div className="grid grid-cols-[1fr_2fr_1fr] px-2 mx-auto items-center py-2 gap-4 max-w-screen-xl">
+            <MenuMobile/>
+            <Link href="/" className='font-bold text-2xl h-[unset]'>FoodPoni</Link>
             <SearchKeyword/>
             <div className='flex items-center justify-end gap-4'>
                 {currentUser.id ? (
                         <>
                             <Cart/>
-                            <Notification ePage={INITIAL_PAGE_API_RESPONSE} />
+                            <Notification ePage={INITIAL_PAGE_API_RESPONSE}/>
                             <Dropdown menu={{items}} placement='bottomRight' trigger={['click']}>
                                 <a>
                                     {currentUser.avatar
@@ -142,15 +209,13 @@ const HeaderMain = () => {
                             </Dropdown>
                         </>
                     )
-                    : <Button type='primary' onClick={() => router.push('/login')} icon={<UserOutlined/>}
+                    : (<Button type='primary' onClick={() => router.push('/login')} icon={<UserOutlined/>}
                               size='large'>
                         Đăng nhập
-                    </Button>
+                    </Button>)
                 }
             </div>
         </div>
     );
 
 };
-
-export default HeaderMain;

@@ -17,7 +17,6 @@ export const apiWithToken = (refreshToken: string) => {
         return response;
     }, (error: AxiosError) => {
         if (error.response && error.response.status === 401) {
-
             return api.post("/auth/refresh-token", {refreshToken})
                 .then((res: AxiosResponse<AuthenticationResponse>) => {
                     accessToken = res.data.accessToken;

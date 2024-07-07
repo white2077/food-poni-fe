@@ -12,7 +12,7 @@ const IconText = ({icon, text}: { icon: React.FC; text: string }) => (
 );
 
 const ProductComment = ({data,isLoading}: { data: RateResponseDTO[], isLoading: boolean }) => (
-    <Card size='small' title='Comment'>
+    <Card size='small' title='Đánh giá'>
         <List
             loading={isLoading}
             itemLayout="vertical"
@@ -41,17 +41,17 @@ const ProductComment = ({data,isLoading}: { data: RateResponseDTO[], isLoading: 
                     // }
                 >
                     <List.Item.Meta
-                        avatar={<Avatar src={server + item.avatar} style={{width: '40px', height: '40px'}}/>}
+                        avatar={<Avatar src={server + item.avatar} className="w-[40px] h-[40px]"/>}
                         title={<a href={item.username}>{item.username} <br/>
                             <Rate allowHalf disabled value={item.rate}/></a>}
                     />
-                    <div style={{fontSize: '16px', fontWeight: 'inherit', color: '#333', marginBottom: '10px'}}>{item.message}</div>
+                    <div className="text-[16px] font-normal text-[#333] mb-[10px]">{item.message}</div>
                     {/* Render images */}
-                    <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                    <div className="flex flex-wrap">
                         {item.images && item.images.map((url, index) => (
-                            <div key={index} style={{marginRight: '10px', marginBottom: '10px'}}>
+                            <div key={index} className="mr-[10px] mb-[10px]">
                                 <Image src={url} alt={`Image ${index}`} width={100} height={60}
-                                       style={{objectFit: 'cover', cursor: 'pointer'}}/>
+                                       className="object-cover cursor-pointer"/>
                             </div>
                         ))}
                     </div>

@@ -1,10 +1,10 @@
-import {Card, Result, Skeleton, Spin} from 'antd';
+import {Card, notification, Result, Skeleton, Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
-import ProductCard from "./product-card";
+import ProductCard, {DistanceResponse} from "./product-card";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {setProductList} from "../stores/product.reducer";
-import {AxiosResponse} from "axios";
+import axios, {AxiosResponse} from "axios";
 import {Page} from "../models/Page";
 import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
 import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailResponseAPI";
@@ -12,6 +12,8 @@ import {CurrentUser} from "../stores/user.reducer";
 import {SmileOutlined} from "@ant-design/icons";
 import {accessToken, api} from "../utils/axios-config";
 import MenuMain from "./menu-main";
+import {OrderItemResponseDTO} from "../models/order_item/OrderItemResponseAPI";
+import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
 
 export interface IProductCard {
     id: string;
@@ -22,6 +24,8 @@ export interface IProductCard {
     rate: number;
     retailer: string;
     rateCount: number;
+    quantityCount: number;
+    createdDate: Date;
 }
 
 const ProductRows = () => {
@@ -34,11 +38,17 @@ const ProductRows = () => {
 
     const currentProductCategory: string = useSelector((state: RootState) => state.productCategory.currentProductCategory);
 
+    const currentMainMenu: string = useSelector((state: RootState) => state.mainMenu.currentMainMenu);
+
     const [pending, setPending] = useState<boolean>(false);
+
+    const shippingAddress: AddressResponseDTO = useSelector((state: RootState) => state.address.shippingAddress);
+
+    const selectedAddress = useSelector((state: RootState) => state.searchPosition.searchPosition);
 
     useEffect((): void => {
         getProducts();
-    }, [currentProductCategory]);
+    }, [currentProductCategory, currentMainMenu]);
 
     const getProducts = (): void => {
         setPending(true);
@@ -51,7 +61,7 @@ const ProductRows = () => {
             .then((res: AxiosResponse<Page<ProductResponseDTO[]>>): void => {
                 const productList: IProductCard[] = [];
                 (res.data.content as ProductResponseDTO[]).map((product: ProductResponseDTO): void => {
-                    if (accessToken && currentUser.role === "RETAILER" && currentUser.id == product.user?.id) {
+                    if (currentUser.role === "RETAILER" && currentUser.id == product.user?.id) {
                         return;
                     }
 
@@ -62,27 +72,102 @@ const ProductRows = () => {
                     const minPrice: number = prices.length > 0 ? Math.min(...prices) : 0;
                     const maxPrice: number = prices.length > 0 ? Math.max(...prices) : 0;
 
+                    let rateSum: number = 0;
+                    let rateCount: number = 0;
+                    let quantityCount: number = 0;
+
+                    productDetails.forEach((productDetail: ProductDetailResponseDTO) => {
+                        productDetail.orderItems?.forEach((orderItem: OrderItemResponseDTO) => {
+                            const quantity: number = orderItem.quantity ?? 0;
+                            quantityCount += quantity;
+
+                            if (orderItem.rate) {
+                                rateSum += orderItem.rate.rate;
+                                rateCount++;
+                            }
+                        });
+                    });
+
+                    const averageRate: number = rateCount > 0 ? rateSum / rateCount : 0;
+
                     const productCard: IProductCard = {
                         id: product.id ?? "",
                         name: product.name ?? "",
                         thumbnail: product.thumbnail ?? "",
                         minPrice: minPrice,
                         maxPrice: maxPrice,
-                        rate: product.rate ?? 0,
+                        rate: averageRate,
                         retailer: product.user?.username ?? "",
-                        rateCount: product.rateCount ?? 0
+                        rateCount: rateCount,
+                        quantityCount: quantityCount,
+                        createdDate: product.createdDate
                     };
 
                     productList.push(productCard);
                 });
 
-                dispatch(setProductList({products: productList, isLoading: false}));
+                let filteredProductList: IProductCard[] = productList;
+
+                if (currentMainMenu && currentMainMenu != "all") {
+                    switch (currentMainMenu) {
+                        case "nearby":
+                            // Logic để lọc sản phẩm gần bạn
+                            filteredProductList = filterByNearby(productList);
+                            console.log(currentMainMenu);
+                            break;
+                        case "promotion":
+                            // Logic để lọc sản phẩm khuyến mãi
+                            filteredProductList = filterByPromotion(productList);
+                            console.log(currentMainMenu);
+                            break;
+                        case "bestnews":
+                            // Logic để lọc sản phẩm mới nhất
+                            filteredProductList = filterByNewest(productList);
+                            console.log(currentMainMenu);
+                            break;
+                        case "bestsellers":
+                            // Logic để lọc sản phẩm bán chạy nhất
+                            filteredProductList = filterByBestSellers(productList);
+                            console.log(currentMainMenu);
+                            break;
+                        case "toprates":
+                            // Logic để lọc sản phẩm đánh giá hàng đầu
+                            filteredProductList = filterByTopRates(productList);
+                            console.log(currentMainMenu);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                dispatch(setProductList({products: filteredProductList, isLoading: false}));
                 setPending(false);
             })
             .catch(err => {
                 setPending(false);
                 console.log(err);
             });
+    };
+
+    const filterByNearby = (products: IProductCard[]): IProductCard[] => {
+        // return products.sort((a, b) => parseFloat(b.distance) - parseFloat(a.distance));
+        return products;
+    };
+
+    const filterByPromotion = (products: IProductCard[]): IProductCard[] => {
+        return products;
+    };
+
+    const filterByNewest = (products: IProductCard[]): IProductCard[] => {
+        return products.sort((a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime());
+    };
+
+    const filterByBestSellers = (products: IProductCard[]): IProductCard[] => {
+        return products.sort((a, b) => b.quantityCount - a.quantityCount);
+    };
+
+    const filterByTopRates = (products: IProductCard[]): IProductCard[] => {
+        return products.sort((a, b) => b.rate - a.rate);
     };
 
     return (
@@ -103,7 +188,7 @@ const ProductRows = () => {
                             <Skeleton loading={isLoading} active/>
                             <MenuMain/>
                             <div
-                                className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
+                                className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
                                 {products.map((product: IProductCard) => (
                                     <ProductCard key={product.id} product={product}/>
                                 ))}
@@ -112,7 +197,7 @@ const ProductRows = () => {
                     ) :
                     <Result
                         icon={<SmileOutlined/>}
-                        title="Oops! No product found"
+                        title="Không tìm thấy sản phẩm nào!"
                     />
                 }
             </>

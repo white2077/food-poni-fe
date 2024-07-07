@@ -23,9 +23,8 @@ const OrderCard = ({order}: { order: OrderResponseDTO }) => {
                             <Col span={24} key={item.id}>
                                 <Card className="overflow-hidden">
                                     {Object.keys(item.rate ?? {}).length !== 0 && (
-                                        <div style={{position: 'absolute', top: 5, right: 5}}>
-                                            <Text type="secondary" style={{color: 'red'}}>Đã đánh
-                                                giá</Text>
+                                        <div className="absolute top-[5px] right-[5px]">
+                                            <Text type="secondary" className="!text-red-600">Đã đánh giá</Text>
                                         </div>
                                     )}
                                     <Row gutter={[16, 16]}>
@@ -54,7 +53,7 @@ const OrderCard = ({order}: { order: OrderResponseDTO }) => {
                         <span>{format(new Date(order.createdDate ?? ""), "yyyy-MM-dd HH:mm:ss")}</span>
                     </div>
                     <div className="flex justify-between mt-4 text-xl font-bold">
-                        <div>Total amount:</div>
+                        <div>Tổng tiền:</div>
                         <div>${order.totalAmount} </div>
                     </div>
                     <Divider/>

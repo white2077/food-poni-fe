@@ -4,6 +4,7 @@ import {Card, Menu} from 'antd';
 import {CategoryResponseDTO} from "../models/category/CategoryResponseAPI";
 import {useDispatch} from "react-redux";
 import {setSelectedProductCategory} from "../stores/product-category.reducer";
+import {HomeFilled} from "@ant-design/icons";
 
 export interface ICategory {
     key: string;
@@ -34,7 +35,8 @@ const ProductCategory = ({categoryList}: { categoryList: CategoryResponseDTO[] }
     const convertCategory = (category: CategoryResponseDTO, tab: string): void => {
         items.push({
             key: category.id ?? "",
-            label: <span dangerouslySetInnerHTML={{__html: tab + category.categoryName ?? ""}}></span>
+            label: <span className="flex items-center"><span dangerouslySetInnerHTML={{__html: tab}}></span><img
+                src="/favicon.ico" className="w-4 h-4 mr-2"></img> {category.categoryName}</span>
         });
 
         if (category.categories?.length)
@@ -48,18 +50,15 @@ const ProductCategory = ({categoryList}: { categoryList: CategoryResponseDTO[] }
     };
 
     return (
-        <div className='hidden md:block'>
-            {/*<Skeleton loading={isLoading} active></Skeleton>*/}
-            <div className="p-4 bg-white rounded-lg">
-                <div className="mb-4">Danh mục</div>
-                <Menu
-                    onClick={onClick}
-                    style={{minWidth: 256, borderRadius: '8px', border: 'none'}}
-                    defaultSelectedKeys={['all']}
-                    mode='inline'
-                    items={categories}
-                />
-            </div>
+        <div className="p-4 bg-white rounded-lg">
+            <div className="mb-4">Danh mục</div>
+            <Menu
+                onClick={onClick}
+                className="min-w-[200px] rounded-log !border-none"
+                defaultSelectedKeys={['all']}
+                mode='inline'
+                items={categories}
+            />
         </div>
     );
 };
