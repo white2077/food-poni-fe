@@ -6,7 +6,7 @@ import {RootState} from "../stores";
 import {RateDTO} from "../models/order/OrderRequest";
 import {setLoadingOrderItem} from "../stores/order.reducer";
 import {setShowModalAddRate, setShowModalFileUpload} from "../stores/rate.reducer";
-import {setSelectedFile} from "../stores/fileUploads.reducer";
+import {setSelectedFile} from "../stores/file-uploads.reducer";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";

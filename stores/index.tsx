@@ -4,7 +4,7 @@ import productReducer from "./product.reducer";
 import addressReducer from "./address.reducer";
 import userReducer from "./user.reducer";
 import orderReducer from "./order.reducer";
-import fileUploadsReducer from "./fileUploads.reducer";
+import fileUploadsReducer from "./file-uploads.reducer";
 import searchPositionReducer from "./search-position.reducer";
 import rateReducer from "./rate.reducer";
 import productCategoryReducer from "./product-category.reducer";

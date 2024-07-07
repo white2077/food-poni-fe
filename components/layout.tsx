@@ -5,18 +5,15 @@ import HeaderBar from "./header-bar";
 export const DefaultLayout = ({children}: { children: React.ReactNode }) => {
 
     return (
-        <>
-            <div className='bg-primary'>
-                <HeaderBar/>
+        <div className="flex flex-col">
+            <div className="fixed z-50 left-[var(--sidebar-width)]">
+
             </div>
-            <div className='bg-white'>
-                <HeaderMain/>
+
+            <div className="ml-[--sidebar-width]">
+                <div className=""></div>
             </div>
-            <div className='bg-[#F5F5FA]'>
-                <div className='px-2 lg:w-[1440px] mx-auto py-4'>{children}</div>
-            </div>
-            <div className='text-center text-white bg-primary'>Đây là footer hihi</div>
-        </>
+        </div>
     );
 
 };

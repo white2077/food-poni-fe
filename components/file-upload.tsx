@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {FileUploadsResponseDTO} from "../models/file/FileUploadsResponseAPI";
 import {UploadOutlined} from "@ant-design/icons";
-import {setFileUploads, setSelectedFile} from "../stores/fileUploads.reducer";
+import {setFileUploads, setSelectedFile} from "../stores/file-uploads.reducer";
 import {setShowModalFileUpload} from "../stores/rate.reducer";
 import {RootState} from "../stores";
 import {accessToken, apiWithToken} from "../utils/axios-config";
