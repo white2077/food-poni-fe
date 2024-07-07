@@ -6,6 +6,8 @@ export interface CategoryResponseDTO {
 
     slug?: string;
 
+    image?: string;
+
     description?: string;
 
     thumbnail?: string;

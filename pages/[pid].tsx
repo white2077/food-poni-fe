@@ -192,11 +192,7 @@ const ProductDetails = ({product}: {product: IProduct}) => {
                                                     <Radio.Button key={productDetail.id}
                                                                   value={productDetail.name || "default"}
                                                                   onClick={() => changeProductDetailSelected(productDetail)}
-<<<<<<< HEAD
-                                                                  className="rounded-lg m-2 static border-2"
-=======
                                                                   className="!rounded-lg m-2 static hover:static border-[1px]"
->>>>>>> 50e2ee7afc21b7807c30867661993e406c39a808
                                                     >
                                                         {productDetail.name || "Default"}
                                                     </Radio.Button>

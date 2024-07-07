@@ -35,7 +35,6 @@ function MyApp({Component, pageProps}: AppProps) {
                     screenMD: 768,
                     screenLG: 1024,
                     screenXL: 1280,
-                    screenXXL: 1536,
                 },
             }}>
                 <style

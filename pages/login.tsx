@@ -146,7 +146,7 @@ const Login: NextPage = () => {
 
     return (
         <div className='bg-[url("/login-bg.png")] bg-cover bg-center bg-no-repeat h-screen'>
-            <Card style={{width: "500px", margin: "auto"}} loading={isLoading}>
+            <Card className="w-[500px] m-auto" loading={isLoading}>
                 <Space direction="vertical" size="middle" style={{display: 'flex'}}>
                     <div>
                         <Avatar size={64} icon={<UserOutlined/>}/>

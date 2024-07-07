@@ -209,10 +209,12 @@ export default function HeaderMain() {
                             </Dropdown>
                         </>
                     )
-                    : (<Button type='primary' onClick={() => router.push('/login')} icon={<UserOutlined/>}
-                              size='large'>
-                        Đăng nhập
-                    </Button>)
+                    : (
+                        <Button type='primary' onClick={() => router.push('/login')} icon={<UserOutlined/>}
+                                size='large'>
+                            Đăng nhập
+                        </Button>
+                    )
                 }
             </div>
         </div>

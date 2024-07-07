@@ -1,5 +1,5 @@
 import React from "react";
-import {DefaultLayout} from "../components/layout";
+import {SidebarLayout} from "../components/layout";
 import ProductRows from "../components/product-rows";
 import CarouselBanner from "../components/carousel-banner";
 import ProductCategory from "../components/product-category";
@@ -31,7 +31,7 @@ const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<CategoryRespons
     ]
 
     return (
-        <DefaultLayout sidebarContents={sidebarContents}>
+        <SidebarLayout sidebarContents={sidebarContents}>
             <div className='grid gap-4 h-fit'>
                 <div className='overflow-auto relative'>
                     <CarouselBanner/>
@@ -39,7 +39,7 @@ const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<CategoryRespons
                 </div>
                 <ProductRows/>
             </div>
-        </DefaultLayout>
+        </SidebarLayout>
     );
 
 };
