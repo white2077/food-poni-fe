@@ -4,19 +4,18 @@ import React, {useEffect, useState} from "react";
 import {Button, Card, notification, Radio, Rate, Result} from "antd";
 import ProductGallery from "../components/product-gallery";
 import ProductCart from "../components/product-cart";
-import {ProductResponseDTO} from "../models/product/ProductAPIResponse";
-import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailAPIResponse";
 import {AxiosResponse} from "axios";
 import ProductComment from "../components/product-comment";
-import {RateResponseDTO} from "../models/rate/RateAPIResponse";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {ParsedUrlQuery} from "querystring";
-import {accessToken, api} from "../utils/axios-config";
+import {api} from "../utils/axios-config";
 import {server} from "../utils/server";
-import {CurrentUser} from "../stores/user.reducer";
-import {OrderItemResponseDTO} from "../models/order_item/OrderItemResponseAPI";
+import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
+import {ProductDetailAPIResponse} from "../models/product_detail/ProductDetailAPIResponse";
+import {OrderItemAPIResponse} from "../models/order_item/OrderItemResponseAPI";
+import {RateAPIResponse} from "../models/rate/RateAPIResponse";
 
 export interface IProduct {
     id: string;
@@ -49,8 +48,8 @@ export interface IRetailer {
 export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
     const {pid} = context.params;
     try {
-        const res: AxiosResponse<ProductResponseDTO> = await api.get('/products/' + pid);
-        const product: ProductResponseDTO = res.data;
+        const res: AxiosResponse<ProductAPIResponse> = await api.get('/products/' + pid);
+        const product: ProductAPIResponse = res.data;
 
         const productMapped: IProduct = {
             id: product.id ?? "",
@@ -64,12 +63,12 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
                 phoneNumber: product.user.phoneNumber ?? "",
                 username: product.user.username ?? "",
             },
-            productDetails: product.productDetails && product.productDetails.map((productDetail: ProductDetailResponseDTO): IProductDetail => {
+            productDetails: product.productDetails && product.productDetails.map((productDetail: ProductDetailAPIResponse): IProductDetail => {
                 let rateSum: number = 0;
                 let rateCount: number = 0;
                 let quantityCount: number = 0;
 
-                productDetail.orderItems?.forEach((orderItem: OrderItemResponseDTO) => {
+                productDetail.orderItems?.forEach((orderItem: OrderItemAPIResponse) => {
                     const quantity: number = orderItem.quantity ?? 0;
                     quantityCount += quantity;
 
@@ -113,7 +112,7 @@ const ProductDetails = ({product}: {product: IProduct}) => {
 
     const [isLoadingRate, setLoadingRate] = useState<boolean>(false);
 
-    const [rates, setRates] = useState<RateResponseDTO[]>([]);
+    const [rates, setRates] = useState<RateAPIResponse[]>([]);
 
     useEffect(() => {
         if (product && product.productDetails && product.productDetails.length > 0) {
@@ -125,7 +124,7 @@ const ProductDetails = ({product}: {product: IProduct}) => {
     const getRates = (productDetailId: string | undefined) => {
         setLoadingRate(true);
         api.get(`/products/rate/${productDetailId}`)
-            .then(function (res: AxiosResponse<RateResponseDTO[]>) {
+            .then(function (res: AxiosResponse<RateAPIResponse[]>) {
                 setRates(res.data);
             })
             .catch(function (res) {

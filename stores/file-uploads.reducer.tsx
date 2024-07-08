@@ -1,8 +1,8 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {FileUploadsResponseDTO} from "../models/file/FileUploadAPIResponse";
+import {FileUploadAPIResponse} from "../models/file/FileUploadAPIResponse";
 
 export interface IFileUploadsState {
-    filesUpload: FileUploadsResponseDTO[];
+    filesUpload: FileUploadAPIResponse[];
     selectedFile: string[];
 }
 
@@ -15,7 +15,7 @@ const fileUploadsSlide = createSlice({
     name: 'fileUploads',
     initialState,
     reducers: {
-        setFileUploads: (state, {payload}: { payload: FileUploadsResponseDTO[] }) => ({
+        setFileUploads: (state, {payload}: { payload: FileUploadAPIResponse[] }) => ({
             ...state,
             filesUpload: payload
         }),

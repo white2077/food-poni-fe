@@ -1,8 +1,8 @@
 import React from 'react';
 import {LikeOutlined, MessageOutlined, StarOutlined} from '@ant-design/icons';
 import {Avatar, Card, Image, List, Rate, Space} from 'antd';
-import {RateResponseDTO} from "../models/rate/RateAPIResponse";
 import {server} from "../utils/server";
+import {RateAPIResponse} from "../models/rate/RateAPIResponse";
 
 const IconText = ({icon, text}: { icon: React.FC; text: string }) => (
     <Space>
@@ -11,7 +11,7 @@ const IconText = ({icon, text}: { icon: React.FC; text: string }) => (
     </Space>
 );
 
-const ProductComment = ({data,isLoading}: { data: RateResponseDTO[], isLoading: boolean }) => (
+const ProductComment = ({data,isLoading}: { data: RateAPIResponse[], isLoading: boolean }) => (
     <Card size='small' title='Đánh giá'>
         <List
             loading={isLoading}

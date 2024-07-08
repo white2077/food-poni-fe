@@ -1,21 +1,21 @@
 import {useDispatch} from "react-redux";
-import {RateResponseDTO} from "../models/rate/RateAPIResponse";
 import React, {useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
 import {Col, Divider, Image, notification, Rate, Row} from "antd";
 import {setShowModalRate} from "../stores/rate.reducer";
 import {Page} from "../models/Page";
 import {api} from "../utils/axios-config";
+import {RateAPIResponse} from "../models/rate/RateAPIResponse";
 
 const ProductRate = ({productId}: { productId: string }) => {
 
     const dispatch = useDispatch();
 
-    const [rates, setRates] = useState<RateResponseDTO[]>([]);
+    const [rates, setRates] = useState<RateAPIResponse[]>([]);
 
     const getRates = () => {
         api.get('/products/rate/' + productId)
-            .then(function (res: AxiosResponse<Page<RateResponseDTO[]>>) {
+            .then(function (res: AxiosResponse<Page<RateAPIResponse[]>>) {
                 console.log(res.data.content);
                 setRates(res.data.content);
             })

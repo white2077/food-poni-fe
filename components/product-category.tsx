@@ -1,17 +1,16 @@
 import React, {ReactElement, useEffect, useState} from 'react';
 import type {MenuProps} from 'antd';
-import {Card, Menu} from 'antd';
-import {CategoryResponseDTO} from "../models/category/CategoryAPIResponse";
+import {Menu} from 'antd';
 import {useDispatch} from "react-redux";
 import {setSelectedProductCategory} from "../stores/product-category.reducer";
-import {HomeFilled} from "@ant-design/icons";
+import {CategoryAPIResponse} from "../models/category/CategoryAPIResponse";
 
 export interface ICategory {
     key: string;
     label: ReactElement;
 }
 
-const ProductCategory = ({categoryList}: { categoryList: CategoryResponseDTO[] }) => {
+const ProductCategory = ({categoryList}: { categoryList: CategoryAPIResponse[] }) => {
 
     const dispatch = useDispatch();
 
@@ -26,13 +25,13 @@ const ProductCategory = ({categoryList}: { categoryList: CategoryResponseDTO[] }
     }, []);
 
     const getAllCategories = (): void => {
-        categoryList.forEach((category: CategoryResponseDTO) => {
+        categoryList.forEach((category: CategoryAPIResponse) => {
             convertCategory(category, '');
         });
         setCategories(items);
     };
 
-    const convertCategory = (category: CategoryResponseDTO, tab: string): void => {
+    const convertCategory = (category: CategoryAPIResponse, tab: string): void => {
         items.push({
             key: category.id ?? "",
             label: <span className="flex items-center"><span dangerouslySetInnerHTML={{__html: tab}}></span><img
@@ -40,7 +39,7 @@ const ProductCategory = ({categoryList}: { categoryList: CategoryResponseDTO[] }
         });
 
         if (category.categories?.length)
-            category.categories.forEach((subCategory: CategoryResponseDTO): void => {
+            category.categories.forEach((subCategory: CategoryAPIResponse): void => {
                 convertCategory(subCategory, tab + '&emsp;');
             });
     };
