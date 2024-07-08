@@ -7,11 +7,11 @@ import SearchPosition from "../components/search-position";
 import {api} from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
-import {CategoryResponseDTO} from "../models/category/CategoryAPIResponse";
+import {CategoryAPIResponse} from "../models/category/CategoryAPIResponse";
 
 export async function getServerSideProps() {
     try {
-        const res: AxiosResponse<Page<CategoryResponseDTO[]>> = await api.get("/product-categories?onlyParent=true");
+        const res: AxiosResponse<Page<CategoryAPIResponse[]>> = await api.get("/product-categories?onlyParent=true");
         return {
             props: {
                 ePage: res.data
@@ -22,7 +22,7 @@ export async function getServerSideProps() {
     }
 }
 
-const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<CategoryResponseDTO[]> }) => {
+const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<CategoryAPIResponse[]> }) => {
 
     const sidebarContents: JSX.Element[] = [
         <ProductCategory key={0} categoryList={ePage.content}/>,

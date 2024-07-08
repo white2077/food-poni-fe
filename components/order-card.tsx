@@ -2,14 +2,14 @@ import {Badge, Button, Card, Col, Divider, Image, Row, Typography} from "antd";
 import {EnvironmentOutlined, FieldTimeOutlined, InfoCircleOutlined} from "@ant-design/icons";
 import {format} from "date-fns";
 import Link from "next/link";
-import {OrderResponseDTO} from "../models/order/OrderAPIResponse";
 import React from "react";
 import {server} from "../utils/server";
-import {OrderItemResponseDTO} from "../models/order_item/OrderItemResponseAPI";
+import {OrderAPIResponse} from "../models/order/OrderAPIResponse";
+import {OrderItemAPIResponse} from "../models/order_item/OrderItemResponseAPI";
 
 const {Text} = Typography;
 
-const OrderCard = ({order}: { order: OrderResponseDTO }) => {
+const OrderCard = ({order}: { order: OrderAPIResponse }) => {
     return (
         <div className="w-full">
             <Badge.Ribbon text={order.status} color="red">
@@ -19,7 +19,7 @@ const OrderCard = ({order}: { order: OrderResponseDTO }) => {
                         <div>{order?.shippingAddress?.phoneNumber}</div>
                     </div>
                     <Row gutter={[16, 16]}>
-                        {order?.orderItems?.map((item: OrderItemResponseDTO) => (
+                        {order?.orderItems?.map((item: OrderItemAPIResponse) => (
                             <Col span={24} key={item.id}>
                                 <Card className="overflow-hidden">
                                     {Object.keys(item.rate ?? {}).length !== 0 && (

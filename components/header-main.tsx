@@ -21,9 +21,9 @@ import {AxiosError, AxiosResponse} from "axios";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {setCurrentShippingAddress} from "../stores/address.reducer";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
-import {UserResponseDTO} from "../models/user/UserResponseAPI";
 import Link from "next/link";
 import MenuMobile from "./menu-mobile";
+import {UserAPIResponse} from "../models/user/UserResponseAPI";
 
 let sock: any = null;
 export default function HeaderMain() {
@@ -127,7 +127,7 @@ export default function HeaderMain() {
                 const user: CurrentUser = jwtDecode(refreshToken);
                 api.get("/users/" + user.id)
                     .then(function (res) {
-                        const userResponseDTO: UserResponseDTO = res.data;
+                        const userResponseDTO: UserAPIResponse = res.data;
                         const currentUser: CurrentUser = {
                             id: userResponseDTO.id,
                             sub: userResponseDTO.id,

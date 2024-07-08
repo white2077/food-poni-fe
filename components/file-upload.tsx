@@ -1,7 +1,6 @@
 import {Button, Card, Divider, List, message, Modal, notification, Upload} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {FileUploadsResponseDTO} from "../models/file/FileUploadAPIResponse";
 import {UploadOutlined} from "@ant-design/icons";
 import {setFileUploads, setSelectedFile} from "../stores/file-uploads.reducer";
 import {setShowModalFileUpload} from "../stores/rate.reducer";
@@ -12,6 +11,7 @@ import {Page} from "../models/Page";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
+import {FileUploadAPIResponse} from "../models/file/FileUploadAPIResponse";
 
 export interface IFileUploadCard {
     id: string;
@@ -28,7 +28,7 @@ const FileUploads = () => {
 
     const refreshToken = getCookie(REFRESH_TOKEN);
 
-    const fileUploads: FileUploadsResponseDTO[] = useSelector((state: RootState) => state.fileUpload.filesUpload);
+    const fileUploads: FileUploadAPIResponse[] = useSelector((state: RootState) => state.fileUpload.filesUpload);
 
     const showModalFileUpload: boolean = useSelector((state: RootState) => state.rate.showModalFileUpload);
 
@@ -49,7 +49,7 @@ const FileUploads = () => {
                     Authorization: 'Bearer ' + accessToken,
                 }
             })
-                .then((res: AxiosResponse<Page<FileUploadsResponseDTO[]>>): void => {
+                .then((res: AxiosResponse<Page<FileUploadAPIResponse[]>>): void => {
                     dispatch(setFileUploads(res.data.content));
                 })
                 .catch(function (err: AxiosError<ErrorApiResponse>) {
@@ -128,7 +128,7 @@ const FileUploads = () => {
             <List
                 grid={{gutter: 16, xs: 1, sm: 2, md: 2, lg: 4, xl: 4, xxl: 4}}
                 dataSource={fileUploads}
-                renderItem={(file: FileUploadsResponseDTO) => (
+                renderItem={(file: FileUploadAPIResponse) => (
                     <List.Item style={{padding: 0}}>
                         <Card
                             onClick={() => handleToggleFileSelect(file.url)}

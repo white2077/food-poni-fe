@@ -1,12 +1,12 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
+import {AddressAPIResponse, INITIAL_ADDRESS_API_RESPONSE} from "../models/address/AddressAPIResponse";
 
 export interface IShippingAddressState {
     shippingAddress: AddressAPIResponse;
 }
 
 const initialState: IShippingAddressState = {
-    shippingAddress: {}
+    shippingAddress: INITIAL_ADDRESS_API_RESPONSE
 }
 
 const addressSlide = createSlice({

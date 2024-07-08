@@ -14,8 +14,8 @@ import {REMEMBER_ME} from "../utils/server";
 import {NextRouter, useRouter} from "next/router";
 import {AxiosResponse} from "axios";
 import {UserCreationRequestDTO} from "../models/user/UserRequest";
-import {UserResponseDTO} from "../models/user/UserResponseAPI";
 import {api} from "../utils/axios-config";
+import {UserAPIResponse} from "../models/user/UserResponseAPI";
 
 export interface IUserRemember {
     username: string;
@@ -39,12 +39,12 @@ const Signup: NextPage = () => {
         setPending(true);
         let user: UserCreationRequestDTO = {username: values.username, email: values.email, password: values.password}
         api.post("/users", user)
-            .then(function (res: AxiosResponse<UserResponseDTO>): void {
+            .then(function (res: AxiosResponse<UserAPIResponse>): void {
                 setPending(false);
                 notification.open({
                     type: 'success',
-                    message: 'Sign up',
-                    description: 'Sign up success!',
+                    message: 'Đăng ký',
+                    description: 'Đăng ký tài khoản thành công!',
                 });
                 const userRemember: IUserRemember = {
                     username: user.username ? user.username! : user.email!,
@@ -60,7 +60,7 @@ const Signup: NextPage = () => {
                 setPending(false);
                 notification.open({
                     type: 'error',
-                    message: 'Sign up message',
+                    message: 'Đăng ký',
                     description: res.response.data.error.message,
                 });
             });
