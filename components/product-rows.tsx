@@ -27,7 +27,12 @@ export interface IProductCard {
     createdDate: Date;
 }
 
-const ProductRows = () => {
+interface ProductRowProps {
+    title: string
+    hasMenu: boolean,
+}
+
+const ProductRows = ({title, hasMenu}: ProductRowProps) => {
 
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
@@ -100,20 +105,24 @@ const ProductRows = () => {
 
     return (
         <div className="p-4 bg-white rounded-lg">
-            <div>Top Deal - Siêu rẻ</div>
-            <MenuMain filterProducts={filterProducts}/>
+            <div>{title}</div>
+            {hasMenu && < MenuMain filterProducts={filterProducts}/>}
             <div
-                className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-                {isLoading ? <ProductRowLoading count={8}/> : (
-                    <>
-                        {productCards.map((productCard: IProductCard) => (
-                            <ProductCard key={productCard.id} product={productCard}/>
-                        ))}
-                    </>
-                )}
+                className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4'>
+                {isLoading ? <ProductRowLoading count={8}/>
+                    :
+                    (
+                        <>
+                            {productCards.map((productCard: IProductCard) => (
+                                <ProductCard key={productCard.id} product={productCard}/>
+                            ))}
+                        </>
+                    )
+                }
             </div>
         </div>
-    );
+    )
+        ;
 
 };
 

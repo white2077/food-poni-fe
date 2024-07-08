@@ -37,7 +37,9 @@ const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<CategoryAPIResp
                     <CarouselBanner/>
                     <SearchPosition/>
                 </div>
-                <ProductRows/>
+                <ProductRows title="Top Deal - Siêu rẻ" hasMenu={true}/>
+                <ProductRows title="Món ngon - Giá sốc" hasMenu={false}/>
+                <ProductRows title="Có thể bạn thấy ngon" hasMenu={false}/>
             </div>
         </SidebarLayout>
     );

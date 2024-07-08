@@ -22,7 +22,7 @@ export default function MenuMain({filterProducts}: MainMenuProps) {
     const dispatch = useDispatch();
 
     return (
-        <Menu className="block rounded-lg mb-4"
+        <Menu className="block rounded-lg"
               onSelect={({key}: { key: string }) => filterProducts(key)}
               defaultSelectedKeys={["all"]}
               mode='horizontal'
