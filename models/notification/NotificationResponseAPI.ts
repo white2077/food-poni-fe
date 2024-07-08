@@ -1,12 +1,12 @@
-import {INITIAL_USER_API_RESPONSE, UserResponseDTO} from "../user/UserResponseAPI";
+import {INITIAL_USER_API_RESPONSE, UserAPIResponse} from "../user/UserResponseAPI";
 
 export interface NotificationAPIResponse {
 
     id: string,
 
-    toUser: UserResponseDTO,
+    toUser: UserAPIResponse,
 
-    fromUser: UserResponseDTO,
+    fromUser: UserAPIResponse,
 
     type: string,
 

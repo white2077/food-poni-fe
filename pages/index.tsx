@@ -7,7 +7,7 @@ import SearchPosition from "../components/search-position";
 import {api} from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
-import {CategoryResponseDTO} from "../models/category/CategoryResponseAPI";
+import {CategoryResponseDTO} from "../models/category/CategoryAPIResponse";
 
 export async function getServerSideProps() {
     try {
@@ -25,8 +25,8 @@ export async function getServerSideProps() {
 const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<CategoryResponseDTO[]> }) => {
 
     const sidebarContents: JSX.Element[] = [
-        <ProductCategory categoryList={ePage.content}/>,
-        <img className='rounded-md w-full'
+        <ProductCategory key={0} categoryList={ePage.content}/>,
+        <img key={1} className='rounded-md w-full'
              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-GyDWnLZ77IVqwCBJYj3KSEafcAMiGAfJlj1kqG0U_Q&s"/>
     ]
 

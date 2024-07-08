@@ -1,5 +1,5 @@
 import {useDispatch} from "react-redux";
-import {RateResponseDTO} from "../models/rate/RateResponseAPI";
+import {RateResponseDTO} from "../models/rate/RateAPIResponse";
 import React, {useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
 import {Col, Divider, Image, notification, Rate, Row} from "antd";

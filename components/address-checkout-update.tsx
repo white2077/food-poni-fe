@@ -4,7 +4,7 @@ import {SearchResult} from "../stores/search-position.reducer";
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {AddressRequestDTO} from "../models/address/AddressRequest";
 import {accessToken, apiWithToken} from "../utils/axios-config";
-import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {AutoComplete, Button, Form, Input, notification} from "antd";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
 import {useDispatch} from "react-redux";
@@ -12,7 +12,7 @@ import {setCurrentShippingAddress} from "../stores/address.reducer";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
 
-export const AddressCheckoutUpdate = ({address}: {address: AddressResponseDTO}) => {
+export const AddressCheckoutUpdate = ({address}: {address: AddressAPIResponse}) => {
 
     const router: NextRouter = useRouter();
 
@@ -85,7 +85,7 @@ export const AddressCheckoutUpdate = ({address}: {address: AddressResponseDTO}) 
                     Authorization: 'Bearer ' + accessToken,
                 }
             })
-                .then(function (res: AxiosResponse<AddressResponseDTO>) {
+                .then(function (res: AxiosResponse<AddressAPIResponse>) {
                     setPending(false);
                     router.push('/checkout');
                     notification.open({

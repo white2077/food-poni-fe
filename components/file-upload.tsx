@@ -1,7 +1,7 @@
 import {Button, Card, Divider, List, message, Modal, notification, Upload} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {FileUploadsResponseDTO} from "../models/file/FileUploadsResponseAPI";
+import {FileUploadsResponseDTO} from "../models/file/FileUploadAPIResponse";
 import {UploadOutlined} from "@ant-design/icons";
 import {setFileUploads, setSelectedFile} from "../stores/file-uploads.reducer";
 import {setShowModalFileUpload} from "../stores/rate.reducer";

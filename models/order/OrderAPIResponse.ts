@@ -1,16 +1,16 @@
-import {INITIAL_USER_API_RESPONSE, UserResponseDTO} from "../user/UserResponseAPI";
-import {OrderItemResponseDTO} from "../order_item/OrderItemResponseAPI";
+import {INITIAL_USER_API_RESPONSE, UserAPIResponse} from "../user/UserResponseAPI";
 import {paymentInfo, PaymentInfo, shippingAddress, ShippingAddress} from "./OrderRequest";
+import {OrderItemAPIResponse} from "../order_item/OrderItemResponseAPI";
 
-export interface OrderResponseDTO {
+export interface OrderAPIResponse {
 
     id: string;
 
     totalAmount: number;
 
-    user: UserResponseDTO;
+    user: UserAPIResponse;
 
-    orderItems: OrderItemResponseDTO[];
+    orderItems: OrderItemAPIResponse[];
 
     shippingAddress: ShippingAddress;
 
@@ -24,7 +24,7 @@ export interface OrderResponseDTO {
 
 }
 
-export const INITIAL_ORDER_RESPONSE_DTO: OrderResponseDTO = {
+export const INITIAL_ORDER_API_RESPONSE: OrderAPIResponse = {
 
     id: '',
 

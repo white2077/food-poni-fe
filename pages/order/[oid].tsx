@@ -10,7 +10,7 @@ import {INITIAL_USER_API_RESPONSE, UserResponseDTO} from "../../models/user/User
 import {paymentInfo, PaymentInfo, RateDTO, shippingAddress, ShippingAddress} from "../../models/order/OrderRequest";
 import {RootState} from "../../stores";
 import {setSelectedOrderItemRate, setShowModalAddRate, setShowModalRate} from "../../stores/rate.reducer";
-import {OrderResponseDTO} from "../../models/order/OrderResposeAPI";
+import {OrderResponseDTO} from "../../models/order/OrderAPIResponse";
 import RateRows from "../../components/rate-rows";
 import {addItem, ICart, ICartItem} from "../../stores/cart.reducer";
 import {ParsedUrlQuery} from "querystring";

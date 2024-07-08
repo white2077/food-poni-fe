@@ -1,10 +1,9 @@
 import {
-    INITIAL_PRODUCT_DETAIL_RESPONSE_DTO,
-    ProductDetailResponseDTO
-} from "../product_detail/ProductDetailResponseAPI";
-import {INITIAL_RATE_API_RESPONSE, RateResponseDTO} from "../rate/RateResponseAPI";
+    INITIAL_PRODUCT_DETAIL_API_RESPONSE, ProductDetailAPIResponse
+} from "../product_detail/ProductDetailAPIResponse";
+import {INITIAL_RATE_API_RESPONSE, RateAPIResponse} from "../rate/RateAPIResponse";
 
-export interface OrderItemResponseDTO {
+export interface OrderItemAPIResponse {
 
     id: string;
 
@@ -12,15 +11,15 @@ export interface OrderItemResponseDTO {
 
     price: number;
 
-    productDetail: ProductDetailResponseDTO;
+    productDetail: ProductDetailAPIResponse;
 
     note: string;
 
-    rate: RateResponseDTO;
+    rate: RateAPIResponse;
 
 }
 
-export const INITIAL_ORDER_ITEM_API_RESPONSE: OrderItemResponseDTO = {
+export const INITIAL_ORDER_ITEM_API_RESPONSE: OrderItemAPIResponse = {
 
     id: '',
 
@@ -28,7 +27,7 @@ export const INITIAL_ORDER_ITEM_API_RESPONSE: OrderItemResponseDTO = {
 
     price: 0,
 
-    productDetail: INITIAL_PRODUCT_DETAIL_RESPONSE_DTO,
+    productDetail: INITIAL_PRODUCT_DETAIL_API_RESPONSE,
 
     note: '',
 

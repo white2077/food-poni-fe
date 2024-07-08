@@ -18,7 +18,7 @@ import {NotificationAPIResponse} from "../models/notification/NotificationRespon
 import jwtDecode from "jwt-decode";
 import {accessToken, api, apiWithToken} from "../utils/axios-config";
 import {AxiosError, AxiosResponse} from "axios";
-import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {setCurrentShippingAddress} from "../stores/address.reducer";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
 import {UserResponseDTO} from "../models/user/UserResponseAPI";
@@ -108,7 +108,7 @@ export default function HeaderMain() {
                     Authorization: 'Bearer ' + accessToken,
                 }
             })
-                .then(function (res: AxiosResponse<AddressResponseDTO>): void {
+                .then(function (res: AxiosResponse<AddressAPIResponse>): void {
                     dispatch(setCurrentShippingAddress(res.data));
                 })
                 .catch(function (res: AxiosError<ErrorApiResponse>): void {

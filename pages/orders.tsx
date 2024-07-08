@@ -4,7 +4,7 @@ import React, {useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
 import OrderCard from "../components/order-card";
 import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
-import {OrderResponseDTO} from "../models/order/OrderResposeAPI";
+import {OrderResponseDTO} from "../models/order/OrderAPIResponse";
 import {NextApiRequest, NextApiResponse} from "next";
 import {CookieValueTypes, getCookie} from "cookies-next";
 import {accessToken, apiWithToken} from "../utils/axios-config";

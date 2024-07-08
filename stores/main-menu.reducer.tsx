@@ -13,6 +13,7 @@ const mainMenuSlide = createSlice({
     initialState,
     reducers: {
         setSelectedMainMenu: (state, {payload}: { payload: string }) => {
+
             state.currentMainMenu = payload
         }
     }

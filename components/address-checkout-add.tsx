@@ -4,7 +4,7 @@ import {SearchResult} from "../stores/search-position.reducer";
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {AddressRequestDTO} from "../models/address/AddressRequest";
 import {accessToken, apiWithToken} from "../utils/axios-config";
-import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {AutoComplete, Button, Form, Input, notification} from "antd";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
 import {useDispatch} from "react-redux";
@@ -83,7 +83,7 @@ export const AddressCheckoutAdd = () => {
                     Authorization: 'Bearer ' + accessToken,
                 }
             })
-                .then(function (res: AxiosResponse<AddressResponseDTO>) {
+                .then(function (res: AxiosResponse<AddressAPIResponse>) {
                     setPending(false);
                     dispatch(setCurrentShippingAddress(res.data));
                     router.push('/checkout');

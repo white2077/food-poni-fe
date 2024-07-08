@@ -4,7 +4,7 @@ import axios, {AxiosError, AxiosResponse} from "axios";
 import {AddressRequestDTO} from "../models/address/AddressRequest";
 import {SearchResult} from "../stores/search-position.reducer";
 import {accessToken, apiWithToken} from "../utils/axios-config";
-import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
 import {NextRouter, useRouter} from "next/router";
 import {getCookie} from "cookies-next";
@@ -79,7 +79,7 @@ const AddressDeliveryInformationAdd = () => {
                     Authorization: 'Bearer ' + accessToken,
                 }
             })
-                .then(function (res: AxiosResponse<AddressResponseDTO>) {
+                .then(function (res: AxiosResponse<AddressAPIResponse>) {
                     setPending(false);
                     router.push('/account-information');
                     notification.open({

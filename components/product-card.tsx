@@ -1,16 +1,13 @@
-import {Badge, Card, Divider, notification, Rate, Skeleton, Space} from "antd";
-import React, {useEffect, useState} from "react";
+import {Badge, Card, Divider, Rate, Space} from "antd";
+import React, {useState} from "react";
 import {IProductCard} from "./product-rows";
 import Link from "next/link";
 import {CurrentUser} from "../stores/user.reducer";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
-import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {HistoryOutlined} from "@ant-design/icons";
 import {server} from "../utils/server";
-import axios, {AxiosResponse} from "axios";
-import {api} from "../utils/axios-config";
-import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
 
 export interface ElementDistance {
     distance: {
@@ -38,7 +35,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
 
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
-    const shippingAddress: AddressResponseDTO = useSelector((state: RootState) => state.address.shippingAddress);
+    const shippingAddress: AddressAPIResponse = useSelector((state: RootState) => state.address.shippingAddress);
 
     const selectedAddress = useSelector((state: RootState) => state.searchPosition.searchPosition);
 
@@ -120,7 +117,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                     </div>
                     <div className='flex justify-between items-center'>
                         <span className="mr-2">
-                            <span className="mr-2">{product.rate !== 0 && product.rate.toFixed(1)}</span>
+                            <span className="mr-2">{product.rate}</span>
                             <Rate disabled allowHalf value={product.rate} className='text-sm mr-2'/>
                         </span>
                         <span>{product.rateCount} đánh giá</span>
@@ -129,7 +126,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                         <div className="text-left text-[20px] font-bold">
                             ${product.minPrice}{product.maxPrice === product.minPrice ? "" : " - $" + product.maxPrice}
                         </div>
-                        <div>Đã bán: {product.quantityCount}</div>
+                        <div>Đã bán: {product.sales}</div>
                     </div>
                 </Space>
                 <Divider style={{margin: '12px 0px'}}/>

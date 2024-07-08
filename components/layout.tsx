@@ -13,7 +13,7 @@ interface DefaultLayoutProps {
     children: React.ReactNode
 }
 
-export const SidebarLayout = ({children, sidebarContents}: DefaultLayoutProps) => {
+export const SidebarLayout = ({children, sidebarContents}: SidebarLayoutProps) => {
 
     return (
         <>

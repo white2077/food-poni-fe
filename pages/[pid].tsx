@@ -4,12 +4,12 @@ import React, {useEffect, useState} from "react";
 import {Button, Card, notification, Radio, Rate, Result} from "antd";
 import ProductGallery from "../components/product-gallery";
 import ProductCart from "../components/product-cart";
-import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
-import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailResponseAPI";
+import {ProductResponseDTO} from "../models/product/ProductAPIResponse";
+import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailAPIResponse";
 import {AxiosResponse} from "axios";
 import ProductComment from "../components/product-comment";
-import {RateResponseDTO} from "../models/rate/RateResponseAPI";
-import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {RateResponseDTO} from "../models/rate/RateAPIResponse";
+import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {ParsedUrlQuery} from "querystring";
@@ -107,7 +107,7 @@ const ProductDetails = ({product}: {product: IProduct}) => {
 
     const router: NextRouter = useRouter();
 
-    const currentShippingAddress: AddressResponseDTO = useSelector((state: RootState) => state.address.shippingAddress);
+    const currentShippingAddress: AddressAPIResponse = useSelector((state: RootState) => state.address.shippingAddress);
 
     const [isError, setIsError] = useState<boolean>(false);
 

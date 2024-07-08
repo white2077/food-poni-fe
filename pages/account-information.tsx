@@ -9,7 +9,7 @@ import {useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {NextRouter, useRouter} from "next/router";
 import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
-import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 
 type MenuItem = Required<MenuProps>['items'][number];
 

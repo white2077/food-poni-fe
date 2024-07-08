@@ -2,7 +2,7 @@ import {Badge, Button, Card, Col, Divider, Image, Row, Typography} from "antd";
 import {EnvironmentOutlined, FieldTimeOutlined, InfoCircleOutlined} from "@ant-design/icons";
 import {format} from "date-fns";
 import Link from "next/link";
-import {OrderResponseDTO} from "../models/order/OrderResposeAPI";
+import {OrderResponseDTO} from "../models/order/OrderAPIResponse";
 import React from "react";
 import {server} from "../utils/server";
 import {OrderItemResponseDTO} from "../models/order_item/OrderItemResponseAPI";

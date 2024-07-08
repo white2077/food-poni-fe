@@ -4,7 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import FileUploads from "./file-upload";
 import {RootState} from "../stores";
 import {setShowModalRate} from "../stores/rate.reducer";
-import {RateResponseDTO} from "../models/rate/RateResponseAPI";
+import {RateAPIResponse} from "../models/rate/RateAPIResponse";
 import {AxiosResponse} from "axios";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {getCookie} from "cookies-next";
@@ -18,7 +18,7 @@ const RateRows = ({orderId}: { orderId: string }) => {
 
     const showModalRate: boolean = useSelector((state: RootState) => state.rate.showModalRate);
 
-    const [rates, setRates] = useState<RateResponseDTO[]>([]);
+    const [rates, setRates] = useState<RateAPIResponse[]>([]);
 
     const getRates = (): void => {
         if (refreshToken) {
@@ -27,7 +27,7 @@ const RateRows = ({orderId}: { orderId: string }) => {
                     Authorization: 'Bearer ' + accessToken,
                 }
             })
-                .then(function (res: AxiosResponse<RateResponseDTO[]>) {
+                .then(function (res: AxiosResponse<RateAPIResponse[]>) {
                     setRates(res.data);
                 })
                 .catch(function (res) {

@@ -22,7 +22,7 @@ import React, {useEffect, useState} from "react";
 import {NextRouter, useRouter} from "next/router";
 import OrderItems from "../components/order-items";
 import {RootState} from "../stores";
-import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {OrderRequestDTO, PaymentInfo, ShippingAddress} from "../models/order/OrderRequest";
 import {CurrentUser} from "../stores/user.reducer";
 import {OrderItemRequestDTO} from "../models/order_item/OrderItemRequest";
@@ -41,7 +41,7 @@ export async function getServerSideProps({req, res}: { req: NextApiRequest, res:
     const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req, res});
     if (refreshToken) {
         try {
-            const res: AxiosResponse<Page<AddressResponseDTO[]>> = await apiWithToken(refreshToken).get('/addresses', {
+            const res: AxiosResponse<Page<AddressAPIResponse[]>> = await apiWithToken(refreshToken).get('/addresses', {
                 headers: {
                     Authorization: "Bearer " + accessToken
                 }
@@ -65,7 +65,7 @@ export async function getServerSideProps({req, res}: { req: NextApiRequest, res:
 }
 
 const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {
-    deliveryInformation: Page<AddressResponseDTO[]>
+    deliveryInformation: Page<AddressAPIResponse[]>
 }) => {
 
     const router: NextRouter = useRouter();
@@ -78,7 +78,7 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {
 
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
-    const currentShippingAddress: AddressResponseDTO = useSelector((state: RootState) => state.address.shippingAddress);
+    const currentShippingAddress: AddressAPIResponse = useSelector((state: RootState) => state.address.shippingAddress);
 
     const [pending, setPending] = useState<boolean>(false);
 
@@ -228,7 +228,7 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {
                                                      onChange={(e: RadioChangeEvent) => setShippingAddress(e.target.value)}>
                                             <List
                                                 dataSource={deliveryInformation.content}
-                                                renderItem={(item: AddressResponseDTO, index: number) => (
+                                                renderItem={(item: AddressAPIResponse, index: number) => (
                                                     <Collapse
                                                         className="my-[16px]"
                                                         expandIconPosition={"end"}

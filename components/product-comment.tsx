@@ -1,7 +1,7 @@
 import React from 'react';
 import {LikeOutlined, MessageOutlined, StarOutlined} from '@ant-design/icons';
 import {Avatar, Card, Image, List, Rate, Space} from 'antd';
-import {RateResponseDTO} from "../models/rate/RateResponseAPI";
+import {RateResponseDTO} from "../models/rate/RateAPIResponse";
 import {server} from "../utils/server";
 
 const IconText = ({icon, text}: { icon: React.FC; text: string }) => (

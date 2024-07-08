@@ -13,22 +13,20 @@ import {useDispatch, useSelector} from "react-redux";
 import {setSelectedMainMenu} from "../stores/main-menu.reducer";
 import {RootState} from "../stores";
 
-export default function MenuMain() {
+interface MainMenuProps {
+    filterProducts: (key: string) => void
+}
+
+export default function MenuMain({filterProducts}: MainMenuProps) {
 
     const dispatch = useDispatch();
 
-    const currentMainMenu: string = useSelector((state: RootState) => state.mainMenu.currentMainMenu);
-
-    const onClick: MenuProps['onClick'] = (e) => {
-        dispatch(setSelectedMainMenu(e.key));
-    };
-
     return (
-            <Menu className="block rounded-lg mb-4"
-                  onClick={onClick}
-                  selectedKeys={[currentMainMenu]}
-                  mode='horizontal'
-                  items={items}/>
+        <Menu className="block rounded-lg mb-4"
+              onSelect={({key}: { key: string }) => filterProducts(key)}
+              defaultSelectedKeys={["all"]}
+              mode='horizontal'
+              items={items}/>
     );
 
 };
@@ -47,17 +45,17 @@ const items: MenuProps['items'] = [
     {
         label: 'Khuyến mãi',
         key: 'promotion',
-        icon: <DollarOutlined />,
+        icon: <DollarOutlined/>,
     },
     {
         label: 'Mới nhất',
         key: 'bestnews',
-        icon: <TagOutlined />,
+        icon: <TagOutlined/>,
     },
     {
         label: 'Bán chạy nhất',
         key: 'bestsellers',
-        icon: <CrownOutlined />,
+        icon: <CrownOutlined/>,
     },
     {
         label: 'Đánh giá hàng đầu',

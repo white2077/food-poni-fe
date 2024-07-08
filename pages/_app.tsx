@@ -6,7 +6,6 @@ import {ConfigProvider} from "antd";
 import nProgress from "nprogress";
 import Router from "next/router";
 import "nprogress/nprogress.css";
-import {px2remTransformer, StyleProvider} from '@ant-design/cssinjs';
 import {useEffect, useState} from "react";
 
 nProgress.configure({showSpinner: false});

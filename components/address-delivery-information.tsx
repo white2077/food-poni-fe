@@ -5,7 +5,7 @@ import {NextRouter, useRouter} from "next/router";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {AddressIdDTO} from "../models/address/AddressRequest";
-import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {CurrentUser, updateAddressId} from "../stores/user.reducer";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {AxiosError, AxiosResponse} from "axios";
@@ -27,7 +27,7 @@ export const AddressDeliveryInformation = () => {
 
     const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
 
-    const [deliveryInformation, setDeliveryInformation] = useState<AddressResponseDTO[]>([]);
+    const [deliveryInformation, setDeliveryInformation] = useState<AddressAPIResponse[]>([]);
 
     useEffect(() => {
         getDeliveryInformation();
@@ -62,7 +62,7 @@ export const AddressDeliveryInformation = () => {
                     Authorization: 'Bearer ' + accessToken,
                 }
             })
-                .then(function (res: AxiosResponse<AddressResponseDTO>): void {
+                .then(function (res: AxiosResponse<AddressAPIResponse>): void {
                     dispatch(setCurrentShippingAddress(res.data));
                 })
                 .catch(function (res: AxiosError<ErrorApiResponse>): void {
@@ -134,7 +134,7 @@ export const AddressDeliveryInformation = () => {
                 <List
                     grid={{gutter: 16, column: 1}}
                     dataSource={deliveryInformation}
-                    renderItem={(item: AddressResponseDTO) => (
+                    renderItem={(item: AddressAPIResponse) => (
                         <List.Item>
                             <Card>
                                 <div className="flex justify-between">

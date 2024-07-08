@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {FileUploadsResponseDTO} from "../models/file/FileUploadsResponseAPI";
+import {FileUploadsResponseDTO} from "../models/file/FileUploadAPIResponse";
 
 export interface IFileUploadsState {
     filesUpload: FileUploadsResponseDTO[];
