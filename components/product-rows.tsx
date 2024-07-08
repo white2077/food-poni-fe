@@ -10,8 +10,11 @@ import {getProductsPage} from "../queries/product.query";
 import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
 import {ProductDetailAPIResponse} from "../models/product_detail/ProductDetailAPIResponse";
 import {OrderItemAPIResponse} from "../models/order_item/OrderItemResponseAPI";
+import ProductRowLoading from "./product-row-skeleton";
+import {log} from "util";
 
 export interface IProductCard {
+    index: number,
     id: string;
     name: string;
     thumbnail: string;
@@ -36,8 +39,9 @@ const ProductRows = () => {
         setLoading(true);
         getProductsPage({status: true})
             .then((res: Page<ProductAPIResponse[]>) => {
-                let productCards: IProductCard[] = res.content.map((product: ProductAPIResponse) => {
+                let productCards: IProductCard[] = res.content.map((product: ProductAPIResponse, index: number) => {
                     return {
+                        index,
                         id: product.id,
                         name: product.name,
                         thumbnail: product.thumbnail,
@@ -68,37 +72,31 @@ const ProductRows = () => {
     }, []);
 
     const filterProducts = (key: string) => {
-        if (key && key != "all") {
-            switch (key) {
-                case "nearby":
+        const copy = [...productCards];
 
-                    break;
-                case "promotion":
+        switch (key) {
+            case "nearby":
 
-                    break;
-                case "bestnews":
-                    productCards
-                        .sort((a: IProductCard, b: IProductCard) =>
-                            new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime());
-                    break;
-                case "bestsellers":
-                    let copy = [...productCards];
-                    copy
-                        .sort((a: IProductCard, b: IProductCard) =>
-                            b.sales - a.sales);
-                    setProductCards(copy);
-                    break;
-                case "toprates":
-                    setProductCards(productCards
-                        .sort((a: IProductCard, b: IProductCard) =>
-                            b.rate - a.rate));
-                    break;
-                default:
-                    break;
-            }
+                break;
+            case "promotion":
 
+                break;
+            case "bestnews":
+                copy.sort((a: IProductCard, b: IProductCard) =>
+                    new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime());
+                break;
+            case "bestsellers":
+                copy.sort((a: IProductCard, b: IProductCard) => b.sales - a.sales);
+                break;
+            case "toprates":
+                copy.sort((a: IProductCard, b: IProductCard) => b.rate - a.rate);
+                break;
+            default:
+                copy.sort((a: IProductCard, b: IProductCard) => a.index - b.index);
+                break;
         }
-    }
+        setProductCards(copy);
+    };
 
     return (
         <div className="p-4 bg-white rounded-lg">
@@ -106,20 +104,7 @@ const ProductRows = () => {
             <MenuMain filterProducts={filterProducts}/>
             <div
                 className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-                {isLoading ? (
-                    <>
-                        <Card loading={true}></Card>
-                        <Card loading={true}></Card>
-                        <Card loading={true}></Card>
-                        <Card loading={true}></Card>
-                        <Card loading={true}></Card>
-                        <Card loading={true}></Card>
-                        <Card loading={true}></Card>
-                        <Card loading={true}></Card>
-                        <Card loading={true}></Card>
-                        <Card loading={true}></Card>
-                    </>
-                ) : (
+                {isLoading ? <ProductRowLoading count={8}/> : (
                     <>
                         {productCards.map((productCard: IProductCard) => (
                             <ProductCard key={productCard.id} product={productCard}/>

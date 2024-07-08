@@ -115,12 +115,9 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                     <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>
                         {product.name}
                     </div>
-                    <div className='flex justify-between items-center'>
-                        <span className="mr-2">
-                            <span className="mr-2">{product.rate}</span>
-                            <Rate disabled allowHalf value={product.rate} className='text-sm mr-2'/>
-                        </span>
-                        <span>{product.rateCount} đánh giá</span>
+                    <div>
+                        <Rate disabled allowHalf value={product.rate} className='text-sm mr-2'/>
+                        ({product.rate}/{product.rateCount})
                     </div>
                     <div className="flex justify-between items-center">
                         <div className="text-left text-[20px] font-bold">
