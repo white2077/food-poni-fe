@@ -34,7 +34,7 @@ const ProductCategory = ({categoryList}: { categoryList: CategoryAPIResponse[] }
         items.push({
             key: category.id ?? "",
             label: <span className="flex items-center"><span dangerouslySetInnerHTML={{__html: tab}}></span>
-                <img src={server + category.image} className="w-4 h-4 mr-2 rounded-full"></img> {category.categoryName}</span>
+                <img src={server + category.image} className="w-4 h-4 mr-2"></img> {category.categoryName}</span>
         });
 
         if (category.categories?.length)
