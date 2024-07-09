@@ -10,6 +10,6 @@ export const getProductsPage = ({page, pageSize, status, categoryId}: {
     status?: boolean,
     categoryId?: string
 }): Promise<Page<ProductAPIResponse[]>> => {
-    return api.get(`/products?page=${page ?? ''}&${pageSize ?? ''}&status=${status ?? ''}&status=${categoryId ?? ''}`)
+    return api.get(`/products?page=${page ?? ''}&pageSize=${pageSize ?? ''}&status=${status ?? ''}&categoryId=${categoryId ?? ''}`)
         .then((res: AxiosResponse<Page<ProductAPIResponse[]>>) => res.data);
 }
