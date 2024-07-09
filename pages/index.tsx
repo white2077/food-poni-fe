@@ -8,6 +8,7 @@ import {api} from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
 import {CategoryAPIResponse} from "../models/category/CategoryAPIResponse";
+import {server} from "../utils/server";
 
 export async function getServerSideProps() {
     try {
@@ -27,7 +28,8 @@ const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<CategoryAPIResp
     const sidebarContents: JSX.Element[] = [
         <ProductCategory key={0} categoryList={ePage.content}/>,
         <img key={1} className='rounded-md w-full'
-             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-GyDWnLZ77IVqwCBJYj3KSEafcAMiGAfJlj1kqG0U_Q&s"/>
+             src={server + '/upload/vertical-banner.png'}/>
+        // https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-GyDWnLZ77IVqwCBJYj3KSEafcAMiGAfJlj1kqG0U_Q&s
     ]
 
     return (
