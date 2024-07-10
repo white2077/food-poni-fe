@@ -1,16 +1,18 @@
-import {useState} from 'react';
-import {AutoComplete, Button, Form, Input, notification} from 'antd';
+import {NextRouter, useRouter} from "next/router";
+import {useState} from "react";
+import {SearchResult} from "../stores/search-position.reducer";
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {AddressRequestDTO} from "../models/address/AddressRequest";
-import {SearchResult} from "../stores/search-position.reducer";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
+import {AutoComplete, Button, Form, Input, notification} from "antd";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
-import {NextRouter, useRouter} from "next/router";
+import {useDispatch} from "react-redux";
+import {setCurrentShippingAddress} from "../stores/address.reducer";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
 
-const AddressDeliveryInformationAdd = () => {
+export const AddressCheckoutUpdate = ({address}: {address: AddressAPIResponse}) => {
 
     const router: NextRouter = useRouter();
 
@@ -52,12 +54,16 @@ const AddressDeliveryInformationAdd = () => {
     };
 
     const onSearch = (value: string): void => {
-        delayedSearch(value);
+        if (value === "") {
+            setSelectedAddress(null);
+        } else {
+            delayedSearch(value);
+        }
     };
 
     const onSelect = (value: string, option: { data: SearchResult }): void => {
-        // console.log('onSelect', value);
-        // console.log('Selected Option:', option.data);
+        console.log('onSelect', value);
+        console.log('Selected Option:', option.data);
 
         setSelectedAddress(option.data);
     };
@@ -68,24 +74,24 @@ const AddressDeliveryInformationAdd = () => {
         const deliveryInfo: AddressRequestDTO = {
             fullName: values.fullname,
             phoneNumber: values.phoneNumber,
-            address: selectedAddress?.display_name || "",
-            lon: selectedAddress?.lon || 0,
-            lat: selectedAddress?.lat || 0
+            address: selectedAddress ? selectedAddress?.display_name || "" : address.address ?? "",
+            lon: selectedAddress ? parseFloat(selectedAddress?.lon.toString()) || 0 : address.lon ?? 0,
+            lat: selectedAddress ? parseFloat(selectedAddress?.lat.toString()) || 0 : address.lat ?? 0
         };
 
         if (refreshToken) {
-            apiWithToken(refreshToken).post("/addresses", deliveryInfo, {
+            apiWithToken(refreshToken).patch("/addresses/" + address.id, deliveryInfo, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }
             })
                 .then(function (res: AxiosResponse<AddressAPIResponse>) {
                     setPending(false);
-                    router.push('/account-information');
+                    router.push('/checkout');
                     notification.open({
                         type: 'success',
                         message: 'Địa chỉ',
-                        description: "Thêm địa chỉ thành công!",
+                        description: "Sửa địa chỉ thành công!",
                     });
                 })
                 .catch(function (res: AxiosError<ErrorApiResponse>) {
@@ -104,6 +110,11 @@ const AddressDeliveryInformationAdd = () => {
             name="normal_add_address"
             className="add-address-form my-[16px]"
             onFinish={onFinish}
+            initialValues={{
+                fullname: address.fullName,
+                phoneNumber: address.phoneNumber,
+                yourAddress: address.address,
+            }}
         >
             <Form.Item
                 name="fullname"
@@ -134,12 +145,12 @@ const AddressDeliveryInformationAdd = () => {
             </Form.Item>
             <Form.Item>
                 <Button type="primary" htmlType="submit" className="add-address-form-button" loading={pending} block>
-                    Thêm địa chỉ
+                    Sửa địa chỉ
                 </Button>
             </Form.Item>
         </Form>
     );
 
-};
+}
 
-export default AddressDeliveryInformationAdd;
+export default AddressCheckoutUpdate;

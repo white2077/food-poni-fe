@@ -1,19 +1,20 @@
-import {Card, Result, Skeleton, Spin} from 'antd';
+import {Card, Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
 import ProductCard from "./product-card";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {RootState} from "../stores";
-import {setProductList} from "../stores/product.reducer";
-import {AxiosResponse} from "axios";
 import {Page} from "../models/Page";
-import {ProductResponseDTO} from "../models/product/ProductResponseAPI";
-import {ProductDetailResponseDTO} from "../models/product_detail/ProductDetailResponseAPI";
 import {CurrentUser} from "../stores/user.reducer";
-import {SmileOutlined} from "@ant-design/icons";
-import {accessToken, api} from "../utils/axios-config";
 import MenuMain from "./menu-main";
+import {getProductsPage} from "../queries/product.query";
+import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
+import {ProductDetailAPIResponse} from "../models/product_detail/ProductDetailAPIResponse";
+import {OrderItemAPIResponse} from "../models/order_item/OrderItemResponseAPI";
+import ProductRowLoading from "./product-row-skeleton";
+import {log} from "util";
 
 export interface IProductCard {
+    index: number,
     id: string;
     name: string;
     thumbnail: string;
@@ -22,102 +23,106 @@ export interface IProductCard {
     rate: number;
     retailer: string;
     rateCount: number;
+    sales: number;
+    createdDate: Date;
 }
 
-const ProductRows = () => {
+interface ProductRowProps {
+    title: string
+    hasMenu: boolean,
+}
 
-    const dispatch = useDispatch();
+const ProductRows = ({title, hasMenu}: ProductRowProps) => {
 
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
-    const {products, isLoading} = useSelector((state: RootState) => state.productList);
+    const [productCards, setProductCards] = useState<IProductCard[]>([]);
 
-    const currentProductCategory: string = useSelector((state: RootState) => state.productCategory.currentProductCategory);
-
-    const [pending, setPending] = useState<boolean>(false);
+    const [isLoading, setLoading] = useState<boolean>(false);
 
     useEffect((): void => {
-        getProducts();
-    }, [currentProductCategory]);
-
-    const getProducts = (): void => {
-        setPending(true);
-        let url: string = "/products?status=true";
-        if (currentProductCategory && currentProductCategory !== "all") {
-            url += '&categoryId=' + currentProductCategory;
-        }
-
-        api.get(url)
-            .then((res: AxiosResponse<Page<ProductResponseDTO[]>>): void => {
-                const productList: IProductCard[] = [];
-                (res.data.content as ProductResponseDTO[]).map((product: ProductResponseDTO): void => {
-                    if (accessToken && currentUser.role === "RETAILER" && currentUser.id == product.user?.id) {
-                        return;
-                    }
-
-                    const productDetails: ProductDetailResponseDTO[] = product.productDetails ?? [];
-                    const prices: number[] = productDetails
-                        .map((productDetail: ProductDetailResponseDTO) => productDetail.price)
-                        .filter((price: number | undefined): price is number => price !== undefined);
-                    const minPrice: number = prices.length > 0 ? Math.min(...prices) : 0;
-                    const maxPrice: number = prices.length > 0 ? Math.max(...prices) : 0;
-
-                    const productCard: IProductCard = {
-                        id: product.id ?? "",
-                        name: product.name ?? "",
-                        thumbnail: product.thumbnail ?? "",
-                        minPrice: minPrice,
-                        maxPrice: maxPrice,
-                        rate: product.rate ?? 0,
-                        retailer: product.user?.username ?? "",
-                        rateCount: product.rateCount ?? 0
-                    };
-
-                    productList.push(productCard);
-                });
-
-                dispatch(setProductList({products: productList, isLoading: false}));
-                setPending(false);
-            })
-            .catch(err => {
-                setPending(false);
-                console.log(err);
+        setLoading(true);
+        getProductsPage({status: true})
+            .then((res: Page<ProductAPIResponse[]>) => {
+                let productCards: IProductCard[] = res.content.map((product: ProductAPIResponse, index: number) => {
+                    return {
+                        index,
+                        id: product.id,
+                        name: product.name,
+                        thumbnail: product.thumbnail,
+                        minPrice: Math.min(...product.productDetails.map((detail: ProductDetailAPIResponse) => detail.price)),
+                        maxPrice: Math.max(...product.productDetails.map((detail: ProductDetailAPIResponse) => detail.price)),
+                        rate: product.productDetails
+                            .map((detail: ProductDetailAPIResponse) => {
+                                let countRate: number = detail.orderItems.filter((orderItem: OrderItemAPIResponse) => orderItem.rate).length;
+                                return detail.orderItems
+                                    .map((orderItem: OrderItemAPIResponse) => orderItem.rate ? orderItem.rate.rate / countRate : 0)
+                                    .reduce((a: number, b: number) => a + b, 0);
+                            })
+                            .reduce((a: number, b: number) => a + b, 0) / product.productDetails.length,
+                        retailer: product.user.username,
+                        rateCount: product.productDetails
+                            .map((detail: ProductDetailAPIResponse) => detail.orderItems
+                                .filter((orderItem: OrderItemAPIResponse) => orderItem.rate).length)
+                            .reduce((a: number, b: number) => a + b, 0),
+                        sales: product.productDetails
+                            .map((detail: ProductDetailAPIResponse) => detail.orderItems.length)
+                            .reduce((a: number, b: number) => a + b, 0),
+                        createdDate: product.createdDate,
+                    } as IProductCard;
+                })
+                setProductCards(productCards);
+                setLoading(false);
             });
+    }, []);
+
+    const filterProducts = (key: string) => {
+        const copy = [...productCards];
+
+        switch (key) {
+            case "nearby":
+
+                break;
+            case "promotion":
+
+                break;
+            case "bestnews":
+                copy.sort((a: IProductCard, b: IProductCard) =>
+                    new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime());
+                break;
+            case "bestsellers":
+                copy.sort((a: IProductCard, b: IProductCard) => b.sales - a.sales);
+                break;
+            case "toprates":
+                copy.sort((a: IProductCard, b: IProductCard) => b.rate - a.rate);
+                break;
+            default:
+                copy.sort((a: IProductCard, b: IProductCard) => a.index - b.index);
+                break;
+        }
+        setProductCards(copy);
     };
 
     return (
-        pending ? (
-            <Spin style={{
-                width: '100%',
-                height: '100vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-            }} size="large" />
-        ) : (
-            <>
-                {products.length ?
+        <div className="p-4 bg-white rounded-lg">
+            <div>{title}</div>
+            {hasMenu && < MenuMain filterProducts={filterProducts}/>}
+            <div
+                className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4'>
+                {isLoading ? <ProductRowLoading count={8}/>
+                    :
                     (
-                        <div className="p-4 bg-white rounded-lg">
-                            <div>Top Deal - Siêu rẻ</div>
-                            <Skeleton loading={isLoading} active/>
-                            <MenuMain/>
-                            <div
-                                className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
-                                {products.map((product: IProductCard) => (
-                                    <ProductCard key={product.id} product={product}/>
-                                ))}
-                            </div>
-                        </div>
-                    ) :
-                    <Result
-                        icon={<SmileOutlined/>}
-                        title="Oops! No product found"
-                    />
+                        <>
+                            {productCards.map((productCard: IProductCard) => (
+                                <ProductCard key={productCard.id} product={productCard}/>
+                            ))}
+                        </>
+                    )
                 }
-            </>
-        )
-    );
+            </div>
+        </div>
+    )
+        ;
 
 };
 

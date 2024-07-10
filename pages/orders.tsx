@@ -4,11 +4,11 @@ import React, {useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
 import OrderCard from "../components/order-card";
 import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
-import {OrderResponseDTO} from "../models/order/OrderResposeAPI";
 import {NextApiRequest, NextApiResponse} from "next";
 import {CookieValueTypes, getCookie} from "cookies-next";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {REFRESH_TOKEN} from "../utils/server";
+import {OrderAPIResponse} from "../models/order/OrderAPIResponse";
 
 enum OrderStatus {
     PENDING,
@@ -30,7 +30,7 @@ export async function getServerSideProps({req, res}: { req: NextApiRequest, res:
     const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req});
     if (refreshToken) {
         try {
-            const res: AxiosResponse<Page<OrderResponseDTO[]>> = await apiWithToken(refreshToken).get('/customer/orders', {
+            const res: AxiosResponse<Page<OrderAPIResponse[]>> = await apiWithToken(refreshToken).get('/customer/orders', {
                 headers: {
                     Authorization: "Bearer " + accessToken
                 }
@@ -54,14 +54,14 @@ export async function getServerSideProps({req, res}: { req: NextApiRequest, res:
     }
 }
 
-const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderResponseDTO[]> }) => {
+const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIResponse[]> }) => {
 
-    const [orders, setOrders] = useState<OrderResponseDTO[]>([]);
+    const [orders, setOrders] = useState<OrderAPIResponse[]>([]);
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        const sortedOrders = ePage.content.map((order: OrderResponseDTO) => {
+        const sortedOrders = ePage.content.map((order: OrderAPIResponse) => {
             const createdDate = new Date(order.createdDate ?? ""); // Chuyển đổi Timestamp thành đối tượng Date
             return { ...order, createdDate };
         });
@@ -108,7 +108,7 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderResponse
                     />
                 </div>
                 <List dataSource={orders} loading={isLoading}
-                      renderItem={(order: OrderResponseDTO) => (
+                      renderItem={(order: OrderAPIResponse) => (
                           <List.Item>
                               <OrderCard order={order}></OrderCard>
                           </List.Item>

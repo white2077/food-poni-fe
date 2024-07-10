@@ -1,19 +1,19 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {AddressAPIResponse, INITIAL_ADDRESS_API_RESPONSE} from "../models/address/AddressAPIResponse";
 
 export interface IShippingAddressState {
-    shippingAddress: AddressResponseDTO;
+    shippingAddress: AddressAPIResponse;
 }
 
 const initialState: IShippingAddressState = {
-    shippingAddress: {}
+    shippingAddress: INITIAL_ADDRESS_API_RESPONSE
 }
 
 const addressSlide = createSlice({
     name: 'address',
     initialState,
     reducers: {
-        setCurrentShippingAddress: (state, {payload}: { payload: AddressResponseDTO }) => ({
+        setCurrentShippingAddress: (state, {payload}: { payload: AddressAPIResponse }) => ({
             ...state,
             shippingAddress: payload
         })

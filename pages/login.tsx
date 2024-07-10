@@ -7,7 +7,7 @@ import {REFRESH_TOKEN, REMEMBER_ME, server} from "../utils/server";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch} from "react-redux";
 import {AuthenticationRequest} from "../models/auth/AuthenticationRequest";
-import {AuthenticationResponse} from "../models/auth/AuthenticationResponse";
+import {AuthAPIResponse} from "../models/auth/AuthAPIResponse";
 import {AxiosError, AxiosResponse} from "axios";
 import jwtDecode from "jwt-decode";
 import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
@@ -75,7 +75,7 @@ const Login: NextPage = () => {
             : {username: values.username, email: null, password: values.password}
 
         api.post("/auth/login", user)
-            .then(function (res: AxiosResponse<AuthenticationResponse>): void {
+            .then(function (res: AxiosResponse<AuthAPIResponse>): void {
                 setPending(false);
 
                 const refreshToken: string = res.data.refreshToken ?? "";
@@ -146,7 +146,7 @@ const Login: NextPage = () => {
 
     return (
         <div className='bg-[url("/login-bg.png")] bg-cover bg-center bg-no-repeat h-screen'>
-            <Card style={{width: "500px", margin: "auto"}} loading={isLoading}>
+            <Card className="w-[500px] m-auto" loading={isLoading}>
                 <Space direction="vertical" size="middle" style={{display: 'flex'}}>
                     <div>
                         <Avatar size={64} icon={<UserOutlined/>}/>

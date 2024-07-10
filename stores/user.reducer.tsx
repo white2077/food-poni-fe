@@ -6,6 +6,8 @@ export interface CurrentUser {
     role?: string;
     avatar?: string;
     addressId?: string;
+    username?: string;
+    email?: string;
 }
 
 export interface ICurrentUserState {

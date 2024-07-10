@@ -6,11 +6,10 @@ import {AxiosResponse} from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import RateAdd from "../../components/rate-add";
 import {MessageOutlined} from "@ant-design/icons";
-import {INITIAL_USER_API_RESPONSE, UserResponseDTO} from "../../models/user/UserResponseAPI";
+import {INITIAL_USER_API_RESPONSE, UserAPIResponse} from "../../models/user/UserResponseAPI";
 import {paymentInfo, PaymentInfo, RateDTO, shippingAddress, ShippingAddress} from "../../models/order/OrderRequest";
 import {RootState} from "../../stores";
 import {setSelectedOrderItemRate, setShowModalAddRate, setShowModalRate} from "../../stores/rate.reducer";
-import {OrderResponseDTO} from "../../models/order/OrderResposeAPI";
 import RateRows from "../../components/rate-rows";
 import {addItem, ICart, ICartItem} from "../../stores/cart.reducer";
 import {ParsedUrlQuery} from "querystring";
@@ -19,6 +18,7 @@ import type {NextApiRequest, NextApiResponse} from "next";
 import {CookieValueTypes, getCookie} from "cookies-next";
 import {accessToken, apiWithToken} from "../../utils/axios-config";
 import {REFRESH_TOKEN, server} from "../../utils/server";
+import {OrderAPIResponse} from "../../models/order/OrderAPIResponse";
 
 const {Text} = Typography;
 
@@ -26,7 +26,7 @@ export interface IOrder {
     id: string;
     totalAmount: number;
     status: string;
-    user: UserResponseDTO;
+    user: UserAPIResponse;
     orderItems: IOrderItem[];
     shippingAddress: ShippingAddress;
     paymentMethod: PaymentInfo;
@@ -64,12 +64,12 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery, req:
     const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req: context.req, res: context.res});
     if (refreshToken) {
         try {
-            const res: AxiosResponse<OrderResponseDTO> = await apiWithToken(refreshToken).get('/customer/orders/' + oid, {
+            const res: AxiosResponse<OrderAPIResponse> = await apiWithToken(refreshToken).get('/customer/orders/' + oid, {
                 headers: {
                     Authorization: "Bearer " + accessToken
                 }
             });
-            const order: OrderResponseDTO = res.data;
+            const order: OrderAPIResponse = res.data;
 
             const orderMapped: IOrder = {
                 id: order.id ?? "",

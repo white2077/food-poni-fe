@@ -4,7 +4,7 @@ import {SearchResult} from "../stores/search-position.reducer";
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {AddressRequestDTO} from "../models/address/AddressRequest";
 import {accessToken, apiWithToken} from "../utils/axios-config";
-import {AddressResponseDTO} from "../models/address/AddressResponseAPI";
+import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {AutoComplete, Button, Form, Input, notification} from "antd";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
 import {useDispatch} from "react-redux";
@@ -83,21 +83,21 @@ export const AddressCheckoutAdd = () => {
                     Authorization: 'Bearer ' + accessToken,
                 }
             })
-                .then(function (res: AxiosResponse<AddressResponseDTO>) {
+                .then(function (res: AxiosResponse<AddressAPIResponse>) {
                     setPending(false);
                     dispatch(setCurrentShippingAddress(res.data));
                     router.push('/checkout');
                     notification.open({
                         type: 'success',
-                        message: 'Add address message',
-                        description: "Add new address successfully!",
+                        message: 'Địa chỉ',
+                        description: "Thêm địa chỉ thành công!",
                     });
                 })
                 .catch(function (res: AxiosError<ErrorApiResponse>) {
                     setPending(false);
                     notification.open({
                         type: 'error',
-                        message: 'Add address message',
+                        message: 'Địa chỉ',
                         description: res.message,
                     });
                 });
@@ -107,23 +107,22 @@ export const AddressCheckoutAdd = () => {
     return (
         <Form
             name="normal_add_address"
-            className="add-address-form"
+            className="add-address-form my-[16px]"
             onFinish={onFinish}
-            style={{margin: '16px 0'}}
         >
             <Form.Item
                 name="fullname"
-                rules={[{required: true, message: 'Please input your fullname!'}]}>
-                <Input placeholder="Fullname"/>
+                rules={[{required: true, message: 'Vui lòng nhập họ tên!'}]}>
+                <Input placeholder="Họ tên"/>
             </Form.Item>
             <Form.Item
                 name="phoneNumber"
-                rules={[{required: true, message: 'Please input your phone number!'}]}>
-                <Input placeholder="Phone number"/>
+                rules={[{required: true, message: 'Vui lòng nhập số điện thoại!'}]}>
+                <Input placeholder="Số điện thoại"/>
             </Form.Item>
             <Form.Item
                 name="yourAddress"
-                rules={[{required: true, message: 'Please choose your address!'}]}>
+                rules={[{required: true, message: 'Vui lòng chọn địa chỉ!'}]}>
                 <AutoComplete
                     options={dataSource.map((result: SearchResult, index: number) => ({
                         value: result.display_name,
@@ -133,14 +132,14 @@ export const AddressCheckoutAdd = () => {
                     }))}
                     onSelect={onSelect}
                     onSearch={onSearch}
-                    placeholder="input search text"
+                    placeholder="Tìm kiếm địa chỉ tại đây"
                     style={{width: '100%'}}>
                     <Input.Search enterButton/>
                 </AutoComplete>
             </Form.Item>
             <Form.Item>
                 <Button type="primary" htmlType="submit" className="add-address-form-button" loading={pending} block>
-                    Add address
+                    Thêm địa chỉ
                 </Button>
             </Form.Item>
         </Form>

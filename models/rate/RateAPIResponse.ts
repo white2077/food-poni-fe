@@ -1,4 +1,4 @@
-export interface RateResponseDTO {
+export interface RateAPIResponse {
 
     rate: number;
 
@@ -16,7 +16,7 @@ export interface RateResponseDTO {
 
 }
 
-export const INITIAL_RATE_API_RESPONSE: RateResponseDTO = {
+export const INITIAL_RATE_API_RESPONSE: RateAPIResponse = {
 
     rate: 0,
 

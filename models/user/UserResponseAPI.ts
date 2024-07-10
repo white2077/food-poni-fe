@@ -1,6 +1,6 @@
-import {AddressResponseDTO, INITIAL_ADDRESS_API_RESPONSE} from "../address/AddressResponseAPI";
+import {AddressAPIResponse, INITIAL_ADDRESS_API_RESPONSE} from "../address/AddressAPIResponse";
 
-export interface UserResponseDTO {
+export interface UserAPIResponse {
 
     id: string;
 
@@ -20,11 +20,11 @@ export interface UserResponseDTO {
 
     status: boolean;
 
-    address: AddressResponseDTO;
+    address: AddressAPIResponse;
 
 }
 
-export const INITIAL_USER_API_RESPONSE: UserResponseDTO = {
+export const INITIAL_USER_API_RESPONSE: UserAPIResponse = {
 
     id: '',
 

@@ -1,54 +1,28 @@
-import React, {useState} from 'react';
-import {AppstoreOutlined, EnvironmentOutlined, HomeOutlined, StarOutlined} from '@ant-design/icons';
-import type {MenuProps} from 'antd';
-import {Menu} from 'antd';
+import React, { useState } from 'react';
+import { Button, Drawer, theme } from 'antd';
+import {MenuOutlined} from "@ant-design/icons";
 
-const MenuMobile = () => {
+export default function MenuMobile() {
+    const [open, setOpen] = useState(false);
 
-    const [current, setCurrent] = useState<string>('mail');
+    const showDrawer = () => {
+        setOpen(true);
+    };
 
-    const onClick: MenuProps['onClick'] = (e): void => {
-        console.log('click ', e);
-        setCurrent(e.key);
+    const onClose = () => {
+        setOpen(false);
     };
 
     return (
-        <Menu style={{borderRadius: '8px'}} onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
+        <div className="md:hidden">
+            <Button type="link" onClick={showDrawer}>
+                <MenuOutlined className="text-lg text-gray-700"/>
+            </Button>
+            <Drawer className="transition-transform" title="Basic Drawer" onClose={onClose} open={open} placement="left">
+                <p>Some contents...</p>
+                <p>Some contents...</p>
+                <p>Some contents...</p>
+            </Drawer>
+        </div>
     );
-
 };
-
-const items: MenuProps['items'] = [
-    {
-        label: 'Nearby',
-        key: 'nearby',
-        icon: <EnvironmentOutlined />,
-    },
-    {
-        label: 'Promotion',
-        key: 'promotion',
-        icon: <EnvironmentOutlined />,
-    },
-    {
-        label: 'Newcomers',
-        key: 'newcomers',
-        icon: <HomeOutlined />,
-    },
-    {
-        label: 'Best Sellers',
-        key: 'bestsellers',
-        icon: <EnvironmentOutlined />,
-    },
-    {
-        label: 'Top Rates',
-        key: 'toprates',
-        icon: <StarOutlined />,
-    },
-    {
-        label: 'All',
-        key: 'all',
-        icon: <AppstoreOutlined />,
-    }
-];
-
-export default MenuMobile;

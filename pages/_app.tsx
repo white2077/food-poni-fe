@@ -6,7 +6,6 @@ import {ConfigProvider} from "antd";
 import nProgress from "nprogress";
 import Router from "next/router";
 import "nprogress/nprogress.css";
-import {px2remTransformer, StyleProvider} from '@ant-design/cssinjs';
 import {useEffect, useState} from "react";
 
 nProgress.configure({showSpinner: false});
@@ -30,6 +29,11 @@ function MyApp({Component, pageProps}: AppProps) {
                 hashed: true,
                 token: {
                     colorPrimary: '#F36F24',
+                    borderRadius: '0.5rem',
+                    screenSM: 640,
+                    screenMD: 768,
+                    screenLG: 1024,
+                    screenXL: 1280,
                 },
             }}>
                 <style

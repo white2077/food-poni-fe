@@ -2,14 +2,14 @@ import {Badge, Button, Card, Col, Divider, Image, Row, Typography} from "antd";
 import {EnvironmentOutlined, FieldTimeOutlined, InfoCircleOutlined} from "@ant-design/icons";
 import {format} from "date-fns";
 import Link from "next/link";
-import {OrderResponseDTO} from "../models/order/OrderResposeAPI";
 import React from "react";
 import {server} from "../utils/server";
-import {OrderItemResponseDTO} from "../models/order_item/OrderItemResponseAPI";
+import {OrderAPIResponse} from "../models/order/OrderAPIResponse";
+import {OrderItemAPIResponse} from "../models/order_item/OrderItemResponseAPI";
 
 const {Text} = Typography;
 
-const OrderCard = ({order}: { order: OrderResponseDTO }) => {
+const OrderCard = ({order}: { order: OrderAPIResponse }) => {
     return (
         <div className="w-full">
             <Badge.Ribbon text={order.status} color="red">
@@ -19,13 +19,12 @@ const OrderCard = ({order}: { order: OrderResponseDTO }) => {
                         <div>{order?.shippingAddress?.phoneNumber}</div>
                     </div>
                     <Row gutter={[16, 16]}>
-                        {order?.orderItems?.map((item: OrderItemResponseDTO) => (
+                        {order?.orderItems?.map((item: OrderItemAPIResponse) => (
                             <Col span={24} key={item.id}>
                                 <Card className="overflow-hidden">
                                     {Object.keys(item.rate ?? {}).length !== 0 && (
-                                        <div style={{position: 'absolute', top: 5, right: 5}}>
-                                            <Text type="secondary" style={{color: 'red'}}>Đã đánh
-                                                giá</Text>
+                                        <div className="absolute top-[5px] right-[5px]">
+                                            <Text type="secondary" className="!text-red-600">Đã đánh giá</Text>
                                         </div>
                                     )}
                                     <Row gutter={[16, 16]}>
@@ -54,7 +53,7 @@ const OrderCard = ({order}: { order: OrderResponseDTO }) => {
                         <span>{format(new Date(order.createdDate ?? ""), "yyyy-MM-dd HH:mm:ss")}</span>
                     </div>
                     <div className="flex justify-between mt-4 text-xl font-bold">
-                        <div>Total amount:</div>
+                        <div>Tổng tiền:</div>
                         <div>${order.totalAmount} </div>
                     </div>
                     <Divider/>

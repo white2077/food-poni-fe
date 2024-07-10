@@ -1,6 +1,6 @@
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {server} from "./server";
-import {AuthenticationResponse} from "../models/auth/AuthenticationResponse";
+import {AuthAPIResponse} from "../models/auth/AuthAPIResponse";
 
 export let accessToken: string | null;
 
@@ -17,9 +17,8 @@ export const apiWithToken = (refreshToken: string) => {
         return response;
     }, (error: AxiosError) => {
         if (error.response && error.response.status === 401) {
-
             return api.post("/auth/refresh-token", {refreshToken})
-                .then((res: AxiosResponse<AuthenticationResponse>) => {
+                .then((res: AxiosResponse<AuthAPIResponse>) => {
                     accessToken = res.data.accessToken;
                     if (error.config) {
                         error.config.headers.Authorization = `Bearer ${accessToken}`;

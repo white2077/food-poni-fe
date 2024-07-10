@@ -1,21 +1,21 @@
 import {useDispatch} from "react-redux";
-import {RateResponseDTO} from "../models/rate/RateResponseAPI";
 import React, {useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
 import {Col, Divider, Image, notification, Rate, Row} from "antd";
 import {setShowModalRate} from "../stores/rate.reducer";
 import {Page} from "../models/Page";
 import {api} from "../utils/axios-config";
+import {RateAPIResponse} from "../models/rate/RateAPIResponse";
 
 const ProductRate = ({productId}: { productId: string }) => {
 
     const dispatch = useDispatch();
 
-    const [rates, setRates] = useState<RateResponseDTO[]>([]);
+    const [rates, setRates] = useState<RateAPIResponse[]>([]);
 
     const getRates = () => {
         api.get('/products/rate/' + productId)
-            .then(function (res: AxiosResponse<Page<RateResponseDTO[]>>) {
+            .then(function (res: AxiosResponse<Page<RateAPIResponse[]>>) {
                 console.log(res.data.content);
                 setRates(res.data.content);
             })
@@ -37,13 +37,13 @@ const ProductRate = ({productId}: { productId: string }) => {
     }
 
     return (
-        <Row style={{padding: '20px 30px', width: '100%'}}>
+        <Row className="py-[20px] px-[30px] w-full">
             {rates && rates.map((rate, index) => (
                 <div key={index} style={{width: '100%'}}>
                     <Row gutter={[16, 16]} align="top">
                         <Col span={1}>
                             <Image src={rate.avatar}
-                                   style={{width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover'}}/>
+                                   className="w-[40px] h-[40px] rounded-full object-cover"/>
                         </Col>
                         <Col span={23}>
                             <Row>
@@ -52,7 +52,7 @@ const ProductRate = ({productId}: { productId: string }) => {
                             <Row>
                                 <Rate disabled defaultValue={rate.rate}/>
                             </Row>
-                            <Row style={{padding: '15px 0'}}>
+                            <Row className="py-[15px]">
                                 <span>{rate.message}</span>
                             </Row>
                             <Row>
@@ -60,7 +60,7 @@ const ProductRate = ({productId}: { productId: string }) => {
                                     <Row gutter={[16, 16]}>
                                         {rate.images.map((url, imageIndex) => (
                                             <Col key={imageIndex}>
-                                                <Image src={url} width={80} height={80} style={{objectFit: 'cover'}}/>
+                                                <Image src={url} width={80} height={80} className="object-cover"/>
                                             </Col>
                                         ))}
                                     </Row>
