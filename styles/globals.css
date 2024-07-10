@@ -1,7 +1,4 @@
+@import url('https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@4cac1a6/css/all.css');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-:root {
-    --sidebar-width: 280px;
-}

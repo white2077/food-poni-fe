@@ -20,8 +20,6 @@ export interface ProductAPIResponse {
 
     productDetails: ProductDetailAPIResponse[];
 
-    categories: CategoryAPIResponse[];
-
     createdDate: Date;
 
 }
@@ -43,8 +41,6 @@ export const INITIAL_PRODUCT_API_RESPONSE: ProductAPIResponse = {
     user: INITIAL_USER_API_RESPONSE,
 
     productDetails: [],
-
-    categories: [],
 
     createdDate: new Date()
 

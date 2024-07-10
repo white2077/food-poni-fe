@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {SidebarLayout} from "../components/layout";
 import ProductRows from "../components/product-rows";
 import CarouselBanner from "../components/carousel-banner";
@@ -8,6 +8,8 @@ import {api} from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
 import {CategoryAPIResponse} from "../models/category/CategoryAPIResponse";
+import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
+import {getProductsPage} from "../queries/product.query";
 
 export async function getServerSideProps() {
     try {
@@ -37,9 +39,11 @@ const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<CategoryAPIResp
                     <CarouselBanner/>
                     <SearchPosition/>
                 </div>
-                <ProductRows title="Top Deal - Siêu rẻ" hasMenu={true}/>
-                <ProductRows title="Món ngon - Giá sốc" hasMenu={false}/>
-                <ProductRows title="Có thể bạn thấy ngon" hasMenu={false}/>
+                <ProductRows title="Top Deal - Siêu rẻ" hasMenu={true} query={getProductsPage({status: true})}/>
+                <ProductRows title="Món ngon - Giá sốc" hasMenu={false}
+                             query={Promise.resolve(INITIAL_PAGE_API_RESPONSE)}/>
+                <ProductRows title="Có thể bạn thấy ngon" hasMenu={false}
+                             query={Promise.resolve(INITIAL_PAGE_API_RESPONSE)}/>
             </div>
         </SidebarLayout>
     );

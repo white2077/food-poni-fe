@@ -188,8 +188,6 @@ export default function HeaderMain() {
         }
     }, []);
 
-    // onClick={() => router.push('/')
-
     return (
         <div className="grid grid-cols-[1fr_2fr_1fr] px-2 mx-auto items-center py-2 gap-4 max-w-screen-xl">
             <MenuMobile/>
@@ -200,13 +198,13 @@ export default function HeaderMain() {
                         <>
                             <Cart/>
                             <Notification ePage={INITIAL_PAGE_API_RESPONSE}/>
-                            <Dropdown menu={{items}} placement='bottomRight' trigger={['click']}>
-                                <a>
-                                    {currentUser.avatar
-                                        ? <Avatar src={server + currentUser.avatar} size='large'/>
-                                        : <Avatar icon={<UserOutlined/>} size='large'/>}
-                                </a>
-                            </Dropdown>
+                            {/*<Dropdown menu={{items}} placement='bottomRight' trigger={['click']}>*/}
+                            {/*    <a>*/}
+                            {/*        {currentUser.avatar*/}
+                            {/*            ? <Avatar src={server + currentUser.avatar} size='large'/>*/}
+                            {/*            : <Avatar icon={<UserOutlined/>} size='large'/>}*/}
+                            {/*    </a>*/}
+                            {/*</Dropdown>*/}
                         </>
                     )
                     : (

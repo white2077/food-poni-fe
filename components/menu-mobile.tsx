@@ -16,7 +16,8 @@ export default function MenuMobile() {
     return (
         <div className="md:hidden">
             <Button type="link" onClick={showDrawer}>
-                <MenuOutlined className="text-lg text-gray-700"/>
+                <i className="fas fa-bars text-lg text-gray-700"></i>
+                {/*<i className="fa-regular fa-bars-sort text-lg text-gray-700"></i>*/}
             </Button>
             <Drawer className="transition-transform" title="Basic Drawer" onClose={onClose} open={open} placement="left">
                 <p>Some contents...</p>

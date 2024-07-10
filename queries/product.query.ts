@@ -3,7 +3,6 @@ import {Page} from "../models/Page";
 import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
 import {AxiosResponse} from "axios";
 
-
 export const getProductsPage = ({page, pageSize, status, categoryId}: {
     page?: number,
     pageSize?: number,

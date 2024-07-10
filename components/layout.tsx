@@ -3,6 +3,7 @@ import HeaderMain from "./header-main";
 import {Alert} from "antd";
 import Marquee from 'react-fast-marquee';
 import {HomeFilled, SettingFilled, UserOutlined, WalletFilled} from "@ant-design/icons";
+import HeaderBar from "./header-bar";
 
 interface SidebarLayoutProps {
     children: React.ReactNode,
@@ -16,17 +17,8 @@ interface DefaultLayoutProps {
 export const SidebarLayout = ({children, sidebarContents}: SidebarLayoutProps) => {
 
     return (
-        <>
-            <Alert
-                className="text-center bg-primary py-2 px-0"
-                showIcon={false}
-                banner
-                message={
-                    <Marquee pauseOnHover gradient={false} className="text-white text-sm">
-                        Happy Valentine's SPRAY! Save an EXTRA 14% off with code #FOODPONI
-                    </Marquee>
-                }
-            />
+        <div>
+            <HeaderBar/>
             <HeaderMain/>
             <div className='bg-[#F5F5FA]'>
                 <div className='px-2 max-w-screen-xl mx-auto py-4'>
@@ -121,7 +113,7 @@ export const SidebarLayout = ({children, sidebarContents}: SidebarLayoutProps) =
                     </div>
                 </footer>
             </div>
-        </>
+        </div>
     );
 
 };
@@ -129,17 +121,8 @@ export const SidebarLayout = ({children, sidebarContents}: SidebarLayoutProps) =
 export const DefaultLayout = ({children}: DefaultLayoutProps) => {
 
     return (
-        <>
-            <Alert
-                className="text-center bg-primary py-2 px-0"
-                showIcon={false}
-                banner
-                message={
-                    <Marquee pauseOnHover gradient={false} className="text-white text-sm">
-                        Happy Valentine's SPRAY! Save an EXTRA 14% off with code #FOODPONI
-                    </Marquee>
-                }
-            />
+        <div>
+            <HeaderBar/>
             <HeaderMain/>
             <div className='bg-[#F5F5FA]'>
                 <div className='px-2 max-w-screen-xl mx-auto py-4'>
@@ -229,7 +212,7 @@ export const DefaultLayout = ({children}: DefaultLayoutProps) => {
                     </div>
                 </footer>
             </div>
-        </>
+        </div>
     );
 
 };

@@ -1,17 +1,15 @@
-import {Card, Spin} from 'antd';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import ProductCard from "./product-card";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {Page} from "../models/Page";
 import {CurrentUser} from "../stores/user.reducer";
 import MenuMain from "./menu-main";
-import {getProductsPage} from "../queries/product.query";
 import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
 import {ProductDetailAPIResponse} from "../models/product_detail/ProductDetailAPIResponse";
 import {OrderItemAPIResponse} from "../models/order_item/OrderItemResponseAPI";
 import ProductRowLoading from "./product-row-skeleton";
-import {log} from "util";
+import {AxiosResponse} from "axios";
 
 export interface IProductCard {
     index: number,
@@ -28,52 +26,52 @@ export interface IProductCard {
 }
 
 interface ProductRowProps {
-    title: string
-    hasMenu: boolean,
+    title: string,
+    hasMenu?: boolean,
+    query: Promise<Page<ProductAPIResponse[]>>,
 }
 
-const ProductRows = ({title, hasMenu}: ProductRowProps) => {
+const ProductRows = ({title, hasMenu, query}: ProductRowProps) => {
 
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
-    const [productCards, setProductCards] = useState<IProductCard[]>([]);
+    const [isLoading, setLoading] = React.useState<boolean>(false);
 
-    const [isLoading, setLoading] = useState<boolean>(false);
+    const [productCards, setProductCards] = React.useState<IProductCard[]>([]);
 
-    useEffect((): void => {
+    React.useEffect(() => {
         setLoading(true);
-        getProductsPage({status: true})
-            .then((res: Page<ProductAPIResponse[]>) => {
-                let productCards: IProductCard[] = res.content.map((product: ProductAPIResponse, index: number) => {
-                    return {
-                        index,
-                        id: product.id,
-                        name: product.name,
-                        thumbnail: product.thumbnail,
-                        minPrice: Math.min(...product.productDetails.map((detail: ProductDetailAPIResponse) => detail.price)),
-                        maxPrice: Math.max(...product.productDetails.map((detail: ProductDetailAPIResponse) => detail.price)),
-                        rate: product.productDetails
-                            .map((detail: ProductDetailAPIResponse) => {
-                                let countRate: number = detail.orderItems.filter((orderItem: OrderItemAPIResponse) => orderItem.rate).length;
-                                return detail.orderItems
-                                    .map((orderItem: OrderItemAPIResponse) => orderItem.rate ? orderItem.rate.rate / countRate : 0)
-                                    .reduce((a: number, b: number) => a + b, 0);
-                            })
-                            .reduce((a: number, b: number) => a + b, 0) / product.productDetails.length,
-                        retailer: product.user.username,
-                        rateCount: product.productDetails
-                            .map((detail: ProductDetailAPIResponse) => detail.orderItems
-                                .filter((orderItem: OrderItemAPIResponse) => orderItem.rate).length)
-                            .reduce((a: number, b: number) => a + b, 0),
-                        sales: product.productDetails
-                            .map((detail: ProductDetailAPIResponse) => detail.orderItems.length)
-                            .reduce((a: number, b: number) => a + b, 0),
-                        createdDate: product.createdDate,
-                    } as IProductCard;
-                })
-                setProductCards(productCards);
-                setLoading(false);
-            });
+
+        query.then((res: Page<ProductAPIResponse[]>) => {
+            setProductCards(res.content.map((product: ProductAPIResponse, index: number) => {
+                return {
+                    index,
+                    id: product.id,
+                    name: product.name,
+                    thumbnail: product.thumbnail,
+                    minPrice: Math.min(...product.productDetails.map((detail: ProductDetailAPIResponse) => detail.price)),
+                    maxPrice: Math.max(...product.productDetails.map((detail: ProductDetailAPIResponse) => detail.price)),
+                    rate: product.productDetails
+                        .map((detail: ProductDetailAPIResponse) => {
+                            let countRate: number = detail.orderItems.filter((orderItem: OrderItemAPIResponse) => orderItem.rate).length;
+                            return detail.orderItems
+                                .map((orderItem: OrderItemAPIResponse) => orderItem.rate ? orderItem.rate.rate / countRate : 0)
+                                .reduce((a: number, b: number) => a + b, 0);
+                        })
+                        .reduce((a: number, b: number) => a + b, 0) / product.productDetails.length,
+                    retailer: product.user.username,
+                    rateCount: product.productDetails
+                        .map((detail: ProductDetailAPIResponse) => detail.orderItems
+                            .filter((orderItem: OrderItemAPIResponse) => orderItem.rate).length)
+                        .reduce((a: number, b: number) => a + b, 0),
+                    sales: product.productDetails
+                        .map((detail: ProductDetailAPIResponse) => detail.orderItems.length)
+                        .reduce((a: number, b: number) => a + b, 0),
+                    createdDate: product.createdDate,
+                } as IProductCard
+            }));
+        }).finally(() =>  setLoading(false));
+
     }, []);
 
     const filterProducts = (key: string) => {
@@ -106,24 +104,17 @@ const ProductRows = ({title, hasMenu}: ProductRowProps) => {
     return (
         <div className="p-4 bg-white rounded-lg">
             <div>{title}</div>
+
             {hasMenu && < MenuMain filterProducts={filterProducts}/>}
             <div
                 className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4'>
-                {isLoading ? <ProductRowLoading count={8}/>
-                    :
-                    (
-                        <>
-                            {productCards.map((productCard: IProductCard) => (
-                                <ProductCard key={productCard.id} product={productCard}/>
-                            ))}
-                        </>
-                    )
-                }
+                {isLoading ? <ProductRowLoading
+                    count={8}/> : (productCards.length !== 0 ? productCards.map((productCard: IProductCard) =>
+                    <ProductCard key={productCard.id} product={productCard}/>) : "Không có dữ liệu!")}
+
             </div>
         </div>
-    )
-        ;
-
+    );
 };
 
 export default ProductRows;
