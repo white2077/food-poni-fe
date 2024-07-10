@@ -175,7 +175,9 @@ const ProductDetails = ({product}: {product: IProduct}) => {
                                                 {(product?.productDetails || []).map((productDetail: IProductDetail) => (
                                                     <Radio.Button key={productDetail.id}
                                                                   value={productDetail.name || "default"}
-                                                                  onClick={() => changeProductDetailSelected(productDetail)}>
+                                                                  onClick={() => changeProductDetailSelected(productDetail)}
+                                                                  className="rounded-lg m-2 static border-s-2"
+                                                    >
                                                         {productDetail.name || "Default"}
                                                     </Radio.Button>
                                                 ))}
