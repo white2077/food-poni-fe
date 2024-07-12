@@ -23,7 +23,7 @@ export const SidebarLayout = ({children, sidebarContents}: SidebarLayoutProps) =
             <div className='bg-[#F5F5FA]'>
                 <div className='px-2 max-w-screen-xl mx-auto py-4'>
                     <div className='flex gap-4'>
-                        <div className='hidden md:flex flex-col gap-4'>
+                        <div className='hidden md:flex flex-col gap-4 w-[260px] shrink-0'>
                             {sidebarContents.map((item: JSX.Element) => item)}
                         </div>
                         {children}

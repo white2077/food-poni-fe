@@ -24,6 +24,7 @@ const ProductCategory = ({categoryList}: { categoryList: CategoryAPIResponse[] }
     }, []);
 
     const getAllCategories = (): void => {
+        console.log(categoryList);
         categoryList.forEach((category: CategoryAPIResponse) => {
             convertCategory(category, '');
         });
@@ -34,7 +35,7 @@ const ProductCategory = ({categoryList}: { categoryList: CategoryAPIResponse[] }
         items.push({
             key: category.id ?? "",
             label: <span className="flex items-center"><span dangerouslySetInnerHTML={{__html: tab}}></span>
-                <img src={server + category.image} className="w-4 h-4 mr-2"></img> {category.categoryName}</span>
+                <img src={server + category.image} className="w-4 h-4 mr-2"></img> <span className={`${!category.parentCategory ? "font-bold" : ""}`}>{category.categoryName}</span></span>
         });
 
         if (category.categories?.length)
@@ -52,7 +53,7 @@ const ProductCategory = ({categoryList}: { categoryList: CategoryAPIResponse[] }
             <div className="mb-4">Danh mục</div>
             <Menu
                 onClick={onClick}
-                className="min-w-[200px] rounded-log !border-none"
+                className="rounded-lg !border-none"
                 defaultSelectedKeys={['all']}
                 mode='inline'
                 items={categories}

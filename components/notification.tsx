@@ -1,22 +1,17 @@
-import React, {useEffect} from "react";
-import {Avatar, Badge, Button, Card, Dropdown, Menu, Tabs} from 'antd';
+import React from "react";
+import {Avatar, Badge, Button, Dropdown, Tabs} from 'antd';
 import {BellOutlined} from "@ant-design/icons";
 import {Page} from "../models/Page";
 import {NotificationAPIResponse} from "../models/notification/NotificationResponseAPI";
-import {accessToken, apiWithToken} from "../utils/axios-config";
-import {AxiosResponse} from "axios";
-import {REFRESH_TOKEN, server} from "../utils/server";
-import {format} from "date-fns";
-import {getCookie} from "cookies-next";
 import {RootState} from "../stores";
 import {useDispatch, useSelector} from "react-redux";
-import {markIsReadNotification, setNotifications} from "../stores/notification.reducer";
 
 const Notification = ({ePage}: { ePage: Page<NotificationAPIResponse> }) => {
 
     const dispatch = useDispatch();
 
     const notification = useSelector((state: RootState) => state.notification);
+
 
     // useEffect(() => {
     //     const refreshToken = getCookie(REFRESH_TOKEN);
@@ -235,7 +230,6 @@ const Notification = ({ePage}: { ePage: Page<NotificationAPIResponse> }) => {
             </Dropdown>
         </>
     );
-
 };
 
 export default Notification;

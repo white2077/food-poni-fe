@@ -16,11 +16,11 @@ export interface CategoryAPIResponse {
 
     categories: CategoryAPIResponse[];
 
-    parentCategory: CategoryAPIResponse;
+    parentCategory: CategoryAPIResponse | null;
 
 }
 
-export const INITIAL_CATEGORY_API_RESPONSE = {
+export const INITIAL_CATEGORY_API_RESPONSE: CategoryAPIResponse = {
     id: '',
     categoryName: '',
     slug: '',
