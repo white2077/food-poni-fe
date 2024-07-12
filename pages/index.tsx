@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {SidebarLayout} from "../components/layout";
+import {SidebarLayout} from "./_layout";
 import ProductRows from "../components/product-rows";
 import CarouselBanner from "../components/carousel-banner";
 import ProductCategory from "../components/product-category";

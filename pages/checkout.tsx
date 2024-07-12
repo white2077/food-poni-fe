@@ -1,4 +1,4 @@
-import {DefaultLayout} from "../components/layout";
+import {DefaultLayout} from "./_layout";
 import {
     Button,
     Card,

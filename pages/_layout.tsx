@@ -1,9 +1,8 @@
-import React from 'react';
-import HeaderMain from "./header-main";
+import HeaderMain from "../components/header-main";
 import {Alert} from "antd";
 import Marquee from 'react-fast-marquee';
 import {HomeFilled, SettingFilled, UserOutlined, WalletFilled} from "@ant-design/icons";
-import HeaderBar from "./header-bar";
+import HeaderBar from "../components/header-bar";
 
 interface SidebarLayoutProps {
     children: React.ReactNode,

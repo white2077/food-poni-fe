@@ -6,8 +6,6 @@ export interface CategoryAPIResponse {
 
     slug: string;
 
-    image: string;
-
     description: string;
 
     thumbnail: string;
@@ -24,7 +22,6 @@ export const INITIAL_CATEGORY_API_RESPONSE: CategoryAPIResponse = {
     id: '',
     categoryName: '',
     slug: '',
-    image: '',
     description: '',
     thumbnail: '',
     default: false,

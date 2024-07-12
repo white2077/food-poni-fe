@@ -1,5 +1,5 @@
 import {NextRouter, useRouter} from "next/router";
-import {DefaultLayout} from "../../components/layout";
+import {DefaultLayout} from "../_layout";
 import React, {useEffect, useState} from "react";
 import {Button, Card, Col, Divider, Image, Row, Spin, Typography} from "antd";
 import {AxiosResponse} from "axios";

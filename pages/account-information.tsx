@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {DefaultLayout} from "../components/layout";
+import {DefaultLayout} from "./_layout";
 import {Col, Flex, Menu, MenuProps} from "antd";
 import AddressDeliveryInformation from "../components/address-delivery-information";
 import {EnvironmentOutlined, UserOutlined} from "@ant-design/icons";

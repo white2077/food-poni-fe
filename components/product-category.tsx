@@ -35,7 +35,7 @@ const ProductCategory = ({categoryList}: { categoryList: CategoryAPIResponse[] }
         items.push({
             key: category.id ?? "",
             label: <span className="flex items-center"><span dangerouslySetInnerHTML={{__html: tab}}></span>
-                <img src={server + category.image} className="w-4 h-4 mr-2"></img> <span className={`${!category.parentCategory ? "font-bold" : ""}`}>{category.categoryName}</span></span>
+                <img src={server + category.image} className="w-4 h-4 mr-2"></img> <span className={`${category.parentCategory === null ? "font-bold uppercase" : ""}`}>{category.categoryName}</span></span>
         });
 
         if (category.categories?.length)

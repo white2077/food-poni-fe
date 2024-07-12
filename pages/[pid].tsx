@@ -1,5 +1,5 @@
 import {NextRouter, useRouter} from "next/router";
-import {DefaultLayout} from "../components/layout";
+import {DefaultLayout} from "./_layout";
 import React, {useEffect, useState} from "react";
 import {Button, Card, notification, Radio, Rate, Result} from "antd";
 import ProductGallery from "../components/product-gallery";

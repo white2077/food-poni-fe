@@ -1,5 +1,5 @@
 import {NextRouter, useRouter} from "next/router";
-import {DefaultLayout} from "../../components/layout";
+import {DefaultLayout} from "../_layout";
 
 const ProductsPage = () => {
 

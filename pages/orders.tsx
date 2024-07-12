@@ -1,4 +1,4 @@
-import {DefaultLayout} from "../components/layout";
+import {DefaultLayout} from "./_layout";
 import {GetProp, List, Segmented, UploadProps} from "antd";
 import React, {useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
