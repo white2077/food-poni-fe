@@ -197,7 +197,7 @@ export default function HeaderMain() {
                 {currentUser.id ? (
                         <>
                             <Cart/>
-                            <Notification ePage={INITIAL_PAGE_API_RESPONSE}/>
+                            <Notification/>
                             {/*<Dropdown menu={{items}} placement='bottomRight' trigger={['click']}>*/}
                             {/*    <a>*/}
                             {/*        {currentUser.avatar*/}
