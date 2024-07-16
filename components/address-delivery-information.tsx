@@ -15,7 +15,7 @@ import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
 
-export const AddressDeliveryInformation = () => {
+export const AddressDeliveryInformation = ({deliveryInformation}: {deliveryInformation: AddressAPIResponse[]}) => {
 
     const router: NextRouter = useRouter();
 
@@ -26,28 +26,6 @@ export const AddressDeliveryInformation = () => {
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
-
-    const [deliveryInformation, setDeliveryInformation] = useState<AddressAPIResponse[]>([]);
-
-    useEffect(() => {
-        getDeliveryInformation();
-    }, []);
-
-    const getDeliveryInformation = () => {
-        if (refreshToken) {
-            apiWithToken(refreshToken).get('/addresses', {
-                headers: {
-                    Authorization: 'Bearer ' + accessToken,
-                }
-            })
-                .then((res) => {
-                    setDeliveryInformation(res.data.content);
-                })
-                .catch((res: AxiosError<ErrorApiResponse>) => {
-                    console.log("Shipping address message: ", res.message);
-                });
-        }
-    }
 
     const handleAddAddressClick = (): void => {
         setShowAddAddress(!showAddAddress);

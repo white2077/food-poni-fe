@@ -12,7 +12,6 @@ import {
     notification,
     Radio,
     RadioChangeEvent,
-    Result,
     Row,
     Space
 } from "antd";
@@ -28,45 +27,28 @@ import {CurrentUser} from "../stores/user.reducer";
 import {OrderItemRequestDTO} from "../models/order_item/OrderItemRequest";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {REFRESH_TOKEN} from "../utils/server";
-import {NextApiRequest, NextApiResponse} from "next";
-import {CookieValueTypes, getCookie} from "cookies-next";
-import {AxiosResponse} from "axios";
+import {getCookie} from "cookies-next";
 import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
 import AddressCheckoutAdd from "../components/address-checkout-add";
 import AddressCheckoutUpdate from "../components/address-checkout-update";
+import {NextRequest} from "next/server";
+import {getAddressesPage} from "../queries/address.query";
 
 const {TextArea} = Input;
 
-export async function getServerSideProps({req, res}: { req: NextApiRequest, res: NextApiResponse }) {
-    const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req, res});
-    if (refreshToken) {
-        try {
-            const res: AxiosResponse<Page<AddressAPIResponse[]>> = await apiWithToken(refreshToken).get('/addresses', {
-                headers: {
-                    Authorization: "Bearer " + accessToken
-                }
-            });
-            return {
-                props: {
-                    deliveryInformation: res.data
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching category page:', error);
-        }
-    }
-
+export async function getServerSideProps({req}: { req: NextRequest }) {
     return {
-        redirect: {
-            destination: '/login',
-            permanent: false,
-        },
-    }
+        props: {
+            ePage: await getAddressesPage({
+                refreshToken: getCookie(REFRESH_TOKEN, {req}),
+                page: 0,
+                pageSize: 10
+            })
+        }
+    };
 }
 
-const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {
-    deliveryInformation: Page<AddressAPIResponse[]>
-}) => {
+const Checkout = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
 
     const router: NextRouter = useRouter();
 
@@ -103,15 +85,12 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {
     }, 0);
 
     useEffect(() => {
-        if (carts.length == 0) {
-            router.push("/");
-            notification.open({
-                type: "warning",
-                message: "Đơn hàng",
-                description: "Vui lòng chọn ít nhất một sản phẩm!"
-            });
-        }
-    }, [carts]);
+        setShippingAddress({
+            fullName: currentShippingAddress.fullName,
+            phoneNumber: currentShippingAddress.phoneNumber,
+            address: currentShippingAddress.address
+        });
+    }, [currentShippingAddress]);
 
     const addMultipleOrders = (): void => {
         let check = false;
@@ -224,10 +203,10 @@ const Checkout = ({deliveryInformation = INITIAL_PAGE_API_RESPONSE}: {
                                     {showAddAddress && <AddressCheckoutAdd/>}
                                     {!showAddAddress && (
                                         <Radio.Group className="w-full"
-                                                     defaultValue={deliveryInformation.content.find(item => item.id === currentUser.addressId)}
+                                                     defaultValue={ePage.content.find(item => item.id === currentUser.addressId)}
                                                      onChange={(e: RadioChangeEvent) => setShippingAddress(e.target.value)}>
                                             <List
-                                                dataSource={deliveryInformation.content}
+                                                dataSource={ePage.content}
                                                 renderItem={(item: AddressAPIResponse, index: number) => (
                                                     <Collapse
                                                         className="my-[16px]"

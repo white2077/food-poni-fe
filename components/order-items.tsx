@@ -73,52 +73,58 @@ const OrderItems = () => {
                 </Row>
             </Card>
             {
-                carts.filter(cart => cart.cartItems.length!=0).map((cart: ICart) => (
-                    <Card key={cart.id} className="my-2">
-                        <Row>
-                            <Checkbox onClick={() => handleSetSelectedICart(cart.id)} checked={cart.isSelectedICart}></Checkbox>
-                            <div className="font-bold text-xl mx-2">{cart.name}</div>
-                            <RightOutlined />
-                        </Row>
-                        <Divider />
-                        {cart.cartItems.map((item: ICartItem, index: number) => (
-                            <Row key={index} className="my-[16px] items-center">
-                                <Col flex='2%'>
-                                    <Checkbox onClick={() => handleSetSelectedICartItem(item.id)} checked={item.isSelectedICartItem}></Checkbox>
-                                </Col>
-                                <Col flex='40%'>
-                                    <div className="flex items-center">
-                                        <div>
-                                            <img src={item.thumbnail} className="w-[100px]" alt="Product"/>
-                                        </div>
-                                        <div className="ml-[16px]">{item.name}</div>
-                                    </div>
-                                </Col>
-                                <Col flex='10%'>${item.price}</Col>
-                                <Col flex='10%'>
-                                    <InputNumber min={1}
-                                                 max={20}
-                                                 className="max-w-[70px]"
-                                                 defaultValue={1}
-                                                 value={item.quantity}
-                                                 onChange={(value: number | null) => onChangeQuantity(item.id, item.retailer.id ?? '', value!)}/>
-                                </Col>
-                                <Col flex='10%'>${item.price * item.quantity}</Col>
-                                <Col flex='26%'>
-                                    <TextArea
-                                        placeholder="Ghi chú"
-                                        value={item.note}
-                                        onChange={(e) => onChangeNote(item.id, item.retailer.id ?? '', e.target.value)}
-                                        allowClear
-                                    />
-                                </Col>
-                                <Col flex='2%'>
-                                    <DeleteOutlined id={`delete-icon-${item.id}`} onClick={() => dispatch(deleteItem({id: item.id, retailerId: item.retailer.id ?? ''}))}/>
-                                </Col>
+                carts.length > 0 ? (
+                    carts.filter(cart => cart.cartItems.length!=0).map((cart: ICart) => (
+                        <Card key={cart.id} className="my-2">
+                            <Row>
+                                <Checkbox onClick={() => handleSetSelectedICart(cart.id)} checked={cart.isSelectedICart}></Checkbox>
+                                <div className="font-bold text-xl mx-2">{cart.name}</div>
+                                <RightOutlined />
                             </Row>
-                        ))}
+                            <Divider />
+                            {cart.cartItems.map((item: ICartItem, index: number) => (
+                                <Row key={index} className="my-[16px] items-center">
+                                    <Col flex='2%'>
+                                        <Checkbox onClick={() => handleSetSelectedICartItem(item.id)} checked={item.isSelectedICartItem}></Checkbox>
+                                    </Col>
+                                    <Col flex='40%'>
+                                        <div className="flex items-center">
+                                            <div>
+                                                <img src={item.thumbnail} className="w-[100px]" alt="Product"/>
+                                            </div>
+                                            <div className="ml-[16px]">{item.name}</div>
+                                        </div>
+                                    </Col>
+                                    <Col flex='10%'>${item.price}</Col>
+                                    <Col flex='10%'>
+                                        <InputNumber min={1}
+                                                     max={20}
+                                                     className="max-w-[70px]"
+                                                     defaultValue={1}
+                                                     value={item.quantity}
+                                                     onChange={(value: number | null) => onChangeQuantity(item.id, item.retailer.id ?? '', value!)}/>
+                                    </Col>
+                                    <Col flex='10%'>${item.price * item.quantity}</Col>
+                                    <Col flex='26%'>
+                                        <TextArea
+                                            placeholder="Ghi chú"
+                                            value={item.note}
+                                            onChange={(e) => onChangeNote(item.id, item.retailer.id ?? '', e.target.value)}
+                                            allowClear
+                                        />
+                                    </Col>
+                                    <Col flex='2%'>
+                                        <DeleteOutlined id={`delete-icon-${item.id}`} onClick={() => dispatch(deleteItem({id: item.id, retailerId: item.retailer.id ?? ''}))}/>
+                                    </Col>
+                                </Row>
+                            ))}
+                        </Card>
+                    ))
+                ) : (
+                    <Card className="my-2">
+                        <div className="text-center font-bold">Chưa có sản phẩm nào!</div>
                     </Card>
-                ))
+                )
             }
         </div>
     );

@@ -51,8 +51,6 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
         const res: AxiosResponse<ProductAPIResponse> = await api.get('/products/' + pid);
         const product: ProductAPIResponse = res.data;
 
-        console.log(res.data);
-
         const productMapped: IProduct = {
             id: product.id ?? "",
             name: product.name ?? "",

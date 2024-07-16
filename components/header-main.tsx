@@ -198,13 +198,13 @@ export default function HeaderMain() {
                         <>
                             <Cart/>
                             <Notification/>
-                            {/*<Dropdown menu={{items}} placement='bottomRight' trigger={['click']}>*/}
-                            {/*    <a>*/}
-                            {/*        {currentUser.avatar*/}
-                            {/*            ? <Avatar src={server + currentUser.avatar} size='large'/>*/}
-                            {/*            : <Avatar icon={<UserOutlined/>} size='large'/>}*/}
-                            {/*    </a>*/}
-                            {/*</Dropdown>*/}
+                            <Dropdown menu={{items}} placement='bottomRight' trigger={['click']}>
+                                <a>
+                                    {currentUser.avatar
+                                        ? <Avatar src={server + currentUser.avatar} size='large'/>
+                                        : <Avatar icon={<UserOutlined/>} size='large'/>}
+                                </a>
+                            </Dropdown>
                         </>
                     )
                     : (
