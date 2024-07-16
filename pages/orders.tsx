@@ -36,6 +36,8 @@ export async function getServerSideProps({req, res}: { req: NextApiRequest, res:
                 }
             });
 
+            console.log(res);
+
             return {
                 props: {
                     ePage: res.data,
