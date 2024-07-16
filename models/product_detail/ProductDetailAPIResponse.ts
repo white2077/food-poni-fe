@@ -23,8 +23,6 @@ export interface ProductDetailAPIResponse {
 
     product: ProductAPIResponse;
 
-    orderItems: OrderItemAPIResponse[];
-
 }
 
 export const INITIAL_PRODUCT_DETAIL_API_RESPONSE: ProductDetailAPIResponse = {
@@ -47,8 +45,6 @@ export const INITIAL_PRODUCT_DETAIL_API_RESPONSE: ProductDetailAPIResponse = {
 
     images: [],
 
-    product: INITIAL_PRODUCT_API_RESPONSE,
-
-    orderItems: []
+    product: INITIAL_PRODUCT_API_RESPONSE
 
 }
