@@ -16,6 +16,7 @@ import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
 import {ProductDetailAPIResponse} from "../models/product_detail/ProductDetailAPIResponse";
 import {OrderItemAPIResponse} from "../models/order_item/OrderItemResponseAPI";
 import {RateAPIResponse} from "../models/rate/RateAPIResponse";
+import {Page} from "../models/Page";
 
 export interface IProduct {
     id: string;
@@ -48,10 +49,11 @@ export interface IRetailer {
 export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
     const {pid} = context.params;
     try {
-        const res: AxiosResponse<ProductAPIResponse> = await api.get('/products/' + pid);
-        const product: ProductAPIResponse = res.data;
+        const resProduct: AxiosResponse<ProductAPIResponse> = await api.get('/products/' + pid);
+        const product: ProductAPIResponse = resProduct.data;
 
-        console.log(res.data);
+        const resProductDetails: AxiosResponse<Page<ProductDetailAPIResponse[]>> = await api.get('/product-details?productId=' + pid);
+        const productDetails: Page<ProductDetailAPIResponse[]> = resProductDetails.data;
 
         const productMapped: IProduct = {
             id: product.id ?? "",
@@ -65,18 +67,17 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
                 phoneNumber: product.user.phoneNumber ?? "",
                 username: product.user.username ?? "",
             },
-            productDetails: Array.isArray(product.productDetails)
-                ? product.productDetails.map((productDetail): IProductDetail => ({
-                    id: productDetail.id ?? "",
-                    name: productDetail.name ?? "",
-                    price: productDetail.price ?? 0,
-                    description: productDetail.description ?? "",
-                    images: productDetail.images ?? [],
-                    rate: productDetail.rate,
-                    rateCount: productDetail.rateCount,
-                    sales: productDetail.sales,
-                }))
-                : [],
+            productDetails: productDetails.content.map((productDetail: ProductDetailAPIResponse): IProductDetail => ({
+                id: productDetail.id ?? "",
+                name: productDetail.name ?? "",
+                price: productDetail.price ?? 0,
+                description: productDetail.description ?? "",
+                images: productDetail.images ?? [],
+                rate: productDetail.rate,
+                rateCount: productDetail.rateCount,
+                sales: productDetail.sales,
+            }))
+
         };
 
         return {

@@ -1,14 +1,13 @@
 import {DefaultLayout} from "./_layout";
 import {GetProp, List, Segmented, UploadProps} from "antd";
 import React, {useEffect, useState} from "react";
-import {AxiosResponse} from "axios";
 import OrderCard from "../components/order-card";
 import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
-import {NextApiRequest, NextApiResponse} from "next";
-import {CookieValueTypes, getCookie} from "cookies-next";
-import {accessToken, apiWithToken} from "../utils/axios-config";
+import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
 import {OrderAPIResponse} from "../models/order/OrderAPIResponse";
+import {getOrdersPage} from "../queries/order.query";
+import {NextRequest} from "next/server";
 
 enum OrderStatus {
     PENDING,
@@ -26,34 +25,16 @@ const getBase64 = (file: FileType): Promise<string> =>
         reader.onerror = (error) => reject(error);
     });
 
-export async function getServerSideProps({req, res}: { req: NextApiRequest, res: NextApiResponse }) {
-    const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req});
-    if (refreshToken) {
-        try {
-            const res: AxiosResponse<Page<OrderAPIResponse[]>> = await apiWithToken(refreshToken).get('/customer/orders', {
-                headers: {
-                    Authorization: "Bearer " + accessToken
-                }
-            });
-
-            console.log(res);
-
-            return {
-                props: {
-                    ePage: res.data,
-                },
-            };
-        } catch (error) {
-            console.error('Error fetching page:', error);
-        }
-    }
-
+export async function getServerSideProps({req}: { req: NextRequest }) {
     return {
-        redirect: {
-            destination: '/login',
-            permanent: false,
-        },
-    }
+        props: {
+            ePage: await getOrdersPage({
+                refreshToken: getCookie(REFRESH_TOKEN, {req}),
+                page: 0,
+                pageSize: 10
+            })
+        }
+    };
 }
 
 const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIResponse[]> }) => {
@@ -65,7 +46,7 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
     useEffect(() => {
         const sortedOrders = ePage.content.map((order: OrderAPIResponse) => {
             const createdDate = new Date(order.createdDate ?? ""); // Chuyển đổi Timestamp thành đối tượng Date
-            return { ...order, createdDate };
+            return {...order, createdDate};
         });
 
         // Sắp xếp sortedOrders theo createdDate giảm dần

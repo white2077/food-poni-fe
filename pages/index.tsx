@@ -8,20 +8,22 @@ import {api} from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
 import {CategoryAPIResponse} from "../models/category/CategoryAPIResponse";
-import {server} from "../utils/server";
+import {REFRESH_TOKEN, server} from "../utils/server";
 import {getProductsPage} from "../queries/product.query";
+import {NextRequest} from "next/server";
+import {getOrdersPage} from "../queries/order.query";
+import {getCookie} from "cookies-next";
+import {getCategoriesPage} from "../queries/category.query";
 
 export async function getServerSideProps() {
-    try {
-        const res: AxiosResponse<Page<CategoryAPIResponse[]>> = await api.get("/product-categories?onlyParent=true");
-        return {
-            props: {
-                ePage: res.data
-            },
-        };
-    } catch (error) {
-        console.error('Error fetching category page:', error);
-    }
+    return {
+        props: {
+            ePage: await getCategoriesPage({
+                page: 0,
+                pageSize: 10
+            })
+        }
+    };
 }
 
 const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<CategoryAPIResponse[]> }) => {

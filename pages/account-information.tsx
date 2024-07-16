@@ -4,11 +4,11 @@ import {Col, Flex, Menu, MenuProps} from "antd";
 import AddressDeliveryInformation from "../components/address-delivery-information";
 import {EnvironmentOutlined, UserOutlined} from "@ant-design/icons";
 import PersonalInformation from "../components/personal-information";
-import {CurrentUser} from "../stores/user.reducer";
-import {useSelector} from "react-redux";
-import {RootState} from "../stores";
-import {NextRouter, useRouter} from "next/router";
-import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
+import {NextRequest} from "next/server";
+import {getAddressesPage} from "../queries/address.query";
+import {getCookie} from "cookies-next";
+import {REFRESH_TOKEN} from "../utils/server";
+import {Page} from "../models/Page";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -34,32 +34,19 @@ const items: MenuProps['items'] = [
     getItem('Sổ địa chỉ', '2', <EnvironmentOutlined/>)
 ];
 
-// export async function getServerSideProps({req, res}: { req: NextApiRequest, res: NextApiResponse }) {
-//     const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req, res});
-//     if (refreshToken) {
-//         try {
-//             const res: AxiosResponse<Page<AddressResponseDTO[]>> = await apiWithToken(refreshToken).get('/addresses', {
-//                 headers: {
-//                     Authorization: "Bearer " + accessToken
-//                 }
-//             });
-//             console.log(accessToken)
-//             return {
-//                 props: {
-//                     deliveryInformation: res.data
-//                 }
-//             }
-//         } catch (error) {
-//             console.error('Error fetching category page:', error);
-//         }
-//     }
-// }
+export async function getServerSideProps({req}: { req: NextRequest }) {
+    return {
+        props: {
+            ePage: await getAddressesPage({
+                refreshToken: getCookie(REFRESH_TOKEN, {req}),
+                page: 0,
+                pageSize: 10
+            })
+        }
+    };
+}
 
-const AccountInformation = () => {
-
-    const router: NextRouter = useRouter();
-
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
+const AccountInformation = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
 
     const [selectedItem, setSelectedItem] = useState<string>('1');
 
@@ -70,7 +57,7 @@ const AccountInformation = () => {
 
     const contentMap: { [key: string]: React.ReactNode } = {
         '1': <PersonalInformation/>,
-        '2': <AddressDeliveryInformation/>
+        '2': <AddressDeliveryInformation deliveryInformation={ePage.content}/>
     };
 
     return (
