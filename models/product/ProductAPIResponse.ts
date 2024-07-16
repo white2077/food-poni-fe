@@ -1,6 +1,7 @@
 import {INITIAL_USER_API_RESPONSE, UserAPIResponse} from "../user/UserResponseAPI";
 import {CategoryAPIResponse} from "../category/CategoryAPIResponse";
 import {ProductDetailAPIResponse} from "../product_detail/ProductDetailAPIResponse";
+import {IProductDetail} from "../../pages/[pid]";
 
 export interface ProductAPIResponse {
 
@@ -22,11 +23,35 @@ export interface ProductAPIResponse {
 
     rate: number;
 
+    rateCount: number;
+
     minPrice: number;
 
     maxPrice: number;
 
     createdDate: Date;
+
+    productDetails: IProductDetail
+
+}
+
+export const INITIAL_PRODUCT_DETAIL: IProductDetail = {
+
+    id: "",
+
+    name: "",
+
+    price: 0,
+
+    description: "",
+
+    images: [],
+
+    rate: 0,
+
+    rateCount: 0,
+
+    sales: 0
 
 }
 
@@ -50,10 +75,14 @@ export const INITIAL_PRODUCT_API_RESPONSE: ProductAPIResponse = {
 
     rate: 0,
 
+    rateCount: 0,
+
     minPrice: 0,
 
     maxPrice: 0,
 
-    createdDate: new Date()
+    createdDate: new Date(),
+
+    productDetails: INITIAL_PRODUCT_DETAIL
 
 }
