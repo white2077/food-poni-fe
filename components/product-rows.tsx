@@ -53,7 +53,7 @@ const ProductRows = ({title, hasMenu, query}: ProductRowProps) => {
                     maxPrice: product.maxPrice,
                     rate: product.rate,
                     retailer: product.user.username,
-                    rateCount: 0,
+                    rateCount: product.rateCount,
                     sales: product.sales,
                     createdDate: product.createdDate,
                 } as IProductCard

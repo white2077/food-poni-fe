@@ -33,7 +33,7 @@ export interface IProductDetail {
     images: string[];
     rate: number;
     rateCount: number;
-    quantityCount: number;
+    sales: number;
 }
 
 export interface IRetailer {
@@ -51,6 +51,8 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
         const res: AxiosResponse<ProductAPIResponse> = await api.get('/products/' + pid);
         const product: ProductAPIResponse = res.data;
 
+        console.log(res.data);
+
         const productMapped: IProduct = {
             id: product.id ?? "",
             name: product.name ?? "",
@@ -63,33 +65,18 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
                 phoneNumber: product.user.phoneNumber ?? "",
                 username: product.user.username ?? "",
             },
-            productDetails: product.productDetails && product.productDetails.map((productDetail: ProductDetailAPIResponse): IProductDetail => {
-                let rateSum: number = 0;
-                let rateCount: number = 0;
-                let quantityCount: number = 0;
-
-                productDetail.orderItems?.forEach((orderItem: OrderItemAPIResponse) => {
-                    const quantity: number = orderItem.quantity ?? 0;
-                    quantityCount += quantity;
-
-                    if (orderItem.rate) {
-                        rateSum += orderItem.rate.rate;
-                        rateCount++;
-                    }
-                });
-
-                const averageRate: number = rateCount > 0 ? rateSum / rateCount : 0;
-                return {
+            productDetails: Array.isArray(product.productDetails)
+                ? product.productDetails.map((productDetail): IProductDetail => ({
                     id: productDetail.id ?? "",
                     name: productDetail.name ?? "",
                     price: productDetail.price ?? 0,
                     description: productDetail.description ?? "",
                     images: productDetail.images ?? [],
-                    rate: averageRate,
-                    rateCount: rateCount,
-                    quantityCount: quantityCount,
-                }
-            })
+                    rate: productDetail.rate,
+                    rateCount: productDetail.rateCount,
+                    sales: productDetail.sales,
+                }))
+                : [],
         };
 
         return {
@@ -180,7 +167,7 @@ const ProductDetails = ({product}: {product: IProduct}) => {
                                             <span className="border-r-2 py-1 px-4 hidden md:inline">
                                                 <span className="text-lg m-1 border-b-2">{productDetailSelected?.rateCount}</span> Đánh giá</span>
                                             <span className="border-r-2 py-1 px-4">
-                                                <span className="text-lg m-1 border-b-2">{productDetailSelected?.quantityCount}</span> Lượt bán</span>
+                                                <span className="text-lg m-1 border-b-2">{productDetailSelected?.sales}</span> Lượt bán</span>
                                         </div>
                                         <h3 className='text-2xl font-semibold'>${price}</h3>
                                     </Card>
