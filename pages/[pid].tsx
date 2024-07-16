@@ -113,7 +113,20 @@ const ProductDetails = ({product}: {product: IProduct}) => {
     const [isLoadingRate, setLoadingRate] = useState<boolean>(false);
 
     const [rates, setRates] = useState<RateAPIResponse[]>([]);
-
+    const [expanded, setExpanded] = useState(false);
+    const [height, setHeight] = useState('max-h-[500px]');
+    const [buttonText, setButtonText] = useState('xem thêm');
+    const toggleDescription = () => {
+        if (expanded) {
+            setExpanded(false);
+            setHeight('h-[500px]');
+            setButtonText('Xem Thêm');
+        } else {
+            setExpanded(true);
+            setHeight('h-full');
+            setButtonText('Ẩn Bớt');
+        }
+    };
     useEffect(() => {
         if (product && product.productDetails && product.productDetails.length > 0) {
             setProductDetailSelected(product.productDetails[0]);
@@ -207,9 +220,10 @@ const ProductDetails = ({product}: {product: IProduct}) => {
                                              dangerouslySetInnerHTML={{__html: product.shortDescription || ''}}></div>
                                     </Card>
                                     <Card size='small' title='Mô tả'>
-                                        <div className="text-black"
-                                             dangerouslySetInnerHTML={{__html: description || ''}}></div>
+                                        <div className={`text-black ${height}  overflow-clip`} dangerouslySetInnerHTML={{ __html: description || '' }}></div>
+                                        <button onClick={toggleDescription} className="  text-black w-[100%] hover:text-orange-500">{buttonText}</button>
                                     </Card>
+
                                 </div>
 
                                 <ProductCart
