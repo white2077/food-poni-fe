@@ -45,8 +45,7 @@ const Notification = () => {
         <>
             <Dropdown dropdownRender={() => (
                 <div className="w-[500px] shadow border rounded-lg bg-white">
-                    <div
-                        className="flex items-center justify-between gap-2.5 text-sm text-gray-900 font-semibold px-5 py-2.5">Thông báo
+                    <div className="flex items-center justify-between gap-2.5 text-sm text-gray-900 font-semibold px-5 py-2.5">Thông báo
                     </div>
                     <div className="border-b border-b-gray-200"></div>
                     <div className="px-5 mb-2">
@@ -56,8 +55,9 @@ const Notification = () => {
                                     key: '1',
                                     label: 'Tất cả',
                                     children:
-                                    <div className="max-h-[480px] overflow-auto">
+                                    <div className="max-h-[480px] overflow-auto scrollbar-rounded">
                                         <div className="flex flex-col gap-4">
+
                                             {[...noti.data].sort((a: NotificationAPIResponse, b: NotificationAPIResponse) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime())
                                                 .map((notification: NotificationAPIResponse, index: number) => {
                                                     return (
