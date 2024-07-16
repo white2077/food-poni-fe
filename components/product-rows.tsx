@@ -49,24 +49,12 @@ const ProductRows = ({title, hasMenu, query}: ProductRowProps) => {
                     id: product.id,
                     name: product.name,
                     thumbnail: product.thumbnail,
-                    minPrice: Math.min(...product.productDetails.map((detail: ProductDetailAPIResponse) => detail.price)),
-                    maxPrice: Math.max(...product.productDetails.map((detail: ProductDetailAPIResponse) => detail.price)),
-                    rate: product.productDetails
-                        .map((detail: ProductDetailAPIResponse) => {
-                            let countRate: number = detail.orderItems.filter((orderItem: OrderItemAPIResponse) => orderItem.rate).length;
-                            return detail.orderItems
-                                .map((orderItem: OrderItemAPIResponse) => orderItem.rate ? orderItem.rate.rate / countRate : 0)
-                                .reduce((a: number, b: number) => a + b, 0);
-                        })
-                        .reduce((a: number, b: number) => a + b, 0) / product.productDetails.length,
+                    minPrice: product.minPrice,
+                    maxPrice: product.maxPrice,
+                    rate: product.rate,
                     retailer: product.user.username,
-                    rateCount: product.productDetails
-                        .map((detail: ProductDetailAPIResponse) => detail.orderItems
-                            .filter((orderItem: OrderItemAPIResponse) => orderItem.rate).length)
-                        .reduce((a: number, b: number) => a + b, 0),
-                    sales: product.productDetails
-                        .map((detail: ProductDetailAPIResponse) => detail.orderItems.length)
-                        .reduce((a: number, b: number) => a + b, 0),
+                    rateCount: 0,
+                    sales: product.sales,
                     createdDate: product.createdDate,
                 } as IProductCard
             }));

@@ -18,7 +18,13 @@ export interface ProductAPIResponse {
 
     user: UserAPIResponse;
 
-    productDetails: ProductDetailAPIResponse[];
+    sales: number;
+
+    rate: number;
+
+    minPrice: number;
+
+    maxPrice: number;
 
     createdDate: Date;
 
@@ -40,7 +46,13 @@ export const INITIAL_PRODUCT_API_RESPONSE: ProductAPIResponse = {
 
     user: INITIAL_USER_API_RESPONSE,
 
-    productDetails: [],
+    sales: 0,
+
+    rate: 0,
+
+    minPrice: 0,
+
+    maxPrice: 0,
 
     createdDate: new Date()
 
