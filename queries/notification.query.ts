@@ -6,7 +6,7 @@ import {AxiosResponse} from "axios";
 
 export const getNotificationsPageByCustomer = (refreshToken: CookieValueTypes): Promise<Page<NotificationAPIResponse[]>> => {
     if (refreshToken) {
-        return apiWithToken(refreshToken).get('/retailer/notifications', {
+        return apiWithToken(refreshToken).get('/notifications', {
             headers: {
                 Authorization: "Bearer " + accessToken
             }
