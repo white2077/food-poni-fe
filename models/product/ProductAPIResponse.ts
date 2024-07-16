@@ -31,28 +31,6 @@ export interface ProductAPIResponse {
 
     createdDate: Date;
 
-    productDetails: IProductDetail
-
-}
-
-export const INITIAL_PRODUCT_DETAIL: IProductDetail = {
-
-    id: "",
-
-    name: "",
-
-    price: 0,
-
-    description: "",
-
-    images: [],
-
-    rate: 0,
-
-    rateCount: 0,
-
-    sales: 0
-
 }
 
 export const INITIAL_PRODUCT_API_RESPONSE: ProductAPIResponse = {
@@ -81,8 +59,6 @@ export const INITIAL_PRODUCT_API_RESPONSE: ProductAPIResponse = {
 
     maxPrice: 0,
 
-    createdDate: new Date(),
-
-    productDetails: INITIAL_PRODUCT_DETAIL
+    createdDate: new Date()
 
 }

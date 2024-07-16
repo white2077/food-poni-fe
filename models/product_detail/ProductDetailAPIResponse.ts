@@ -11,6 +11,12 @@ export interface ProductDetailAPIResponse {
 
     description: string;
 
+    sales: number;
+
+    rate: number;
+
+    rateCount: number;
+
     status: boolean;
 
     images: string[];
@@ -30,6 +36,12 @@ export const INITIAL_PRODUCT_DETAIL_API_RESPONSE: ProductDetailAPIResponse = {
     price: 0,
 
     description: '',
+
+    sales: 0,
+
+    rate: 0,
+
+    rateCount: 0,
 
     status: false,
 
