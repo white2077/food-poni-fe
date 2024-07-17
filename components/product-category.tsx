@@ -24,7 +24,6 @@ const ProductCategory = ({categoryList}: { categoryList: CategoryAPIResponse[] }
     }, []);
 
     const getAllCategories = (): void => {
-        console.log(categoryList);
         categoryList.forEach((category: CategoryAPIResponse) => {
             convertCategory(category, '');
         });

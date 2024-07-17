@@ -17,6 +17,7 @@ import {ProductDetailAPIResponse} from "../models/product_detail/ProductDetailAP
 import {OrderItemAPIResponse} from "../models/order_item/OrderItemResponseAPI";
 import {RateAPIResponse} from "../models/rate/RateAPIResponse";
 import {Page} from "../models/Page";
+import ReadMore from "../components/read_more";
 
 export interface IProduct {
     id: string;
@@ -90,7 +91,7 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
     }
 }
 
-const ProductDetails = ({product}: {product: IProduct}) => {
+const ProductDetails = ({product}: { product: IProduct }) => {
 
     const router: NextRouter = useRouter();
 
@@ -101,20 +102,8 @@ const ProductDetails = ({product}: {product: IProduct}) => {
     const [isLoadingRate, setLoadingRate] = useState<boolean>(false);
 
     const [rates, setRates] = useState<RateAPIResponse[]>([]);
-    const [expanded, setExpanded] = useState(false);
-    const [height, setHeight] = useState('max-h-[500px]');
-    const [buttonText, setButtonText] = useState('xem thêm');
-    const toggleDescription = () => {
-        if (expanded) {
-            setExpanded(false);
-            setHeight('h-[500px]');
-            setButtonText('Xem Thêm');
-        } else {
-            setExpanded(true);
-            setHeight('h-full');
-            setButtonText('Ẩn Bớt');
-        }
-    };
+
+
     useEffect(() => {
         if (product && product.productDetails && product.productDetails.length > 0) {
             setProductDetailSelected(product.productDetails[0]);
@@ -172,20 +161,24 @@ const ProductDetails = ({product}: {product: IProduct}) => {
                                         <h2 className='text-xl'>{product.name + (productDetailName ? ' - ' + productDetailName : '')}</h2>
                                         <div className="my-2">
                                             <span className="border-r-2 py-1 pr-2">
-                                                <span className="m-1 border-b-2 text-lg">{(productDetailSelected?.rate ? productDetailSelected.rate.toFixed(1) : 0) + ""}</span>
+                                                <span
+                                                    className="m-1 border-b-2 text-lg">{(productDetailSelected?.rate ? productDetailSelected.rate.toFixed(1) : 0) + ""}</span>
                                                 <span> </span>
                                                 <Rate allowHalf disabled value={productDetailSelected?.rate}
                                                       className="text-xs mr-[8px]"
                                                 />
                                             </span>
                                             <span className="border-r-2 py-1 px-4 hidden md:inline">
-                                                <span className="text-lg m-1 border-b-2">{productDetailSelected?.rateCount}</span> Đánh giá</span>
+                                                <span
+                                                    className="text-lg m-1 border-b-2">{productDetailSelected?.rateCount}</span> Đánh giá</span>
                                             <span className="border-r-2 py-1 px-4">
-                                                <span className="text-lg m-1 border-b-2">{productDetailSelected?.sales}</span> Lượt bán</span>
+                                                <span
+                                                    className="text-lg m-1 border-b-2">{productDetailSelected?.sales}</span> Lượt bán</span>
                                         </div>
                                         <h3 className='text-2xl font-semibold'>${price}</h3>
                                     </Card>
-                                    <Card hidden={product.productDetails?.length == 1} size='small' title='Loại sản phẩm' className="static">
+                                    <Card hidden={product.productDetails?.length == 1} size='small'
+                                          title='Loại sản phẩm' className="static">
                                         {(product.productDetails && product.productDetails.length > 1) && (
                                             <Radio.Group defaultValue={product.productDetails[0].name || "default"}>
                                                 {(product?.productDetails || []).map((productDetail: IProductDetail) => (
@@ -200,17 +193,17 @@ const ProductDetails = ({product}: {product: IProduct}) => {
                                             </Radio.Group>
                                         )}
                                     </Card>
-                                    <Card size='small' title='Thông tin vận chuyển' loading={Object.keys(currentShippingAddress).length === 0}>
+                                    <Card size='small' title='Thông tin vận chuyển'
+                                          loading={Object.keys(currentShippingAddress).length === 0}>
                                         <div>{currentShippingAddress.address}</div>
                                     </Card>
                                     <Card size='small' title='Mô tả ngắn'>
                                         <div className="text-black"
                                              dangerouslySetInnerHTML={{__html: product.shortDescription || ''}}></div>
                                     </Card>
-                                    <Card size='small' title='Mô tả'>
-                                        <div className={`text-black ${height}  overflow-clip`} dangerouslySetInnerHTML={{ __html: description || '' }}></div>
-                                        <button onClick={toggleDescription} className="  text-black w-[100%] hover:text-orange-500">{buttonText}</button>
-                                    </Card>
+
+                                        <ReadMore content={description}/>
+
 
                                 </div>
 

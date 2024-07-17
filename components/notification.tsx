@@ -39,8 +39,6 @@ const Notification = () => {
             })
     }, []);
 
-    console.log(noti)
-
     return (
         <>
             <Dropdown dropdownRender={() => (
