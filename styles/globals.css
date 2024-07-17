@@ -1,4 +1,5 @@
 @import url('https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@4cac1a6/css/all.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,20 +8,19 @@
     &::-webkit-scrollbar-track {
         background-color: rgb(255, 255, 255);
     }
+
     &::-webkit-scrollbar-thumb {
         background-color: rgba(152, 151, 151, 0.75);
         border-radius: 10px;
     }
+
     &::-webkit-scrollbar {
         width: 8px;
     }
 }
-
-
 .transition-all {
     transition: max-height 1s ease-in-out, opacity 1s ease-in-out;
     overflow: hidden;
-
 }
 
 .transition-all > div {
