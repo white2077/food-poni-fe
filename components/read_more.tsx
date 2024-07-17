@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Button, Card } from 'antd';
+import React, {useState, useRef, useEffect} from 'react';
+import {Card} from 'antd';
 
 interface ReadMoreProps {
     content?: string;
 }
 
-const ReadMore: React.FC<ReadMoreProps> = ({ content }) => {
+const ReadMore: React.FC<ReadMoreProps> = ({content}) => {
     const [expanded, setExpanded] = useState(false);
     const [height, setHeight] = useState('500px');
     const [opacity, setOpacity] = useState(0);
@@ -45,8 +45,8 @@ const ReadMore: React.FC<ReadMoreProps> = ({ content }) => {
                 <div
                     ref={contentRef}
                     className={`text-black overflow-clip transition-all `}
-                    dangerouslySetInnerHTML={{ __html: sanitizedDescription }}
-                    style={{ maxHeight: height, opacity: opacity }}
+                    dangerouslySetInnerHTML={{__html: sanitizedDescription}}
+                    style={{maxHeight: height, opacity: opacity}}
                 ></div>
                 {showButton && (
                     <button

@@ -201,12 +201,8 @@ const ProductDetails = ({product}: { product: IProduct }) => {
                                         <div className="text-black"
                                              dangerouslySetInnerHTML={{__html: product.shortDescription || ''}}></div>
                                     </Card>
-
-                                        <ReadMore content={description}/>
-
-
+                                    <ReadMore content={description}/>
                                 </div>
-
                                 <ProductCart
                                     id={id!}
                                     price={price!}
