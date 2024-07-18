@@ -4,6 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 @tailwind variants;
+
 .scrollbar-rounded {
     &::-webkit-scrollbar-track {
         background-color: rgb(255, 255, 255);
@@ -18,6 +19,7 @@
         width: 8px;
     }
 }
+
 .transition-all {
     transition: max-height 1s ease-in-out, opacity 1s ease-in-out;
     overflow: hidden;
@@ -37,5 +39,3 @@
         transform: translateY(0);
     }
 }
-
-
