@@ -16,7 +16,6 @@ const SearchKeyword = () => {
             <Button size='large' type='primary' onClick={() => search('') }>Tìm kiếm</Button>
         </Space.Compact>
     );
-
 };
 
 export default SearchKeyword;

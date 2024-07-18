@@ -33,6 +33,7 @@ import AddressCheckoutAdd from "../components/address-checkout-add";
 import AddressCheckoutUpdate from "../components/address-checkout-update";
 import {NextRequest} from "next/server";
 import {getAddressesPage} from "../queries/address.query";
+import CardHome from "../components/card_home";
 
 const {TextArea} = Input;
 
@@ -177,7 +178,7 @@ const Checkout = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
     return (
         <DefaultLayout>
             <div style={{color: "black", textAlign: "left"}}>
-                <h1>GIỎ HÀNG</h1>
+                <h1 className="text-2xl mb-2">GIỎ HÀNG</h1>
                 <Row gutter={16}>
                     <Col flex='auto'>
                         <OrderItems></OrderItems>
@@ -185,11 +186,13 @@ const Checkout = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
                     <Col flex='400px'>
                         <Card style={{marginBottom: "16px"}}>
                             <div>
-                                Giao tới
-                                <Button id="button-change-address" type='link' style={{float: 'right'}}
-                                        onClick={() => {
-                                            setModal2Open(true);
-                                        }}>Thay đổi</Button>
+                                <div className="flex justify-between items-center">
+                                    <div className="text-[17px] text-gray-400">Giao tới</div>
+                                    <Button id="button-change-address" type="link"
+                                            onClick={() => {
+                                                setModal2Open(true);
+                                            }}>Thay đổi</Button>
+                                </div>
                                 <Modal
                                     title="Địa chỉ của bạn"
                                     centered
@@ -235,7 +238,7 @@ const Checkout = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
                                         <div><span
                                             style={{fontWeight: 'bold'}}>{shippingAddress.fullName}</span> | {shippingAddress.phoneNumber}
                                         </div>
-                                        <div>{shippingAddress.address}</div>
+                                        <div><CardHome content="Nhà"/>{shippingAddress.address}</div>
                                     </>)
                                 }
                                 {!shippingAddress && (
@@ -249,24 +252,37 @@ const Checkout = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
                             </div>
                             <Radio.Group onChange={onChange} value={payment.method}>
                                 <Space direction="vertical">
-                                    <Radio value="CASH">Tiền mặt</Radio>
-                                    <Radio value="VNPAY">VNPAY</Radio>
+                                    <Radio value="CASH">
+                                        <div className="flex items-center"><img src="/img_1.png" className="w-9 h-9 mr-2"/><p>Thanh toán tiền mặt</p></div>
+                                    </Radio>
+                                    <Radio value="VNPAY">
+                                        <div className="flex items-center"><img src="/img.png" className="w-9 h-9 mr-2"/>
+                                            <div>
+                                                <p>VNPAY</p>
+                                                <div className="text-gray-400">Quét Mã QR từ ứng dụng ngân hàng</div>
+                                            </div>
+                                        </div>
+                                    </Radio>
                                 </Space>
                             </Radio.Group>
                         </Card>
                         <Card style={{marginBottom: "16px"}}>
-                            <div>
-                                Tạm tính
+                            <div className="flex justify-between">
+                                <div className="text-gray-500">Tạm tính</div>
                                 <span style={{float: 'right'}}>${totalAmount}</span>
                             </div>
-                            <div>
-                                Giảm giá
+                            <div className="flex justify-between">
+                                <div className="text-gray-500">Giảm giá</div>
                                 <span style={{float: 'right'}}>$0</span>
                             </div>
                             <Divider/>
-                            <div>
-                                Tổng tiền
-                                <span style={{float: 'right'}}>${totalAmount}</span>
+                            <div className="flex justify-between">
+                                <div className="text-gray-500">Tổng tiền</div>
+                                <div className="grid">
+                                    <div className="text-2xl text-red-500 text-right"
+                                         style={{float: 'right'}}>${totalAmount}</div>
+                                    <div className="right-0 text-gray-400">(Đã bao gồm VAT nếu có)</div>
+                                </div>
                             </div>
                         </Card>
                         <Form
@@ -280,9 +296,9 @@ const Checkout = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
                             >
                                 <TextArea placeholder="Ghi chú" allowClear/>
                             </Form.Item>
-
                             <Form.Item>
-                                <Button type="primary" htmlType="submit" danger block disabled={pending} loading={pending}>
+                                <Button type="primary" htmlType="submit" danger block disabled={pending}
+                                        loading={pending}>
                                     Thanh toán
                                 </Button>
                             </Form.Item>

@@ -1,6 +1,6 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Avatar, Badge, Button, Drawer, InputNumber, List} from 'antd';
-import {CloseOutlined, ShoppingCartOutlined} from "@ant-design/icons";
+import {CloseOutlined, MinusOutlined, PlusOutlined, ShoppingCartOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {deleteAllItem, deleteItem, ICart, ICartItem, setQuantity} from "../stores/cart.reducer";
 import {RootState} from "../stores";
@@ -21,8 +21,20 @@ const Cart = () => {
 
     const [pending, setPending] = useState<boolean>(false);
 
+    const [totalPrice, setTotalPrice] = useState<number>(0);
+
     const showDrawer = (): void => {
         setOpen(true);
+    };
+
+    const calculateTotalPrice = (): number => {
+        let total = 0;
+        carts.forEach((cart: ICart) => {
+            cart.cartItems.forEach((item: ICartItem) => {
+                total += item.price * item.quantity;
+            });
+        });
+        return total;
     };
 
     const onClose = (): void => {
@@ -51,6 +63,11 @@ const Cart = () => {
         }
     }
 
+    useEffect(() => {
+        const calculatedTotalPrice = calculateTotalPrice();
+        setTotalPrice(calculatedTotalPrice);
+    }, [carts]);
+
     return (
         <>
             <a onClick={showDrawer}>
@@ -68,32 +85,59 @@ const Cart = () => {
                                 itemLayout="horizontal"
                                 dataSource={cart.cartItems}
                                 renderItem={(item: ICartItem) => (
-                                    <List.Item
-                                        actions={[
-                                            <CloseOutlined
-                                                key="list-loadmore-edit"
-                                                id={`delete-icon-${item.id}`}
-                                                onClick={() => dispatch(deleteItem({
-                                                    id: item.id,
-                                                    retailerId: item.retailer.id ?? ''
-                                                }))}/>
-                                        ]}
-                                    >
+                                    <List.Item>
                                         <List.Item.Meta
-                                            avatar={<Avatar src={item.thumbnail}/>}
+                                            avatar={
+                                                <div className="relative inline-block flex items-center">
+                                                    <Avatar className="rounded-lg w-20 h-20" src={item.thumbnail}/>
+                                                    <div
+                                                        className="absolute top-[-5px] w-6 h-6 right-[-5px] bg-gray-300 rounded-[100px] flex p-0 justify-center ">
+                                                        <CloseOutlined
+                                                            id={`delete-icon-${item.id}`}
+                                                            key="list-loadmore-edit"
+                                                            onClick={() =>
+                                                                dispatch(
+                                                                    deleteItem({
+                                                                        id: item.id,
+                                                                        retailerId: item.retailer.id ?? ""
+                                                                    })
+                                                                )
+                                                            }
+                                                        />
+                                                    </div>
+                                                </div>
+                                            }
                                             title={<span>{item.name}</span>}
                                             description={
                                                 <span>
-                                                    <span style={{marginRight: '10px'}}>${item.price}</span>
-                                                    <InputNumber min={1}
-                                                                 max={20}
-                                                                 style={{maxWidth: '70px'}}
-                                                                 defaultValue={1}
-                                                                 value={item.quantity}
-                                                                 onChange={(value: number | null) => onChangeQuantity(item.id, item.retailer.id ?? '', value!)}/>
-                                                </span>}
+                                                    <span style={{marginRight: "10px"}}>${item.price}</span>
+                                                </span>
+                                            }
                                         />
-                                        <div>${item.price * item.quantity}</div>
+                                        <div className="mb-auto">
+                                            <div className="text-right mb-auto">${item.price * item.quantity}</div>
+                                            <div className="flex items-center border-[1px] w-24 justify-between rounded-lg mt-6">
+                                                <Button
+                                                    type="text"
+                                                    icon={<MinusOutlined/>}
+                                                    onClick={() => onChangeQuantity(item.id, item.retailer.id ?? '', item.quantity > 1 ? item.quantity - 1 : item.quantity)}
+                                                />
+                                                <input
+                                                    className="w-6 text-center"
+                                                    defaultValue={1}
+                                                    value={item.quantity}
+                                                    onChange={(e) => {
+                                                        const value = parseInt(e.target.value);
+                                                        onChangeQuantity(item.id, item.retailer.id ?? '', !isNaN(value) && value >= 1 ? value : item.quantity);
+                                                    }}
+                                                />
+                                                <Button
+                                                    type="text"
+                                                    icon={<PlusOutlined/>}
+                                                    onClick={() => onChangeQuantity(item.id, item.retailer.id ?? '', item.quantity + 1)}
+                                                />
+                                            </div>
+                                        </div>
                                     </List.Item>
                                 )}
                             />
@@ -102,13 +146,17 @@ const Cart = () => {
                         )
                     ))
                 }
-                <Button className="my-5" type='primary' danger block disabled={pending} loading={pending} hidden={carts.length === 0} onClick={goToCheckout}>
-                    Thanh toán ngay
-                </Button>
+                <hr></hr>
+                <div className="mt-3 flex justify-between">
+                    <div>Total</div>
+                    <div>${totalPrice}</div>
+                </div>
+                <hr></hr>
+                <Button className="my-5s mt-2" type='primary' danger block disabled={pending} loading={pending}
+                        hidden={carts.length === 0} onClick={goToCheckout}>Thanh toán ngay</Button>
             </Drawer>
         </>
     );
-
 };
 
 export default Cart;

@@ -2,6 +2,8 @@ import {Card, Checkbox, Col, Divider, Input, InputNumber, Popconfirm, Row} from 
 import {DeleteOutlined, RightOutlined} from "@ant-design/icons";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
+import {Button} from 'antd';
+import {PlusOutlined, MinusOutlined} from '@ant-design/icons';
 import {
     deleteItem,
     deleteSelectedSoldItems,
@@ -24,7 +26,7 @@ const OrderItems = () => {
     const carts: ICart[] = useSelector((state: RootState) => state.cart.carts);
 
     const onChangeQuantity = (id: string, retailerId: string, value: number): void => {
-        const payload: {id: string, retailerId: string, value: number} = {id, retailerId, value};
+        const payload: { id: string, retailerId: string, value: number } = {id, retailerId, value};
         dispatch(setQuantity(payload));
     };
 
@@ -50,75 +52,101 @@ const OrderItems = () => {
 
     return (
         <div>
-            <Card className="mb-[16px]">
+
+            <div className="p-2 bg-white border-[1px] rounded-lg ">
                 <Row>
                     <Col flex='2%'>
                         <Checkbox onClick={handleSetSelectedAll}></Checkbox>
                     </Col>
                     <Col flex='40%'>Tất cả</Col>
                     <Col flex='10%'>Đơn giá</Col>
-                    <Col flex='10%'>Số lượng</Col>
-                    <Col flex='10%'>Thành tiền</Col>
-                    <Col flex='26%'>Ghi chú</Col>
-                    <Col flex='2%'>
+                    <Col flex='12%'>Số lượng</Col>
+                    <Col flex='14%'>Thành tiền</Col>
+                    <Col flex='19%'>Ghi chú</Col>
+                    <Col flex='3%' className="text-center">
                         <Popconfirm
                             title="Bạn có chắc chắn muốn xóa không?"
                             onConfirm={handleDeleteSelectedAll}
                             okText="Đồng ý"
                             cancelText="Hủy"
                         >
-                            <DeleteOutlined className="cursor-pointer" />
+                            <DeleteOutlined className="cursor-pointer "/>
                         </Popconfirm>
                     </Col>
                 </Row>
-            </Card>
+            </div>
             {
                 carts.length > 0 ? (
-                    carts.filter(cart => cart.cartItems.length!=0).map((cart: ICart) => (
-                        <Card key={cart.id} className="my-2">
+                    carts.filter(cart => cart.cartItems.length != 0).map((cart: ICart) => (
+                        <div key={cart.id} className="p-2 bg-white border-[1px] rounded-lg mt-4">
                             <Row>
-                                <Checkbox onClick={() => handleSetSelectedICart(cart.id)} checked={cart.isSelectedICart}></Checkbox>
+                                <Checkbox onClick={() => handleSetSelectedICart(cart.id)}
+                                          checked={cart.isSelectedICart}></Checkbox>
                                 <div className="font-bold text-xl mx-2">{cart.name}</div>
-                                <RightOutlined />
+                                <RightOutlined/>
+
                             </Row>
-                            <Divider />
+                            <Divider/>
                             {cart.cartItems.map((item: ICartItem, index: number) => (
                                 <Row key={index} className="my-[16px] items-center">
                                     <Col flex='2%'>
-                                        <Checkbox onClick={() => handleSetSelectedICartItem(item.id)} checked={item.isSelectedICartItem}></Checkbox>
+                                        <Checkbox onClick={() => handleSetSelectedICartItem(item.id)}
+                                                  checked={item.isSelectedICartItem}></Checkbox>
                                     </Col>
                                     <Col flex='40%'>
                                         <div className="flex items-center">
                                             <div>
-                                                <img src={item.thumbnail} className="w-[100px]" alt="Product"/>
+                                                <img src={item.thumbnail} className="w-[100px] rounded-lg ml-2"
+                                                     alt="Product"/>
                                             </div>
                                             <div className="ml-[16px]">{item.name}</div>
                                         </div>
                                     </Col>
-                                    <Col flex='10%'>${item.price}</Col>
-                                    <Col flex='10%'>
-                                        <InputNumber min={1}
-                                                     max={20}
-                                                     className="max-w-[70px]"
-                                                     defaultValue={1}
-                                                     value={item.quantity}
-                                                     onChange={(value: number | null) => onChangeQuantity(item.id, item.retailer.id ?? '', value!)}/>
+                                    <Col flex='9%' className="font-bold"> ${item.price}</Col>
+                                    <Col flex='13%'>
+                                        <div className="flex items-center border-[1px] w-24 justify-between rounded-lg">
+                                            <Button
+                                                type="text"
+                                                icon={<MinusOutlined/>}
+                                                onClick={() => onChangeQuantity(item.id, item.retailer.id ?? '', item.quantity > 1 ? item.quantity - 1 : item.quantity)}
+                                            />
+                                            <input
+                                                className="w-6 text-center"
+                                                defaultValue={1}
+                                                value={item.quantity}
+                                                onChange={(e) => {
+                                                    const value = parseInt(e.target.value);
+                                                    onChangeQuantity(item.id, item.retailer.id ?? '', !isNaN(value) && value >= 1 ? value : item.quantity);
+                                                }}
+                                            />
+                                            <Button
+                                                type="text"
+                                                icon={<PlusOutlined/>}
+                                                onClick={() => onChangeQuantity(item.id, item.retailer.id ?? '', item.quantity + 1)}
+                                            />
+                                        </div>
                                     </Col>
-                                    <Col flex='10%'>${item.price * item.quantity}</Col>
-                                    <Col flex='26%'>
+                                    <Col flex='14%'
+                                         className="font-bold text-red-500">${item.price * item.quantity}</Col>
+                                    <Col flex='19%'>
                                         <TextArea
                                             placeholder="Ghi chú"
                                             value={item.note}
+                                            className="h-[35px]"
                                             onChange={(e) => onChangeNote(item.id, item.retailer.id ?? '', e.target.value)}
                                             allowClear
                                         />
                                     </Col>
-                                    <Col flex='2%'>
-                                        <DeleteOutlined id={`delete-icon-${item.id}`} onClick={() => dispatch(deleteItem({id: item.id, retailerId: item.retailer.id ?? ''}))}/>
+                                    <Col flex='3%' className="text-center">
+                                        <DeleteOutlined id={`delete-icon-${item.id}`}
+                                                        onClick={() => dispatch(deleteItem({
+                                                            id: item.id,
+                                                            retailerId: item.retailer.id ?? ''
+                                                        }))}/>
                                     </Col>
                                 </Row>
                             ))}
-                        </Card>
+                        </div>
                     ))
                 ) : (
                     <Card className="my-2">
