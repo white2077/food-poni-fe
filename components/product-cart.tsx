@@ -7,6 +7,7 @@ import {RootState} from "../stores";
 import {CurrentUser} from "../stores/user.reducer";
 import {IRetailer} from "../pages/[pid]";
 import {server} from "../utils/server";
+import CustomInput from "./customInput ";
 
 const ProductCart = ({id, price, thumbnail, name, retailer}: {
     id: string,
@@ -55,20 +56,38 @@ const ProductCart = ({id, price, thumbnail, name, retailer}: {
 
     return (
         <Card className='text-left text-black h-fit' size='small'>
-            <div>
-                <Avatar src={server + retailer.avatar} size='large'/>
-                <span className="mx-2">{retailer.username}</span>
+            <div className="flex">
+                <img className="w-12 h-12 rounded-[100%] overflow-hidden object-cover" src={server + retailer.avatar}
+                     alt={""}/>
+                <div>
+                    <span className="mx-2 font-semibold">{retailer.username}</span>
+                    <div className="ml-2 font-semibold ">
+                        <span>
+                            <span className="">4.9 *</span>
+                        </span>
+                        <span>
+                            <span className="mx-2 text-gray-400 font-normal">(69 đánh giá)</span>
+                        </span>
+                    </div>
+                </div>
+                <div className="w-[44%] flex justify-end items-center">
+                    <span className="border-2 w-9 h-9 flex items-center justify-center  rounded-lg">
+                        <img className="w-5 h-5" src={"TinNhan.png"}></img>
+                    </span>
+                </div>
             </div>
-            <Divider/>
+            <hr className="my-3.5"></hr>
             <div className="flex gap-24 mb-6">
                 <div>
                     <div className='text-md font-medium mb-2'>Số lượng</div>
-                    <InputNumber
+                    <CustomInput
                         min={1}
                         max={20}
                         defaultValue={1}
                         value={quantity}
-                        onChange={(value: number | null) => setQuantity(value ?? 1)} disabled={isExisted}/>
+                        onChange={(value: number | null) => setQuantity(value ?? 1)}
+                        disabled={isExisted}
+                    />
                 </div>
                 <div>
                     <div className='text-md font-medium mb-2'>Tạm tính</div>

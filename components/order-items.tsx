@@ -16,6 +16,7 @@ import {
     setSelectedICartItem
 } from "../stores/cart.reducer";
 import {RootState} from "../stores";
+import QuantityInput from "./quantityInput";
 
 const {TextArea} = Input;
 
@@ -104,27 +105,7 @@ const OrderItems = () => {
                                     </Col>
                                     <Col flex='9%' className="font-bold"> ${item.price}</Col>
                                     <Col flex='13%'>
-                                        <div className="flex items-center border-[1px] w-24 justify-between rounded-lg">
-                                            <Button
-                                                type="text"
-                                                icon={<MinusOutlined/>}
-                                                onClick={() => onChangeQuantity(item.id, item.retailer.id ?? '', item.quantity > 1 ? item.quantity - 1 : item.quantity)}
-                                            />
-                                            <input
-                                                className="w-6 text-center"
-                                                defaultValue={1}
-                                                value={item.quantity}
-                                                onChange={(e) => {
-                                                    const value = parseInt(e.target.value);
-                                                    onChangeQuantity(item.id, item.retailer.id ?? '', !isNaN(value) && value >= 1 ? value : item.quantity);
-                                                }}
-                                            />
-                                            <Button
-                                                type="text"
-                                                icon={<PlusOutlined/>}
-                                                onClick={() => onChangeQuantity(item.id, item.retailer.id ?? '', item.quantity + 1)}
-                                            />
-                                        </div>
+                                        <QuantityInput item={item} onChangeQuantity={onChangeQuantity}/>
                                     </Col>
                                     <Col flex='14%'
                                          className="font-bold text-red-500">${item.price * item.quantity}</Col>

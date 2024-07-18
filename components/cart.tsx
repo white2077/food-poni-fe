@@ -6,6 +6,7 @@ import {deleteAllItem, deleteItem, ICart, ICartItem, setQuantity} from "../store
 import {RootState} from "../stores";
 import {NextRouter, useRouter} from "next/router";
 import {CurrentUser} from "../stores/user.reducer";
+import QuantityInput from "./quantityInput";
 
 const Cart = () => {
 
@@ -93,6 +94,7 @@ const Cart = () => {
                                                     <div
                                                         className="absolute top-[-5px] w-6 h-6 right-[-5px] bg-gray-300 rounded-[100px] flex p-0 justify-center ">
                                                         <CloseOutlined
+                                                            className=" p-0"
                                                             id={`delete-icon-${item.id}`}
                                                             key="list-loadmore-edit"
                                                             onClick={() =>
@@ -116,27 +118,7 @@ const Cart = () => {
                                         />
                                         <div className="mb-auto">
                                             <div className="text-right mb-auto">${item.price * item.quantity}</div>
-                                            <div className="flex items-center border-[1px] w-24 justify-between rounded-lg mt-6">
-                                                <Button
-                                                    type="text"
-                                                    icon={<MinusOutlined/>}
-                                                    onClick={() => onChangeQuantity(item.id, item.retailer.id ?? '', item.quantity > 1 ? item.quantity - 1 : item.quantity)}
-                                                />
-                                                <input
-                                                    className="w-6 text-center"
-                                                    defaultValue={1}
-                                                    value={item.quantity}
-                                                    onChange={(e) => {
-                                                        const value = parseInt(e.target.value);
-                                                        onChangeQuantity(item.id, item.retailer.id ?? '', !isNaN(value) && value >= 1 ? value : item.quantity);
-                                                    }}
-                                                />
-                                                <Button
-                                                    type="text"
-                                                    icon={<PlusOutlined/>}
-                                                    onClick={() => onChangeQuantity(item.id, item.retailer.id ?? '', item.quantity + 1)}
-                                                />
-                                            </div>
+                                            <QuantityInput item={item} onChangeQuantity={onChangeQuantity}/>
                                         </div>
                                     </List.Item>
                                 )}

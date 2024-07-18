@@ -1,31 +1,34 @@
 import { Button } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import {Component} from "react";
+import { Component } from 'react';
 
 class QuantityInput extends Component<{ item: any, onChangeQuantity: any }> {
     render() {
-        let {item, onChangeQuantity} = this.props;
+        let { item, onChangeQuantity } = this.props;
+        const handleDecrease = () => {
+            const newQuantity = item.quantity > 1 ? item.quantity - 1 : item.quantity;
+            onChangeQuantity(item.id, item.retailer?.id ?? '', newQuantity);
+        };
+
+        const handleIncrease = () => {
+            const newQuantity = item.quantity + 1;
+            onChangeQuantity(item.id, item.retailer?.id ?? '', newQuantity);
+        };
+
         return (
-            <div className="flex items-center border-[1px] w-24 justify-between rounded-lg mt-6">
-                <Button
-                    type="text"
-                    icon={<MinusOutlined/>}
-                    onClick={() => onChangeQuantity(item.id, item.retailer.id ?? '', item.quantity > 1 ? item.quantity - 1 : item.quantity)}
-                />
+            <div className="flex items-center border-[1px] w-24 justify-between rounded-lg">
+                <Button type="text" icon={<MinusOutlined />} onClick={handleDecrease} />
                 <input
                     className="w-6 text-center"
                     defaultValue={1}
                     value={item.quantity}
                     onChange={(e) => {
                         const value = parseInt(e.target.value);
-                        onChangeQuantity(item.id, item.retailer.id ?? '', !isNaN(value) && value >= 1 ? value : item.quantity);
+                        const newQuantity = !isNaN(value) && value >= 1 ? value : item.quantity;
+                        onChangeQuantity(item.id, item.retailer?.id ?? '', newQuantity);
                     }}
                 />
-                <Button
-                    type="text"
-                    icon={<PlusOutlined/>}
-                    onClick={() => onChangeQuantity(item.id, item.retailer.id ?? '', item.quantity + 1)}
-                />
+                <Button type="text" icon={<PlusOutlined />} onClick={handleIncrease} />
             </div>
         );
     }
