@@ -1,15 +1,25 @@
 import React, {useState} from "react";
 import {DefaultLayout} from "./_layout";
-import {Col, Flex, Menu, MenuProps} from "antd";
+import {Col, Flex, Image, Menu, MenuProps} from "antd";
 import AddressDeliveryInformation from "../components/address-delivery-information";
-import {EnvironmentOutlined, UserOutlined} from "@ant-design/icons";
+import {
+    CreditCardOutlined,
+    CustomerServiceOutlined,
+    EnvironmentOutlined, LikeOutlined,
+    PhoneOutlined,
+    ProfileOutlined,
+    UserOutlined
+} from "@ant-design/icons";
 import PersonalInformation from "../components/personal-information";
 import {NextRequest} from "next/server";
 import {getAddressesPage} from "../queries/address.query";
 import {getCookie} from "cookies-next";
-import {REFRESH_TOKEN} from "../utils/server";
+import {REFRESH_TOKEN, server} from "../utils/server";
 import {Page} from "../models/Page";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
+import {CurrentUser} from "../stores/user.reducer";
+import {useSelector} from "react-redux";
+import {RootState} from "../stores";
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -31,7 +41,11 @@ function getItem(
 
 const items: MenuProps['items'] = [
     getItem('Thông tin tài khoản', '1', <UserOutlined/>),
-    getItem('Sổ địa chỉ', '2', <EnvironmentOutlined/>)
+    getItem('Sổ địa chỉ', '2', <EnvironmentOutlined/>),
+    getItem('Quản lý đơn hàng', '3', <ProfileOutlined/>),
+    getItem('Thông tin thanh toán', '4', <CreditCardOutlined/>),
+    getItem('Sản phẩm yêu thích', '5', <LikeOutlined/>),
+    getItem('Hỗ trợ khách hàng', '6', <CustomerServiceOutlined/>)
 ];
 
 export async function getServerSideProps({req}: { req: NextRequest }) {
@@ -47,12 +61,14 @@ export async function getServerSideProps({req}: { req: NextRequest }) {
 }
 
 const AccountInformation = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const [selectedItem, setSelectedItem] = useState<string>('1');
+    const [selectedItemLabel, setSelectedItemLabel] = useState<string>('Thông tin tài khoản');
 
     const onClick: MenuProps['onClick'] = (e) => {
-        // console.log('click ', e);
         setSelectedItem(e.key);
+        setSelectedItemLabel(e.domEvent.currentTarget.textContent ?? '');
     };
 
     const contentMap: { [key: string]: React.ReactNode } = {
@@ -64,7 +80,18 @@ const AccountInformation = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
         <DefaultLayout>
             <Flex gap={16}>
                 <div className="p-4 bg-white rounded-lg">
-                    <div className="mb-4">Danh mục</div>
+                    <div className="flex">
+                        <Image
+                            width={50}
+                            height={50}
+                            className="object-center rounded-full shadow-lg  overflow-hidden object-cover "
+                            src={server + currentUser.avatar}
+                        />
+                        <div className="mx-2">
+                            <span className="text-[13px] text-gray-500 font-extralight">Tài khoản của</span>
+                            <div>{currentUser.username}</div>
+                        </div>
+                    </div>
                     <Col>
                         <div className="mt-[16px]">
                             <Menu
@@ -79,12 +106,12 @@ const AccountInformation = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
                     </Col>
                 </div>
                 <Col>
+                    <div className="my-2 text-[20px] font-sans">{selectedItemLabel}</div>
                     {contentMap[selectedItem]}
                 </Col>
             </Flex>
         </DefaultLayout>
     );
-
 };
 
 export default AccountInformation;
