@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {Avatar, Badge, Button, Drawer, InputNumber, List} from 'antd';
-import {CloseOutlined, MinusOutlined, PlusOutlined, ShoppingCartOutlined} from "@ant-design/icons";
+import {Avatar, Badge, Button, Divider, Drawer, List} from 'antd';
+import {CloseOutlined, ShoppingCartOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {deleteAllItem, deleteItem, ICart, ICartItem, setQuantity} from "../stores/cart.reducer";
 import {RootState} from "../stores";
@@ -128,14 +128,16 @@ const Cart = () => {
                         )
                     ))
                 }
-                <hr></hr>
-                <div className="mt-3 flex justify-between">
-                    <div>Total</div>
-                    <div>${totalPrice}</div>
+                <div hidden={carts.length == 0}>
+                    <Divider/>
+                    <div className="mt-3 flex justify-between">
+                        <div>Total</div>
+                        <div>${totalPrice}</div>
+                    </div>
+                    <Divider/>
+                    <Button className="my-5s mt-2" type='primary' danger block disabled={pending} loading={pending}
+                            hidden={carts.length === 0} onClick={goToCheckout}>Thanh toán ngay</Button>
                 </div>
-                <hr></hr>
-                <Button className="my-5s mt-2" type='primary' danger block disabled={pending} loading={pending}
-                        hidden={carts.length === 0} onClick={goToCheckout}>Thanh toán ngay</Button>
             </Drawer>
         </>
     );
