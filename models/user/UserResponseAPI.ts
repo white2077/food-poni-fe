@@ -8,11 +8,9 @@ export interface UserAPIResponse {
 
     email: string;
 
-    firstName: string;
+    gender: boolean;
 
-    lastName: string;
-
-    phoneNumber: string;
+    birthday: string;
 
     username: string;
 
@@ -32,11 +30,9 @@ export const INITIAL_USER_API_RESPONSE: UserAPIResponse = {
 
     email: '',
 
-    firstName: '',
+    gender: false,
 
-    lastName: '',
-
-    phoneNumber: '',
+    birthday: "",
 
     username: '',
 
