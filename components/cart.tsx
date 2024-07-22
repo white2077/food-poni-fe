@@ -80,58 +80,60 @@ const Cart = () => {
                 {
                     carts.map((cart: ICart) => (
                         cart.cartItems.length > 0 ? (
-                            <List
-                                key={cart.id}
-                                className="demo-loadmore-list"
-                                itemLayout="horizontal"
-                                dataSource={cart.cartItems}
-                                renderItem={(item: ICartItem) => (
-                                    <List.Item>
-                                        <List.Item.Meta
-                                            avatar={
-                                                <div className="relative inline-block flex items-center">
-                                                    <Avatar className="rounded-lg w-20 h-20" src={item.thumbnail}/>
-                                                    <div
-                                                        className="absolute top-[-5px] w-6 h-6 right-[-5px] bg-gray-300 rounded-[100px] flex p-0 justify-center ">
-                                                        <CloseOutlined
-                                                            className=" p-0"
-                                                            id={`delete-icon-${item.id}`}
-                                                            key="list-loadmore-edit"
-                                                            onClick={() =>
-                                                                dispatch(
-                                                                    deleteItem({
-                                                                        id: item.id,
-                                                                        retailerId: item.retailer.id ?? ""
-                                                                    })
-                                                                )
-                                                            }
-                                                        />
+                            <div>
+                                <List
+                                    key={cart.id}
+                                    className="demo-loadmore-list"
+                                    itemLayout="horizontal"
+                                    dataSource={cart.cartItems}
+                                    renderItem={(item: ICartItem) => (
+                                        <List.Item>
+                                            <List.Item.Meta
+                                                avatar={
+                                                    <div className="relative inline-block flex items-center">
+                                                        <Avatar className="rounded-lg w-20 h-20" src={item.thumbnail}/>
+                                                        <div
+                                                            className="absolute top-[-5px] w-6 h-6 right-[-5px] bg-gray-300 rounded-[100px] flex p-0 justify-center ">
+                                                            <CloseOutlined
+                                                                className=" p-0"
+                                                                id={`delete-icon-${item.id}`}
+                                                                key="list-loadmore-edit"
+                                                                onClick={() =>
+                                                                    dispatch(
+                                                                        deleteItem({
+                                                                            id: item.id,
+                                                                            retailerId: item.retailer.id ?? ""
+                                                                        })
+                                                                    )
+                                                                }
+                                                            />
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            }
-                                            title={<span>{item.name}</span>}
-                                            description={
-                                                <span>
+                                                }
+                                                title={<span>{item.name}</span>}
+                                                description={
+                                                    <span>
                                                     <span style={{marginRight: "10px"}}>${item.price}</span>
                                                 </span>
-                                            }
-                                        />
-                                        <div className="mb-auto">
-                                            <div className="text-right mb-auto">${item.price * item.quantity}</div>
-                                            <QuantityInput item={item} onChangeQuantity={onChangeQuantity}/>
-                                        </div>
-                                    </List.Item>
-                                )}
-                            />
+                                                }
+                                            />
+                                            <div className="mb-auto">
+                                                <div className="text-right mb-auto">${item.price * item.quantity}</div>
+                                                <QuantityInput item={item} onChangeQuantity={onChangeQuantity}/>
+                                            </div>
+                                        </List.Item>
+                                    )}
+                                />
+                                <Divider/>
+                            </div>
                         ) : (
                             <div key={cart.id}></div>
                         )
                     ))
                 }
                 <div hidden={carts.length == 0}>
-                    <Divider/>
                     <div className="mt-3 flex justify-between">
-                        <div>Total</div>
+                        <div>Tổng tiền</div>
                         <div>${totalPrice}</div>
                     </div>
                     <Divider/>
