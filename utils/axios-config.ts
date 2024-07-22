@@ -1,7 +1,7 @@
 import axios, {AxiosError, AxiosResponse} from "axios";
-import {server} from "./server";
+import {REFRESH_TOKEN, server} from "./server";
 import {AuthAPIResponse} from "../models/auth/AuthAPIResponse";
-import {CookieValueTypes} from "cookies-next";
+import {CookieValueTypes, deleteCookie} from "cookies-next";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
 
 export let accessToken: string | null;
@@ -32,9 +32,9 @@ export const apiWithToken = (refreshToken: CookieValueTypes) => {
                     return Promise.reject(error);
                 })
                 .catch((res: AxiosError<ErrorApiResponse>) => {
-                    // alert(res.response ? res.response.data.error.message : res.message);
-                    // window.location.href = "/login";
-                    // deleteCookie(REFRESH_TOKEN);
+                    alert(res.response ? res.response.data.error.message : res.message);
+                    window.location.href = "/login";
+                    deleteCookie(REFRESH_TOKEN);
                 });
         }
         return Promise.reject(error);

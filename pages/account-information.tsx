@@ -64,6 +64,7 @@ const AccountInformation = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const [selectedItem, setSelectedItem] = useState<string>('1');
+
     const [selectedItemLabel, setSelectedItemLabel] = useState<string>('Thông tin tài khoản');
 
     const onClick: MenuProps['onClick'] = (e) => {

@@ -4,13 +4,12 @@ import {LogoutOutlined, QuestionCircleOutlined, ShoppingOutlined, UserOutlined} 
 import {NextRouter, useRouter} from 'next/router';
 import {RootState} from '../stores';
 import React, {useEffect} from "react";
-import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
+import {CurrentUser, INITIAL_CURRENT_USER, setCurrentUser} from "../stores/user.reducer";
 import Cart from "./cart";
 import SearchKeyword from "./search-keyword";
 import {deleteCookie, getCookie} from "cookies-next";
 import {REFRESH_TOKEN, server} from "../utils/server";
 import Notification from "./notification";
-import {INITIAL_PAGE_API_RESPONSE} from "../models/Page";
 import SockJS from "sockjs-client";
 import {Client, IMessage} from "@stomp/stompjs";
 import {addNotification} from "../stores/notification.reducer";
@@ -87,7 +86,7 @@ export default function HeaderMain() {
         if (currentUser.id) {
             if (path === '/login') {
                 deleteCookie(REFRESH_TOKEN);
-                dispatch(setCurrentUser({}));
+                dispatch(setCurrentUser(INITIAL_CURRENT_USER));
                 setTimeout(() => {
                     window.location.href = path;
                 }, 0);

@@ -41,9 +41,6 @@ export interface IProductDetail {
 export interface IRetailer {
     id: string;
     avatar: string;
-    firstName: string;
-    lastName: string;
-    phoneNumber: string;
     username: string;
 }
 
@@ -63,9 +60,6 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
             retailer: product.user && {
                 id: product.user.id ?? "",
                 avatar: product.user.avatar ?? "",
-                firstName: product.user.firstName ?? "",
-                lastName: product.user.lastName ?? "",
-                phoneNumber: product.user.phoneNumber ?? "",
                 username: product.user.username ?? "",
             },
             productDetails: productDetails.content.map((productDetail: ProductDetailAPIResponse): IProductDetail => ({
