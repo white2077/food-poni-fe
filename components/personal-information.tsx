@@ -76,7 +76,7 @@ export const PersonalInformation = () => {
                     </div>
                 </div>
                 <div className="mt-8 text-center">
-                    <Button className="w-44">Lưu thay đổi</Button>
+                    <Button className="w-44 !bg-primary !text-white hover:!bg-white hover:!text-[#F36F24]">Lưu thay đổi</Button>
                 </div>
             </div>
             <div className="col-span-2">

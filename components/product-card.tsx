@@ -106,7 +106,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                             className="aspect-square object-cover"
                             src={product.thumbnail ? server + product.thumbnail : fallback}/>}
             >
-                <Space direction="vertical" size="small" style={{display: 'flex'}}>
+                <Space direction="vertical" size="small" className="flex">
                     <div className='flex items-center overflow-hidden'>
                         <Badge className='mr-1 overflow-hidden'
                                count={distance !== "" ? `Khoảng ${distance}` : "Khoảng cách không xác định"}
@@ -126,8 +126,8 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                         <div>Đã bán: {product.sales}</div>
                     </div>
                 </Space>
-                <Divider style={{margin: '12px 0px'}}/>
-                <div style={{fontSize: '14px'}}>
+                <Divider className="my-[12px]"/>
+                <div className="text-[14px]">
                     <HistoryOutlined/> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"} {product.retailer}
                 </div>
             </Card>
