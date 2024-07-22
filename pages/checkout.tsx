@@ -297,7 +297,7 @@ const Checkout = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
                                 <TextArea placeholder="Ghi chú" allowClear/>
                             </Form.Item>
                             <Form.Item>
-                                <Button type="primary" htmlType="submit" danger block disabled={pending}
+                                <Button type="primary" htmlType="submit" danger block disabled={pending || carts.length == 0}
                                         loading={pending}>
                                     Thanh toán
                                 </Button>
