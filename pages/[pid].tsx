@@ -36,6 +36,7 @@ export interface IProductDetail {
     rate: number;
     rateCount: number;
     sales: number;
+    status: boolean;
 }
 
 export interface IRetailer {
@@ -71,6 +72,7 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
                 rate: productDetail.rate,
                 rateCount: productDetail.rateCount,
                 sales: productDetail.sales,
+                status: productDetail.status
             }))
 
         };
@@ -134,7 +136,8 @@ const ProductDetails = ({product}: { product: IProduct }) => {
         images,
         name: productDetailName,
         price,
-        description
+        description,
+        status
     } = productDetailSelected || {};
 
     return (
@@ -203,6 +206,7 @@ const ProductDetails = ({product}: { product: IProduct }) => {
                                     thumbnail={images && images.length > 0 ? server + images[0] : ""}
                                     name={product.name + (productDetailName ? ' - ' + productDetailName : '')}
                                     retailer={product.retailer!}
+                                    status={status!}
                                 />
                             </div>
                             <ProductComment data={rates} isLoading={isLoadingRate}/>

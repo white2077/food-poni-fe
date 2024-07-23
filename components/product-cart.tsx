@@ -10,12 +10,13 @@ import {server} from "../utils/server";
 import CustomInput from "./customInput ";
 import Link from "next/link";
 
-const ProductCart = ({id, price, thumbnail, name, retailer}: {
+const ProductCart = ({id, price, thumbnail, name, retailer, status}: {
     id: string,
     price: number,
     thumbnail: string,
     name: string,
-    retailer: IRetailer
+    retailer: IRetailer,
+    status: boolean
 }) => {
 
     const router: NextRouter = useRouter();
@@ -104,13 +105,23 @@ const ProductCart = ({id, price, thumbnail, name, retailer}: {
                     </div>
                 </div>
             </div>
-            <Flex vertical gap='small' style={{width: '100%'}}>
-                <Button type='primary' danger block disabled={pending} loading={pending} onClick={getCheckout}>
-                    Mua ngay
-                </Button>
-                <Button block onClick={addToCart}
-                        disabled={isExisted}>{isExisted ? 'Sản phẩm đã có trong giỏ hàng' : 'Thêm vào giỏ hàng'}</Button>
-            </Flex>
+            {
+                status ? (
+                    <Flex vertical gap='small' className="w-full">
+                        <Button type='primary' danger block disabled={pending} loading={pending} onClick={getCheckout}>
+                            Mua ngay
+                        </Button>
+                        <Button block onClick={addToCart}
+                                disabled={isExisted}>{isExisted ? 'Sản phẩm đã có trong giỏ hàng' : 'Thêm vào giỏ hàng'}</Button>
+                    </Flex>
+                ) : (
+                    <Flex vertical gap='small' className="w-full">
+                        <Button disabled={!status}>
+                            Sản phẩm này đã hết
+                        </Button>
+                    </Flex>
+                )
+            }
         </Card>
     );
 
