@@ -19,6 +19,7 @@
         width: 8px;
     }
 }
+/* Tùy chỉnh thanh cuộn cho Chrome, Safari */
 
 .product-row {
     display: flex;

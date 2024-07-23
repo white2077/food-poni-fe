@@ -125,37 +125,25 @@ const FileUploads = () => {
     return (
         <Modal title="Upload Files" open={showModalFileUpload} footer={null}
                onCancel={() => dispatch(setShowModalFileUpload(false))}>
-            <List
+            <List className="scrollbar-rounded overflow-scroll max-h-96 h-96 p-2 "
                 grid={{gutter: 16, xs: 1, sm: 2, md: 2, lg: 4, xl: 4, xxl: 4}}
                 dataSource={fileUploads}
                 renderItem={(file: FileUploadAPIResponse) => (
-                    <List.Item style={{padding: 0}}>
-                        <Card
+                    <List.Item >
+                        <div
                             onClick={() => handleToggleFileSelect(file.url)}
-                            className="relative h-[100px]"
-                            hoverable
-                            cover={<img src={file.url} alt={file.name} style={{maxWidth: '100%', height: '100px'}}/>}
+                            className="p-0"
                             onMouseEnter={() => setHoveredFile(file.url)}
-                            onMouseLeave={() => setHoveredFile(null)}
-                        >
-                            {selectedFiles.includes(file.url) && (
-                                <Button
-                                    type="primary"
-                                    className="absolute top-[10px] right-[10px]"
-                                    onClick={() => handleToggleFileSelect(file.url)}
-                                >
-                                    ✓
-                                </Button>
-                            )}
-                            {hoveredFile === file.url && (
-                                <Button
-                                    type="primary"
-                                    className="absolute top-[10px] right-[10px]"
-                                >
-                                    ✓
-                                </Button>
-                            )}
-                        </Card>
+                            onMouseLeave={() => setHoveredFile(null)}>
+                            <img src={file.url} alt={file.name} className="w-32 h-32 object-cover rounded-lg "/>
+
+                            <div className="flex border-2 border-orange-200  absolute top-1 w-6 h-6 right-3  rounded-full" style={{backgroundColor:'rgba(128, 128, 128, 0.5)'}}>
+                                {selectedFiles.includes(file.url) && (
+                                    <div onClick={() => handleToggleFileSelect(file.url)}
+                                         className=" flex justify-center items-center w-full h-full bg-orange-400 text-white rounded-full ">✓</div>
+                                )}
+                            </div>
+                        </div>
                     </List.Item>
                 )}
             />

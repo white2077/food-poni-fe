@@ -4,7 +4,14 @@ import MenuShop from "../../components/menu-shop";
 import ProductRowLoading from "../../components/product-row-skeleton";
 import ProductCard from "../../components/product-card";
 import React from "react";
-import {FireOutlined, HistoryOutlined, MailOutlined, ShopOutlined, StarOutlined} from "@ant-design/icons";
+import {
+    EnvironmentOutlined,
+    FireOutlined,
+    HistoryOutlined,
+    MailOutlined,
+    ShopOutlined,
+    StarOutlined
+} from "@ant-design/icons";
 import {Badge, Card, Divider, Rate, Space} from "antd";
 import {server} from "../../utils/server";
 
@@ -77,7 +84,7 @@ const ShopDetail = () => {
                                         className="text-orange-500">300</span></span>
                                 </div>
                                 <div className="flex gap-2 items-center">
-                                    <FireOutlined/>
+                                    <EnvironmentOutlined/>
                                     <span className="text-gray-600">Vương quốc phép thuật - Ấn độ</span>
                                 </div>
                                 <div className="flex gap-2 items-center">

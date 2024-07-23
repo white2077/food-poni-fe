@@ -1,5 +1,5 @@
 import {Badge, Button, Card, Col, Divider, Image, Row, Typography} from "antd";
-import {EnvironmentOutlined, FieldTimeOutlined, InfoCircleOutlined} from "@ant-design/icons";
+import {EnvironmentOutlined, FieldTimeOutlined, FormOutlined, InfoCircleOutlined} from "@ant-design/icons";
 import {format} from "date-fns";
 import Link from "next/link";
 import React from "react";
@@ -11,49 +11,54 @@ const {Text} = Typography;
 
 const OrderCard = ({order}: { order: OrderAPIResponse }) => {
     return (
-        <div className="w-full ">
             <Badge.Ribbon text={order.status} color={order.status === "COMPLETED" ? "green" : "red"}>
-                <Card hoverable title={"#" + order.id?.substring(0, 7)} bordered={false}>
+                <Card hoverable={true} title={"#" + order.id?.substring(0, 7)}>
                     <Row gutter={[16, 16]}>
                         {order?.orderItems?.map((item: OrderItemAPIResponse) => (
                             <Col span={24} key={item.id}>
                                 <Link href={`/order/${order.id}`}>
-                                    <Card className="overflow-hidden hover:bg-gray-100 hover:border-orange-300 border-2">
-                                        {Object.keys(item.rate ?? {}).length !== 0 && (
-                                            <div className="absolute top-[5px] right-[5px]">
-                                                <Text type="secondary" className="!text-red-600">Đã đánh giá</Text>
-                                            </div>
-
-                                        )}
-                                        <Row gutter={[16, 16]}>
-                                            <Col span={5} >
+                                    <div
+                                        className="overflow-hidden rounded-lg p-2 hover:bg-gray-100 hover:border-orange-300 border-2 ">
+                                        <Row gutter={[16, 16]} style={{}}>
+                                            <Col span={5}>
                                                 <div className="flex justify-center ">
                                                     <Image
+                                                        height='100px'
+                                                        preview={false}
                                                         src={item?.productDetail?.product?.thumbnail ? server + item.productDetail.product.thumbnail : ""}
-                                                        style={{
-                                                            width: '150px',
-                                                            height: '95px',
-                                                            objectFit: 'cover'
-                                                        }} className="rounded-lg border-2 border-orange-300"/>
-                                                    <p className=" font-['Impact','fantasy'] absolute text-[13px] border-orange-300 border-2 text-orange-600 bottom-0 right-2 bg-gray-100  px-1 rounded-br-lg rounded-tl-lg ">x{item.quantity}</p>
+                                                        className="object-cover rounded-lg border-2 border-orange-300"/>
+                                                    <p className="font-['Impact','fantasy'] absolute text-xs border-orange-300 border-2 text-orange-600 bottom-0 right-2 bg-gray-100  px-1 rounded-br-lg rounded-tl-lg ">x{item.quantity}</p>
                                                 </div>
                                             </Col>
-                                            <Col span={19} className=" justify-between">
+                                            <Col span={19} className="justify-between">
                                                 <div className="flex justify-between">
                                                     <p>{item.productDetail?.product?.name}{item.productDetail?.name ? "- " + item.productDetail?.name : ""}</p>
-                                                    <p className=" text-[15px] ">{item.price} $</p>
+                                                    <p className="text-xs">{item.price} $</p>
                                                 </div>
-                                                <div className="flex">
-                                                    <div className="mr-2"><EnvironmentOutlined/></div>
+                                                <div className="flex gap-2">
+                                                    <div><EnvironmentOutlined/></div>
                                                     <div>{order.shippingAddress?.address}</div>
                                                 </div>
-                                                <div className="flex">
-                                                    <div className="mr-2"><FieldTimeOutlined/></div>
+                                                <div className="flex gap-2">
+                                                    <div><FieldTimeOutlined/></div>
                                                     <div>{format(new Date(order.createdDate ?? ""), "yyyy-MM-dd HH:mm:ss")}</div>
                                                 </div>
+                                                {order.status === "COMPLETED" && Object.keys(item.rate ?? {}).length === 0 ? (
+                                                    <div className="flex gap-2">
+                                                        <FormOutlined/>
+                                                        <Text type="success" className="text-green-600 text-base font-sans">Đánh giá ngay để nhận ưu đãi</Text>
+                                                    </div>
+                                                ) : (
+                                                    Object.keys(item.rate ?? {}).length !== 0 && (
+                                                        <div className="flex gap-2">
+                                                            <FormOutlined/>
+                                                            <Text  className="text-red-600 text-base font-sans">Bạn đã đánh giá</Text>
+                                                        </div>
+                                                    )
+                                                )}
                                             </Col>
                                         </Row>
-                                    </Card>
+                                    </div>
                                 </Link>
                             </Col>
                         ))}
@@ -72,7 +77,6 @@ const OrderCard = ({order}: { order: OrderAPIResponse }) => {
                     </div>
                 </Card>
             </Badge.Ribbon>
-        </div>
     );
 };
 
