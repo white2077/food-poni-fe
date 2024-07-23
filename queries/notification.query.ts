@@ -4,9 +4,13 @@ import {NotificationAPIResponse} from "../models/notification/NotificationRespon
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 
-export const getNotificationsPageByCustomer = (refreshToken: CookieValueTypes): Promise<Page<NotificationAPIResponse[]>> => {
+export const getNotificationsPageByCustomer = ({refreshToken, page, pageSize}: {
+    refreshToken?: CookieValueTypes,
+    page?: number,
+    pageSize?: number
+}): Promise<Page<NotificationAPIResponse[]>> => {
     if (refreshToken) {
-        return apiWithToken(refreshToken).get('/notifications', {
+        return apiWithToken(refreshToken).get(`/retailer/notifications?page=${page ?? ''}&pageSize=${pageSize ?? ''}`, {
             headers: {
                 Authorization: "Bearer " + accessToken
             }

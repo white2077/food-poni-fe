@@ -13,18 +13,24 @@ import {getNotificationsPageByCustomer} from "../queries/notification.query";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {format, formatDistanceToNow} from "date-fns";
-import {NextRouter, useRouter} from "next/router";
+import {vi} from "date-fns/locale";
 
 const Notification = () => {
-
-    const router: NextRouter = useRouter();
 
     const dispatch = useDispatch();
 
     const noti = useSelector((state: RootState) => state.notification);
 
     useEffect(() => {
-        getNotificationsPageByCustomer(getCookie(REFRESH_TOKEN))
+        getNotifications(0, 100);
+    }, []);
+
+    const getNotifications = (page: number, pageSize: number) => {
+        getNotificationsPageByCustomer({
+            refreshToken: getCookie(REFRESH_TOKEN),
+            page: page,
+            pageSize: pageSize
+        })
             .then((res: Page<NotificationAPIResponse[]>) => {
                 dispatch(setNotifications(res.content))
             })
@@ -40,13 +46,15 @@ const Notification = () => {
                 }
                 dispatch(setNotifications([]))
             })
-    }, []);
+    }
 
     return (
         <>
             <Dropdown dropdownRender={() => (
                 <div className="w-[500px] shadow border rounded-lg bg-white">
-                    <div className="flex items-center justify-between gap-2.5 text-sm text-gray-900 font-semibold px-5 py-2.5">Thông báo
+                    <div
+                        className="flex items-center justify-between gap-2.5 text-sm text-gray-900 font-semibold px-5 py-2.5">Thông
+                        báo
                     </div>
                     <div className="border-b border-b-gray-200"></div>
                     <div className="px-5 mb-2">
@@ -56,64 +64,77 @@ const Notification = () => {
                                     key: '1',
                                     label: 'Tất cả',
                                     children:
-                                    <div className="max-h-[480px] overflow-auto scrollbar-rounded">
-                                        {noti.data.length > 0 ? (
-                                            <div className="flex flex-col gap-4">
-                                                {[...noti.data].sort((a: NotificationAPIResponse, b: NotificationAPIResponse) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime())
-                                                    .map((notification: NotificationAPIResponse, index: number) => {
-                                                        return (
-                                                            <div key={index}
-                                                                 onClick={() => {
-                                                                     if (!notification.read) {
-                                                                         dispatch(markIsReadNotification(notification.id));
-                                                                         apiWithToken(getCookie("refreshToken")).patch("/notifications/update-read", {
-                                                                             id: notification.id,
-                                                                             read: true
-                                                                         }, {
-                                                                             headers: {
-                                                                                 Authorization: "Bearer " + accessToken
-                                                                             }
-                                                                         });
-                                                                     }
-                                                                 }}
-                                                                 className="flex grow gap-2.5">
-                                                                <div className="relative shrink-0 mt-0.5">
-                                                                    <img alt="" className="rounded-full size-8"
-                                                                         src={server + notification.fromUser.avatar}/>
-                                                                    <div
-                                                                        className="bg-[#17c653] rounded-full size-1.5 badge badge-circle color-white absolute top-7 end-0.5 ring-1 ring-white transform -translate-y-1/2"/>
-                                                                </div>
-                                                                <div className="flex flex-col gap-3.5">
-                                                                    <div className="flex flex-col gap-1">
-                                                                        <div className="text-2sm font-medium">
-                                                                            <a className="hover:text-primary-active text-gray-900 font-semibold"
-                                                                               href="#">
-                                                                                {notification.fromUser.address.fullName}
-                                                                            </a> {" "}
-                                                                            <span
-                                                                                className="text-gray-700">{notification.message}</span>
+                                        <div className="max-h-[480px] overflow-auto scrollbar-rounded">
+                                            {noti.data.length > 0 ? (
+                                                <div className="flex flex-col gap-4">
+                                                    {[...noti.data].sort((a: NotificationAPIResponse, b: NotificationAPIResponse) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime())
+                                                        .map((notification: NotificationAPIResponse, index: number) => {
+                                                            return (
+                                                                <div key={index}
+                                                                     onClick={() => {
+                                                                         if (!notification.read) {
+                                                                             dispatch(markIsReadNotification(notification.id));
+                                                                             apiWithToken(getCookie("refreshToken")).patch("/notifications/update-read", {
+                                                                                 id: notification.id,
+                                                                                 read: true
+                                                                             }, {
+                                                                                 headers: {
+                                                                                     Authorization: "Bearer " + accessToken
+                                                                                 }
+                                                                             });
+                                                                         }
+                                                                     }}
+                                                                     className="flex grow gap-2.5">
+                                                                    <div className="relative shrink-0 mt-0.5">
+                                                                        <img alt="" className="rounded-full size-8"
+                                                                             src={server + notification.fromUser.avatar}/>
+                                                                        <div
+                                                                            className="bg-[#17c653] rounded-full size-1.5 badge badge-circle color-white absolute top-7 end-0.5 ring-1 ring-white transform -translate-y-1/2"/>
+                                                                    </div>
+                                                                    <div className="flex flex-col gap-3.5">
+                                                                        <div className="flex flex-col gap-1">
+                                                                            <div className="text-2sm font-medium">
+                                                                                <a className="hover:text-primary-active text-gray-900 font-semibold"
+                                                                                   href="#">
+                                                                                    {notification.fromUser.address.fullName}
+                                                                                </a> {" "}
+                                                                                <span
+                                                                                    className="text-gray-700">{notification.message}</span>
+                                                                            </div>
+                                                                            <span className="flex items-center text-2xs font-medium text-gray-500">
+                                                                                {(() => {
+                                                                                    const hoursDiff = Math.abs(new Date().getTime() - new Date(notification.createdDate).getTime()) / 36e5;
+
+                                                                                    if (hoursDiff > 48) {
+                                                                                        return <span>{format(notification.createdDate, "hh:mm dd-MM-yyyy")}</span>;
+                                                                                    } else if (hoursDiff > 24) {
+                                                                                        return <span>Hôm qua {format(notification.createdDate, "hh:mm")}</span>;
+                                                                                    } else {
+                                                                                        return <span>{formatDistanceToNow(notification.createdDate, {
+                                                                                            addSuffix: true,
+                                                                                            locale: vi
+                                                                                        })}</span>;
+                                                                                    }
+                                                                                })()}
+                                                                            </span>
                                                                         </div>
-                                                                        <span
-                                                                            className="flex items-center text-2xs font-medium text-gray-500">{formatDistanceToNow(notification.createdDate, {addSuffix: true})}<span
-                                                                            className="rounded-full bg-gray-500 size-1 mx-1.5"></span>{format(notification.createdDate, "yyyy-MM-dd - hh:mm:ss")}</span>
+                                                                    </div>
+                                                                    <div
+                                                                        className="w-5 h-5 flex items-center justify-center">
+                                                                        <div hidden={notification.read}
+                                                                             className="w-2 h-2 bg-primary rounded-full"></div>
                                                                     </div>
                                                                 </div>
-                                                                <div
-                                                                    className="w-5 h-5 flex items-center justify-center">
-                                                                    <div hidden={notification.read}
-                                                                         className="w-2 h-2 bg-primary rounded-full"></div>
-                                                                </div>
-                                                            </div>
-                                                        )
-                                                    })}
-                                            </div>
-                                        ) : (
-                                            <Result
-                                                icon={<BellOutlined />}
-                                                title="Bạn chưa có thông báo"
-                                            />
-                                        )}
-                                    </div>
+                                                            )
+                                                        })}
+                                                </div>
+                                            ) : (
+                                                <Result
+                                                    icon={<BellOutlined/>}
+                                                    title="Bạn chưa có thông báo"
+                                                />
+                                            )}
+                                        </div>
                                 },
                                 {
                                     key: '2',
@@ -156,9 +177,22 @@ const Notification = () => {
                                                                                 <span
                                                                                     className="text-gray-700">{notification.message}</span>
                                                                             </div>
-                                                                            <span
-                                                                                className="flex items-center text-2xs font-medium text-gray-500">{formatDistanceToNow(notification.createdDate, {addSuffix: true})}<span
-                                                                                className="rounded-full bg-gray-500 size-1 mx-1.5"></span>{format(notification.createdDate, "yyyy-MM-dd - hh:mm:ss")}</span>
+                                                                            <span className="flex items-center text-2xs font-medium text-gray-500">
+                                                                                {(() => {
+                                                                                    const hoursDiff = Math.abs(new Date().getTime() - new Date(notification.createdDate).getTime()) / 36e5;
+
+                                                                                    if (hoursDiff > 48) {
+                                                                                        return <span>{format(notification.createdDate, "hh:mm dd-MM-yyyy")}</span>;
+                                                                                    } else if (hoursDiff > 24) {
+                                                                                        return <span>Hôm qua {format(notification.createdDate, "hh:mm")}</span>;
+                                                                                    } else {
+                                                                                        return <span>{formatDistanceToNow(notification.createdDate, {
+                                                                                            addSuffix: true,
+                                                                                            locale: vi
+                                                                                        })}</span>;
+                                                                                    }
+                                                                                })()}
+                                                                            </span>
                                                                         </div>
                                                                     </div>
                                                                     <div
@@ -345,11 +379,11 @@ const Notification = () => {
                     </div>
                     <div className="border-b border-b-gray-200"></div>
                     <div className="grid grid-cols-2 p-5 gap-2.5">
-                        <button className="btn btn-sm btn-light justify-center">
-                            Archive all
+                        <button className="btn btn-sm btn-light justify-center hover:text-[#F36F24]">
+                            Xem thông báo trước đó
                         </button>
-                        <button className="btn btn-sm btn-light justify-center">
-                            Mark all as read
+                        <button className="btn btn-sm btn-light justify-center hover:text-[#F36F24]">
+                            Đánh dấu tất cả là đã đọc
                         </button>
                     </div>
                 </div>
