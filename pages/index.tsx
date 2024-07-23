@@ -31,10 +31,13 @@ const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<CategoryAPIResp
     const sidebarContents: JSX.Element[] = [
         <ProductCategory key={0} categoryList={ePage.content}/>,
         <img key={1} className='rounded-md w-full'
-             src={server + '/upload/vertical-banner.png'}/>
-        // https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-GyDWnLZ77IVqwCBJYj3KSEafcAMiGAfJlj1kqG0U_Q&s
+             src={server + '/upload/vertical-banner.png'} alt={""}/>
     ]
-
+    const MyCustomTitle = () => (
+        <div className="flex items-center">
+            <img src="Sale.png" alt="Title" className="w-auto h-8 mr-2"/>
+        </div>
+    );
     return (
         <SidebarLayout sidebarContents={sidebarContents}>
             <div className='grid gap-4 h-fit'>
@@ -42,9 +45,13 @@ const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<CategoryAPIResp
                     <CarouselBanner/>
                     <SearchPosition/>
                 </div>
-                <ProductRows title="Top Deal - Siêu rẻ" hasMenu={true} query={getProductsPage({status: true})}/>
-                <ProductRows title="Món ngon - Giá sốc" hasMenu={false}
-                             query={Promise.resolve(INITIAL_PAGE_API_RESPONSE)}/>
+
+                <ProductRows
+                    title={<MyCustomTitle/>}
+                    hasMenu={true}
+                    query={getProductsPage({status: true})}
+                />
+                <ProductRows title="Món ngon - Giá sốc" hasMenu={false} query={getProductsPage({status: true})}/>
                 <ProductRows title="Có thể bạn thấy ngon" hasMenu={false}
                              query={Promise.resolve(INITIAL_PAGE_API_RESPONSE)}/>
             </div>

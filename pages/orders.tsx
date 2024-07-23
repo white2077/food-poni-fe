@@ -82,7 +82,7 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
 
     return (
         <DefaultLayout>
-            <div style={{color: "black", textAlign: "left", width: "1440px"}}>
+            <div style={{color: "black", textAlign: "left",}} className="">
                 <div style={{textAlign: "left", width: "100%", marginBottom: "20px"}}>
                     <Segmented<string>
                         options={orderStatusOptions}
@@ -90,13 +90,13 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
                         style={{width: "100%"}}
                     />
                 </div>
-                <List dataSource={orders} loading={isLoading}
-                      renderItem={(order: OrderAPIResponse) => (
-                          <List.Item>
-                              <OrderCard order={order}></OrderCard>
-                          </List.Item>
-                      )}
-                />
+                <div className="grid grid-cols-2 grid-auto-rows gap-4">
+                    {orders.map((order: OrderAPIResponse) => (
+                        <div>
+                            <OrderCard order={order}/>
+                        </div>
+                    ))}
+                </div>
             </div>
         </DefaultLayout>
     );

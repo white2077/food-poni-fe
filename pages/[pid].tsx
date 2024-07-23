@@ -213,6 +213,7 @@ const ProductDetails = ({product}: { product: IProduct }) => {
                             </div>
                             <ProductComment data={rates} isLoading={isLoadingRate}/>
                         </div>
+
                     )}
                 </>
             )}
