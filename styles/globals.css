@@ -20,6 +20,44 @@
     }
 }
 
+.product-row {
+    display: flex;
+    flex-wrap: wrap;
+    transition: transform 0.3s ease-in-out;
+}
+
+.slide-next {
+    transform: translateX(-100%);
+}
+
+.slide-prev {
+    transform: translateX(100%);
+}
+
+
+.slide-enter {
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+.slide-enter-active {
+    opacity: 1;
+    transform: translateX(0%);
+    transition: opacity 500ms, transform 500ms;
+}
+
+.slide-exit {
+    opacity: 1;
+    transform: translateX(0%);
+}
+
+.slide-exit-active {
+    opacity: 0;
+    transform: translateX(-100%);
+    transition: opacity 500ms, transform 500ms;
+}
+
+
 .transition-all {
     transition: max-height 1s ease-in-out, opacity 1s ease-in-out;
     overflow: hidden;
