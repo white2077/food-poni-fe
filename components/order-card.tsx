@@ -11,63 +11,64 @@ const {Text} = Typography;
 
 const OrderCard = ({order}: { order: OrderAPIResponse }) => {
     return (
-        <div className="w-full">
-            <Badge.Ribbon text={order.status} color="red">
+        <div className="w-full ">
+            <Badge.Ribbon text={order.status} color={order.status === "COMPLETED" ? "green" : "red"}>
                 <Card hoverable title={"#" + order.id?.substring(0, 7)} bordered={false}>
-                    <div className="flex items-center justify-between mb-4 font-bold">
-                        <div>{order?.shippingAddress?.fullName}</div>
-                        <div>{order?.shippingAddress?.phoneNumber}</div>
-                    </div>
                     <Row gutter={[16, 16]}>
                         {order?.orderItems?.map((item: OrderItemAPIResponse) => (
                             <Col span={24} key={item.id}>
-                                <Card className="overflow-hidden">
-                                    {Object.keys(item.rate ?? {}).length !== 0 && (
-                                        <div className="absolute top-[5px] right-[5px]">
-                                            <Text type="secondary" className="!text-red-600">Đã đánh giá</Text>
-                                        </div>
-                                    )}
-                                    <Row gutter={[16, 16]}>
-                                        <Col span={6}>
-                                            <Image src={item?.productDetail?.product?.thumbnail ? server + item.productDetail.product.thumbnail : ""} style={{
-                                                width: '120px',
-                                                height: '90px',
-                                                objectFit: 'cover'
-                                            }}/>
-                                        </Col>
-                                        <Col span={18} className="flex justify-between">
-                                            <p className="font-semibold text-xl">{item.quantity} x {item.productDetail?.product?.name} {item.productDetail?.name ? "- " + item.productDetail?.name : ""}</p>
-                                            <p className="font-semibold text-xl text-green-700">{item.price} $</p>
-                                        </Col>
-                                    </Row>
-                                </Card>
+                                <Link href={`/order/${order.id}`}>
+                                    <Card className="overflow-hidden hover:bg-gray-100 hover:border-orange-300 border-2">
+                                        {Object.keys(item.rate ?? {}).length !== 0 && (
+                                            <div className="absolute top-[5px] right-[5px]">
+                                                <Text type="secondary" className="!text-red-600">Đã đánh giá</Text>
+                                            </div>
+
+                                        )}
+                                        <Row gutter={[16, 16]}>
+                                            <Col span={5} >
+                                                <div className="flex justify-center ">
+                                                    <Image
+                                                        src={item?.productDetail?.product?.thumbnail ? server + item.productDetail.product.thumbnail : ""}
+                                                        style={{
+                                                            width: '150px',
+                                                            height: '95px',
+                                                            objectFit: 'cover'
+                                                        }} className="rounded-lg border-2 border-orange-300"/>
+                                                    <p className=" font-['Impact','fantasy'] absolute text-[13px] border-orange-300 border-2 text-orange-600 bottom-0 right-2 bg-gray-100  px-1 rounded-br-lg rounded-tl-lg ">x{item.quantity}</p>
+                                                </div>
+                                            </Col>
+                                            <Col span={19} className=" justify-between">
+                                                <div className="flex justify-between">
+                                                    <p>{item.productDetail?.product?.name}{item.productDetail?.name ? "- " + item.productDetail?.name : ""}</p>
+                                                    <p className=" text-[15px] ">{item.price} $</p>
+                                                </div>
+                                                <div className="flex">
+                                                    <div className="mr-2"><EnvironmentOutlined/></div>
+                                                    <div>{order.shippingAddress?.address}</div>
+                                                </div>
+                                                <div className="flex">
+                                                    <div className="mr-2"><FieldTimeOutlined/></div>
+                                                    <div>{format(new Date(order.createdDate ?? ""), "yyyy-MM-dd HH:mm:ss")}</div>
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                    </Card>
+                                </Link>
                             </Col>
                         ))}
                     </Row>
-                    <div className="my-3">
-                        <span className="mr-2"><EnvironmentOutlined/></span>
-                        <span>{order.shippingAddress?.address}</span>
-                    </div>
-                    <div>
-                        <span className="mr-2"><FieldTimeOutlined/></span>
-                        <span>{format(new Date(order.createdDate ?? ""), "yyyy-MM-dd HH:mm:ss")}</span>
-                    </div>
-                    <div className="flex justify-between mt-4 text-xl font-bold">
-                        <div>Tổng tiền:</div>
+                    <div className="flex justify-end mt-4 text-xl gap-2">
+                        <div className="text-gray-400">Tổng tiền:</div>
                         <div>${order.totalAmount} </div>
                     </div>
-                    <Divider/>
-                    <div className="flex justify-between mt-4 ">
-                        <div className="flex gap-2">
+                    <div className="flex justify-end mt-4  ">
+                        <div className="flex gap-2 j">
                             <Link href={`/order/${order.id}`}>
                                 <Button style={{backgroundColor: '#F36F24', color: 'white'}}>Chi tiết</Button>
                             </Link>
                             <Button style={{backgroundColor: '#F36F24', color: 'white'}}>Đặt lại</Button>
                         </div>
-                    </div>
-                    <div className="flex justify-self-start mt-4 gap-2">
-                        <InfoCircleOutlined/>
-                        <p>Đánh giá ngay để tích thưởng</p>
                     </div>
                 </Card>
             </Badge.Ribbon>

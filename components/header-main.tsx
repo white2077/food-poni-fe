@@ -1,4 +1,4 @@
-import {Avatar, Button, Dropdown, MenuProps, notification} from 'antd';
+import {Avatar, Button, Dropdown, Image, MenuProps, notification} from 'antd';
 import {useDispatch, useSelector} from 'react-redux';
 import {LogoutOutlined, QuestionCircleOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
 import {NextRouter, useRouter} from 'next/router';
@@ -190,18 +190,27 @@ export default function HeaderMain() {
     return (
         <div className="grid grid-cols-[1fr_2fr_1fr] px-2 mx-auto items-center py-2 gap-4 max-w-screen-xl">
             <MenuMobile/>
-            <Link href="/" className='font-bold text-2xl h-[unset]'>FoodPoni</Link>
+            <Link href="/" >
+                {/*<img src={".jpg"} className={"overflow-hidden object-cover cursor-pointer h-20 w-44 "}/>*/}
+               <div className="font-['Impact','fantasy'] text-4xl text-orange-400 cursor-pointer hover:text-orange-500">FoodPoni</div>
+            </Link>
             <SearchKeyword/>
             <div className='flex items-center justify-end gap-4'>
                 {currentUser.id ? (
                         <>
                             <Cart/>
                             <Notification/>
-                            <Dropdown menu={{items}} placement='bottomRight' trigger={['click']}>
-                                <a>
-                                    {currentUser.avatar
-                                        ? <Avatar src={server + currentUser.avatar} size='large'/>
-                                        : <Avatar icon={<UserOutlined/>} size='large'/>}
+                            <Dropdown menu={{items}} placement='bottomRight' trigger={['click']}
+                                      className="hover:bg-gray-200 rounded-lg p-1.5 cursor-pointer h-[100%] ">
+                                <a className="gap-1 flex items-center">
+                                   <div>
+                                       {currentUser.avatar
+                                           ? <Avatar
+                                               className="w-8 h-8 rounded-[100%] border-green-400 border-2"
+                                               src={server + currentUser.avatar}/>
+                                           : <Avatar icon={<UserOutlined/>} size='large'/>}
+                                   </div>
+                                    <div className="text-gray-500 text-[15px]">Tài khoản</div>
                                 </a>
                             </Dropdown>
                         </>

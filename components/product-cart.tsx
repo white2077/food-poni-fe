@@ -8,6 +8,7 @@ import {CurrentUser} from "../stores/user.reducer";
 import {IRetailer} from "../pages/[pid]";
 import {server} from "../utils/server";
 import CustomInput from "./customInput ";
+import Link from "next/link";
 
 const ProductCart = ({id, price, thumbnail, name, retailer}: {
     id: string,
@@ -57,8 +58,11 @@ const ProductCart = ({id, price, thumbnail, name, retailer}: {
     return (
         <Card className='text-left text-black h-fit' size='small'>
             <div className="flex">
-                <img className="w-12 h-12 rounded-[100%] overflow-hidden object-cover" src={server + retailer.avatar}
-                     alt={""}/>
+
+                    <img className="w-12 h-12 rounded-[100%] overflow-hidden object-cover"
+                         src={server + retailer.avatar}
+                         alt={""}/>
+
                 <div>
                     <span className="mx-2 font-semibold">{retailer.username}</span>
                     <div className="ml-2 font-semibold ">

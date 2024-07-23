@@ -1,11 +1,11 @@
 import {NextRouter, useRouter} from "next/router";
 import {DefaultLayout} from "../_layout";
 import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Divider, Image, Row, Spin, Typography} from "antd";
+import {Button, Card, Col, Divider, Image, Row, Spin, Table, Typography} from "antd";
 import {AxiosResponse} from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import RateAdd from "../../components/rate-add";
-import {MessageOutlined} from "@ant-design/icons";
+import {LeftOutlined, MessageOutlined} from "@ant-design/icons";
 import {INITIAL_USER_API_RESPONSE, UserAPIResponse} from "../../models/user/UserResponseAPI";
 import {paymentInfo, PaymentInfo, RateDTO, shippingAddress, ShippingAddress} from "../../models/order/OrderRequest";
 import {RootState} from "../../stores";
@@ -19,6 +19,8 @@ import {CookieValueTypes, getCookie} from "cookies-next";
 import {accessToken, apiWithToken} from "../../utils/axios-config";
 import {REFRESH_TOKEN, server} from "../../utils/server";
 import {OrderAPIResponse} from "../../models/order/OrderAPIResponse";
+import HeadTable from "../../components/table_head";
+import Link from "next/link";
 
 const {Text} = Typography;
 
@@ -59,7 +61,11 @@ export interface IOrderItem {
     retailerId: string;
 }
 
-export async function getServerSideProps(context: { params: ParsedUrlQuery, req: NextApiRequest, res: NextApiResponse }) {
+export async function getServerSideProps(context: {
+    params: ParsedUrlQuery,
+    req: NextApiRequest,
+    res: NextApiResponse
+}) {
     const {oid} = context.params;
     const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req: context.req, res: context.res});
     if (refreshToken) {
@@ -118,7 +124,7 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery, req:
     }
 }
 
-const OrderDetails = ({order = INITIAL_IORDER}: {order: IOrder}) => {
+const OrderDetails = ({order = INITIAL_IORDER}: { order: IOrder }) => {
 
     const router: NextRouter = useRouter();
 
@@ -135,7 +141,7 @@ const OrderDetails = ({order = INITIAL_IORDER}: {order: IOrder}) => {
             dispatch(setLoadingOrderItem(false));
             setOrderItems(order.orderItems);
         }
-    },[order]);
+    }, [order]);
 
     const handleSetOrderItemRate = (id: string): void => {
         dispatch(setSelectedOrderItemRate(id));
@@ -148,7 +154,7 @@ const OrderDetails = ({order = INITIAL_IORDER}: {order: IOrder}) => {
 
     const addOrderItemsCart = (): void => {
         orderItems.forEach((orderItem: IOrderItem): void => {
-            let existItem : boolean = false;
+            let existItem: boolean = false;
             const cart = carts.find((cart: ICart): boolean => {
                 return cart.id === orderItem.retailerId;
             })
@@ -161,14 +167,14 @@ const OrderDetails = ({order = INITIAL_IORDER}: {order: IOrder}) => {
                     }
                 })
             }
-            if(!existItem){
+            if (!existItem) {
                 addToCart(orderItem.productDetail.id, orderItem.price, orderItem.image, orderItem.name, orderItem.quantity);
             }
         })
         router.push("/checkout");
     }
 
-    const addToCart = (id: string, price : number, thumbnail: string, name: string, quantity: number): void => {
+    const addToCart = (id: string, price: number, thumbnail: string, name: string, quantity: number): void => {
         const payload: ICartItem = {id, price, thumbnail, name, quantity} as ICartItem;
         dispatch(addItem(payload));
     };
@@ -188,7 +194,7 @@ const OrderDetails = ({order = INITIAL_IORDER}: {order: IOrder}) => {
                     {order && (
                         <Row className='lg:w-[1440px] px-2 mx-auto items-center'>
                             <Col span={20}>
-                                <Card title={'Order #' + order.id?.substring(0, 7)} style={{marginTop: '20px'}}>
+                                <Card title={'Order details #' + order.id?.substring(0, 7)} style={{marginTop: '20px'}}>
                                     <div style={{display: 'flex', justifyContent: 'space-between'}}>
                                         <Text strong>
                                             {
@@ -199,72 +205,153 @@ const OrderDetails = ({order = INITIAL_IORDER}: {order: IOrder}) => {
                                         </Text>
                                         <MessageOutlined/>
                                     </div>
-                                    <Divider/>
-                                    <div>
-                                        <Text style={{fontSize: '18px'}} strong>Đồ ăn</Text>
-                                        <br/>
-                                        <br/>
-                                        <Text>{order.totalAmount + '$ - ' + order.orderItems.length + ' món - '} {order.paymentMethod.method?.includes('CASH') ? 'Tiền mặt' : 'VNPay'}</Text>
-                                        <br/>
-                                        <Text>{order.shippingAddress.fullName + ' - ' + order.shippingAddress.phoneNumber}</Text>
+                                    <Divider></Divider>
+                                    <div className="flex justify-between gap-3">
+                                        <Card style={{backgroundColor: ''}} title="ĐỊA CHỈ NGƯỜI NHẬN"
+                                              className="w-full">
+                                            <div className="font-bold">
+                                                <Text>{order.shippingAddress.fullName}</Text>
+                                            </div>
+                                            <div>
+                                                <Text>{'Address: ' + order.shippingAddress.address}</Text>
+                                            </div>
+                                            <div>
+                                                <Text> {'Phone number: ' + order.shippingAddress.phoneNumber}</Text>
+                                            </div>
+                                        </Card>
+                                        <Card style={{backgroundColor: ''}} title="HÌNH THỨC GIAO HÀNG"
+                                              className="w-full">
+                                            <div className="">
+                                                <Text>{'giao hàng nhanh'}</Text>
+                                            </div>
+                                            <div>
+                                                <Text>{'Giao vào thứ 5 ,11/11'}</Text>
+                                            </div>
+                                            <div>
+                                                <Text> {'Được giao bởi BATMAN'}</Text>
+                                            </div>
+                                            <div>
+                                                <Text> {'Miễn phí vận chuyển'}</Text>
+                                            </div>
+                                        </Card>
+                                        <Card style={{backgroundColor: ''}} title="HÌNH THỨC THANH TOÁN"
+                                              className="w-full">
+                                            <div>
+                                                <Text> {order.paymentMethod.method?.includes('CASH') ? 'Tiền mặt' : 'VNPay'}</Text>
+                                            </div>
+                                        </Card>
                                     </div>
-                                    <div style={{marginTop: '20px'}}>
-                                        <Text style={{fontSize: '18px'}} strong>Shipping address:</Text>
-                                        <br/>
-                                        <br/>
-                                        <Text>{order.shippingAddress.address}</Text>
-                                    </div>
-                                    <Divider/>
-                                    <Row gutter={[16, 16]}>
-                                        {orderItems.map((item: IOrderItem) => (
-                                            <Col span={24} key={item.id}>
-                                                <Card hoverable style={{overflow: 'hidden'}}
-                                                      onClick={() => {
-                                                          if (Object.keys(item.rate).length === 0) {
-                                                              handleSetOrderItemRate(item.id);
-                                                          }
-                                                      }}>
-                                                    {Object.keys(item.rate).length !== 0 && (
-                                                        <div style={{position: 'absolute', top: 5, right: 5}}>
-                                                            <Text type="secondary" style={{color: 'red'}}>Đã đánh
-                                                                giá</Text>
+                                    <div className="border-[1px] rounded-lg mt-6">
+                                        <HeadTable/>
+                                        <Divider/>
+                                        <Row gutter={[16, 16]}>
+                                            {orderItems.map((item: IOrderItem) => (
+                                                <Col span={24} key={item.id} className="">
+                                                    <div style={{overflow: 'hidden'}}>
+                                                        <div className="grid grid-cols-10 px-5 cursor-pointer ">
+                                                            <div className="col-span-5">
+                                                                <div className="font-sans text-[17px] text-gray-600">
+                                                                    <div className="flex gap-2">
+                                                                        <div className="flex items-center">
+                                                                            <Image preview={false}
+                                                                                   src={server + item.image} style={{
+                                                                                width: '100px',
+                                                                                height: '100px',
+                                                                                objectFit: 'cover'
+                                                                            }} className="rounded-lg"/>
+                                                                        </div>
+                                                                        <div>
+                                                                            <div>
+                                                                                {item.name}
+                                                                            </div>
+                                                                            <div className="text-[14px]">
+                                                                                Người bán: <Text
+                                                                                style={{color: 'rgb(243, 111, 36)'}}>Oan
+                                                                                hồn trinh
+                                                                                nữ</Text>
+                                                                            </div>
+                                                                            <div className="text-[14px]">
+                                                                                Ngày bán: 11/11/2021
+                                                                            </div>
+                                                                            <div className="flex gap-2">
+                                                                                <Button style={{
+                                                                                    border: '1px solid rgb(243, 111, 36)',
+                                                                                    color: 'rgb(243, 111, 36)'
+                                                                                }} onClick={handleShowModalRate}>Xem
+                                                                                    đánh giá</Button>
+                                                                                <Button style={{
+                                                                                    border: '1px solid rgb(243, 111, 36)',
+                                                                                    color: 'rgb(243, 111, 36)'
+                                                                                }}>Mua lại</Button>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-span-1">
+                                                                <div className="font-sans text-[17px] text-gray-600">
+                                                                    {item.price}$
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-span-1">
+                                                                <div className="font-sans text-[17px] text-gray-600">
+                                                                    {item.quantity}
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-span-1">
+                                                                <div className="font-sans text-[17px] text-gray-600">
+                                                                    0
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-span-2 text-right">
+                                                                <div className="font-sans text-[17px] text-gray-600">
+                                                                    {item.price * item.quantity}$
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                    )}
-                                                    <Row gutter={[16, 16]}>
-                                                        <Col span={6}>
-                                                            <Image src={server + item.image} style={{
-                                                                width: '200px',
-                                                                height: '150px',
-                                                                objectFit: 'cover'
-                                                            }}/>
-                                                        </Col>
-                                                        <Col span={18}
-                                                             style={{display: 'flex', justifyContent: 'space-between'}}>
-                                                            <Text strong
-                                                                  style={{fontSize: '20px'}}>{item.quantity} x {item.name} {item.productDetail.name ? "- " + item.productDetail.name : ""}</Text>
-                                                            <Text strong style={{
-                                                                fontSize: '20px',
-                                                                color: 'green'
-                                                            }}>{item.price} $</Text>
-                                                        </Col>
-                                                    </Row>
-                                                </Card>
-                                            </Col>
-                                        ))}
-                                    </Row>
-                                    <div className="flex justify-between items-center md:p-4" >
-                                        <Text className="hidden lg:flex text-lg" strong>Item
-                                            Subtotal({order.orderItems.length + ' món'}):</Text>
-                                        <Text style={{fontSize: '20px'}}>{order.totalAmount}$</Text>
+                                                    </div>
+                                                    <Divider/>
+                                                </Col>
+                                            ))}
+                                        </Row>
+                                        <div
+                                            className="text-[17px] font-sans flex justify-end items-center pb-4 pr-4 gap-5">
+                                            <div className="text-right text-gray-400">
+                                                <div>Tạm tính</div>
+                                                <div>Phí vận chuyển</div>
+                                                <div>Khuyễn mãi vận chuyển</div>
+                                                <div>Giảm giá</div>
+                                                <div>Tổng cộng</div>
+                                            </div>
+                                            <div className="text-right gap-6">
+                                                <div>{order.totalAmount}$</div>
+                                                <div>0</div>
+                                                <div>0</div>
+                                                <div>0</div>
+                                                <div className="text-2xl text-orange-600">{order.totalAmount}$</div>
+                                                {/*giá sau khi giảm all ở đây nhé*/}
+                                            </div>
+                                        </div>
+                                        {/*<Text className="hidden lg:flex text-lg" strong>Item*/}
+                                        {/*    Subtotal({order.orderItems.length + ' món'}):</Text>*/}
+                                        {/*<Text style={{fontSize: '20px'}}>{order.totalAmount}$</Text>*/}
+                                        {/*<Divider/>*/}
+                                        {/*<div style={{gap: "10px", display: "flex"}}>*/}
+                                        {/*    <Button style={{color: '#F36F24'}}*/}
+                                        {/*    >Xem đánh giá</Button>*/}
+                                        {/*    <Button style={{backgroundColor: '#F36F24', color: 'white'}}*/}
+                                        {/*            onClick={addOrderItemsCart}*/}
+                                        {/*    >Đặt lại</Button>*/}
+                                        {/*</div>*/}
                                     </div>
-                                    <Divider/>
-                                    <div style={{gap: "10px", display: "flex"}}>
-                                        <Button style={{color: '#F36F24'}}
-                                                onClick={handleShowModalRate}>Xem đánh giá</Button>
-                                        <Button style={{backgroundColor: '#F36F24', color: 'white'}}
-                                                onClick={addOrderItemsCart}
-                                        >Đặt lại</Button>
-                                    </div>
+                                    <Link href="http://localhost:3000/orders" >
+                                        <a>
+                                            <div className="text-orange-600 hover:text-orange-400 mt-4">
+                                                <LeftOutlined/>Quay lại đơn hàng của tôi
+                                            </div>
+                                        </a>
+                                    </Link>
                                 </Card>
                             </Col>
                             <RateAdd/>
@@ -275,7 +362,6 @@ const OrderDetails = ({order = INITIAL_IORDER}: {order: IOrder}) => {
             )}
         </DefaultLayout>
     );
-
 };
 
 export default OrderDetails;
