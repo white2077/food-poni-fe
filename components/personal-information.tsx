@@ -26,20 +26,10 @@ export const PersonalInformation = () => {
                             />
                         </div>
                     </div>
-                    <div className="col-span-3 w-[100%]">
-                        <div className="flex gap-4 items-start justify-center col-span-2 mr-5 w-[100%]">
-                            <div className="flex flex-col justify-items-start align-top w-full gap-5">
-                                <div className="px-4 sm:grid sm:grid-cols-[1fr,2fr] sm:gap-4 sm:px-0 ">
-                                    <dt className="text-[15px] flex items-center font-sans">Họ & Tên</dt>
-                                    <Input value={currentUser.username}></Input>
-                                </div>
-                                <div className="px-4 pt-4 sm:grid sm:grid-cols-[1fr,2fr] sm:gap-4 sm:px-0">
-                                    <dt className="text-[15px] flex items-center font-sans">Nickname</dt>
-                                    <Input placeholder="Thêm nickname"></Input>
-                                </div>
-                                <div className="flex ">
-                                </div>
-                            </div>
+                    <div className="col-span-3 w-[100%] flex items-center">
+                        <div className="px-4 sm:grid sm:grid-cols-[1fr,2fr] sm:gap-4 sm:px-0 ">
+                            <dt className="text-[15px] flex items-center font-sans">Họ & Tên</dt>
+                            <Input value={currentUser.username}></Input>
                         </div>
                     </div>
                 </div>
@@ -76,7 +66,8 @@ export const PersonalInformation = () => {
                     </div>
                 </div>
                 <div className="mt-8 text-center">
-                    <Button className="w-44 !bg-primary !text-white hover:!bg-white hover:!text-[#F36F24]">Lưu thay đổi</Button>
+                    <Button className="w-44 !bg-primary !text-white hover:!bg-white hover:!text-[#F36F24]">Lưu thay
+                        đổi</Button>
                 </div>
             </div>
             <div className="col-span-2">
