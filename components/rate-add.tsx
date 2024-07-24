@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Input, Modal, notification, Rate} from 'antd';
+import {Avatar, Button, Image, Input, Modal, notification, Rate} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import FileUploads from "./file-upload";
 import {RootState} from "../stores";
@@ -103,15 +103,9 @@ const RateAdd = () => {
         setMessage("");
     }
 
-    const handlePreview = (url: string): void => {
-        setPreviewImage(url);
-        setPreviewOpen(true);
-    };
-
-    // Render
     return (
         <Modal title="Đánh giá sản phẩm" open={showModalAddRate} footer={null} onCancel={handleModalClose}>
-            <div style={{padding: "20px 0"}}>
+            <div className="p-1">
                 <div style={{display: "flex", justifyContent: "center"}}>
                     <Rate value={rate} style={{fontSize: '50px'}} onChange={handleRateChange}/>
                 </div>
@@ -119,31 +113,21 @@ const RateAdd = () => {
                     <Input.TextArea showCount maxLength={100} placeholder="Nhập tin nhắn đánh giá"
                                     onChange={handleMessageChange} value={message}/>
                 </div>
-                <div style={{display: "flex", justifyContent: "left", flexWrap: "wrap"}}>
-                    <div style={{padding: "8px"}}>
-                        <Button style={{width: "100px", height: "100px"}}
+                <div
+                    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-2 overflow-scroll scrollbar-rounded max-h-96">
+                    <div>
+                        <Button style={{width: '100%', height: '8rem'}}
                                 onClick={() => dispatch(setShowModalFileUpload(true))}>Chọn ảnh</Button>
                     </div>
                     {images.map((url, index) => (
-                        <div key={index} style={{display: 'inline-block', margin: '8px'}}>
-                            <img
+                        <div key={index}>
+                            <Image
                                 src={url}
                                 alt={`Image ${index}`}
-                                onClick={() => handlePreview(url)}
-                                style={{width: '100px', height: '100px', cursor: 'pointer'}}
+                                style={{width: '8rem', height: '8rem', objectFit: 'cover', borderRadius: '0.5rem'}}
                             />
                         </div>
                     ))}
-                    {previewImage && (
-                        <div>
-                            <img
-                                src={previewImage}
-                                alt="Preview"
-                                style={{maxWidth: '100%', maxHeight: '100%', cursor: 'pointer'}}
-                                onClick={() => setPreviewOpen(false)}
-                            />
-                        </div>
-                    )}
                 </div>
                 <div style={{marginTop: 20, textAlign: "center"}}>
                     <Button type="primary" onClick={handleSubmit}>Gửi đánh giá</Button>

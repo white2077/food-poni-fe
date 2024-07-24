@@ -25,7 +25,7 @@ export interface IProductCard {
     createdDate: Date;
 }
 interface ProductRowProps {
-    title: string,
+    title: string | JSX.Element,
     hasMenu?: boolean,
     query: Promise<Page<ProductAPIResponse[]>>,
 }
@@ -78,10 +78,10 @@ const ProductRows = ({title, hasMenu, query}: ProductRowProps) => {
     };
     return (
         <div className="p-4 bg-white rounded-lg">
-            <div>{title}</div>
             {hasMenu && < MenuMain filterProducts={filterProducts}/>}
+            <div className="mt-2">{title}</div>
             <div
-                className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4'>
+                className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-2'>
                 {isLoading ? <ProductRowLoading
                     count={8}/> : (productCards.length !== 0 ? productCards.map((productCard: IProductCard) =>
                     <ProductCard key={productCard.id} product={productCard}/>) : "Không có dữ liệu!")}

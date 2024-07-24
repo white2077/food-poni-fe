@@ -60,9 +60,13 @@ const ProductCart = ({id, price, thumbnail, name, retailer, status}: {
         <Card className='text-left text-black h-fit' size='small'>
             <div className="flex">
 
-                    <img className="w-12 h-12 rounded-[100%] overflow-hidden object-cover"
-                         src={server + retailer.avatar}
-                         alt={""}/>
+                <Link href={"/shop/[sid].tsx"}>
+                    <a>
+                        <img className="w-12 h-12 rounded-[100%] overflow-hidden object-cover"
+                             src={server + retailer.avatar}
+                             alt={""}/>
+                    </a>
+                </Link>
 
                 <div>
                     <span className="mx-2 font-semibold">{retailer.username}</span>

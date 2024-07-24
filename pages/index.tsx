@@ -33,11 +33,9 @@ const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<CategoryAPIResp
         <img key={1} className='rounded-md w-full'
              src={server + '/upload/vertical-banner.png'} alt={""}/>
     ]
-    const MyCustomTitle = () => (
-        <div className="flex items-center">
-            <img src="Sale.png" alt="Title" className="w-auto h-8 mr-2"/>
-        </div>
-    );
+    const MyCustomTitle = <div className="flex items-center">
+        <img src="Sale.png" alt="Title" className="w-auto h-8 mr-2"/>
+    </div>;
     return (
         <SidebarLayout sidebarContents={sidebarContents}>
             <div className='grid gap-4 h-fit'>
@@ -47,7 +45,7 @@ const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<CategoryAPIResp
                 </div>
 
                 <ProductRows
-                    title={<MyCustomTitle/>}
+                    title={MyCustomTitle}
                     hasMenu={true}
                     query={getProductsPage({status: true})}
                 />

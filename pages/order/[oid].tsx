@@ -248,7 +248,7 @@ const OrderDetails = ({order = INITIAL_IORDER}: { order: IOrder }) => {
                                             {orderItems.map((item: IOrderItem) => (
                                                 <Col span={24} key={item.id} className="">
                                                     <div style={{overflow: 'hidden'}}>
-                                                        <div className="grid grid-cols-10 px-5 cursor-pointer ">
+                                                        <div className="grid grid-cols-10 px-5 cursor-pointer">
                                                             <div className="col-span-5">
                                                                 <div className="font-sans text-[17px] text-gray-600">
                                                                     <div className="flex gap-2">
@@ -274,6 +274,21 @@ const OrderDetails = ({order = INITIAL_IORDER}: { order: IOrder }) => {
                                                                                 Ngày bán: 11/11/2021
                                                                             </div>
                                                                             <div className="flex gap-2">
+                                                                                <Button
+                                                                                    style={{
+                                                                                        border: '1px solid rgb(243, 111, 36)',
+                                                                                        color: 'rgb(243, 111, 36)',
+                                                                                        pointerEvents: order.status.includes("COMPLETED") ? 'auto' : 'none', // Tạm ngưng hoặc cho phép sự kiện click
+                                                                                        opacity: order.status.includes("COMPLETED") ? 1 : 0.3 // Điều chỉnh độ mờ của nút
+                                                                                    }}
+                                                                                    onClick={() => {
+                                                                                        if (Object.keys(item.rate).length === 0) {
+                                                                                            handleSetOrderItemRate(item.id);
+                                                                                        }
+                                                                                    }}
+                                                                                >
+                                                                                    Đánh giá
+                                                                                </Button>
                                                                                 <Button style={{
                                                                                     border: '1px solid rgb(243, 111, 36)',
                                                                                     color: 'rgb(243, 111, 36)'
@@ -283,6 +298,7 @@ const OrderDetails = ({order = INITIAL_IORDER}: { order: IOrder }) => {
                                                                                     border: '1px solid rgb(243, 111, 36)',
                                                                                     color: 'rgb(243, 111, 36)'
                                                                                 }}>Mua lại</Button>
+
                                                                             </div>
                                                                         </div>
 
@@ -345,7 +361,7 @@ const OrderDetails = ({order = INITIAL_IORDER}: { order: IOrder }) => {
                                         {/*    >Đặt lại</Button>*/}
                                         {/*</div>*/}
                                     </div>
-                                    <Link href="http://localhost:3000/orders" >
+                                    <Link href="http://localhost:3000/orders">
                                         <a>
                                             <div className="text-orange-600 hover:text-orange-400 mt-4">
                                                 <LeftOutlined/>Quay lại đơn hàng của tôi

@@ -206,7 +206,7 @@ export default function HeaderMain() {
                                    <div>
                                        {currentUser.avatar
                                            ? <Avatar
-                                               className="w-8 h-8 rounded-[100%] border-green-400 border-2"
+                                               className="w-8 h-8 rounded-[100%] border-orange-400 border-2"
                                                src={server + currentUser.avatar}/>
                                            : <Avatar icon={<UserOutlined/>} size='large'/>}
                                    </div>
