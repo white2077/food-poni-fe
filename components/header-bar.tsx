@@ -1,5 +1,4 @@
 import React from "react";
-import {Alert} from 'antd';
 import Marquee from 'react-fast-marquee';
 
 const HeaderBar = () => {

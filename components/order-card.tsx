@@ -1,5 +1,5 @@
-import {Badge, Button, Card, Col, Divider, Image, Row, Typography} from "antd";
-import {EnvironmentOutlined, FieldTimeOutlined, FormOutlined, InfoCircleOutlined} from "@ant-design/icons";
+import {Badge, Button, Card, Col, Image, Row, Typography} from "antd";
+import {EnvironmentOutlined, FieldTimeOutlined, FormOutlined} from "@ant-design/icons";
 import {format} from "date-fns";
 import Link from "next/link";
 import React from "react";

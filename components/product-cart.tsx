@@ -1,4 +1,4 @@
-import {Avatar, Button, Card, Divider, Flex, InputNumber} from "antd";
+import {Button, Card, Flex} from "antd";
 import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {addItem, deleteAllItem, ICart, ICartItem} from "../stores/cart.reducer";
@@ -60,7 +60,7 @@ const ProductCart = ({id, price, thumbnail, name, retailer, status}: {
         <Card className='text-left text-black h-fit' size='small'>
             <div className="flex">
 
-                <Link href={"/shop/[sid].tsx"}>
+                <Link href={`/shop/${retailer.id}`}>
                     <a>
                         <img className="w-12 h-12 rounded-[100%] overflow-hidden object-cover"
                              src={server + retailer.avatar}

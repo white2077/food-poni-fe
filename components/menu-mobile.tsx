@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { Button, Drawer, theme } from 'antd';
-import {MenuOutlined} from "@ant-design/icons";
+import React, {useState} from 'react';
+import {Button, Drawer} from 'antd';
 
 export default function MenuMobile() {
     const [open, setOpen] = useState(false);

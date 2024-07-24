@@ -1,7 +1,6 @@
 import {Button} from 'antd';
 import {MinusOutlined, PlusOutlined} from '@ant-design/icons';
-import {Component, useState} from 'react';
-import Cart from "./cart";
+import {Component} from 'react';
 
 class CustomInput extends Component<{
     min: any,

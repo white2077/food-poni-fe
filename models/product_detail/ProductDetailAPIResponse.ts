@@ -1,5 +1,4 @@
 import {INITIAL_PRODUCT_API_RESPONSE, ProductAPIResponse} from "../product/ProductAPIResponse";
-import {OrderItemAPIResponse} from "../order_item/OrderItemResponseAPI";
 
 export interface ProductDetailAPIResponse {
 

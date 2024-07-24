@@ -1,6 +1,4 @@
 import HeaderMain from "../components/header-main";
-import {Alert} from "antd";
-import Marquee from 'react-fast-marquee';
 import {HomeFilled, SettingFilled, UserOutlined, WalletFilled} from "@ant-design/icons";
 import HeaderBar from "../components/header-bar";
 import Link from "next/link";

@@ -12,3 +12,12 @@ export const getProductsPage = ({page, pageSize, status, categoryId}: {
     return api.get(`/products?page=${page ?? ''}&pageSize=${pageSize ?? ''}&status=${status ?? ''}&categoryId=${categoryId ?? ''}`)
         .then((res: AxiosResponse<Page<ProductAPIResponse[]>>) => res.data);
 }
+
+export const getProductsPageByRetailer = ({page, pageSize, status}: {
+    page?: number,
+    pageSize?: number,
+    status?: boolean
+}): Promise<Page<ProductAPIResponse[]>> => {
+    return api.get(`/retailer/products?page=${page ?? ''}&pageSize=${pageSize ?? ''}&status=${status ?? ''}`)
+        .then((res: AxiosResponse<Page<ProductAPIResponse[]>>) => res.data);
+}

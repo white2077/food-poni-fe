@@ -1,6 +1,6 @@
 import React from "react";
-import {Button, Image, Input, Radio, Select, Space} from "antd";
-import {DeleteOutlined, LockOutlined, MailOutlined, PhoneOutlined, SafetyCertificateOutlined} from "@ant-design/icons";
+import {Button, Image, Input, Radio, Space} from "antd";
+import {DeleteOutlined, LockOutlined, MailOutlined, SafetyCertificateOutlined} from "@ant-design/icons";
 import {CurrentUser} from "../stores/user.reducer";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";

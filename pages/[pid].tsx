@@ -14,7 +14,6 @@ import {api} from "../utils/axios-config";
 import {server} from "../utils/server";
 import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
 import {ProductDetailAPIResponse} from "../models/product_detail/ProductDetailAPIResponse";
-import {OrderItemAPIResponse} from "../models/order_item/OrderItemResponseAPI";
 import {RateAPIResponse} from "../models/rate/RateAPIResponse";
 import {Page} from "../models/Page";
 import ReadMore from "../components/read_more";

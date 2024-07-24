@@ -1,5 +1,6 @@
 import {
-    INITIAL_PRODUCT_DETAIL_API_RESPONSE, ProductDetailAPIResponse
+    INITIAL_PRODUCT_DETAIL_API_RESPONSE,
+    ProductDetailAPIResponse
 } from "../product_detail/ProductDetailAPIResponse";
 import {INITIAL_RATE_API_RESPONSE, RateAPIResponse} from "../rate/RateAPIResponse";
 

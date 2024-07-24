@@ -1,5 +1,4 @@
 import {Page} from "../models/Page";
-import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
 import {api} from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {CategoryAPIResponse} from "../models/category/CategoryAPIResponse";

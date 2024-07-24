@@ -1,9 +1,7 @@
-import {Card, Checkbox, Col, Divider, Input, InputNumber, Popconfirm, Row} from "antd";
+import {Card, Checkbox, Col, Divider, Input, Popconfirm, Row} from "antd";
 import {DeleteOutlined, RightOutlined} from "@ant-design/icons";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {Button} from 'antd';
-import {PlusOutlined, MinusOutlined} from '@ant-design/icons';
 import {
     deleteItem,
     deleteSelectedSoldItems,

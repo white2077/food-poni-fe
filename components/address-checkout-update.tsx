@@ -7,8 +7,6 @@ import {accessToken, apiWithToken} from "../utils/axios-config";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {AutoComplete, Button, Form, Input, notification} from "antd";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
-import {useDispatch} from "react-redux";
-import {setCurrentShippingAddress} from "../stores/address.reducer";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
 

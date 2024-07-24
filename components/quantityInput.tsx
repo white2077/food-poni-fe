@@ -1,6 +1,6 @@
-import { Button } from 'antd';
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { Component } from 'react';
+import {Button} from 'antd';
+import {MinusOutlined, PlusOutlined} from '@ant-design/icons';
+import {Component} from 'react';
 
 class QuantityInput extends Component<{ item: any, onChangeQuantity: any }> {
     render() {

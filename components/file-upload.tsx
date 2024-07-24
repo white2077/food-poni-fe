@@ -1,4 +1,4 @@
-import {Button, Card, Divider, List, message, Modal, notification, Upload} from 'antd';
+import {Button, Divider, List, message, Modal, notification, Upload} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {UploadOutlined} from "@ant-design/icons";

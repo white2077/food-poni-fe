@@ -1,19 +1,19 @@
-import {NextRouter, useRouter} from "next/router";
 import {DefaultLayout} from "../_layout";
 import MenuShop from "../../components/menu-shop";
+import React from "react";
+import {EnvironmentOutlined, MailOutlined, ShopOutlined, StarOutlined} from "@ant-design/icons";
+import {ParsedUrlQuery} from "querystring";
+import {AxiosResponse} from "axios";
+import {ProductAPIResponse} from "../../models/product/ProductAPIResponse";
+import {api} from "../../utils/axios-config";
+import {Page} from "../../models/Page";
+import {INITIAL_USER_API_RESPONSE, UserAPIResponse} from "../../models/user/UserResponseAPI";
+import type {NextApiRequest, NextApiResponse} from "next";
+import {CookieValueTypes, getCookie} from "cookies-next";
+import {REFRESH_TOKEN, server} from "../../utils/server";
 import ProductRowLoading from "../../components/product-row-skeleton";
 import ProductCard from "../../components/product-card";
-import React from "react";
-import {
-    EnvironmentOutlined,
-    FireOutlined,
-    HistoryOutlined,
-    MailOutlined,
-    ShopOutlined,
-    StarOutlined
-} from "@ant-design/icons";
-import {Badge, Card, Divider, Rate, Space} from "antd";
-import {server} from "../../utils/server";
+import {getProductsPage} from "../../queries/product.query";
 
 export interface IProductCard {
     index: number,
@@ -29,7 +29,68 @@ export interface IProductCard {
     createdDate: Date;
 }
 
-const ShopDetail = () => {
+export async function getServerSideProps(context: {
+    params: ParsedUrlQuery,
+    req: NextApiRequest,
+    res: NextApiResponse
+}) {
+    const {sid} = context.params;
+    const refreshToken: CookieValueTypes = getCookie(REFRESH_TOKEN, {req: context.req, res: context.res});
+    if (refreshToken) {
+        try {
+            const resUser: AxiosResponse<UserAPIResponse> = await api.get('/users/' + sid);
+            const user: UserAPIResponse = resUser.data;
+
+            return {
+                props: {
+                    user: user,
+                },
+            };
+        } catch (error) {
+            console.error('Error fetching user:', error);
+            return {
+                props: {
+                    user: INITIAL_USER_API_RESPONSE,
+                },
+            };
+        }
+    }
+
+    return {
+        redirect: {
+            destination: '/login',
+            permanent: false,
+        },
+    }
+}
+
+const ShopDetail = ({user}: {user: UserAPIResponse}) => {
+
+    const [isLoading, setLoading] = React.useState<boolean>(false);
+
+    const [productCards, setProductCards] = React.useState<IProductCard[]>([]);
+
+    React.useEffect(() => {
+        setLoading(true);
+        getProductsPage({status: true}).then((res: Page<ProductAPIResponse[]>) => {
+            setProductCards(res.content.map((product: ProductAPIResponse, index: number) => {
+                return {
+                    index,
+                    id: product.id,
+                    name: product.name,
+                    thumbnail: product.thumbnail,
+                    minPrice: product.minPrice,
+                    maxPrice: product.maxPrice,
+                    rate: product.rate,
+                    retailer: product.user.username,
+                    rateCount: product.rateCount,
+                    sales: product.sales,
+                    createdDate: product.createdDate,
+                } as IProductCard
+            }));
+        }).finally(() =>  setLoading(false));
+    }, []);
+
     const filterProducts = (key: string) => {
         const copy = [...productCards];
         switch (key) {
@@ -53,8 +114,7 @@ const ShopDetail = () => {
         }
         setProductCards(copy);
     };
-    const [isLoading, setLoading] = React.useState<boolean>(false);
-    const [productCards, setProductCards] = React.useState<IProductCard[]>([]);
+
     return (
         <DefaultLayout>
             <main className="grow content pt-5" id="content" role="content">
@@ -64,10 +124,10 @@ const ShopDetail = () => {
                         <div className="flex flex-col items-center gap-2 lg:gap-3.5 py-4 lg:pt-5 lg:pb-10">
                             <img
                                 className="rounded-full border-3 border-4 border-orange-400 h-32 w-32 shrink-0 object-cover"
-                                src="/avatar.jpg"/>
+                                src={server + user.avatar}/>
                             <div className="flex items-center gap-1.5">
                                 <div className="text-lg leading-5 font-semibold text-gray-900">
-                                    Child hunter
+                                    {user.username}
                                 </div>
                                 <svg className="text-primary" fill="none" height="16" viewBox="0 0 15 16" width="15"
                                      xmlns="http://www.w3.org/2000/svg">
@@ -85,12 +145,12 @@ const ShopDetail = () => {
                                 </div>
                                 <div className="flex gap-2 items-center">
                                     <EnvironmentOutlined/>
-                                    <span className="text-gray-600">Vương quốc phép thuật - Ấn độ</span>
+                                    <span className="text-gray-600">{user.address.address}</span>
                                 </div>
                                 <div className="flex gap-2 items-center">
                                     <MailOutlined/>
                                     <a className="text-gray-600 hover:text-primary" href="mailto: jenny@kteam.com">
-                                        ChildHunter@gmail.com
+                                        {user.email}
                                     </a>
                                 </div>
                                 <div className="flex gap-2 items-center">
@@ -111,44 +171,9 @@ const ShopDetail = () => {
                         </div>
                         <div
                             className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 bg-white'>
-                            {/*{isLoading ? <ProductRowLoading*/}
-                            {/*    count={8}/> : (productCards.length !== 0 ? productCards.map((productCard: IProductCard) =>*/}
-                            {/*    <ProductCard key={productCard.id} product={productCard}/>) : "Không có dữ liệu!")}*/}
-
-                            {/*Chị lấy dữ liệu lên chỗ em comment nhé lấy all sản phẩm của 1 shop*/}
-                            {Array.from({length: 10}).map((_, index) => (
-                                <Card
-                                    key={index}
-                                    size='small'
-                                    hoverable
-                                    cover={<img alt="example" className="aspect-square object-cover"
-                                                src={'/avatar.jpg'}/>}
-                                >
-                                    <Space direction="vertical" size="small" className="flex">
-                                        <div className='flex items-center overflow-hidden'>
-                                            <Badge className='mr-1 overflow-hidden' count={"Khoảng cách không xác định"}
-                                                   color='#F36F24'/>
-                                        </div>
-                                        <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>
-                                            Pịa tây bắc
-                                        </div>
-                                        <div>
-                                            <Rate disabled allowHalf value={4.5} className='text-sm mr-2'/>
-                                            (4.5)
-                                        </div>
-                                        <div className="flex justify-between items-center">
-                                            <div className="text-left text-[20px] font-bold">
-                                                3.0$
-                                            </div>
-                                            <div>Đã bán: 69</div>
-                                        </div>
-                                    </Space>
-                                    <Divider className="my-[12px]"/>
-                                    <div className="text-[14px]">
-                                        <HistoryOutlined/> {"Thời gian không xác định"}
-                                    </div>
-                                </Card>
-                            ))}
+                            {isLoading ? <ProductRowLoading
+                                count={8}/> : (productCards.length !== 0 ? productCards.map((productCard: IProductCard) =>
+                                <ProductCard key={productCard.id} product={productCard}/>) : "Không có dữ liệu!")}
                         </div>
                     </div>
                 </div>

@@ -1,7 +1,4 @@
 import {INITIAL_USER_API_RESPONSE, UserAPIResponse} from "../user/UserResponseAPI";
-import {CategoryAPIResponse} from "../category/CategoryAPIResponse";
-import {ProductDetailAPIResponse} from "../product_detail/ProductDetailAPIResponse";
-import {IProductDetail} from "../../pages/[pid]";
 
 export interface ProductAPIResponse {
 

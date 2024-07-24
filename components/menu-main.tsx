@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
     AppstoreOutlined,
     CrownOutlined,
@@ -9,9 +9,7 @@ import {
 } from '@ant-design/icons';
 import type {MenuProps} from 'antd';
 import {Menu} from 'antd';
-import {useDispatch, useSelector} from "react-redux";
-import {setSelectedMainMenu} from "../stores/main-menu.reducer";
-import {RootState} from "../stores";
+import {useDispatch} from "react-redux";
 
 interface MainMenuProps {
     filterProducts: (key: string) => void

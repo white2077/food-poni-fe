@@ -1,18 +1,13 @@
-import React, {useState} from "react";
+import React from "react";
 import {SidebarLayout} from "./_layout";
 import ProductRows from "../components/product-rows";
 import CarouselBanner from "../components/carousel-banner";
 import ProductCategory from "../components/product-category";
 import SearchPosition from "../components/search-position";
-import {api} from "../utils/axios-config";
-import {AxiosResponse} from "axios";
 import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
 import {CategoryAPIResponse} from "../models/category/CategoryAPIResponse";
-import {REFRESH_TOKEN, server} from "../utils/server";
+import {server} from "../utils/server";
 import {getProductsPage} from "../queries/product.query";
-import {NextRequest} from "next/server";
-import {getOrdersPage} from "../queries/order.query";
-import {getCookie} from "cookies-next";
 import {getCategoriesPage} from "../queries/category.query";
 
 export async function getServerSideProps() {

@@ -1,4 +1,4 @@
-import {Avatar, Button, Dropdown, Image, MenuProps, notification} from 'antd';
+import {Avatar, Button, Dropdown, MenuProps, notification} from 'antd';
 import {useDispatch, useSelector} from 'react-redux';
 import {LogoutOutlined, QuestionCircleOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
 import {NextRouter, useRouter} from 'next/router';

@@ -1,7 +1,7 @@
 import {NextRouter, useRouter} from "next/router";
 import {DefaultLayout} from "../_layout";
 import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Divider, Image, Row, Spin, Table, Typography} from "antd";
+import {Button, Card, Col, Divider, Image, Row, Spin, Typography} from "antd";
 import {AxiosResponse} from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import RateAdd from "../../components/rate-add";
@@ -34,7 +34,7 @@ export interface IOrder {
     paymentMethod: PaymentInfo;
 }
 
-export const INITIAL_IORDER = {
+export const INITIAL_IORDER: IOrder = {
     id: "",
     totalAmount: 0,
     status: "",
@@ -110,7 +110,7 @@ export async function getServerSideProps(context: {
             console.error('Error fetching order:', error);
             return {
                 props: {
-                    order: null,
+                    order: INITIAL_IORDER,
                 },
             };
         }

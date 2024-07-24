@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ProductCard from "./product-card";
 import {useSelector} from "react-redux";
@@ -7,10 +6,8 @@ import {Page} from "../models/Page";
 import {CurrentUser} from "../stores/user.reducer";
 import MenuMain from "./menu-main";
 import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
-import {ProductDetailAPIResponse} from "../models/product_detail/ProductDetailAPIResponse";
-import {OrderItemAPIResponse} from "../models/order_item/OrderItemResponseAPI";
 import ProductRowLoading from "./product-row-skeleton";
-import {AxiosResponse} from "axios";
+
 export interface IProductCard {
     index: number,
     id: string;

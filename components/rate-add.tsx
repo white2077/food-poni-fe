@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Avatar, Button, Image, Input, Modal, notification, Rate} from 'antd';
+import {Button, Image, Input, Modal, notification, Rate} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import FileUploads from "./file-upload";
 import {RootState} from "../stores";

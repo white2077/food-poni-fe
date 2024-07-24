@@ -5,8 +5,8 @@ import AddressDeliveryInformation from "../components/address-delivery-informati
 import {
     CreditCardOutlined,
     CustomerServiceOutlined,
-    EnvironmentOutlined, LikeOutlined,
-    PhoneOutlined,
+    EnvironmentOutlined,
+    LikeOutlined,
     ProfileOutlined,
     UserOutlined
 } from "@ant-design/icons";

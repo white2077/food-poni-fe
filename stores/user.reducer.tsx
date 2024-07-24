@@ -1,6 +1,4 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {INITIAL_ADDRESS_API_RESPONSE} from "../models/address/AddressAPIResponse";
-import {UserAPIResponse} from "../models/user/UserResponseAPI";
 
 export interface CurrentUser {
     id: string;

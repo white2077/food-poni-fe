@@ -1,6 +1,6 @@
 import {Button, Card, List, notification} from "antd";
 import {CheckCircleOutlined, DeleteOutlined} from "@ant-design/icons";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../stores";
