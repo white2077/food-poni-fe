@@ -11,7 +11,7 @@ const {Text} = Typography;
 
 const OrderCard = ({order}: { order: OrderAPIResponse }) => {
     return (
-        <Badge.Ribbon text={order.status} color={order.status === "COMPLETED" ? "green" : "red"}>
+        <Badge.Ribbon text={order.status === "COMPLETED" ? "Hoàn thành" : "Chư"} color={order.status === "COMPLETED" ? "green" : "red"}>
             <Card hoverable={true} title={"#" + order.id?.substring(0, 7)}>
                 <Row gutter={[16, 16]}>
                     {order?.orderItems?.map((item: OrderItemAPIResponse) => (
