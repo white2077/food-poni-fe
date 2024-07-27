@@ -51,9 +51,8 @@ const ReadMore: React.FC<ReadMoreProps> = ({content}) => {
                 {showButton && (
                     <button
                         onClick={toggleDescription}
-                        className="absolute inset-x-0 bottom-[0.1%] text-white w-full hover:text-orange-500 bg-gradient-to-t from-gray-500 via-black-900 to-transparent size-10"
-                    >
-                        {buttonText}
+                        className="absolute text-sm inset-x-0 bottom-[0.01%] text-gray-600 font-sans w-full hover:text-orange-500 bg-gradient-to-t from-white via-white-900 to-transparent size-24">
+                        <div className="w-full h-full flex items-end justify-center">{buttonText}</div>
                     </button>
                 )}
             </div>
