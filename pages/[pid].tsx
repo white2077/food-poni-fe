@@ -159,7 +159,8 @@ const ProductDetails = ({product}: { product: IProduct }) => {
                                             <span className="border-r-2 py-1 pr-2">
                                                 <span
                                                     className="m-1 border-b-2 text-lg">{(productDetailSelected?.rate ? productDetailSelected.rate.toFixed(1) : 0) + ""}</span>
-                                                <span> </span>
+                                                <span>
+                                                </span>
                                                 <Rate allowHalf disabled value={productDetailSelected?.rate}
                                                       className="text-xs mr-[8px]"
                                                 />

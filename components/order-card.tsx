@@ -9,9 +9,24 @@ import {OrderItemAPIResponse} from "../models/order_item/OrderItemResponseAPI";
 
 const {Text} = Typography;
 
+const statusText: Record<string, string> = {
+    PENDING: "Đang chờ",
+    APPROVED: "Đã duyệt",
+    CANCELLED: "Đã hủy",
+    REJECTED: "Bị từ chối",
+    COMPLETED: "Hoàn thành"
+};
+
+const statusColors: Record<string, string> = {
+    PENDING: "orange",
+    APPROVED: "blue",
+    CANCELLED: "red",
+    REJECTED: "purple",
+    COMPLETED: "green"
+};
 const OrderCard = ({order}: { order: OrderAPIResponse }) => {
     return (
-        <Badge.Ribbon text={order.status} color={order.status === "COMPLETED" ? "green" : "red"}>
+        <Badge.Ribbon text={statusText[order.status]} color={statusColors[order.status]}>
             <Card hoverable={true} title={"#" + order.id?.substring(0, 7)}>
                 <Row gutter={[16, 16]}>
                     {order?.orderItems?.map((item: OrderItemAPIResponse) => (
@@ -21,13 +36,16 @@ const OrderCard = ({order}: { order: OrderAPIResponse }) => {
                                     className="overflow-hidden rounded-lg p-2 hover:bg-gray-100 hover:border-orange-300 border-2 ">
                                     <Row gutter={[16, 16]} style={{}}>
                                         <Col span={5}>
-                                            <div className="flex justify-center ư">
-                                                <Image
-                                                    height='100px'
-                                                    preview={false}
-                                                    src={item?.productDetail?.product?.thumbnail ? server + item.productDetail.product.thumbnail : ""}
-                                                    className="object-cover rounded-lg border-2 border-orange-300"/>
-                                                <p className="font-['Impact','fantasy'] absolute text-xs border-orange-300 border-2 text-orange-600 bottom-0 right-0 bg-gray-100  px-1 rounded-br-lg rounded-tl-lg ">x{item.quantity}</p>
+                                            <div className="flex justify-center">
+                                                <div className='relative' style={{position: 'relative'}}>
+                                                    <Image
+                                                        height='100px'
+                                                        preview={false}
+                                                        src={item?.productDetail?.product?.thumbnail ? server + item.productDetail.product.thumbnail : ""}
+                                                        className="object-cover rounded-lg border-2 border-orange-300"
+                                                    />
+                                                    <p className="font-['Impact','fantasy'] absolute text-xs border-orange-300 border-2 bottom-1.5 right-0 text-orange-600 bg-gray-100  px-1 rounded-br-lg rounded-tl-lg">x{item.quantity}</p>
+                                                </div>
                                             </div>
                                         </Col>
                                         <Col span={19} className="justify-between">
@@ -46,13 +64,15 @@ const OrderCard = ({order}: { order: OrderAPIResponse }) => {
                                             {order.status === "COMPLETED" && Object.keys(item.rate ?? {}).length === 0 ? (
                                                 <div className="flex gap-2">
                                                     <FormOutlined/>
-                                                    <Text type="success" className="text-green-600 text-base font-sans">Đánh giá ngay để nhận ưu đãi</Text>
+                                                    <Text type="success" className="text-green-600 text-base font-sans">Đánh
+                                                        giá ngay để nhận ưu đãi</Text>
                                                 </div>
                                             ) : (
                                                 Object.keys(item.rate ?? {}).length !== 0 && (
                                                     <div className="flex gap-2">
                                                         <FormOutlined/>
-                                                        <Text className="text-red-600 text-base font-sans">Bạn đã đánh giá</Text>
+                                                        <Text className="text-red-600 text-base font-sans">Bạn đã đánh
+                                                            giá</Text>
                                                     </div>
                                                 )
                                             )}

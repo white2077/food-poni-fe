@@ -20,7 +20,9 @@
     }
 }
 /* Tùy chỉnh thanh cuộn cho Chrome, Safari */
-
+/*.ant-rate-star {*/
+/*    font-size: 100px; !* Kích thước của ngoại sao *!*/
+/*}*/
 .product-row {
     display: flex;
     flex-wrap: wrap;

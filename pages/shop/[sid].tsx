@@ -163,7 +163,7 @@ const ShopDetail = ({user}: {user: UserAPIResponse}) => {
                         </div>
                     </div>
                 </div>
-                <div className="bg-white px-4">
+                <div className="bg-white px-4 pb-4 rounded-lg">
                     <MenuShop filterProducts={filterProducts}></MenuShop>
                     <div>
                         <div className="py-4 w-48">
