@@ -16,15 +16,18 @@ const ProductGallery = ({images}: { images: string[] }) => {
                    width='100%'
                    src={selectedImage ? (server + selectedImage) : (images[0] ? (server + images[0]) : '')}
             />
-            <div className='overflow-x-scroll'>
-                <Segmented
-                    options={images.map((image: string) => ({
-                        label: <Avatar size={75} src={server + image}/>,
-                        value: image
-                    }))}
-                    value={selectedImage ?? (images[0] ?? '')}
-                    onChange={(image: string) => setSelectedImage(image)}
-                />
+            <div className="overflow-x-scroll scrollbar-rounded">
+                <div className="flex max-w-80 my-2 ">
+                    <Segmented
+                        className=" flex gap-2"
+                        options={images.map((image: string) => ({
+                            label: <Avatar className="my-2 rounded-lg"  size={75} src={server + image}/>,
+                            value: image
+                        }))}
+                        value={selectedImage ?? (images[0] ?? '')}
+                        onChange={(image: string) => setSelectedImage(image)}
+                    />
+                </div>
             </div>
         </Card>
     );

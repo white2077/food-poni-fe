@@ -12,6 +12,10 @@ import {RateAPIResponse} from "../models/rate/RateAPIResponse";
 import Link from "next/link";
 import {Progress} from "antd";
 
+interface ExpandedComments {
+    [key: number]: boolean;
+}
+
 const IconText = ({icon, text}: { icon: React.FC; text: string }) => (
     <Space>
         {React.createElement(icon)}
@@ -47,6 +51,15 @@ const ProductComment = ({data, isLoading}: { data: RateAPIResponse[], isLoading:
     const handleShowAllComments = () => {
         setSelectedRating(null); // Reset trạng thái lọc
         setShowAllComments(true);
+    };
+
+    const [expandedComments, setExpandedComments] = useState<ExpandedComments>({});
+
+    const toggleExpand = (index: number) => {
+        setExpandedComments({
+            ...expandedComments,
+            [index]: !expandedComments[index]
+        });
     };
     return (
         <Card size='small'>
@@ -150,7 +163,15 @@ const ProductComment = ({data, isLoading}: { data: RateAPIResponse[], isLoading:
                                                                                             value={item.rate}/>{getReviewText({rate: item.rate})}
                                     </div>
                                     <div className="text-green-500 gap-1 flex"><CheckCircleFilled/>Đã nhận hàng</div>
-                                    <div className="text-sm font-normal my-3">{item.message}</div>
+                                    <div className="flex gap-2">
+                                        <div
+                                            className={`text-sm font-normal my-3 ${expandedComments[index] ? 'w-auto' : 'max-w-24 truncate'}`}>
+                                            {item.message}
+                                        </div>
+                                        <button onClick={() => toggleExpand(index)} className="text-orange-400">
+                                            {expandedComments[index] ? 'rút gọn' : 'xem thêm'}
+                                        </button>
+                                    </div>
                                     <div className="flex flex-wrap">
                                         {item.images && item.images.map((url, index) => (
                                             <div key={index} className="mr-[10px] mb-[10px]">
