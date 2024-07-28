@@ -10,8 +10,8 @@ import {OrderItemAPIResponse} from "../models/order_item/OrderItemResponseAPI";
 const {Text} = Typography;
 
 const statusText: Record<string, string> = {
-    PENDING: "Đang chờ",
-    APPROVED: "Đã duyệt",
+    PENDING: "Chờ xác nhận",
+    APPROVED: "Chờ lấy hàng",
     CANCELLED: "Đã hủy",
     REJECTED: "Bị từ chối",
     COMPLETED: "Hoàn thành"
@@ -24,6 +24,7 @@ const statusColors: Record<string, string> = {
     REJECTED: "purple",
     COMPLETED: "green"
 };
+
 const OrderCard = ({order}: { order: OrderAPIResponse }) => {
     return (
         <Badge.Ribbon text={statusText[order.status]} color={statusColors[order.status]}>
@@ -34,7 +35,7 @@ const OrderCard = ({order}: { order: OrderAPIResponse }) => {
                             <Link href={`/order/${order.id}`}>
                                 <div
                                     className="overflow-hidden rounded-lg p-2 hover:bg-gray-100 hover:border-orange-300 border-2 ">
-                                    <Row gutter={[16, 16]} style={{}}>
+                                    <Row gutter={[16, 16]}>
                                         <Col span={5}>
                                             <div className="flex justify-center">
                                                 <div className='relative' style={{position: 'relative'}}>

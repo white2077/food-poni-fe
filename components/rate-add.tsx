@@ -39,8 +39,8 @@ const RateAdd = () => {
         } else {
             notification.open({
                 type: "error",
-                message: "Rate message",
-                description: "Some information is missing. Please fill in all required fields."
+                message: "Đánh giá",
+                description: "Vui lòng nhập đầy đủ thông tin"
             });
             return;
         }
@@ -60,15 +60,15 @@ const RateAdd = () => {
                 .then(() => {
                     notification.open({
                         type: 'success',
-                        message: 'Rate',
-                        description: 'Rate success!',
+                        message: 'Đánh giá',
+                        description: 'Đánh giá thành công!',
                     });
                     handleModalClose();
                 })
                 .catch((res) => {
                     notification.open({
                         type: 'error',
-                        message: 'Rate message',
+                        message: 'Đánh giá',
                         description: res.message
                     });
                 }).finally(() => {

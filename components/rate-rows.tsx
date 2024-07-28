@@ -33,7 +33,7 @@ const RateRows = ({orderId}: { orderId: string }) => {
                 .catch(function (res) {
                     notification.open({
                         type: 'error',
-                        message: 'Order message',
+                        message: 'Đánh giá',
                         description: res.message
                     });
                 })
