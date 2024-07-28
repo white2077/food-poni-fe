@@ -142,7 +142,7 @@ export const AddressCheckoutUpdate = ({address}: {address: AddressAPIResponse}) 
                 </AutoComplete>
             </Form.Item>
             <Form.Item>
-                <Button type="primary" htmlType="submit" className="add-address-form-button" loading={pending} block>
+                <Button type="primary" htmlType="submit" className="add-address-form-button" loading={pending} disabled={pending} block>
                     Sửa địa chỉ
                 </Button>
             </Form.Item>

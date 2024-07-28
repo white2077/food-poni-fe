@@ -138,7 +138,7 @@ export const AddressCheckoutAdd = () => {
                 </AutoComplete>
             </Form.Item>
             <Form.Item>
-                <Button type="primary" htmlType="submit" className="add-address-form-button" loading={pending} block>
+                <Button type="primary" htmlType="submit" className="add-address-form-button" loading={pending} disabled={pending} block>
                     Thêm địa chỉ
                 </Button>
             </Form.Item>
