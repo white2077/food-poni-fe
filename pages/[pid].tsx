@@ -54,20 +54,20 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
         const productDetails: Page<ProductDetailAPIResponse[]> = resProductDetails.data;
 
         const productMapped: IProduct = {
-            id: product.id ?? "",
-            name: product.name ?? "",
-            shortDescription: product.shortDescription ?? "",
+            id: product.id,
+            name: product.name,
+            shortDescription: product.shortDescription,
             retailer: product.user && {
-                id: product.user.id ?? "",
-                avatar: product.user.avatar ?? "",
-                username: product.user.username ?? "",
+                id: product.user.id,
+                avatar: product.user.avatar,
+                username: product.user.username,
             },
             productDetails: productDetails.content.map((productDetail: ProductDetailAPIResponse): IProductDetail => ({
-                id: productDetail.id ?? "",
-                name: productDetail.name ?? "",
-                price: productDetail.price ?? 0,
-                description: productDetail.description ?? "",
-                images: productDetail.images ?? [],
+                id: productDetail.id,
+                name: productDetail.name,
+                price: productDetail.price,
+                description: productDetail.description,
+                images: productDetail.images,
                 rate: productDetail.rate,
                 rateCount: productDetail.rateCount,
                 sales: productDetail.sales,
@@ -83,6 +83,11 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
         };
     } catch (error) {
         console.error('Error fetching product:', error);
+        return {
+            props: {
+                product: null,
+            },
+        };
     }
 }
 
@@ -98,11 +103,12 @@ const ProductDetails = ({product}: { product: IProduct }) => {
 
     const [rates, setRates] = useState<RateAPIResponse[]>([]);
 
-
     useEffect(() => {
         if (product && product.productDetails && product.productDetails.length > 0) {
             setProductDetailSelected(product.productDetails[0]);
             getRates(product.productDetails && product.productDetails[0].id);
+        } else if (product == null) {
+            setIsError(true);
         }
     }, [product]);
 
@@ -141,12 +147,13 @@ const ProductDetails = ({product}: { product: IProduct }) => {
 
     return (
         <DefaultLayout>
-            {isError ? (<Result
+            {isError ? (
+                <Result
                 status="404"
                 title="404"
                 subTitle="Sorry, the page you visited does not exist."
-                extra={<Button type="primary" onClick={() => router.push('/')}>Back Home</Button>}
-            />) : (
+                extra={<Button type="primary" onClick={() => router.push('/')}>Back Home</Button>} />
+            ) : (
                 <>
                     {product && (
                         <div className='grid gap-4'>
