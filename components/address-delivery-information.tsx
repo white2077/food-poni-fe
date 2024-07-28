@@ -128,11 +128,11 @@ export const AddressDeliveryInformation = ({deliveryInformation}: {deliveryInfor
                                         <div>{item.address}</div>
                                     </div>
                                     <div>
-                                        <Button type="text" className="text-purple-600"
+                                        <Button type="text" className="!text-purple-600"
                                                 onClick={() => updateShippingAddress(item.id ?? "")}>
                                             Đặt làm mặc định
                                         </Button>
-                                        <span className="ml-[16px]"><DeleteOutlined
+                                        <span className="ml-[16px]" hidden={item.id === currentUser.addressId}><DeleteOutlined
                                             onClick={() => deleteDeliveryInformation(item.id ?? "")}/></span>
                                     </div>
                                 </div>
