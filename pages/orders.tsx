@@ -43,6 +43,8 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
+    const [selectedStatus, setSelectedStatus] = useState<string>('');
+
     useEffect(() => {
         const sortedOrders = ePage.content.map((order: OrderAPIResponse) => {
             const createdDate = new Date(order.createdDate ?? ""); // Chuyển đổi Timestamp thành đối tượng Date
@@ -57,7 +59,8 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
     }, [ePage]);
 
     const handleChange = (value: string) => {
-        // console.log(OrderStatus[value as keyof typeof OrderStatus]);
+        console.log(OrderStatus[value as keyof typeof OrderStatus]);
+        setSelectedStatus(value);
     };
 
     const getStatusText = (status: OrderStatus) => {
@@ -72,6 +75,10 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
                 return '';
         }
     };
+
+    const filteredOrders = selectedStatus
+        ? orders.filter(order => order.status === OrderStatus[parseInt(selectedStatus)])
+        : orders;
 
     const orderStatusOptions = Object.values(OrderStatus)
         .filter((status) => typeof status === 'number')
@@ -91,8 +98,8 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
                     />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
-                    {orders.map((order: OrderAPIResponse) => (
-                        <div>
+                    {filteredOrders.map((order: OrderAPIResponse) => (
+                        <div key={order.id}>
                             <OrderCard order={order}/>
                         </div>
                     ))}
