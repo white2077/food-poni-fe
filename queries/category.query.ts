@@ -7,6 +7,6 @@ export const getCategoriesPage = ({page, pageSize}: {
     page?: number,
     pageSize?: number
 }): Promise<Page<CategoryAPIResponse[]>> => {
-    return api.get(`/categories?page=${page ?? ''}&pageSize=${pageSize ?? ''}&onlyParent=true`)
+    return api.get(`/categories?page=${page ?? ''}&size=${pageSize ?? ''}&onlyParent=true`)
         .then((res: AxiosResponse<Page<CategoryAPIResponse[]>>) => res.data);
 }

@@ -31,7 +31,8 @@ export async function getServerSideProps({req}: { req: NextRequest }) {
             ePage: await getOrdersPage({
                 refreshToken: getCookie(REFRESH_TOKEN, {req}),
                 page: 0,
-                pageSize: 100
+                pageSize: 100,
+                sort: 'createdDate,desc'
             })
         }
     };
@@ -41,21 +42,10 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
 
     const [orders, setOrders] = useState<OrderAPIResponse[]>([]);
 
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-
     const [selectedStatus, setSelectedStatus] = useState<string>('');
 
     useEffect(() => {
-        const sortedOrders = ePage.content.map((order: OrderAPIResponse) => {
-            const createdDate = new Date(order.createdDate ?? ""); // Chuyển đổi Timestamp thành đối tượng Date
-            return {...order, createdDate};
-        });
-
-        // Sắp xếp sortedOrders theo createdDate giảm dần
-        sortedOrders.sort((a, b) => b.createdDate.getTime() - a.createdDate.getTime());
-
-        setOrders(sortedOrders);
-        setIsLoading(false);
+        setOrders(ePage.content);
     }, [ePage]);
 
     const handleChange = (value: string) => {
@@ -76,9 +66,9 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
         }
     };
 
-    const filteredOrders = selectedStatus
+    const filteredOrders = selectedStatus !== ""
         ? orders.filter(order => order.status === OrderStatus[parseInt(selectedStatus)])
-        : orders;
+        : orders.filter(order => order.status === 'PENDING');
 
     const orderStatusOptions = Object.values(OrderStatus)
         .filter((status) => typeof status === 'number')
