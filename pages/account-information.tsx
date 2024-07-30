@@ -43,7 +43,7 @@ function getItem(
 const items: MenuProps['items'] = [
     getItem('Thông tin tài khoản', '1', <UserOutlined/>),
     getItem('Sổ địa chỉ', '2', <EnvironmentOutlined/>),
-    getItem('Quản lý đơn hàng', '3', <ProfileOutlined/>),
+    getItem('Quản lý đơn hàng - Để tạm form đổi mật khẩu ở đây', '3', <ProfileOutlined/>),
     getItem('Thông tin thanh toán', '4', <CreditCardOutlined/>),
     getItem('Sản phẩm yêu thích', '5', <LikeOutlined/>),
     getItem('Hỗ trợ khách hàng', '6', <CustomerServiceOutlined/>)
