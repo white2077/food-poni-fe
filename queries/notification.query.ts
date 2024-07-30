@@ -10,7 +10,7 @@ export const getNotificationsPageByCustomer = ({refreshToken, page, pageSize}: {
     pageSize?: number
 }): Promise<Page<NotificationAPIResponse[]>> => {
     if (refreshToken) {
-        return apiWithToken(refreshToken).get(`/retailer/notifications?page=${page ?? ''}&pageSize=${pageSize ?? ''}`, {
+        return apiWithToken(refreshToken).get(`/notifications?page=${page ?? ''}&pageSize=${pageSize ?? ''}`, {
             headers: {
                 Authorization: "Bearer " + accessToken
             }
