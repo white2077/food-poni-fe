@@ -50,7 +50,7 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
         const resProduct: AxiosResponse<ProductAPIResponse> = await api.get('/products/' + pid);
         const product: ProductAPIResponse = resProduct.data;
 
-        const resProductDetails: AxiosResponse<Page<ProductDetailAPIResponse[]>> = await api.get('/product-details?productId=' + pid);
+        const resProductDetails: AxiosResponse<Page<ProductDetailAPIResponse[]>> = await api.get('/product-details/products/' + pid);
         const productDetails: Page<ProductDetailAPIResponse[]> = resProductDetails.data;
 
         const productMapped: IProduct = {
@@ -216,7 +216,7 @@ const ProductDetails = ({product}: { product: IProduct }) => {
                                     status={status!}
                                 />
                             </div>
-                            <ProductComment data={rates} isLoading={isLoadingRate}/>
+                            {/*<ProductComment data={rates} isLoading={isLoadingRate}/>*/}
                         </div>
 
                     )}
