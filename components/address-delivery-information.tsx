@@ -74,7 +74,7 @@ export const AddressDeliveryInformation = ({deliveryInformation}: {deliveryInfor
             id: addressId
         };
         if (refreshToken) {
-            apiWithToken(refreshToken).put("/users/update-address", addressIdDTO, {
+            apiWithToken(refreshToken).patch("/users/update-address", addressIdDTO, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }
