@@ -23,6 +23,7 @@ import {ErrorApiResponse} from "../models/ErrorApiResponse";
 import Link from "next/link";
 import MenuMobile from "./menu-mobile";
 import {UserAPIResponse} from "../models/user/UserResponseAPI";
+import ThemeSwitch from "./theme";
 
 let sock: any = null;
 export default function HeaderMain() {
@@ -190,11 +191,13 @@ export default function HeaderMain() {
     return (
         <div className="grid grid-cols-[1fr_2fr_1fr] px-2 mx-auto items-center py-2 gap-4 max-w-screen-xl">
             <MenuMobile/>
+            <ThemeSwitch/>
             <Link href="/" >
                 {/*<img src={".jpg"} className={"overflow-hidden object-cover cursor-pointer h-20 w-44 "}/>*/}
                <div className="font-['Impact','fantasy'] text-4xl text-orange-400 cursor-pointer hover:text-orange-500">FoodPoni</div>
             </Link>
             <SearchKeyword/>
+
             <div className='flex items-center justify-end gap-4'>
                 {currentUser.id ? (
                         <>

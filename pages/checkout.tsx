@@ -35,6 +35,7 @@ import {NextRequest} from "next/server";
 import {getAddressesPage} from "../queries/address.query";
 import CardHome from "../components/card_home";
 
+
 const {TextArea} = Input;
 
 export async function getServerSideProps({req}: { req: NextRequest }) {

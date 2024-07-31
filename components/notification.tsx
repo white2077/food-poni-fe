@@ -84,6 +84,7 @@ const Notification = () => {
                                                                              });
                                                                          }
                                                                      }}
+
                                                                      className="flex grow gap-2.5">
                                                                     <div className="relative shrink-0 mt-0.5">
                                                                         <img alt="" className="rounded-full size-8"
