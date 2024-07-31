@@ -5,7 +5,7 @@ import CarouselBanner from "../components/carousel-banner";
 import ProductCategory from "../components/product-category";
 import SearchPosition from "../components/search-position";
 import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
-import {CategoryAPIResponse} from "../models/category/CategoryAPIResponse";
+import {ProductCategoryAPIResponse} from "../models/product_category/ProductCategoryAPIResponse";
 import {server} from "../utils/server";
 import {getProductsPage} from "../queries/product.query";
 import {getCategoriesPage} from "../queries/category.query";
@@ -15,13 +15,13 @@ export async function getServerSideProps() {
         props: {
             ePage: await getCategoriesPage({
                 page: 0,
-                pageSize: 10
+                pageSize: 100
             })
         }
     };
 }
 
-const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<CategoryAPIResponse[]> }) => {
+const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<ProductCategoryAPIResponse[]> }) => {
 
     const sidebarContents: JSX.Element[] = [
         <ProductCategory key={0} categoryList={ePage.content}/>,
