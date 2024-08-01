@@ -11,20 +11,19 @@ const CatBackground = () => {
         });
 
 
-
-        gsap.set("#smoke",{
-            x:10,
-            y:5
+        gsap.set("#smoke", {
+            x: 10,
+            y: 5
         });
 
-        gsap.to("#smoke",{
+        gsap.to("#smoke", {
             rotation: -360,
             transformOrigin: "center",
             duration: 5,
             repeat: -1
         });
 
-        gsap.to("#smoke",{
+        gsap.to("#smoke", {
             y: 10,
             duration: 5,
             repeat: -1,
@@ -35,33 +34,30 @@ const CatBackground = () => {
 
         let tail = gsap.timeline({repeat: -1, yoyo: true,});
 
-        tail.to("#tail",{
+        tail.to("#tail", {
             ease: "power1.in",
-            morphSVG:{shape:"M506.637,298.528L506.637,350.214"},
-            duration:0.5,
-            delay:3
+            morphSVG: {shape: "M506.637,298.528L506.637,350.214"},
+            duration: 0.5,
+            delay: 3
         })
-            .to("#tail",{
+            .to("#tail", {
                 ease: "power1.out",
-                morphSVG:{shape:"M506.637,298.528L506.637,323.299C506.637,323.299 506.699,350.214 534.849,350.214"}
+                morphSVG: {shape: "M506.637,298.528L506.637,323.299C506.637,323.299 506.699,350.214 534.849,350.214"}
             })
-
 
 ///skate//
 
-
-
-        let skate = gsap.timeline({repeat: -1, });
+        let skate = gsap.timeline({repeat: -1,});
 
         skate
-            .to("#skateCat",{
-                x:20,
-                delay:4 + 0.5,
+            .to("#skateCat", {
+                x: 20,
+                delay: 4 + 0.5,
                 ease: "power1.inOut"
             })
-            .to("#skateCat",{
-                x:0,
-                delay:2.5,
+            .to("#skateCat", {
+                x: 0,
+                delay: 2.5,
                 ease: "power1.inOut"
             });
 
@@ -69,49 +65,46 @@ const CatBackground = () => {
         let bumpDura = 0.2;
 
         bump
-            .to("#skate, #cat",{
+            .to("#skate, #cat", {
                 y: -2,
-                delay:3,
+                delay: 3,
                 duration: bumpDura
-            },0)
-            .to("#skate, #cat",{
+            }, 0)
+            .to("#skate, #cat", {
                 y: 0,
                 duration: bumpDura
             })
-            .to("#tire-front, #tire-back",{
+            .to("#tire-front, #tire-back", {
                 y: -2,
-                delay:3,
+                delay: 3,
                 duration: bumpDura,
-                stagger:0.2
-            },0)
-            .to("#tire-front, #tire-back",{
+                stagger: 0.2
+            }, 0)
+            .to("#tire-front, #tire-back", {
                 y: 0,
                 duration: bumpDura,
-                stagger:0.2
+                stagger: 0.2
             })
-            .to("#face",{
+            .to("#face", {
                 y: -2,
-                delay:3,
+                delay: 3,
                 duration: bumpDura,
-            },0.1)
-            .to("#face",{
+            }, 0.1)
+            .to("#face", {
                 y: 0,
                 duration: bumpDura,
             });
 
 //tires//
-
         let tires = gsap.timeline({repeat: -1});
 
-        tires.to('#tire-front, #tire-back',{
+        tires.to('#tire-front, #tire-back', {
             rotation: 360,
             transformOrigin: "center",
-            duration:0.5
+            duration: 0.5
         });
-
 //cat//
-
-        gsap.to("#left-hand",{
+        gsap.to("#left-hand", {
             rotate: -20,
             transformOrigin: "top",
             repeat: -1,
@@ -119,19 +112,14 @@ const CatBackground = () => {
             duration: 2,
             ease: "power1.inOut"
         });
-
-
 ///zzz///
-
-
-
-        gsap.set('#fly',{
+        gsap.set('#fly', {
             x: 70,
             y: 50,
             scale: 1.4
         });
 
-        gsap.to(".zzz",{
+        gsap.to(".zzz", {
             x: "random(-80, -150)",
             y: "random(-80, -30)",
             rotation: "random(20,120)",
@@ -142,7 +130,6 @@ const CatBackground = () => {
                 each: 1.2,
             }
         })
-
     }, []);
 
     return (
@@ -171,7 +158,6 @@ const CatBackground = () => {
                               strokeWidth="2" strokeLinecap="round"/>
                         <circle className="zzz" cx="336.557" cy="245.842" r="2.132" fill="none" stroke="#fff"
                                 strokeWidth="2"/>
-
                     </g>
                     <g id="skate">
                         <path
@@ -211,7 +197,6 @@ const CatBackground = () => {
                         <path id="body"
                               d="M411.422 284.308s81.404-40.992 98.905-.679c11.659 26.856-7.93 42.028-43.527 42.028-23.361 0-43.863-1.588-52.67-5.836-8.807-4.248-2.708-35.513-2.708-35.513z"
                               fill="#ffae23"/>
-
                         <clipPath id="_clip1">
                             <path
                                 d="M411.422 284.308s81.404-40.992 98.905-.679c11.659 26.856-7.93 42.028-43.527 42.028-23.361 0-43.863-1.588-52.67-5.836-8.807-4.248-2.708-35.513-2.708-35.513z"/>

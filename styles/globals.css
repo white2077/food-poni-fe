@@ -1309,11 +1309,11 @@ footer {
     display: flex;
     flex-direction: column;
 }
-.container .content p:first-child:not(.flex p:first-child) {
+.container .content .in-col:first-child:not(.flex .in-col:first-child) {
     color: white;
     font-size: 22px;
 }
-.container .content p:not(.col, .column p:first-child) {
+.container .content .in-col:not(.col, .column .in-col:first-child) {
     color: rgb(136, 136, 136);
     text-align: left;
     margin-bottom: 10px;
@@ -1330,7 +1330,7 @@ footer {
     flex-direction: column;
     gap: 20px;
 }
-.container .content .col:first-child .flex .col-info p {
+.container .content .col:first-child .flex .col-info .in-col {
     font-size: 14px;
     text-align: left;
 }
@@ -1342,14 +1342,14 @@ footer {
     margin-right: 50px;
 }
 
-.container .content .col .column p:first-child {
+.container .content .col .column .in-col:first-child {
     margin-bottom: 25px;
 }
-.container .content .col .column p:hover {
+.container .content .col .column .in-col:hover {
    color: #ff6a00;
     cursor: pointer;
 }
-.container .content .col .column p:not(p:first-child) {
+.container .content .col .column .in-col:not(.in-col:first-child) {
     margin-bottom: 12px;
 }
 .container .content .col:last-child {
@@ -1404,7 +1404,7 @@ footer {
 .content-foot .container p {
     color: rgb(136, 136, 136);
 }
-.content-foot .container p span {
+.content-foot .container .in-col span {
     color: white;
     font-weight: bold;
 }
