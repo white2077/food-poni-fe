@@ -11,7 +11,7 @@ export const getAddressesPage = ({refreshToken, page, pageSize}: {
 }): Promise<Page<AddressAPIResponse[]>> => {
     if (refreshToken) {
         return apiWithToken(refreshToken)
-            .get(`/addresses?page=${page ?? ''}&pageSize=${pageSize ?? ''}`, {
+            .get(`/addresses?page=${page ?? ''}&size=${pageSize ?? ''}`, {
                 headers: {
                     Authorization: "Bearer " + accessToken
                 }

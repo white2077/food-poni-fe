@@ -1,7 +1,7 @@
 import {NextRouter, useRouter} from "next/router";
 import {DefaultLayout} from "../_layout";
 import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Divider, Image, Row, Spin, Typography} from "antd";
+import {Button, Card, Col, Divider, Image, Result, Row, Spin, Typography} from "antd";
 import {AxiosResponse} from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import RateAdd from "../../components/rate-add";
@@ -33,16 +33,6 @@ export interface IOrder {
     shippingAddress: ShippingAddress;
     paymentMethod: PaymentInfo;
 }
-
-export const INITIAL_IORDER: IOrder = {
-    id: "",
-    totalAmount: 0,
-    status: "",
-    user: INITIAL_USER_API_RESPONSE,
-    orderItems: [],
-    shippingAddress: shippingAddress,
-    paymentMethod: paymentInfo
-};
 
 export interface IProductDetailOrderItem {
     id: string;
@@ -110,7 +100,7 @@ export async function getServerSideProps(context: {
             console.error('Error fetching order:', error);
             return {
                 props: {
-                    order: INITIAL_IORDER,
+                    order: null,
                 },
             };
         }
@@ -124,7 +114,7 @@ export async function getServerSideProps(context: {
     }
 }
 
-const OrderDetails = ({order = INITIAL_IORDER}: { order: IOrder }) => {
+const OrderDetails = ({order}: { order: IOrder }) => {
 
     const router: NextRouter = useRouter();
 
@@ -136,10 +126,14 @@ const OrderDetails = ({order = INITIAL_IORDER}: { order: IOrder }) => {
 
     const [orderItems, setOrderItems] = useState<IOrderItem[]>([]);
 
+    const [isError, setIsError] = useState<boolean>(false);
+
     useEffect(() => {
         if (order && order.orderItems) {
             dispatch(setLoadingOrderItem(false));
             setOrderItems(order.orderItems);
+        } else if (order == null) {
+            setIsError(true);
         }
     }, [order]);
 
@@ -181,201 +175,230 @@ const OrderDetails = ({order = INITIAL_IORDER}: { order: IOrder }) => {
 
     return (
         <DefaultLayout>
-            {isLoading ? (
-                <Spin style={{
-                    width: '100%',
-                    height: '100vh',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }} size="large"/>
-            ) : (
-                <>
-                    {order && (
-                        <Row className='lg:w-[1440px] px-2 mx-auto items-center'>
-                            <Col span={20}>
-                                <Card title={'Order details #' + order.id?.substring(0, 7)} style={{marginTop: '20px'}}>
-                                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                                        <Text strong>
-                                            {
-                                                order.status.includes("PENDING") ?
-                                                    'Chờ xác nhận' : order.status.includes("APPROVED") ?
-                                                        'Chờ giao hàng' : 'Đơn hoàn tất'
-                                            }
-                                        </Text>
-                                        <MessageOutlined/>
-                                    </div>
-                                    <Divider></Divider>
-                                    <div className="flex justify-between gap-3">
-                                        <Card style={{backgroundColor: ''}} title="ĐỊA CHỈ NGƯỜI NHẬN"
-                                              className="w-full">
-                                            <div className="font-bold">
-                                                <Text>{order.shippingAddress.fullName}</Text>
-                                            </div>
-                                            <div>
-                                                <Text>{'Address: ' + order.shippingAddress.address}</Text>
-                                            </div>
-                                            <div>
-                                                <Text> {'Phone number: ' + order.shippingAddress.phoneNumber}</Text>
-                                            </div>
-                                        </Card>
-                                        <Card style={{backgroundColor: ''}} title="HÌNH THỨC GIAO HÀNG"
-                                              className="w-full">
-                                            <div className="">
-                                                <Text>{'giao hàng nhanh'}</Text>
-                                            </div>
-                                            <div>
-                                                <Text>{'Giao vào thứ 5 ,11/11'}</Text>
-                                            </div>
-                                            <div>
-                                                <Text> {'Được giao bởi BATMAN'}</Text>
-                                            </div>
-                                            <div>
-                                                <Text> {'Miễn phí vận chuyển'}</Text>
-                                            </div>
-                                        </Card>
-                                        <Card style={{backgroundColor: ''}} title="HÌNH THỨC THANH TOÁN"
-                                              className="w-full">
-                                            <div>
-                                                <Text> {order.paymentMethod.method?.includes('CASH') ? 'Tiền mặt' : 'VNPay'}</Text>
-                                            </div>
-                                        </Card>
-                                    </div>
-                                    <div className="border-[1px] rounded-lg mt-6">
-                                        <HeadTable/>
-                                        <Divider/>
-                                        <Row gutter={[16, 16]}>
-                                            {orderItems.map((item: IOrderItem) => (
-                                                <Col span={24} key={item.id} className="">
-                                                    <div style={{overflow: 'hidden'}}>
-                                                        <div className="grid grid-cols-10 px-5 cursor-pointer">
-                                                            <div className="col-span-5">
-                                                                <div className="font-sans text-[17px] text-gray-600">
-                                                                    <div className="flex gap-2">
-                                                                        <div className="flex items-center">
-                                                                            <Image preview={false}
-                                                                                   src={server + item.image} style={{
-                                                                                width: '100px',
-                                                                                height: '100px',
-                                                                                objectFit: 'cover'
-                                                                            }} className="rounded-lg"/>
-                                                                        </div>
-                                                                        <div>
-                                                                            <div>
-                                                                                {item.name}
-                                                                            </div>
-                                                                            <div className="text-[14px]">
-                                                                                Người bán: <Text
-                                                                                style={{color: 'rgb(243, 111, 36)'}}>Oan
-                                                                                hồn trinh
-                                                                                nữ</Text>
-                                                                            </div>
-                                                                            <div className="text-[14px]">
-                                                                                Ngày bán: 11/11/2021
-                                                                            </div>
-                                                                            <div className="flex gap-2">
-                                                                                <Button
-                                                                                    style={{
-                                                                                        border: '1px solid rgb(243, 111, 36)',
-                                                                                        color: 'rgb(243, 111, 36)',
-                                                                                        pointerEvents: order.status.includes("COMPLETED") ? 'auto' : 'none', // Tạm ngưng hoặc cho phép sự kiện click
-                                                                                        opacity: order.status.includes("COMPLETED") ? 1 : 0.3 // Điều chỉnh độ mờ của nút
-                                                                                    }}
-                                                                                    onClick={() => {
-                                                                                        if (Object.keys(item.rate).length === 0) {
-                                                                                            handleSetOrderItemRate(item.id);
-                                                                                        }
-                                                                                    }}
-                                                                                >
-                                                                                    Đánh giá
-                                                                                </Button>
-                                                                                <Button style={{
-                                                                                    border: '1px solid rgb(243, 111, 36)',
-                                                                                    color: 'rgb(243, 111, 36)'
-                                                                                }} onClick={handleShowModalRate}>Xem
-                                                                                    đánh giá</Button>
-                                                                                <Button style={{
-                                                                                    border: '1px solid rgb(243, 111, 36)',
-                                                                                    color: 'rgb(243, 111, 36)'
-                                                                                }}>Mua lại</Button>
+            {
+                isError ? (
+                    <Result
+                        status="404"
+                        title="404"
+                        subTitle="Sorry, the page you visited does not exist."
+                        extra={<Button type="primary" onClick={() => router.push('/')}>Back Home</Button>}/>
+                ) : (
+                    <div>
+                        {
+                            isLoading ? (
+                                <Spin style={{
+                                    width: '100%',
+                                    height: '100vh',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }} size="large"/>
+                            ) : (
+                                <>
+                                    {order && (
+                                        <Row className='lg:w-[1440px] px-2 mx-auto items-center'>
+                                            <Col span={20}>
+                                                <Card title={'Order details #' + order.id?.substring(0, 7)}
+                                                      style={{marginTop: '20px'}}>
+                                                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                                        <Text strong>
+                                                            {
+                                                                order.status.includes("PENDING") ?
+                                                                    'Chờ xác nhận' : order.status.includes("APPROVED") ?
+                                                                        'Chờ giao hàng' : 'Đơn hoàn tất'
+                                                            }
+                                                        </Text>
+                                                        <MessageOutlined/>
+                                                    </div>
+                                                    <Divider></Divider>
+                                                    <div className="flex justify-between gap-3">
+                                                        <Card style={{backgroundColor: ''}} title="ĐỊA CHỈ NGƯỜI NHẬN"
+                                                              className="w-full">
+                                                            <div className="font-bold">
+                                                                <Text>{order.shippingAddress.fullName}</Text>
+                                                            </div>
+                                                            <div>
+                                                                <Text>{'Address: ' + order.shippingAddress.address}</Text>
+                                                            </div>
+                                                            <div>
+                                                                <Text> {'Phone number: ' + order.shippingAddress.phoneNumber}</Text>
+                                                            </div>
+                                                        </Card>
+                                                        <Card style={{backgroundColor: ''}} title="HÌNH THỨC GIAO HÀNG"
+                                                              className="w-full">
+                                                            <div className="">
+                                                                <Text>{'giao hàng nhanh'}</Text>
+                                                            </div>
+                                                            <div>
+                                                                <Text>{'Giao vào thứ 5 ,11/11'}</Text>
+                                                            </div>
+                                                            <div>
+                                                                <Text> {'Được giao bởi BATMAN'}</Text>
+                                                            </div>
+                                                            <div>
+                                                                <Text> {'Miễn phí vận chuyển'}</Text>
+                                                            </div>
+                                                        </Card>
+                                                        <Card style={{backgroundColor: ''}} title="HÌNH THỨC THANH TOÁN"
+                                                              className="w-full">
+                                                            <div>
+                                                                <Text> {order.paymentMethod.method?.includes('CASH') ? 'Tiền mặt' : 'VNPay'}</Text>
+                                                            </div>
+                                                        </Card>
+                                                    </div>
+                                                    <div className="border-[1px] rounded-lg mt-6">
+                                                        <HeadTable/>
+                                                        <Divider/>
+                                                        <Row gutter={[16, 16]}>
+                                                            {orderItems.map((item: IOrderItem) => (
+                                                                <Col span={24} key={item.id} className="">
+                                                                    <div style={{overflow: 'hidden'}}>
+                                                                        <div
+                                                                            className="grid grid-cols-10 px-5 cursor-pointer">
+                                                                            <div className="col-span-5">
+                                                                                <div
+                                                                                    className="font-sans text-[17px] text-gray-600">
+                                                                                    <div className="flex gap-2">
+                                                                                        <div
+                                                                                            className="flex items-center">
+                                                                                            <Image preview={false}
+                                                                                                   src={server + item.image}
+                                                                                                   style={{
+                                                                                                       width: '100px',
+                                                                                                       height: '100px',
+                                                                                                       objectFit: 'cover'
+                                                                                                   }}
+                                                                                                   className="rounded-lg"/>
+                                                                                        </div>
+                                                                                        <div>
+                                                                                            <div>
+                                                                                                {item.name}
+                                                                                            </div>
+                                                                                            <div
+                                                                                                className="text-[14px]">
+                                                                                                Người bán: <Text
+                                                                                                style={{color: 'rgb(243, 111, 36)'}}>Oan
+                                                                                                hồn trinh
+                                                                                                nữ</Text>
+                                                                                            </div>
+                                                                                            <div
+                                                                                                className="text-[14px]">
+                                                                                                Ngày bán: 11/11/2021
+                                                                                            </div>
+                                                                                            <div className="flex gap-2">
+                                                                                                <Button
+                                                                                                    style={{
+                                                                                                        border: '1px solid rgb(243, 111, 36)',
+                                                                                                        color: 'rgb(243, 111, 36)',
+                                                                                                        pointerEvents: order.status.includes("COMPLETED") ? 'auto' : 'none', // Tạm ngưng hoặc cho phép sự kiện click
+                                                                                                        opacity: order.status.includes("COMPLETED") ? 1 : 0.3 // Điều chỉnh độ mờ của nút
+                                                                                                    }}
+                                                                                                    onClick={() => {
+                                                                                                        if (Object.keys(item.rate).length === 0) {
+                                                                                                            handleSetOrderItemRate(item.id);
+                                                                                                        }
+                                                                                                    }}
+                                                                                                >
+                                                                                                    Đánh giá
+                                                                                                </Button>
+                                                                                                <Button style={{
+                                                                                                    border: '1px solid rgb(243, 111, 36)',
+                                                                                                    color: 'rgb(243, 111, 36)'
+                                                                                                }}
+                                                                                                        onClick={handleShowModalRate}>Xem
+                                                                                                    đánh giá</Button>
+                                                                                                <Button style={{
+                                                                                                    border: '1px solid rgb(243, 111, 36)',
+                                                                                                    color: 'rgb(243, 111, 36)'
+                                                                                                }}>Mua lại</Button>
 
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="col-span-1">
+                                                                                <div
+                                                                                    className="font-sans text-[17px] text-gray-600">
+                                                                                    {item.price}$
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="col-span-1">
+                                                                                <div
+                                                                                    className="font-sans text-[17px] text-gray-600">
+                                                                                    {item.quantity}
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="col-span-1">
+                                                                                <div
+                                                                                    className="font-sans text-[17px] text-gray-600">
+                                                                                    0
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="col-span-2 text-right">
+                                                                                <div
+                                                                                    className="font-sans text-[17px] text-gray-600">
+                                                                                    {item.price * item.quantity}$
+                                                                                </div>
                                                                             </div>
                                                                         </div>
-
                                                                     </div>
-                                                                </div>
+                                                                    <Divider/>
+                                                                </Col>
+                                                            ))}
+                                                        </Row>
+                                                        <div
+                                                            className="text-[17px] font-sans flex justify-end items-center pb-4 pr-4 gap-5">
+                                                            <div className="text-right text-gray-400">
+                                                                <div>Tạm tính</div>
+                                                                <div>Phí vận chuyển</div>
+                                                                <div>Khuyễn mãi vận chuyển</div>
+                                                                <div>Giảm giá</div>
+                                                                <div>Tổng cộng</div>
                                                             </div>
-                                                            <div className="col-span-1">
-                                                                <div className="font-sans text-[17px] text-gray-600">
-                                                                    {item.price}$
+                                                            <div className="text-right gap-6">
+                                                                <div>{order.totalAmount}$</div>
+                                                                <div>0</div>
+                                                                <div>0</div>
+                                                                <div>0</div>
+                                                                <div
+                                                                    className="text-2xl text-orange-600">{order.totalAmount}$
                                                                 </div>
-                                                            </div>
-                                                            <div className="col-span-1">
-                                                                <div className="font-sans text-[17px] text-gray-600">
-                                                                    {item.quantity}
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-span-1">
-                                                                <div className="font-sans text-[17px] text-gray-600">
-                                                                    0
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-span-2 text-right">
-                                                                <div className="font-sans text-[17px] text-gray-600">
-                                                                    {item.price * item.quantity}$
-                                                                </div>
+                                                                {/*giá sau khi giảm all ở đây nhé*/}
                                                             </div>
                                                         </div>
+                                                        {/*<Text className="hidden lg:flex text-lg" strong>Item*/}
+                                                        {/*    Subtotal({order.orderItems.length + ' món'}):</Text>*/}
+                                                        {/*<Text style={{fontSize: '20px'}}>{order.totalAmount}$</Text>*/}
+                                                        {/*<Divider/>*/}
+                                                        {/*<div style={{gap: "10px", display: "flex"}}>*/}
+                                                        {/*    <Button style={{color: '#F36F24'}}*/}
+                                                        {/*    >Xem đánh giá</Button>*/}
+                                                        {/*    <Button style={{backgroundColor: '#F36F24', color: 'white'}}*/}
+                                                        {/*            onClick={addOrderItemsCart}*/}
+                                                        {/*    >Đặt lại</Button>*/}
+                                                        {/*</div>*/}
                                                     </div>
-                                                    <Divider/>
-                                                </Col>
-                                            ))}
+                                                    <Link href="http://localhost:3000/orders">
+                                                        <a>
+                                                            <div className="text-orange-600 hover:text-orange-400 mt-4">
+                                                                <LeftOutlined/>Quay lại đơn hàng của tôi
+                                                            </div>
+                                                        </a>
+                                                    </Link>
+                                                </Card>
+                                            </Col>
+                                            <RateAdd/>
+                                            <RateRows orderId={order.id}/>
                                         </Row>
-                                        <div
-                                            className="text-[17px] font-sans flex justify-end items-center pb-4 pr-4 gap-5">
-                                            <div className="text-right text-gray-400">
-                                                <div>Tạm tính</div>
-                                                <div>Phí vận chuyển</div>
-                                                <div>Khuyễn mãi vận chuyển</div>
-                                                <div>Giảm giá</div>
-                                                <div>Tổng cộng</div>
-                                            </div>
-                                            <div className="text-right gap-6">
-                                                <div>{order.totalAmount}$</div>
-                                                <div>0</div>
-                                                <div>0</div>
-                                                <div>0</div>
-                                                <div className="text-2xl text-orange-600">{order.totalAmount}$</div>
-                                                {/*giá sau khi giảm all ở đây nhé*/}
-                                            </div>
-                                        </div>
-                                        {/*<Text className="hidden lg:flex text-lg" strong>Item*/}
-                                        {/*    Subtotal({order.orderItems.length + ' món'}):</Text>*/}
-                                        {/*<Text style={{fontSize: '20px'}}>{order.totalAmount}$</Text>*/}
-                                        {/*<Divider/>*/}
-                                        {/*<div style={{gap: "10px", display: "flex"}}>*/}
-                                        {/*    <Button style={{color: '#F36F24'}}*/}
-                                        {/*    >Xem đánh giá</Button>*/}
-                                        {/*    <Button style={{backgroundColor: '#F36F24', color: 'white'}}*/}
-                                        {/*            onClick={addOrderItemsCart}*/}
-                                        {/*    >Đặt lại</Button>*/}
-                                        {/*</div>*/}
-                                    </div>
-                                    <Link href="http://localhost:3000/orders">
-                                        <a>
-                                            <div className="text-orange-600 hover:text-orange-400 mt-4">
-                                                <LeftOutlined/>Quay lại đơn hàng của tôi
-                                            </div>
-                                        </a>
-                                    </Link>
-                                </Card>
-                            </Col>
-                            <RateAdd/>
-                            <RateRows orderId={order.id}/>
-                        </Row>
-                    )}
-                </>
-            )}
+                                    )}
+                                </>
+                            )
+                        }
+                    </div>
+                )
+            }
         </DefaultLayout>
     );
 };

@@ -20,6 +20,7 @@ import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {CurrentUser} from "../stores/user.reducer";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
+import ChangePassword from "../components/change-password";
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -42,7 +43,7 @@ function getItem(
 const items: MenuProps['items'] = [
     getItem('Thông tin tài khoản', '1', <UserOutlined/>),
     getItem('Sổ địa chỉ', '2', <EnvironmentOutlined/>),
-    getItem('Quản lý đơn hàng', '3', <ProfileOutlined/>),
+    getItem('Quản lý đơn hàng - Để tạm form đổi mật khẩu ở đây', '3', <ProfileOutlined/>),
     getItem('Thông tin thanh toán', '4', <CreditCardOutlined/>),
     getItem('Sản phẩm yêu thích', '5', <LikeOutlined/>),
     getItem('Hỗ trợ khách hàng', '6', <CustomerServiceOutlined/>)
@@ -74,7 +75,8 @@ const AccountInformation = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
 
     const contentMap: { [key: string]: React.ReactNode } = {
         '1': <PersonalInformation/>,
-        '2': <AddressDeliveryInformation deliveryInformation={ePage.content}/>
+        '2': <AddressDeliveryInformation deliveryInformation={ePage.content}/>,
+        '3': <ChangePassword/>
     };
 
     return (

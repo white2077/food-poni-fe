@@ -82,7 +82,12 @@ const Checkout = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
     const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
 
     const totalAmount: number = carts.reduce((totalCart: number, cart: ICart) => {
-        const cartTotal: number = cart.cartItems.reduce((total: number, item: ICartItem) => total + item.price, 0);
+        const cartTotal: number = cart.cartItems.reduce((total: number, item: ICartItem) => {
+            if (item.isSelectedICartItem) {
+                return total + item.price;
+            }
+            return total;
+        }, 0);
         return totalCart + cartTotal;
     }, 0);
 
@@ -307,12 +312,6 @@ const Checkout = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
                     </Col>
                 </Row>
             </div>
-            {/*<Result*/}
-            {/*    status="403"*/}
-            {/*    title="403"*/}
-            {/*    subTitle="Sorry, you are not authorized to access this page."*/}
-            {/*    extra={<Button type="primary" onClick={() => router.push('/')}>Back Home</Button>}*/}
-            {/*/>*/}
         </DefaultLayout>
     );
 

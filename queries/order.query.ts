@@ -4,10 +4,10 @@ import {OrderAPIResponse} from "../models/order/OrderAPIResponse";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {getAllType} from "./type";
 
-export const getOrdersPage = ({refreshToken, page, pageSize, status}: getAllType): Promise<Page<OrderAPIResponse[]>> => {
+export const getOrdersPage = ({refreshToken, page, pageSize, status, sort}: getAllType): Promise<Page<OrderAPIResponse[]>> => {
     if (refreshToken) {
         return apiWithToken(refreshToken)
-            .get(`/customer/orders?page=${page ?? ''}&pageSize=${pageSize ?? ''}&status=${status ?? ''}`, {
+            .get(`/customer/orders?page=${page ?? ''}&size=${pageSize ?? ''}&status=${status ?? ''}&sort=${sort ?? ''}`, {
                 headers: {
                     Authorization: "Bearer " + accessToken
                 }
