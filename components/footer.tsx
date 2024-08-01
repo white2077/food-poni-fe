@@ -10,7 +10,6 @@ const Footer = () => {
             <footer>
                 <div className="container">
                     <div className="content">
-
                         <div className="col">
                             <p>
                                 <Link href="/">
@@ -48,7 +47,6 @@ const Footer = () => {
                                 </div>
                             </div>
                         </div>
-                        ⁡⁢⁣⁡⁢⁣⁣ ⁡
                         <div className="col">
                             <div className="column">
                                 <p>information</p>
@@ -73,7 +71,6 @@ const Footer = () => {
                                 <p>affiliate</p>
                             </div>
                         </div>
-                        ⁡⁢⁣⁣ ⁡
                         <div className="col">
                             <p>newsletter</p>
                             <p>
@@ -91,13 +88,12 @@ const Footer = () => {
                                 </Link>
                                 <img src="https://i.postimg.cc/L8Q3nB4f/twitter.png" alt=""/>
                                 <img src="https://i.postimg.cc/TYG9S3Hy/instagram.png" alt=""/>
-                                <Link href="https://www.youtube.com/watch?v=QwLvrnlfdNo">
+                                <Link href="https://www.youtube.com/watch?v=SMNB0fNU1Nw&list=RDSMNB0fNU1Nw&index=1">
                                     <img src="https://i.postimg.cc/kGCxkTwr/youtube.png" alt=""/>
                                 </Link>
                                 <img src="https://i.postimg.cc/CKZHDBd2/telegram.png" alt=""/>
                             </div>
                         </div>
-                        ⁡⁢⁡⁢⁣⁣
                     </div>
                 </div>
                 <div className="content-foot">
@@ -116,7 +112,6 @@ const Footer = () => {
             </footer>
         </div>
     );
-
 };
 
 export default Footer;

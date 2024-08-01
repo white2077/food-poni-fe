@@ -855,6 +855,8 @@
 /*.bb8:hover .bb8__head::after {*/
 /*    background-position: 0 0 !important;*/
 /*}*/
+
+/*-----*/
 .theme-switch {
     --toggle-size: 15px;
     position: fixed;

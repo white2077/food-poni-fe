@@ -147,10 +147,10 @@ const CatBackground = () => {
 
     return (
         <div className="box">
-            <svg viewBox="200 0 650 360" xmlns="http://www.w3.org/2000/svg" fill-rule="none" clip-rule="none"
-                 stroke-linejoin="round" stroke-miterlimit="1.5">
+            <svg viewBox="200 0 650 360" xmlns="http://www.w3.org/2000/svg" fillRule="evenodd" clipRule="none"
+                 strokeLinejoin="round" strokeMiterlimit="1.5">
                 <path fill="none" d="M0 0h800v600H0z"/>
-                <path id="shadow" d="M560.946 357.995H340.815" fill="none" stroke="#bddad8" stroke-width="7.5"/>
+                <path id="shadow" d="M560.946 357.995H340.815" fill="none" stroke="#bddad8" strokeWidth="7.5"/>
                 <path id="smoke"
                       d="M293.773 327.336c0-12.15-9.865-22.014-22.015-22.014-12.149 0-22.014 9.864-22.014 22.014-6.075-10.522-19.549-14.132-30.071-8.057-10.523 6.075-14.133 19.549-8.058 30.071-10.522-6.074-23.997-2.464-30.072 8.058-6.075 10.522-2.464 23.997 8.058 30.072-12.15 0-22.014 9.864-22.014 22.014 0 12.15 9.864 22.014 22.014 22.014-10.522 6.075-14.133 19.55-8.058 30.072 6.075 10.522 19.55 14.133 30.072 8.058-6.075 10.522-2.465 23.997 8.058 30.072 10.522 6.075 23.996 2.464 30.071-8.058 0 12.15 9.865 22.014 22.014 22.014 12.15 0 22.015-9.864 22.015-22.014 6.075 10.522 19.549 14.133 30.071 8.058 10.523-6.075 14.133-19.55 8.058-30.072 10.522 6.075 23.997 2.464 30.072-8.058 6.075-10.522 2.464-23.997-8.058-30.072 12.15 0 22.014-9.864 22.014-22.014 0-12.15-9.864-22.014-22.014-22.014 10.522-6.075 14.133-19.55 8.058-30.072-6.075-10.522-19.55-14.132-30.072-8.058 6.075-10.522 2.465-23.996-8.058-30.071-10.522-6.075-23.996-2.465-30.071 8.057z"
                       fill="#bddad8"/>
@@ -158,22 +158,21 @@ const CatBackground = () => {
                 <g id="skateCat">
                     <g id="fly">
                         <path className="zzz" d="M333.148 242.371h6.881l-6.943 6.943h6.631" fill="none" stroke="#ffae23"
-                              stroke-width="2" stroke-linecap="round"/>
+                              strokeWidth="2" strokeLinecap="round"/>
                         <circle className="zzz" cx="336.557" cy="245.842" r="2.132" fill="none" stroke="#fff"
-                                stroke-width="2"/>
+                                strokeWidth="2"/>
                         <path className="zzz" d="M333.148 242.371h6.881l-6.943 6.943h6.631" fill="none" stroke="#ffae23"
-                              stroke-width="2" stroke-linecap="round"/>
+                              strokeWidth="2" strokeLinecap="round"/>
                         <circle className="zzz" cx="336.557" cy="245.842" r="2.132" fill="#fff"/>
                         <path className="zzz" d="M333.148 242.371h6.881l-6.943 6.943h6.631" fill="none" stroke="#ffae23"
-                              stroke-width="2" stroke-linecap="round"/>
+                              strokeWidth="2" strokeLinecap="round"/>
                         <circle className="zzz" cx="336.557" cy="245.842" r="2.132" fill="#fff"/>
                         <path className="zzz" d="M333.148 242.371h6.881l-6.943 6.943h6.631" fill="none" stroke="#ffae23"
-                              stroke-width="2" stroke-linecap="round"/>
+                              strokeWidth="2" strokeLinecap="round"/>
                         <circle className="zzz" cx="336.557" cy="245.842" r="2.132" fill="none" stroke="#fff"
-                                stroke-width="2"/>
+                                strokeWidth="2"/>
 
                     </g>
-
                     <g id="skate">
                         <path
                             d="M498.607 324.387h35.908l-8.977 18.645h-17.954l-8.977-18.645zM372.77 324.387h35.909l-8.978 18.645h-17.954l-8.977-18.645z"
@@ -191,9 +190,7 @@ const CatBackground = () => {
                                 <path
                                     d="M521.978 334.363a.783.783 0 011.384.438l.288 3.693a2.279 2.279 0 01-2.961 2.352l-.004-.002a2.278 2.278 0 01-1.069-3.627l2.362-2.854zM511.163 334.316a.759.759 0 00-1.34.424l-.293 3.754a2.281 2.281 0 002.961 2.352l.004-.002a2.278 2.278 0 001.069-3.627l-2.401-2.901z"/>
                             </g>
-
                         </g>
-
                     </g>
                     <g id="tire-back">
                         <g id="tire1">
@@ -206,7 +203,6 @@ const CatBackground = () => {
                             </g>
                         </g>
                     </g>
-
                     <g id="cat">
                         <path id="right-hand"
                               d="M399.588 305.324s-27.311-.341-25.911 8.246c1.027 6.301 8.592 7.007 14.778 7.167 6.187.16 36.063-.563 11.133-15.413z"
@@ -220,16 +216,15 @@ const CatBackground = () => {
                             <path
                                 d="M411.422 284.308s81.404-40.992 98.905-.679c11.659 26.856-7.93 42.028-43.527 42.028-23.361 0-43.863-1.588-52.67-5.836-8.807-4.248-2.708-35.513-2.708-35.513z"/>
                         </clipPath>
-                        <g clip-path="url(#_clip1)" fill="#f3fdff">
+                        <g clipPath="url(#_clip1)" fill="#f3fdff">
                             <ellipse cx="446.33" cy="267.129" rx="6.745" ry="21.523"/>
                             <ellipse cx="464.042" cy="264.673" rx="6.745" ry="21.523"/>
                             <ellipse cx="480.341" cy="261.42" rx="6.745" ry="21.523"/>
                         </g>
-
                         <g id="face">
                             <path
                                 d="M423.348 319.48s11.227-4.283 15.648-9.691c6.563-8.027 3.892-15.747 3.892-15.747l-11.031.387-8.509 25.051z"
-                                fill="#303853" fill-opacity=".2"/>
+                                fill="#303853" fillOpacity=".2"/>
                             <path
                                 d="M410.032 266.05c18.134 0 32.856 12.256 32.856 27.352s-5.682 27.351-32.856 27.351c-27.175 0-32.857-12.255-32.857-27.351 0-15.096 14.723-27.352 32.857-27.352z"
                                 fill="#ffae23"/>
@@ -237,7 +232,7 @@ const CatBackground = () => {
                                 <path
                                     d="M410.032 266.05c18.134 0 32.856 12.256 32.856 27.352s-5.682 27.351-32.856 27.351c-27.175 0-32.857-12.255-32.857-27.351 0-15.096 14.723-27.352 32.857-27.352z"/>
                             </clipPath>
-                            <g clip-path="url(#_clip2)">
+                            <g clipPath="url(#_clip2)">
                                 <ellipse cx="411.177" cy="260.615" rx="6.738" ry="21.523" fill="#f3fdff"/>
                             </g>
                             <path
@@ -254,33 +249,26 @@ const CatBackground = () => {
                                 fill="#d7edee"/>
                             <path
                                 d="M395.324 306.77s-4.319-1.774-9.465-.34M421.684 306.77s4.319-1.774 9.465-.34M395.607 309.089s-3.765-.486-8.735 2.943M421.401 309.089s3.765-.486 8.734 2.943"
-                                fill="none" stroke="#556f80" stroke-width="2" stroke-linecap="round"/>
+                                fill="none" stroke="#556f80" strokeWidth="2" strokeLinecap="round"/>
                             <path
                                 d="M408.904 305.48a1.174 1.174 0 011.273.026c.166.106.317.226.458.355a1.456 1.456 0 01-.935 2.539c-.144 0-.289-.002-.434-.01a1.468 1.468 0 01-.871-2.577c.164-.107.329-.224.509-.333z"
                                 fill="#556f80"/>
                             <path
                                 d="M391.495 296.712c.993 1.432 3.476 2.14 5.121 2.13 1.987-.011 4.015-.608 5.028-2.13M416.205 296.712c.993 1.432 3.476 2.14 5.122 2.13 1.986-.011 4.014-.608 5.028-2.13"
-                                fill="none" stroke="#556f80" stroke-width="2" stroke-linecap="round"/>
+                                fill="none" stroke="#556f80" strokeWidth="2" strokeLinecap="round"/>
                         </g>
                         <path id="leg"
                               d="M493.619 305.325s41.571-.432 39.44 10.42c-1.564 7.964-13.079 8.857-22.495 9.059-9.417.201-54.893-.712-16.945-19.479z"
                               fill="#ffae23"/>
                         <path d="M506.637 298.528v24.771s-.061 26.915-28.211 26.915" fill="none" stroke="#ffae23"
-                              stroke-width="14" stroke-linecap="round" id="tail"/>
-
-
+                              strokeWidth="14" strokeLinecap="round" id="tail"/>
                         <path id="left-hand"
                               d="M426.186 311.409s-15.939 22.179-8.101 25.956c5.751 2.771 10.668-3.022 14.345-7.998 3.678-4.977 20.216-29.869-6.244-17.958z"
                               fill="#ffae23"/>
-
                     </g>
                 </g>
-
-
             </svg>
         </div>
-
-
     );
 };
 

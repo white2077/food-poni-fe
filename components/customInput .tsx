@@ -29,7 +29,6 @@ class CustomInput extends Component<{
                     className="w-6 text-center"
                     min={min}
                     max={max}
-                    defaultValue={defaultValue}
                     value={value}
                     onChange={(e) => onChange(parseInt(e.target.value))}
                     disabled={disabled}

@@ -195,11 +195,9 @@ export default function HeaderMain() {
             <MenuMobile/>
             <ThemeSwitch/>
             <Link href="/" >
-                {/*<img src={".jpg"} className={"overflow-hidden object-cover cursor-pointer h-20 w-44 "}/>*/}
                <div className="font-['Impact','fantasy'] text-4xl text-orange-400 cursor-pointer hover:text-orange-500">FoodPoni</div>
             </Link>
             <SearchKeyword/>
-
             <div className='flex items-center justify-end gap-4'>
                 {currentUser.id ? (
                         <>

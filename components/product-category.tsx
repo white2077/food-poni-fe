@@ -3,7 +3,7 @@ import type {MenuProps} from 'antd';
 import {Menu} from 'antd';
 import {useDispatch} from "react-redux";
 import {setSelectedProductCategory} from "../stores/product-category.reducer";
-import {CategoryAPIResponse} from "../models/category/CategoryAPIResponse";
+import {ProductCategoryAPIResponse} from "../models/product_category/ProductCategoryAPIResponse";
 import {server} from "../utils/server";
 
 export interface ICategory {
@@ -11,7 +11,7 @@ export interface ICategory {
     label: ReactElement;
 }
 
-const ProductCategory = ({categoryList}: { categoryList: CategoryAPIResponse[] }) => {
+const ProductCategory = ({categoryList}: { categoryList: ProductCategoryAPIResponse[] }) => {
 
     const dispatch = useDispatch();
 
@@ -24,21 +24,21 @@ const ProductCategory = ({categoryList}: { categoryList: CategoryAPIResponse[] }
     }, []);
 
     const getAllCategories = (): void => {
-        categoryList.forEach((category: CategoryAPIResponse) => {
+        categoryList.forEach((category: ProductCategoryAPIResponse) => {
             convertCategory(category, '');
         });
         setCategories(items);
     };
 
-    const convertCategory = (category: CategoryAPIResponse, tab: string): void => {
+    const convertCategory = (category: ProductCategoryAPIResponse, tab: string): void => {
         items.push({
             key: category.id ?? "",
             label: <span className="flex items-center"><span dangerouslySetInnerHTML={{__html: tab}}></span>
-                <img src={server + category.thumbnail} className="w-4 h-4 mr-2"></img> <span className={`${category.parentCategory === null ? "font-bold uppercase" : ""}`}>{category.categoryName}</span></span>
+                <img src={server + category.thumbnail} className="w-4 h-4 mr-2"></img> <span className={`${category.parentProductCategory === null ? "font-bold uppercase" : ""}`}>{category.name}</span></span>
         });
 
-        if (category.categories?.length)
-            category.categories.forEach((subCategory: CategoryAPIResponse): void => {
+        if (category.productCategories?.length)
+            category.productCategories.forEach((subCategory: ProductCategoryAPIResponse): void => {
                 convertCategory(subCategory, tab + '&emsp;');
             });
     };

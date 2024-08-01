@@ -211,10 +211,10 @@ const ProductDetails = ({product}: { product: IProduct }) => {
                                         <div className="text-black"
                                              dangerouslySetInnerHTML={{__html: product.shortDescription || ''}}></div>
                                     </Card>
-                                    <RelatedProducts
-                                        title={"Sản phẩm liên quan"}
-                                        query={getProductsPage({status: true})}
-                                    />
+                                    {/*<RelatedProducts*/}
+                                    {/*    title={"Sản phẩm liên quan"}*/}
+                                    {/*    query={getProductsPage({status: true})}*/}
+                                    {/*/>*/}
                                     <ReadMore content={description}/>
 
                                 </div>
@@ -227,10 +227,8 @@ const ProductDetails = ({product}: { product: IProduct }) => {
                                       retailer={product.retailer!}
                                       status={status!}
                                   />
-
                               </div>
                             </div>
-
                             {/*<ProductComment data={rates} isLoading={isLoadingRate}/>*/}
                         </div>
 
