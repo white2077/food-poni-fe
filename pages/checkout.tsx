@@ -36,6 +36,7 @@ import {getAddressesPage} from "../queries/address.query";
 import CardHome from "../components/card_home";
 
 
+
 const {TextArea} = Input;
 
 export async function getServerSideProps({req}: { req: NextRequest }) {
@@ -307,8 +308,10 @@ const Checkout = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
                                         loading={pending}>
                                     Thanh toán
                                 </Button>
+
                             </Form.Item>
                         </Form>
+
                     </Col>
                 </Row>
             </div>

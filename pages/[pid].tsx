@@ -18,6 +18,9 @@ import {RateAPIResponse} from "../models/rate/RateAPIResponse";
 import {Page} from "../models/Page";
 import ReadMore from "../components/read_more";
 import Banner from "../components/slide-banner";
+import ProductRows from "../components/product-rows";
+import {getProductsPage} from "../queries/product.query";
+import RelatedProducts from "../components/related-products";
 
 export interface IProduct {
     id: string;
@@ -208,7 +211,12 @@ const ProductDetails = ({product}: { product: IProduct }) => {
                                         <div className="text-black"
                                              dangerouslySetInnerHTML={{__html: product.shortDescription || ''}}></div>
                                     </Card>
+                                    <RelatedProducts
+                                        title={"Sản phẩm liên quan"}
+                                        query={getProductsPage({status: true})}
+                                    />
                                     <ReadMore content={description}/>
+
                                 </div>
                               <div className="sticky top-5">
                                   <ProductCart
@@ -222,6 +230,7 @@ const ProductDetails = ({product}: { product: IProduct }) => {
 
                               </div>
                             </div>
+
                             {/*<ProductComment data={rates} isLoading={isLoadingRate}/>*/}
                         </div>
 

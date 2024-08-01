@@ -24,6 +24,8 @@ import Link from "next/link";
 import MenuMobile from "./menu-mobile";
 import {UserAPIResponse} from "../models/user/UserResponseAPI";
 import ThemeSwitch from "./theme";
+import Pet from "./pet";
+import CatBackground from "./pet";
 
 let sock: any = null;
 export default function HeaderMain() {
