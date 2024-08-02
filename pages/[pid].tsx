@@ -204,7 +204,7 @@ const ProductDetails = ({product}: { product: IProduct }) => {
                                         )}
                                     </Card>
                                     <Card size='small' title='Thông tin vận chuyển'
-                                          loading={Object.keys(currentShippingAddress).length === 0}>
+                                          loading={Object.keys(currentShippingAddress).length === 0} hidden={currentShippingAddress.id === ""}>
                                         <div>{currentShippingAddress.address}</div>
                                     </Card>
                                     <Card size='small' title='Mô tả ngắn'>
