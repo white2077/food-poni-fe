@@ -32,7 +32,7 @@ const RateAdd = () => {
     const [previewImage, setPreviewImage] = useState('');
 
     const createRateDTO = (rate: number, message: string, images: string[]) => {
-        // Thêm các trường vào đối tượng RateDTO nếu chúng được cung cấp
+
         const rateDTO: RateDTO = {};
         if (rate !== 0) {
             rateDTO.rate = rate;
