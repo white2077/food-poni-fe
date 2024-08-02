@@ -7,6 +7,7 @@ import {RootState} from "../stores";
 import {NextRouter, useRouter} from "next/router";
 import {CurrentUser} from "../stores/user.reducer";
 import QuantityInput from "./quantityInput";
+import EmptyNotice from "./empty-notice";
 
 const Cart = () => {
 
@@ -77,12 +78,13 @@ const Cart = () => {
                 </Badge>
             </a>
             <Drawer title="Giỏ hàng" onClose={onClose} open={open}>
-                {
+                {carts.length === 0 ? (
+                    <EmptyNotice w="60" h="60" src="/NoProduct.png" message="Chưa có sản phẩm nào" />
+                ) : (
                     carts.map((cart: ICart) => (
                         cart.cartItems.length > 0 ? (
-                            <div>
+                            <div key={cart.id}>
                                 <List
-                                    key={cart.id}
                                     className="demo-loadmore-list"
                                     itemLayout="horizontal"
                                     dataSource={cart.cartItems}
@@ -93,18 +95,16 @@ const Cart = () => {
                                                     <div className="relative inline-block flex items-center">
                                                         <Avatar className="rounded-lg w-20 h-20" src={item.thumbnail}/>
                                                         <div
-                                                            className="absolute top-[-5px] w-6 h-6 right-[-5px] bg-gray-300 rounded-[100px] flex p-0 justify-center ">
+                                                            className="absolute top-[-5px] w-6 h-6 right-[-5px] bg-gray-300 rounded-[100px] flex p-0 justify-center">
                                                             <CloseOutlined
-                                                                className=" p-0"
+                                                                className="p-0"
                                                                 id={`delete-icon-${item.id}`}
                                                                 key="list-loadmore-edit"
                                                                 onClick={() =>
-                                                                    dispatch(
-                                                                        deleteItem({
-                                                                            id: item.id,
-                                                                            retailerId: item.retailer.id ?? ""
-                                                                        })
-                                                                    )
+                                                                    dispatch(deleteItem({
+                                                                        id: item.id,
+                                                                        retailerId: item.retailer.id ?? ""
+                                                                    }))
                                                                 }
                                                             />
                                                         </div>
@@ -126,20 +126,22 @@ const Cart = () => {
                                 />
                                 <Divider/>
                             </div>
-                        ) : (
-                            <div key={cart.id}></div>
-                        )
+                        ) : null
                     ))
-                }
-                <div hidden={carts.length == 0}>
-                    <div className="mt-3 flex justify-between">
-                        <div>Tổng tiền</div>
-                        <div>${totalPrice}</div>
+                )}
+                {carts.length > 0 && (
+                    <div>
+                        <div className="mt-3 flex justify-between">
+                            <div>Tổng tiền</div>
+                            <div>${totalPrice}</div>
+                        </div>
+                        <Divider/>
+                        <Button className="my-5s mt-2" type='primary' danger block disabled={pending} loading={pending}
+                                onClick={goToCheckout}>
+                            Thanh toán ngay
+                        </Button>
                     </div>
-                    <Divider/>
-                    <Button className="my-5s mt-2" type='primary' danger block disabled={pending} loading={pending}
-                            hidden={carts.length === 0} onClick={goToCheckout}>Thanh toán ngay</Button>
-                </div>
+                )}
             </Drawer>
         </>
     );

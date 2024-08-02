@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {
-    CheckCircleFilled,
+    CheckCircleFilled, CheckOutlined,
     CommentOutlined,
     LikeOutlined,
     MessageOutlined, ShareAltOutlined,
@@ -11,6 +11,10 @@ import {server} from "../utils/server";
 import {RateAPIResponse} from "../models/rate/RateAPIResponse";
 import Link from "next/link";
 import {Progress} from "antd";
+import EmptyNotice from "./empty-notice";
+import Tym from "./tym";
+import Like from "./Like";
+import Start from "./start";
 
 interface ExpandedComments {
     [key: number]: boolean;
@@ -42,16 +46,18 @@ const getReviewText = ({rate}: { rate: any }) => {
 
 const ProductComment = ({data, isLoading}: { data: RateAPIResponse[], isLoading: boolean }) => {
     const [selectedRating, setSelectedRating] = useState<number | null>(null);
+    const [isButtonClicked, setIsButtonClicked] = useState(false);
 
-    const [showAllComments, setShowAllComments] = useState<boolean>(false);
     const handleRatingChange = (value: number) => {
         setSelectedRating(value);
+        setIsButtonClicked(true);
     };
 
     const handleShowAllComments = () => {
-        setSelectedRating(null); // Reset trạng thái lọc
-        setShowAllComments(true);
+        setSelectedRating(null);
+        setIsButtonClicked(true);
     };
+
 
     const [expandedComments, setExpandedComments] = useState<ExpandedComments>({});
 
@@ -68,39 +74,61 @@ const ProductComment = ({data, isLoading}: { data: RateAPIResponse[], isLoading:
             <div>
                 <div className="flex gap-2 text-4xl items-center">
                     <div>4.7</div>
-                    <div><Rate style={{fontSize: '30px'}} value={4}/></div>
+                    <div><Rate style={{fontSize: '30px'}} disabled value={4}/></div>
                 </div>
             </div>
             <div className="my-2 text-gray-400">(900 đánh giá)</div>
             <div className="text-gray-400">
-                <div className="flex gap-2 "><Rate disabled value={5}/><Progress style={{maxWidth: '20%'}} percent={80}
-                                                                                 showInfo={false}/>
+                <div className="flex gap-1"><Rate disabled value={5}/><Progress style={{maxWidth: '13%'}} percent={80}
+                                                                                showInfo={false}/>
                     <div>90</div>
                 </div>
-                <div className="flex gap-2 "><Rate disabled value={4}/><Progress style={{maxWidth: '20%'}} percent={70}
-                                                                                 showInfo={false}/>
+                <div className="flex gap-1"><Rate disabled value={4}/><Progress style={{maxWidth: '13%'}} percent={70}
+                                                                                showInfo={false}/>
                     <div>80</div>
                 </div>
-                <div className="flex gap-2 "><Rate disabled value={3}/><Progress style={{maxWidth: '20%'}} percent={60}
-                                                                                 showInfo={false}/>
+                <div className="flex gap-1"><Rate disabled value={3}/><Progress style={{maxWidth: '13%'}} percent={60}
+                                                                                showInfo={false}/>
                     <div>70</div>
                 </div>
-                <div className="flex gap-2 "><Rate disabled value={2}/><Progress style={{maxWidth: '20%'}} percent={50}
-                                                                                 showInfo={false}/>
+                <div className="flex gap-1"><Rate disabled value={2}/><Progress style={{maxWidth: '13%'}} percent={50}
+                                                                                showInfo={false}/>
                     <div>60</div>
                 </div>
-                <div className="flex gap-2 "><Rate disabled value={1}/><Progress style={{maxWidth: '20%'}} percent={10}
-                                                                                 showInfo={false}/>
+                <div className="flex gap-1"><Rate disabled value={1}/><Progress style={{maxWidth: '13%'}} percent={10}
+                                                                                showInfo={false}/>
                     <div>50</div>
                 </div>
             </div>
 
             <hr className="my-6 "/>
-            <div className="my-2 text-base font-medium">Lọc Đánh giá</div>
+            <div className="my-2 text-base font-medium">Lọc theo</div>
             <div className="flex gap-4 items-center text-gray-500 ">
-                <Rate style={{fontSize: '20px'}} onChange={handleRatingChange}/>
-                <Button style={{backgroundColor: 'orange', color: 'white'}} onClick={handleShowAllComments}>Tất
-                    cả</Button>
+                <Button style={{borderRadius: '100px'}}>
+                    Mới nhất
+                </Button>
+                <Button style={{borderRadius: '100px'}}>
+                    Đã mua hàng
+                </Button>
+                <Button style={{borderRadius: '100px'}} onClick={() => handleRatingChange(1)}>
+                    {selectedRating === 1 && isButtonClicked && <CheckOutlined/>} 1 Sao
+                </Button>
+                <Button style={{borderRadius: '100px'}} onClick={() => handleRatingChange(2)}>
+                    {selectedRating === 2 && isButtonClicked && <CheckOutlined/>} 2 Sao
+                </Button>
+                <Button style={{borderRadius: '100px'}} onClick={() => handleRatingChange(3)}>
+                    {selectedRating === 3 && isButtonClicked && <CheckOutlined/>} 3 Sao
+                </Button>
+                <Button style={{borderRadius: '100px'}} onClick={() => handleRatingChange(4)}>
+                    {selectedRating === 4 && isButtonClicked && <CheckOutlined/>} 4 Sao
+                </Button>
+                <Button style={{borderRadius: '100px'}} onClick={() => handleRatingChange(5)}>
+                    {selectedRating === 5 && isButtonClicked && <CheckOutlined/>} 5 Sao
+                </Button>
+                <Button style={{backgroundColor: 'orange', color: 'white', borderRadius: '100px'}}
+                        onClick={handleShowAllComments}>
+                    Tất cả
+                </Button>
             </div>
             <hr className="my-6 "/>
             <List
@@ -108,13 +136,8 @@ const ProductComment = ({data, isLoading}: { data: RateAPIResponse[], isLoading:
                 itemLayout="vertical"
                 size="large"
                 locale={{
-                    emptyText: <div className="w-full h-auto object-cover flex justify-center">
-                        <div>
-                            <div className="flex justify-center"><img className=" w-32 h-32 object-cover"
-                                                                      src={"/img.png"}/></div>
-                            <div className="text-2xl text-gray-500 font-medium">Chưa có đánh giá nào ~ ~</div>
-                        </div>
-                    </div>
+                    emptyText:
+                        <EmptyNotice w="32" h="32" src="/Star.png" message="Chưa có đánh giá nào"/>
                 }}
                 pagination={{
                     onChange: (page) => {
@@ -182,9 +205,19 @@ const ProductComment = ({data, isLoading}: { data: RateAPIResponse[], isLoading:
                                     </div>
                                     <div className="flex text-sm text-gray-400 justify-between">
                                         <div className="flex gap-3">
-                                            <IconText icon={StarOutlined} text="156" key="list-vertical-star-o"/>
-                                            <IconText icon={LikeOutlined} text="156" key="list-vertical-like-o"/>
-                                            <IconText icon={MessageOutlined} text="2" key="list-vertical-message"/>
+                                            <div className="flex gap-1 items-center">
+                                               <div> <Start/></div>
+                                                <span>5</span>
+                                            </div>
+                                            <div className="flex gap-1 items-center">
+                                                <Like/>
+                                                <span>10</span>
+                                            </div>
+                                            <div className="flex gap-1 items-center">
+                                                {/*<MessageOutlined className="hover:text-orange-400"/>*/}
+                                               <div> <Tym/></div>
+                                                <span>12</span>
+                                            </div>
                                         </div>
                                         <ShareAltOutlined/>
                                     </div>

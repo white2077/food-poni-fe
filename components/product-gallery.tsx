@@ -11,25 +11,28 @@ const ProductGallery = ({images}: { images: string[] }) => {
     }, [images]);
 
     return (
-        <Card className='h-fit grid gap-4' size='small'>
-            <Image className='aspect-square object-cover rounded'
-                   width='100%'
-                   src={selectedImage ? (server + selectedImage) : (images[0] ? (server + images[0]) : '')}
-            />
-            <div className="overflow-x-scroll scrollbar-rounded">
-                <div className="flex max-w-80 my-2 ">
-                    <Segmented
-                        className=" flex gap-2"
-                        options={images.map((image: string) => ({
-                            label: <Avatar className="my-2 rounded-lg"  size={75} src={server + image}/>,
-                            value: image
-                        }))}
-                        value={selectedImage ?? (images[0] ?? '')}
-                        onChange={(image: string) => setSelectedImage(image)}
-                    />
+        <div className="sticky top-5">
+            <Card className='h-fit grid gap-4 ' size='small'>
+                <Image className='aspect-square object-cover rounded'
+                       width='100%'
+                       src={selectedImage ? (server + selectedImage) : (images[0] ? (server + images[0]) : '')}
+                />
+                <div className="overflow-x-scroll scrollbar-rounded">
+                    <div className="flex max-w-80 my-2 ">
+                        <Segmented
+                            className=" flex gap-2"
+                            options={images.map((image: string) => ({
+                                label: <Avatar className="my-2 rounded-lg"  size={75} src={server + image}/>,
+                                value: image
+                            }))}
+                            value={selectedImage ?? (images[0] ?? '')}
+                            onChange={(image: string) => setSelectedImage(image)}
+                        />
+                    </div>
                 </div>
-            </div>
-        </Card>
+            </Card>
+        </div>
+
     );
 
 };

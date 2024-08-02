@@ -17,6 +17,10 @@ import {ProductDetailAPIResponse} from "../models/product_detail/ProductDetailAP
 import {RateAPIResponse} from "../models/rate/RateAPIResponse";
 import {Page} from "../models/Page";
 import ReadMore from "../components/read_more";
+import Banner from "../components/slide-banner";
+import ProductRows from "../components/product-rows";
+import {getProductsPage} from "../queries/product.query";
+import RelatedProducts from "../components/related-products";
 
 export interface IProduct {
     id: string;
@@ -158,7 +162,9 @@ const ProductDetails = ({product}: { product: IProduct }) => {
                     {product && (
                         <div className='grid gap-4'>
                             <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[2fr_3fr_2fr] gap-4'>
-                                <ProductGallery images={images ?? []}/>
+                                <div className="sticky top-5">
+                                    <ProductGallery images={images ?? []}/>
+                                </div>
                                 <div className='grid gap-4'>
                                     <Card size='small'>
                                         <h2 className='text-xl'>{product.name + (productDetailName ? ' - ' + productDetailName : '')}</h2>
@@ -205,16 +211,23 @@ const ProductDetails = ({product}: { product: IProduct }) => {
                                         <div className="text-black"
                                              dangerouslySetInnerHTML={{__html: product.shortDescription || ''}}></div>
                                     </Card>
+                                    <RelatedProducts
+                                        title={"Sản phẩm liên quan"}
+                                        query={getProductsPage({status: true})}
+                                    />
                                     <ReadMore content={description}/>
+
                                 </div>
-                                <ProductCart
-                                    id={id!}
-                                    price={price!}
-                                    thumbnail={images && images.length > 0 ? server + images[0] : ""}
-                                    name={product.name + (productDetailName ? ' - ' + productDetailName : '')}
-                                    retailer={product.retailer!}
-                                    status={status!}
-                                />
+                              <div className="sticky top-5">
+                                  <ProductCart
+                                      id={id!}
+                                      price={price!}
+                                      thumbnail={images && images.length > 0 ? server + images[0] : ""}
+                                      name={product.name + (productDetailName ? ' - ' + productDetailName : '')}
+                                      retailer={product.retailer!}
+                                      status={status!}
+                                  />
+                              </div>
                             </div>
                             {/*<ProductComment data={rates} isLoading={isLoadingRate}/>*/}
                         </div>

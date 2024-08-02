@@ -45,8 +45,8 @@ const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<ProductCategory
                     query={getProductsPage({status: true})}
                 />
                 <ProductRows title="Món ngon - Giá sốc" hasMenu={false} query={getProductsPage({status: true})}/>
-                <ProductRows title="Có thể bạn thấy ngon" hasMenu={false}
-                             query={Promise.resolve(INITIAL_PAGE_API_RESPONSE)}/>
+                <ProductRows title="Có thể bạn thấy ngon" hasMenu={true}
+                             query={getProductsPage({status: true})}/>
             </div>
         </SidebarLayout>
     );
