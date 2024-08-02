@@ -1309,18 +1309,14 @@ footer {
     display: flex;
     flex-direction: column;
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> ab4a4000b8eaa096cc34adcb6c9f72c6cdfbd74c
+
 .container .content .in-col:first-child:not(.flex .in-col:first-child) {
     color: white;
     font-size: 22px;
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> ab4a4000b8eaa096cc34adcb6c9f72c6cdfbd74c
+
 .container .content .in-col:not(.col, .column .in-col:first-child) {
     color: rgb(136, 136, 136);
     text-align: left;
@@ -1341,10 +1337,8 @@ footer {
     flex-direction: column;
     gap: 20px;
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> ab4a4000b8eaa096cc34adcb6c9f72c6cdfbd74c
+
 .container .content .col:first-child .flex .col-info .in-col {
     font-size: 14px;
     text-align: left;
@@ -1362,19 +1356,18 @@ footer {
 .container .content .col .column .in-col:first-child {
     margin-bottom: 25px;
 }
-<<<<<<< HEAD
+
 
 .container .content .col .column .in-col:hover {
     color: #ff6a00;
     cursor: pointer;
 }
 
-=======
+
 .container .content .col .column .in-col:hover {
    color: #ff6a00;
     cursor: pointer;
 }
->>>>>>> ab4a4000b8eaa096cc34adcb6c9f72c6cdfbd74c
 .container .content .col .column .in-col:not(.in-col:first-child) {
     margin-bottom: 12px;
 }
@@ -1439,10 +1432,7 @@ footer {
 .content-foot .container .in-col {
     color: rgb(136, 136, 136);
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> ab4a4000b8eaa096cc34adcb6c9f72c6cdfbd74c
 .content-foot .container .in-col span {
     color: white;
     font-weight: bold;

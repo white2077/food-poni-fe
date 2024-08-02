@@ -212,11 +212,10 @@ const ProductDetails = ({product}: { product: IProduct }) => {
                                              dangerouslySetInnerHTML={{__html: product.shortDescription || ''}}></div>
                                     </Card>
                                     <RelatedProducts
-                                        title={"Sản phẩm liên quan"}
+                                        title="Sản phẩm liên quan"
                                         query={getProductsPage({status: true})}
                                     />
                                     <ReadMore content={description}/>
-
                                 </div>
                               <div className="sticky top-5">
                                   <ProductCart
