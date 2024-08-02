@@ -113,23 +113,29 @@ const ProductRows = ({title, hasMenu, query}: ProductRowProps) => {
             {hasMenu && <MenuMain filterProducts={filterProducts}/>}
             <div className="mt-2">{title}</div>
             <div style={{maxWidth: '59rem', margin: 'auto'}}>
-                <Carousel
-                    arrows
-                    prevArrow={<CustomPrevArrow/>}
-                    nextArrow={<CustomNextArrow/>}
-                    infinite={true}
-                    dots={false}
-                >
-                    {productGroups.map((group, index) => (
-                        <div key={index}>
-                            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-2 mt-2'>
-                                {group.map((productCard: IProductCard) => (
-                                    <ProductCard key={productCard.id} product={productCard}/>
-                                ))}
+                {isLoading ? (
+                    <p>Loading...</p>
+                ) : (
+                    <Carousel
+                        onLazyLoad={() => console.log('lazy load')}
+                        arrows
+                        prevArrow={<CustomPrevArrow/>}
+                        nextArrow={<CustomNextArrow/>}
+                        infinite={true}
+                        dots={false}
+                    >
+                        {productGroups.map((group, index) => (
+                            <div key={index}>
+                                <div
+                                    className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-2 mt-2'>
+                                    {group.map((productCard: IProductCard) => (
+                                        <ProductCard key={productCard.id} product={productCard}/>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                </Carousel>
+                        ))}
+                    </Carousel>
+                )}
             </div>
         </div>
     );

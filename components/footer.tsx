@@ -11,77 +11,77 @@ const Footer = () => {
                 <div className="container">
                     <div className="content">
                         <div className="col">
-                            <p>
+                            <div className="in-col">
                                 <Link href="/">
                                     <div
                                         className="font-['Impact','fantasy'] text-4xl text-orange-500 cursor-pointer hover:text-orange-500">FoodPoni
                                     </div>
                                 </Link>
-                            </p>
-                            <p>
+                            </div>
+                            <div className="in-col">
                                 hi, we are always open for cooperation and suggestions, <br/>
                                 contact us in one of the ways below:
-                            </p>
+                            </div>
                             <div className="flex">
                                 <div className="col-info">
-                                    <p>
+                                    <div className="in-col">
                                         PHONE NUMBER <br/>
                                         <span>+1 (800) 060-07-30</span>
-                                    </p>
-                                    <p>
+                                    </div>
+                                    <div className="in-col">
                                         OUR LOCATION <br/>
                                         <span>715 Fake Street, New York<br/>
                 10021 USA</span>
-                                    </p>
+                                    </div>
                                 </div>
                                 <div className="col-info">
-                                    <p>
+                                    <div className="in-col">
                                         EMAIL ADDRESS <br/>
                                         <span>us@example.com</span>
-                                    </p>
+                                    </div>
 
-                                    <p>
+                                    <div className="in-col">
                                         WORKING HOURS <br/>
                                         <span>Mon-sat 10:00pm - 7:00pm</span>
-                                    </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div className="col">
                             <div className="column">
-                                <p>information</p>
-                                <p>about us</p>
-                                <p>delivery information</p>
-                                <p>privacy policy</p>
-                                <p>brands</p>
-                                <p>contact us</p>
-                                <p>returns</p>
-                                <p>site map</p>
+                                <div className="in-col">information</div>
+                                <div className="in-col">about us</div>
+                                <div className="in-col">delivery information</div>
+                                <div className="in-col">privacy policy</div>
+                                <div className="in-col">brands</div>
+                                <div className="in-col">contact us</div>
+                                <div className="in-col">returns</div>
+                                <div className="in-col">site map</div>
                             </div>
                         </div>
                         <div className="col">
                             <div className="column">
-                                <p>my account</p>
-                                <p>store location</p>
-                                <p>order history</p>
-                                <p>wish list</p>
-                                <p>newsletter</p>
-                                <p>special offers</p>
-                                <p>gift certificates</p>
-                                <p>affiliate</p>
+                                <div className="in-col">my account</div>
+                                <div className="in-col">store location</div>
+                                <div className="in-col">order history</div>
+                                <div className="in-col">wish list</div>
+                                <div className="in-col">newsletter</div>
+                                <div className="in-col">special offers</div>
+                                <div className="in-col">gift certificates</div>
+                                <div className="in-col">affiliate</div>
                             </div>
                         </div>
                         <div className="col">
-                            <p>newsletter</p>
-                            <p>
+                            <div className="in-col">newsletter</div>
+                            <div className="in-col">
                                 enter your email address below to subscribe to our newsletter<br/>
                                 and keep up to date with discounts and special offers.
-                            </p>
+                            </div>
                             <div className="email">
                                 <input type="email" placeholder="user@example.com"/>
                                 <button>Subscribe</button>
                             </div>
-                            <p>follow us on social networks:</p>
+                            <div className="in-col">follow us on social networks:</div>
                             <div className="social">
                                 <Link href="https://www.facebook.com/profile.php?id=100085580808149">
                                     <img src="https://i.postimg.cc/44pPB9wk/facebook.png" alt=""/>
@@ -99,7 +99,7 @@ const Footer = () => {
                 <div className="content-foot">
                     <div className="container">
                         <div className="foot-text">
-                            <p>powered by <span>tech</span> - designed by <span>hema</span></p>
+                            <div className="in-col">powered by <span>tech</span> - designed by <span>hema</span></div>
                             <div className="pay">
                                 <img src="https://i.postimg.cc/PrtWyFPY/visa-logo-png-2013.png" alt=""/>
                                 <img src="https://i.postimg.cc/R0j1TSHZ/mastercard-PNG23.png" alt=""/>
