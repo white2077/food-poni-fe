@@ -18,6 +18,8 @@ import {
 import {CustomArrowProps} from "@ant-design/react-slick";
 import ProductCardRelated from "./related-products-card";
 import {className} from "postcss-selector-parser";
+import LoadingProduct from "./loading-product";
+import Loading from "./loading-product";
 
 export interface IProductCard {
     index: number,
@@ -122,7 +124,7 @@ const RelatedProducts = ({title,query}: ProductRowProps) => {
             <div className="mt-2">{title}</div>
             <div style={{maxWidth: '30rem', margin: 'auto'}}>
                 {isLoading ? (
-                    <p>Loading...</p>
+                   <Loading/>
                 ) : (
                     <Carousel
                         onLazyLoad={() => console.log('lazy load')}

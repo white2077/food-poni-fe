@@ -9,6 +9,7 @@ import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
 import {Carousel} from "antd";
 
 import {CustomArrowProps} from "@ant-design/react-slick";
+import Loading from "./loading-product";
 
 export interface IProductCard {
     index: number,
@@ -114,7 +115,7 @@ const ProductRows = ({title, hasMenu, query}: ProductRowProps) => {
             <div className="mt-2">{title}</div>
             <div style={{maxWidth: '59rem', margin: 'auto'}}>
                 {isLoading ? (
-                    <p>Loading...</p>
+                    <Loading/>
                 ) : (
                     <Carousel
                         onLazyLoad={() => console.log('lazy load')}
