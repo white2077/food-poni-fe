@@ -32,7 +32,7 @@ export const apiWithToken = (refreshToken: CookieValueTypes) => {
                     return Promise.reject(error);
                 })
                 .catch((res: AxiosError<ErrorApiResponse>) => {
-                    alert(res.response ? res.response.data.error.message : res.message);
+                    console.log(res.response ? res.response.data.error.message : res.message);
                     window.location.href = "/login";
                     deleteCookie(REFRESH_TOKEN);
                 });
