@@ -118,9 +118,9 @@ const ProductDetails = ({product}: { product: IProduct }) => {
 
     const getRates = (productDetailId: string | undefined) => {
         setLoadingRate(true);
-        api.get(`/products/rate/${productDetailId}`)
-            .then(function (res: AxiosResponse<RateAPIResponse[]>) {
-                setRates(res.data);
+        api.get(`/product-details/rate/${productDetailId}`)
+            .then(function (res: AxiosResponse<Page<RateAPIResponse>>) {
+                setRates(Array.isArray(res.data.content) ? res.data.content : []);
             })
             .catch(function (res) {
                 notification.open({
@@ -229,7 +229,7 @@ const ProductDetails = ({product}: { product: IProduct }) => {
                                   />
                               </div>
                             </div>
-                            {/*<ProductComment data={rates} isLoading={isLoadingRate}/>*/}
+                            <ProductComment data={rates} isLoading={isLoadingRate}/>
                         </div>
 
                     )}
