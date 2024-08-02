@@ -120,7 +120,6 @@ const ProductCardRelated = ({product}: { product: IProductCard }) => {
                             ${product.minPrice}{product.maxPrice === product.minPrice ? "" : " - $" + product.maxPrice}
                         </div>
                     </div>
-
             </Card>
         </Link>
     );
