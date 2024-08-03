@@ -31,6 +31,7 @@
     transform: translateX(-100%);
 }
 
+
 .slide-prev {
     transform: translateX(100%);
 }
@@ -1518,8 +1519,7 @@ footer {
 /* Dark theme */
 @media (prefers-color-scheme: dark) {
     :root {
-        --bg: hsl(var(--hue),10%,10%);
-        --fg: hsl(var(--hue),10%,90%);
+
     }
 }
 /* Animation */
@@ -1719,4 +1719,5 @@ footer {
         fill: hsla(223, 10%, 50%, 0.225);
         transform: scaleX(1.065);
     }
-}/*# sourceMappingURL=loading.css.map */
+}
+

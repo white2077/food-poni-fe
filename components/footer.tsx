@@ -85,7 +85,7 @@ const Footer = () => {
                                 </Link>
                                 <img src="https://i.postimg.cc/L8Q3nB4f/twitter.png" alt=""/>
                                 <img src="https://i.postimg.cc/TYG9S3Hy/instagram.png" alt=""/>
-                                <Link href="https://www.youtube.com/watch?v=SMNB0fNU1Nw&list=RDSMNB0fNU1Nw&index=1">
+                                <Link href="https://www.youtube.com/watch?v=STzK1XrpoBs">
                                     <img src="https://i.postimg.cc/kGCxkTwr/youtube.png" alt=""/>
                                 </Link>
                                 <img src="https://i.postimg.cc/CKZHDBd2/telegram.png" alt=""/>

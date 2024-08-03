@@ -118,9 +118,9 @@ const ProductDetails = ({product}: { product: IProduct }) => {
 
     const getRates = (productDetailId: string | undefined) => {
         setLoadingRate(true);
-        api.get(`/products/rate/${productDetailId}`)
-            .then(function (res: AxiosResponse<RateAPIResponse[]>) {
-                setRates(res.data);
+        api.get(`/product-details/rate/${productDetailId}`)
+            .then(function (res: AxiosResponse<Page<RateAPIResponse>>) {
+                setRates(Array.isArray(res.data.content) ? res.data.content : []);
             })
             .catch(function (res) {
                 notification.open({
@@ -204,7 +204,7 @@ const ProductDetails = ({product}: { product: IProduct }) => {
                                         )}
                                     </Card>
                                     <Card size='small' title='Thông tin vận chuyển'
-                                          loading={Object.keys(currentShippingAddress).length === 0}>
+                                          loading={Object.keys(currentShippingAddress).length === 0} hidden={currentShippingAddress.id === ""}>
                                         <div>{currentShippingAddress.address}</div>
                                     </Card>
                                     <Card size='small' title='Mô tả ngắn'>
@@ -228,7 +228,7 @@ const ProductDetails = ({product}: { product: IProduct }) => {
                                   />
                               </div>
                             </div>
-                            {/*<ProductComment data={rates} isLoading={isLoadingRate}/>*/}
+                            <ProductComment data={rates} isLoading={isLoadingRate}/>
                         </div>
 
                     )}

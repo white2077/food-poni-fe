@@ -8,7 +8,7 @@ import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
 import {ProductCategoryAPIResponse} from "../models/product_category/ProductCategoryAPIResponse";
 import {server} from "../utils/server";
 import {getProductsPage} from "../queries/product.query";
-import {getCategoriesPage} from "../queries/category.query";
+import {getCategoriesPage} from "../queries/product_category.query";
 
 export async function getServerSideProps() {
     return {
