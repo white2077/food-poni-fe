@@ -8,9 +8,9 @@ export interface UserAPIResponse {
 
     email: string;
 
-    gender: boolean;
-
     birthday: string;
+
+    gender: boolean;
 
     username: string;
 

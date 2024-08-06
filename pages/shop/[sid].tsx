@@ -7,7 +7,7 @@ import {AxiosResponse} from "axios";
 import {ProductAPIResponse} from "../../models/product/ProductAPIResponse";
 import {api} from "../../utils/axios-config";
 import {Page} from "../../models/Page";
-import {UserAPIResponse} from "../../models/user/UserResponseAPI";
+import {UserAPIResponse} from "../../models/user/UserAPIResponse";
 import type {NextApiRequest, NextApiResponse} from "next";
 import {CookieValueTypes, getCookie} from "cookies-next";
 import {REFRESH_TOKEN, server} from "../../utils/server";

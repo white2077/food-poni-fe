@@ -1,4 +1,4 @@
-import {UserAPIResponse} from "../user/UserResponseAPI";
+import {UserAPIResponse} from "../user/UserAPIResponse";
 import {PaymentInfo, ShippingAddress} from "./OrderRequest";
 import {OrderItemAPIResponse} from "../order_item/OrderItemAPIResponse";
 

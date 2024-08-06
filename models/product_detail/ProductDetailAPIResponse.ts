@@ -10,15 +10,15 @@ export interface ProductDetailAPIResponse {
 
     description: string;
 
-    sales: number;
-
-    rate: number;
-
-    rateCount: number;
-
     status: boolean;
 
     images: string[];
+
+    rate: number;
+
+    sales: number;
+
+    rateCount: number;
 
     product: ProductAPIResponse;
 

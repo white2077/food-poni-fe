@@ -6,7 +6,7 @@ import {AxiosResponse} from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import RateAdd from "../../components/rate-add";
 import {LeftOutlined, MessageOutlined} from "@ant-design/icons";
-import {UserAPIResponse} from "../../models/user/UserResponseAPI";
+import {UserAPIResponse} from "../../models/user/UserAPIResponse";
 import {PaymentInfo, ShippingAddress} from "../../models/order/OrderRequest";
 import {RootState} from "../../stores";
 import {setSelectedOrderItemRate, setShowModalAddRate, setShowModalRate} from "../../stores/rate.reducer";

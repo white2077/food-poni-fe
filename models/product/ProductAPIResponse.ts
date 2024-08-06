@@ -1,4 +1,4 @@
-import {UserAPIResponse} from "../user/UserResponseAPI";
+import {UserAPIResponse} from "../user/UserAPIResponse";
 
 export interface ProductAPIResponse {
 
@@ -27,5 +27,7 @@ export interface ProductAPIResponse {
     maxPrice: number;
 
     createdDate: Date;
+
+    updatedDate: Date;
 
 }

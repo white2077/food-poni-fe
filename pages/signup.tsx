@@ -15,7 +15,7 @@ import {NextRouter, useRouter} from "next/router";
 import {AxiosResponse} from "axios";
 import {UserCreationRequestDTO} from "../models/user/UserRequest";
 import {api} from "../utils/axios-config";
-import {UserAPIResponse} from "../models/user/UserResponseAPI";
+import {UserAPIResponse} from "../models/user/UserAPIResponse";
 
 export interface IUserRemember {
     username: string;
