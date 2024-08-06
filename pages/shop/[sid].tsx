@@ -13,7 +13,7 @@ import {CookieValueTypes, getCookie} from "cookies-next";
 import {REFRESH_TOKEN, server} from "../../utils/server";
 import ProductRowLoading from "../../components/product-row-skeleton";
 import ProductCard from "../../components/product-card";
-import {getProductsPage} from "../../queries/product.query";
+import {getProductsPage, getProductsPageByRetailer} from "../../queries/product.query";
 import {Button, Result} from "antd";
 import {NextRouter, useRouter} from "next/router";
 
@@ -81,7 +81,7 @@ const ShopDetail = ({user}: { user: UserAPIResponse }) => {
             setIsError(true);
         } else {
             setLoading(true);
-            getProductsPage({status: true}).then((res: Page<ProductAPIResponse[]>) => {
+            getProductsPageByRetailer({rid: user.id, status: true}).then((res: Page<ProductAPIResponse[]>) => {
                 setProductCards(res.content.map((product: ProductAPIResponse, index: number) => {
                     return {
                         index,
