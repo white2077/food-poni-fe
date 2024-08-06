@@ -5,7 +5,7 @@ import Link from "next/link";
 import React from "react";
 import {server} from "../utils/server";
 import {OrderAPIResponse} from "../models/order/OrderAPIResponse";
-import {OrderItemAPIResponse} from "../models/order_item/OrderItemResponseAPI";
+import {OrderItemAPIResponse} from "../models/order_item/OrderItemAPIResponse";
 
 const {Text} = Typography;
 

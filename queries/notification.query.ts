@@ -1,6 +1,6 @@
 import {CookieValueTypes} from "cookies-next";
 import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
-import {NotificationAPIResponse} from "../models/notification/NotificationResponseAPI";
+import {NotificationAPIResponse} from "../models/notification/NotificationAPIResponse";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 

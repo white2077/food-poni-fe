@@ -1,6 +1,6 @@
-import {INITIAL_USER_API_RESPONSE, UserAPIResponse} from "../user/UserResponseAPI";
-import {paymentInfo, PaymentInfo, shippingAddress, ShippingAddress} from "./OrderRequest";
-import {OrderItemAPIResponse} from "../order_item/OrderItemResponseAPI";
+import {UserAPIResponse} from "../user/UserResponseAPI";
+import {PaymentInfo, ShippingAddress} from "./OrderRequest";
+import {OrderItemAPIResponse} from "../order_item/OrderItemAPIResponse";
 
 export interface OrderAPIResponse {
 
@@ -21,27 +21,5 @@ export interface OrderAPIResponse {
     payment: PaymentInfo;
 
     createdDate: Date;
-
-}
-
-export const INITIAL_ORDER_API_RESPONSE: OrderAPIResponse = {
-
-    id: '',
-
-    totalAmount: 0,
-
-    user: INITIAL_USER_API_RESPONSE,
-
-    orderItems: [],
-
-    shippingAddress: shippingAddress,
-
-    status: '',
-
-    note: '',
-
-    payment: paymentInfo,
-
-    createdDate: new Date()
 
 }

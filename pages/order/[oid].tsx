@@ -6,8 +6,8 @@ import {AxiosResponse} from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import RateAdd from "../../components/rate-add";
 import {LeftOutlined, MessageOutlined} from "@ant-design/icons";
-import {INITIAL_USER_API_RESPONSE, UserAPIResponse} from "../../models/user/UserResponseAPI";
-import {paymentInfo, PaymentInfo, RateDTO, shippingAddress, ShippingAddress} from "../../models/order/OrderRequest";
+import {UserAPIResponse} from "../../models/user/UserResponseAPI";
+import {PaymentInfo, ShippingAddress} from "../../models/order/OrderRequest";
 import {RootState} from "../../stores";
 import {setSelectedOrderItemRate, setShowModalAddRate, setShowModalRate} from "../../stores/rate.reducer";
 import RateRows from "../../components/rate-rows";
@@ -21,6 +21,7 @@ import {REFRESH_TOKEN, server} from "../../utils/server";
 import {OrderAPIResponse} from "../../models/order/OrderAPIResponse";
 import HeadTable from "../../components/table_head";
 import Link from "next/link";
+import {RateRequest} from "../../models/rate/RateRequest";
 
 const {Text} = Typography;
 
@@ -46,7 +47,7 @@ export interface IOrderItem {
     quantity: number;
     price: number;
     image: string;
-    rate: RateDTO;
+    rate: RateRequest;
     productDetail: IProductDetailOrderItem;
     retailerId: string;
 }
@@ -71,7 +72,7 @@ export async function getServerSideProps(context: {
                 id: order.id ?? "",
                 totalAmount: order.totalAmount ?? 0,
                 status: order.status ?? "",
-                user: order.user ?? INITIAL_USER_API_RESPONSE,
+                user: order.user ?? {} as UserAPIResponse,
                 shippingAddress: order.shippingAddress ?? {},
                 paymentMethod: order.payment ?? {},
                 orderItems: order.orderItems?.map((orderItem): IOrderItem => {

@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {Avatar, Badge, Button, Dropdown, notification, Result, Tabs} from 'antd';
 import {BellOutlined} from "@ant-design/icons";
 import {Page} from "../models/Page";
-import {NotificationAPIResponse} from "../models/notification/NotificationResponseAPI";
+import {NotificationAPIResponse} from "../models/notification/NotificationAPIResponse";
 import {RootState} from "../stores";
 import {useDispatch, useSelector} from "react-redux";
 import {getCookie} from "cookies-next";

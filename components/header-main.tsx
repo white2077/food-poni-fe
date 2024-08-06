@@ -13,7 +13,7 @@ import Notification from "./notification";
 import SockJS from "sockjs-client";
 import {Client, IMessage} from "@stomp/stompjs";
 import {addNotification} from "../stores/notification.reducer";
-import {NotificationAPIResponse} from "../models/notification/NotificationResponseAPI";
+import {NotificationAPIResponse} from "../models/notification/NotificationAPIResponse";
 import jwtDecode from "jwt-decode";
 import {accessToken, api, apiWithToken} from "../utils/axios-config";
 import {AxiosError, AxiosResponse} from "axios";

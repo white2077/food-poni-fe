@@ -15,21 +15,3 @@ export interface RateAPIResponse {
     avatar: string;
 
 }
-
-export const INITIAL_RATE_API_RESPONSE: RateAPIResponse = {
-
-    rate: 0,
-
-    message: '',
-
-    images: [],
-
-    name: '',
-
-    thumbnail: '',
-
-    username: '',
-
-    avatar: '',
-
-}

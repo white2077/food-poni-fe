@@ -1,4 +1,3 @@
-
 export interface FileUploadAPIResponse {
 
     id: string;
@@ -13,13 +12,4 @@ export interface FileUploadAPIResponse {
 
     url: string;
 
-}
-
-export const INITIAL_FILE_UPLOAD_API_RESPONSE: FileUploadAPIResponse = {
-    id: '',
-    name: '',
-    extension: '',
-    contentType: '',
-    size: 0,
-    url: '',
 }

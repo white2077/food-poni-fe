@@ -13,19 +13,3 @@ export interface AddressAPIResponse {
     lat: number;
 
 }
-
-export const INITIAL_ADDRESS_API_RESPONSE: AddressAPIResponse = {
-
-    id: '',
-
-    fullName: '',
-
-    phoneNumber: '',
-
-    address: '',
-
-    lon: 0,
-
-    lat: 0
-
-}

@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {NotificationAPIResponse} from "../models/notification/NotificationResponseAPI";
+import {NotificationAPIResponse} from "../models/notification/NotificationAPIResponse";
 
 export interface Notification {
     data: NotificationAPIResponse[],

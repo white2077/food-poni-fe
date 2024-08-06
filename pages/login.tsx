@@ -6,7 +6,7 @@ import {deleteCookie, getCookie, setCookie} from "cookies-next";
 import {REFRESH_TOKEN, REMEMBER_ME, server} from "../utils/server";
 import {NextRouter, useRouter} from "next/router";
 import {useDispatch} from "react-redux";
-import {AuthenticationRequest} from "../models/auth/AuthenticationRequest";
+import {AuthRequest} from "../models/auth/AuthRequest";
 import {AuthAPIResponse} from "../models/auth/AuthAPIResponse";
 import {AxiosError, AxiosResponse} from "axios";
 import jwtDecode from "jwt-decode";
@@ -70,7 +70,7 @@ const Login: NextPage = () => {
 
     const onFinish = (values: any): void => {
         setPending(true);
-        let user: AuthenticationRequest = values.username.includes("@")
+        let user: AuthRequest = values.username.includes("@")
             ? {username: null, email: values.username, password: values.password}
             : {username: values.username, email: null, password: values.password}
 

@@ -7,7 +7,7 @@ import {AxiosResponse} from "axios";
 import {ProductAPIResponse} from "../../models/product/ProductAPIResponse";
 import {api} from "../../utils/axios-config";
 import {Page} from "../../models/Page";
-import {INITIAL_USER_API_RESPONSE, UserAPIResponse} from "../../models/user/UserResponseAPI";
+import {UserAPIResponse} from "../../models/user/UserResponseAPI";
 import type {NextApiRequest, NextApiResponse} from "next";
 import {CookieValueTypes, getCookie} from "cookies-next";
 import {REFRESH_TOKEN, server} from "../../utils/server";
@@ -50,7 +50,7 @@ export async function getServerSideProps(context: {
             console.error('Error fetching user:', error);
             return {
                 props: {
-                    user: INITIAL_USER_API_RESPONSE,
+                    user: {} as UserAPIResponse,
                 },
             };
         }

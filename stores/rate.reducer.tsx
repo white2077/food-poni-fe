@@ -1,19 +1,19 @@
 // import {rateDTO, RateDTO} from "../models/order/OrderRequest";
 import {createSlice} from "@reduxjs/toolkit";
-import {INITIAL_RATE_API_RESPONSE, RateAPIResponse} from "../models/rate/RateAPIResponse";
+import {RateAPIResponse} from "../models/rate/RateAPIResponse";
 
 export interface IRateState {
     rates: RateAPIResponse;
     showModalAddRate: boolean,
-    selecOrderItemRate: string,
+    selectOrderItemRate: string,
     showModalFileUpload: boolean,
     showModalRate: boolean,
 }
 
 const initialState: IRateState = {
-    rates: INITIAL_RATE_API_RESPONSE,
+    rates: {} as RateAPIResponse,
     showModalAddRate: false,
-    selecOrderItemRate: "",
+    selectOrderItemRate: "",
     showModalFileUpload: false,
     showModalRate: false,
 }
@@ -36,7 +36,7 @@ const rateSlide = createSlice({
         }),
         setSelectedOrderItemRate: (state, {payload}: { payload: string }) => ({
             ...state,
-            selecOrderItemRate: payload
+            selectOrderItemRate: payload
         }),
         setShowModalRate: (state, {payload}: { payload: boolean }) => ({
             ...state,

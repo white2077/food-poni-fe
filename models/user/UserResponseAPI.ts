@@ -1,4 +1,4 @@
-import {AddressAPIResponse, INITIAL_ADDRESS_API_RESPONSE} from "../address/AddressAPIResponse";
+import {AddressAPIResponse} from "../address/AddressAPIResponse";
 
 export interface UserAPIResponse {
 
@@ -19,27 +19,5 @@ export interface UserAPIResponse {
     status: boolean;
 
     address: AddressAPIResponse;
-
-}
-
-export const INITIAL_USER_API_RESPONSE: UserAPIResponse = {
-
-    id: '',
-
-    avatar: '',
-
-    email: '',
-
-    gender: false,
-
-    birthday: "",
-
-    username: '',
-
-    role: '',
-
-    status: false,
-
-    address: INITIAL_ADDRESS_API_RESPONSE
 
 }
