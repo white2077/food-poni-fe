@@ -12,4 +12,6 @@ export interface FileUploadAPIResponse {
 
     url: string;
 
+    dimension: string;
+
 }

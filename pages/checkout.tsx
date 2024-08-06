@@ -22,7 +22,7 @@ import {NextRouter, useRouter} from "next/router";
 import OrderItems from "../components/order-items";
 import {RootState} from "../stores";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
-import {OrderRequestDTO, PaymentInfo, ShippingAddress} from "../models/order/OrderRequest";
+import {OrderCreationRequestDTO, PaymentInfo, ShippingAddress} from "../models/order/OrderRequest";
 import {CurrentUser} from "../stores/user.reducer";
 import {OrderItemRequestDTO} from "../models/order_item/OrderItemRequest";
 import {accessToken, apiWithToken} from "../utils/axios-config";
@@ -134,12 +134,12 @@ const Checkout = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
             }
 
             if (orderItems && shippingAddress && payment && refreshToken) {
-                const order: OrderRequestDTO = {
+                const order: OrderCreationRequestDTO = {
                     orderItems,
                     shippingAddress: shippingAddress,
                     note,
                     payment: payment
-                } as OrderRequestDTO;
+                } as OrderCreationRequestDTO;
 
                 return apiWithToken(refreshToken).post("/orders", order, {
                     headers: {

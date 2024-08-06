@@ -1,13 +1,13 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {OrderRequestDTO} from "../models/order/OrderRequest";
+import {OrderCreationRequestDTO} from "../models/order/OrderRequest";
 
 export interface IOrderState {
-    orders: OrderRequestDTO,
+    orders: OrderCreationRequestDTO,
     isLoadingOrderItem: boolean,
 }
 
 const initialState: IOrderState = {
-    orders: {} as OrderRequestDTO,
+    orders: {} as OrderCreationRequestDTO,
     isLoadingOrderItem: true,
 }
 

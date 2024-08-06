@@ -1,6 +1,6 @@
 import {OrderItemRequestDTO} from "../order_item/OrderItemRequest";
 
-export interface OrderRequestDTO {
+export interface OrderCreationRequestDTO {
 
     orderItems: OrderItemRequestDTO[];
 
@@ -27,4 +27,5 @@ export interface PaymentInfo {
     method: string;
 
     status: string;
+
 }
