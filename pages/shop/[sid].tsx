@@ -13,7 +13,7 @@ import {CookieValueTypes, getCookie} from "cookies-next";
 import {REFRESH_TOKEN, server} from "../../utils/server";
 import ProductRowLoading from "../../components/product-row-skeleton";
 import ProductCard from "../../components/product-card";
-import {getProductsPage, getProductsPageByRetailer} from "../../queries/product.query";
+import {getProductsPageByRetailer} from "../../queries/product.query";
 import {Button, Result} from "antd";
 import {NextRouter, useRouter} from "next/router";
 
