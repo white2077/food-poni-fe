@@ -1,16 +1,9 @@
 import React, {useState} from 'react';
-import {
-    CheckCircleFilled, CheckOutlined,
-    CommentOutlined,
-    LikeOutlined,
-    MessageOutlined, ShareAltOutlined,
-    StarOutlined,
-} from '@ant-design/icons';
-import {Avatar, Button, Card, Divider, Image, List, notification, Rate, Slider, Space} from 'antd';
+import {CheckCircleFilled, CheckOutlined, CommentOutlined, LikeOutlined, ShareAltOutlined,} from '@ant-design/icons';
+import {Avatar, Button, Card, Image, List, Progress, Rate, Space} from 'antd';
 import {server} from "../utils/server";
 import {RateAPIResponse} from "../models/rate/RateAPIResponse";
 import Link from "next/link";
-import {Progress} from "antd";
 import EmptyNotice from "./empty-notice";
 import Tym from "./tym";
 import Like from "./Like";

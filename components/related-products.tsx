@@ -1,23 +1,12 @@
 import React from 'react';
-import ProductCard from "./product-card";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {Page} from "../models/Page";
 import {CurrentUser} from "../stores/user.reducer";
-import MenuMain from "./menu-main";
 import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
 import ProductRowLoading from "./product-row-skeleton";
-import {Carousel} from "antd";
-import {
-    ArrowLeftOutlined,
-    ArrowRightOutlined, LeftCircleOutlined,
-    LeftOutlined,
-    RightCircleOutlined,
-    RightOutlined
-} from "@ant-design/icons";
 import {CustomArrowProps} from "@ant-design/react-slick";
 import ProductCardRelated from "./related-products-card";
-import {className} from "postcss-selector-parser";
 
 export interface IProductCard {
     index: number,

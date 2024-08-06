@@ -1,4 +1,4 @@
-import {Badge, Card, Divider, Rate, Space} from "antd";
+import {Card, Rate} from "antd";
 import React, {useState} from "react";
 import {IProductCard} from "./product-rows";
 import Link from "next/link";
@@ -6,9 +6,7 @@ import {CurrentUser} from "../stores/user.reducer";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
-import {HistoryOutlined} from "@ant-design/icons";
 import {server} from "../utils/server";
-import ThemeSwitch from "./theme";
 
 export interface ElementDistance {
     distance: {
