@@ -1,10 +1,7 @@
 import {useState} from 'react';
-import {AutoComplete, Button, Form, Input, notification} from 'antd';
-import axios, {AxiosError, AxiosResponse} from "axios";
-import {AddressRequestDTO} from "../models/address/AddressRequest";
-import {SearchResult} from "../stores/search-position.reducer";
+import {Button, Form, Input, notification} from 'antd';
+import {AxiosError} from "axios";
 import {accessToken, apiWithToken} from "../utils/axios-config";
-import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
 import {NextRouter, useRouter} from "next/router";
 import {getCookie} from "cookies-next";

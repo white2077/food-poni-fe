@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {AutoComplete, Button, Form, Input, notification} from 'antd';
 import axios, {AxiosError, AxiosResponse} from "axios";
-import {AddressRequestDTO} from "../models/address/AddressRequest";
+import {AddressCreationRequestDTO} from "../models/address/AddressRequest";
 import {SearchResult} from "../stores/search-position.reducer";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
@@ -65,7 +65,7 @@ const AddressDeliveryInformationAdd = () => {
     const onFinish = (values: any): void => {
         setPending(true);
 
-        const deliveryInfo: AddressRequestDTO = {
+        const deliveryInfo: AddressCreationRequestDTO = {
             fullName: values.fullname,
             phoneNumber: values.phoneNumber,
             address: selectedAddress?.display_name || "",
