@@ -101,7 +101,7 @@ export async function getServerSideProps(context: {
             console.error('Error fetching order:', error);
             return {
                 props: {
-                    order: null,
+                    order: {} as IOrder,
                 },
             };
         }
@@ -127,14 +127,10 @@ const OrderDetails = ({order}: { order: IOrder }) => {
 
     const [orderItems, setOrderItems] = useState<IOrderItem[]>([]);
 
-    const [isError, setIsError] = useState<boolean>(false);
-
     useEffect(() => {
         if (order && order.orderItems) {
             dispatch(setLoadingOrderItem(false));
             setOrderItems(order.orderItems);
-        } else if (order == null) {
-            setIsError(true);
         }
     }, [order]);
 
@@ -177,13 +173,7 @@ const OrderDetails = ({order}: { order: IOrder }) => {
     return (
         <DefaultLayout>
             {
-                isError ? (
-                    <Result
-                        status="404"
-                        title="404"
-                        subTitle="Xin lỗi, trang bạn đang tìm kiếm không tồn tại"
-                        extra={<Button type="primary" onClick={() => router.push('/')}>Tiếp tục mua sắm</Button>} />
-                ) : (
+                order.id ? (
                     <div>
                         {
                             isLoading ? (
@@ -398,6 +388,12 @@ const OrderDetails = ({order}: { order: IOrder }) => {
                             )
                         }
                     </div>
+                ) : (
+                    <Result
+                        status="404"
+                        title="404"
+                        subTitle="Xin lỗi, trang bạn đang tìm kiếm không tồn tại"
+                        extra={<Button type="primary" onClick={() => router.push('/')}>Tiếp tục mua sắm</Button>}/>
                 )
             }
         </DefaultLayout>

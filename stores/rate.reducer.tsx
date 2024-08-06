@@ -1,4 +1,3 @@
-// import {rateDTO, RateDTO} from "../models/order/OrderRequest";
 import {createSlice} from "@reduxjs/toolkit";
 import {RateAPIResponse} from "../models/rate/RateAPIResponse";
 
