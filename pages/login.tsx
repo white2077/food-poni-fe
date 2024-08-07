@@ -82,7 +82,8 @@ const Login: NextPage = () => {
                 dispatch(setCurrentUser(payload));
 
                 setCookie(REFRESH_TOKEN, res.data.refreshToken, {
-                    expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
+                    maxAge: 60 * 60 * 24 * 30,
+                    path: "/"
                 });
 
                 deleteCookie(REMEMBER_ME);
@@ -94,7 +95,8 @@ const Login: NextPage = () => {
                         avatar: "currentUser.avatar"
                     }
                     setCookie(REMEMBER_ME, btoa(JSON.stringify(userRemember)), {
-                        expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
+                        maxAge: 60 * 60 * 24 * 30,
+                        path: "/"
                     });
                 } else deleteCookie(REMEMBER_ME);
 
