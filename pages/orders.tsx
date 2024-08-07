@@ -12,6 +12,7 @@ import {NextRequest} from "next/server";
 enum OrderStatus {
     PENDING,
     APPROVED,
+    REJECTED,
     COMPLETED,
 }
 
@@ -53,6 +54,8 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
                 return 'Chờ xác nhận';
             case OrderStatus.APPROVED:
                 return 'Chờ lấy hàng';
+            case OrderStatus.REJECTED:
+                return 'Bị từ chối';
             case OrderStatus.COMPLETED:
                 return 'Hoàn thành';
             default:
