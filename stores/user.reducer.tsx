@@ -10,22 +10,12 @@ export interface CurrentUser {
     email: string;
 }
 
-export const INITIAL_CURRENT_USER: CurrentUser = {
-    id: "",
-    sub: "",
-    role: "",
-    avatar: "",
-    addressId: "",
-    username: "",
-    email: ""
-}
-
 export interface ICurrentUserState {
     currentUser: CurrentUser;
 }
 
 const initialState: ICurrentUserState = {
-    currentUser: INITIAL_CURRENT_USER
+    currentUser: {} as CurrentUser
 }
 
 const userSlide = createSlice({

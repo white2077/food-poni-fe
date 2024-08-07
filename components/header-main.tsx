@@ -4,7 +4,7 @@ import {LogoutOutlined, QuestionCircleOutlined, ShoppingOutlined, UserOutlined} 
 import {NextRouter, useRouter} from 'next/router';
 import {RootState} from '../stores';
 import React, {useEffect} from "react";
-import {CurrentUser, INITIAL_CURRENT_USER, setCurrentUser} from "../stores/user.reducer";
+import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
 import Cart from "./cart";
 import SearchKeyword from "./search-keyword";
 import {deleteCookie, getCookie} from "cookies-next";
@@ -87,7 +87,7 @@ export default function HeaderMain() {
         if (currentUser.id) {
             if (path === '/login') {
                 deleteCookie(REFRESH_TOKEN);
-                dispatch(setCurrentUser(INITIAL_CURRENT_USER));
+                dispatch(setCurrentUser({} as CurrentUser));
                 setTimeout(() => {
                     window.location.href = path;
                 }, 0);
