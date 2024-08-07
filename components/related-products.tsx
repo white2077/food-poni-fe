@@ -7,12 +7,9 @@ import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
 import ProductRowLoading from "./product-row-skeleton";
 import {CustomArrowProps} from "@ant-design/react-slick";
 import ProductCardRelated from "./related-products-card";
-<<<<<<< HEAD
-import {className} from "postcss-selector-parser";
-import LoadingProduct from "./loading-product";
 import Loading from "./loading-product";
-=======
->>>>>>> 0ec1fe6e9947b9708c5347f5f341003246abaecc
+import {Carousel} from "antd";
+
 
 export interface IProductCard {
     index: number,

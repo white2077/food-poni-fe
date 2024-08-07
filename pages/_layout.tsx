@@ -20,9 +20,6 @@ export const SidebarLayout = ({children, sidebarContents}: SidebarLayoutProps) =
         <div>
             <HeaderBar/>
             <HeaderMain/>
-            <div className="fixed bottom-1 text-orange-500  right-1">
-                <AudioPlayer/>
-            </div>
             <div className='bg-[#F5F5FA]'>
                 <div className='px-2 max-w-screen-xl mx-auto py-4'>
                     <div className='flex gap-4'>
@@ -103,9 +100,6 @@ export const DefaultLayout = ({children}: DefaultLayoutProps) => {
         <div>
             <HeaderBar/>
             <HeaderMain/>
-            <div className="fixed bottom-1 text-orange-500  right-1">
-                <AudioPlayer/>
-            </div>
             <div className='bg-[#F5F5FA]'>
                 <div className='px-2 max-w-screen-xl mx-auto py-4'>
                     {children}

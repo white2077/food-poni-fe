@@ -24,13 +24,12 @@ import Link from "next/link";
 import MenuMobile from "./menu-mobile";
 import {UserAPIResponse} from "../models/user/UserAPIResponse";
 import ThemeSwitch from "./theme";
-<<<<<<< HEAD
+
 import Pet from "./pet";
 import CatBackground from "./pet";
 import Audio from "./audio";
 import AudioPlayer from "./audio";
-=======
->>>>>>> 0ec1fe6e9947b9708c5347f5f341003246abaecc
+
 
 let sock: any = null;
 export default function HeaderMain() {

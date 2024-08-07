@@ -1,6 +1,7 @@
 import React from "react";
 import CatBackground from "./pet";
 import Link from "next/link";
+import Audio from "./audio";
 
 const Footer = () => {
     return (
@@ -103,6 +104,7 @@ const Footer = () => {
                                 <img src="https://i.postimg.cc/R0j1TSHZ/mastercard-PNG23.png" alt=""/>
                                 <img src="https://i.postimg.cc/sggJj0zs/paypal-logo-png-2119.png" alt=""/>
                                 <img src="https://i.postimg.cc/hjdsFzBm/American-Express-logo-PNG14.png" alt=""/>
+
                             </div>
                         </div>
                     </div>
