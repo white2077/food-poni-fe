@@ -12,6 +12,7 @@ import {NextRequest} from "next/server";
 enum OrderStatus {
     PENDING,
     APPROVED,
+    REJECTED,
     COMPLETED,
 }
 
@@ -40,16 +41,9 @@ export async function getServerSideProps({req}: { req: NextRequest }) {
 
 const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIResponse[]> }) => {
 
-    const [orders, setOrders] = useState<OrderAPIResponse[]>([]);
-
     const [selectedStatus, setSelectedStatus] = useState<string>('');
 
-    useEffect(() => {
-        setOrders(ePage.content);
-    }, [ePage]);
-
     const handleChange = (value: string) => {
-        console.log(OrderStatus[value as keyof typeof OrderStatus]);
         setSelectedStatus(value);
     };
 
@@ -59,6 +53,8 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
                 return 'Chờ xác nhận';
             case OrderStatus.APPROVED:
                 return 'Chờ lấy hàng';
+            case OrderStatus.REJECTED:
+                return 'Bị từ chối';
             case OrderStatus.COMPLETED:
                 return 'Hoàn thành';
             default:
@@ -67,8 +63,8 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
     };
 
     const filteredOrders = selectedStatus !== ""
-        ? orders.filter(order => order.status === OrderStatus[parseInt(selectedStatus)])
-        : orders.filter(order => order.status === 'PENDING');
+        ? ePage.content.filter(order => order.status === OrderStatus[parseInt(selectedStatus)])
+        : ePage.content.filter(order => order.status === 'PENDING');
 
     const orderStatusOptions = Object.values(OrderStatus)
         .filter((status) => typeof status === 'number')

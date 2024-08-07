@@ -1,8 +1,6 @@
 import HeaderMain from "../components/header-main";
 import {HomeFilled, SettingFilled, UserOutlined, WalletFilled} from "@ant-design/icons";
 import HeaderBar from "../components/header-bar";
-import Link from "next/link";
-import ThemeSwitch from "../components/theme";
 import React from "react";
 import Footer from "../components/footer";
 import AudioPlayer from "../components/audio";

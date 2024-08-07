@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, {useState} from "react";
 import {Button, Card, Dropdown, Image, Input, List, type MenuProps, Modal, Radio, Space} from "antd";
 import {
@@ -16,6 +17,18 @@ import ChangePassword from "./change-password";
 import SelectedItemLabel from "./select-label";
 import UploadImg from "./upload";
 import {ExclamationCircleFilled} from '@ant-design/icons';
+=======
+import React, {useEffect, useState} from "react";
+import {Button, Image, Input, Radio, Skeleton, Space} from "antd";
+import {DeleteOutlined, LockOutlined, MailOutlined, SafetyCertificateOutlined} from "@ant-design/icons";
+import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
+import {useSelector} from "react-redux";
+import {RootState} from "../stores";
+import {server} from "../utils/server";
+import ComboBoxDate from "./comboBox_date";
+import {api} from "../utils/axios-config";
+import {UserAPIResponse} from "../models/user/UserAPIResponse";
+>>>>>>> 0ec1fe6e9947b9708c5347f5f341003246abaecc
 
 const {confirm} = Modal;
 export const PersonalInformation = () => {
@@ -72,8 +85,29 @@ export const PersonalInformation = () => {
         },
     ];
 
+    const [user, setUser] = useState<UserAPIResponse>({} as UserAPIResponse);
+
+    const [isLoading, setLoading] = useState<boolean>(false);
+
+    useEffect(() => {
+        getUserById();
+    }, [currentUser]);
+
+    const getUserById = () => {
+        setLoading(true);
+        api.get("/users/" + currentUser.id)
+            .then((res) => {
+                setUser(res.data);
+            })
+            .catch(() => {
+                console.log("Personal information: Can't get user information");
+            })
+            .finally(() => setLoading(false));
+    }
+
     return (
         <>
+<<<<<<< HEAD
 
             {showAddAddress && (
                 <div className="w-[600px] mx-auto">
@@ -110,11 +144,18 @@ export const PersonalInformation = () => {
                         />
                     </Modal>
                     <SelectedItemLabel label={"Thông tin cá nhân"}/>
+=======
+            {
+                isLoading ? (
+                    <Skeleton active />
+                ) : (
+>>>>>>> 0ec1fe6e9947b9708c5347f5f341003246abaecc
                     <div className="bg-white p-3 rounded-lg grid lg:grid-cols-5 grid-cols-1 gap-4">
                         <div className="col-span-3">
                             <div className="mb-3 text-[15px] text-gray-500 font-sans">Thông tin cá nhân</div>
                             <div className="grid lg:grid-cols-4">
                                 <div className="col-span-1">
+<<<<<<< HEAD
                                     <div className="flex flex-col items-center mr-5 gap-5 relative">
                                         <Dropdown menu={{items}} placement="bottom" arrow>
                                             <div
@@ -130,6 +171,21 @@ export const PersonalInformation = () => {
                                             src={server + currentUser.avatar}
                                         />
 
+=======
+                                    <div className="flex flex-col items-center mr-5 gap-5">
+                                        <Image
+                                            width={110}
+                                            height={110}
+                                            className="object-center rounded-full shadow-lg border-4 border-orange-200 overflow-hidden object-cover "
+                                            src={server + user.avatar}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="col-span-3 w-[100%] flex items-center">
+                                    <div className="px-4 sm:grid sm:grid-cols-[1fr,2fr] sm:gap-4 sm:px-0 ">
+                                        <dt className="text-[15px] flex items-center font-sans">Họ & Tên</dt>
+                                        <Input value={user.username}></Input>
+>>>>>>> 0ec1fe6e9947b9708c5347f5f341003246abaecc
                                     </div>
                                 </div>
                                 <div className="col-span-3 w-[100%] flex items-center">
@@ -173,6 +229,7 @@ export const PersonalInformation = () => {
                                     thay
                                     đổi</Button>
                             </div>
+<<<<<<< HEAD
                         </div>
                         <div className="col-span-2">
                             <div className="grid lg:grid-cols-2">
@@ -192,6 +249,60 @@ export const PersonalInformation = () => {
                                             </div>
                                         </div>
                                     </div>
+=======
+                            <div className="grid lg:grid-cols-4 mt-4">
+                                <div className="col-span-1 w-[100%]">
+                                    <div className="flex justify-start items-center gap-5">
+                                        Ngày sinh
+                                    </div>
+                                </div>
+                                <ComboBoxDate user={user}/>
+                            </div>
+                            <div className="grid lg:grid-cols-4 mt-8">
+                                <div className="col-span-1 w-[100%]">
+                                    <div className="flex justify-start items-center gap-5">
+                                        Giới tính
+                                    </div>
+                                </div>
+                                <div>
+                                    <Radio.Group defaultValue={true}>
+                                        <Space direction="vertical">
+                                            <div className="flex gap-2">
+                                                <Radio value={user.gender === true ? true : false}>
+                                                    <p>Nam</p>
+                                                </Radio>
+                                                <Radio value={user.gender === false ? true : false}>
+                                                    <p>Nữ</p>
+                                                </Radio>
+                                            </div>
+                                        </Space>
+                                    </Radio.Group>
+                                </div>
+                            </div>
+                            <div className="mt-8 text-center">
+                                <Button className="w-44 !bg-primary !text-white hover:!bg-white hover:!text-[#F36F24]">Lưu thay
+                                    đổi</Button>
+                            </div>
+                        </div>
+                        <div className="col-span-2">
+                            <div className="grid lg:grid-cols-2">
+                                <div className="border-l-2 col-span-2">
+                                    <div className="px-4">
+                                        <h3 className="text-[17px] font-sans text-gray-400">Email</h3>
+                                        <div className="p-4 grid gap-3">
+                                            <div className="flex items-center gap-2 justify-between w-[100%]">
+                                                <div className="flex items-center gap-2 w-[100%]">
+                                                    <MailOutlined/>
+                                                    <div className="text-lg text-gray-600 ml-2 ">
+                                                        <div className="text-[15px]">Địa chỉ email</div>
+                                                        <div className="text-[15px] w-full">{user.email}</div>
+                                                    </div>
+                                                </div>
+                                                <Button>Cập nhật</Button>
+                                            </div>
+                                        </div>
+                                    </div>
+>>>>>>> 0ec1fe6e9947b9708c5347f5f341003246abaecc
                                     <div className="px-4">
                                         <h3 className="text-[17px] font-sans text-gray-400">Bảo mật</h3>
                                         <div className="p-4 grid gap-3">
@@ -202,7 +313,11 @@ export const PersonalInformation = () => {
                                                         <div className="text-[15px]">Đổi mật khẩu</div>
                                                     </div>
                                                 </div>
+<<<<<<< HEAD
                                                 <Button onClick={handleAddAddressClick}>Cập nhật</Button>
+=======
+                                                <Button>Cập nhật</Button>
+>>>>>>> 0ec1fe6e9947b9708c5347f5f341003246abaecc
                                             </div>
                                         </div>
                                         <div className="p-4 grid gap-3">
@@ -257,10 +372,16 @@ export const PersonalInformation = () => {
                             </div>
                         </div>
                     </div>
+<<<<<<< HEAD
                 </>
             )}
         </>
 
+=======
+                )
+            }
+        </>
+>>>>>>> 0ec1fe6e9947b9708c5347f5f341003246abaecc
     );
 };
 

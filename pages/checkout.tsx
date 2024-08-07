@@ -22,19 +22,18 @@ import {NextRouter, useRouter} from "next/router";
 import OrderItems from "../components/order-items";
 import {RootState} from "../stores";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
-import {OrderRequestDTO, PaymentInfo, ShippingAddress} from "../models/order/OrderRequest";
+import {OrderCreationRequestDTO, PaymentInfo, ShippingAddress} from "../models/order/OrderRequest";
 import {CurrentUser} from "../stores/user.reducer";
 import {OrderItemRequestDTO} from "../models/order_item/OrderItemRequest";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {REFRESH_TOKEN} from "../utils/server";
 import {getCookie} from "cookies-next";
-import {Page} from "../models/Page";
+import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
 import AddressCheckoutAdd from "../components/address-checkout-add";
 import AddressCheckoutUpdate from "../components/address-checkout-update";
 import {NextRequest} from "next/server";
 import {getAddressesPage} from "../queries/address.query";
 import CardHome from "../components/card-home";
-
 
 
 const {TextArea} = Input;
@@ -51,7 +50,7 @@ export async function getServerSideProps({req}: { req: NextRequest }) {
     };
 }
 
-const Checkout = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
+const Checkout = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<AddressAPIResponse[]> }) => {
 
     const router: NextRouter = useRouter();
 
@@ -134,12 +133,12 @@ const Checkout = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
             }
 
             if (orderItems && shippingAddress && payment && refreshToken) {
-                const order: OrderRequestDTO = {
+                const order: OrderCreationRequestDTO = {
                     orderItems,
                     shippingAddress: shippingAddress,
                     note,
                     payment: payment
-                } as OrderRequestDTO;
+                } as OrderCreationRequestDTO;
 
                 return apiWithToken(refreshToken).post("/orders", order, {
                     headers: {

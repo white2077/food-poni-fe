@@ -6,8 +6,8 @@ import {AxiosResponse} from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import RateAdd from "../../components/rate-add";
 import {LeftOutlined, MessageOutlined} from "@ant-design/icons";
-import {INITIAL_USER_API_RESPONSE, UserAPIResponse} from "../../models/user/UserResponseAPI";
-import {paymentInfo, PaymentInfo, RateDTO, shippingAddress, ShippingAddress} from "../../models/order/OrderRequest";
+import {UserAPIResponse} from "../../models/user/UserAPIResponse";
+import {PaymentInfo, ShippingAddress} from "../../models/order/OrderRequest";
 import {RootState} from "../../stores";
 import {setSelectedOrderItemRate, setShowModalAddRate, setShowModalRate} from "../../stores/rate.reducer";
 import RateRows from "../../components/rate-rows";
@@ -21,6 +21,7 @@ import {REFRESH_TOKEN, server} from "../../utils/server";
 import {OrderAPIResponse} from "../../models/order/OrderAPIResponse";
 import HeadTable from "../../components/table-head";
 import Link from "next/link";
+import {RateRequest} from "../../models/rate/RateRequest";
 
 const {Text} = Typography;
 
@@ -46,7 +47,7 @@ export interface IOrderItem {
     quantity: number;
     price: number;
     image: string;
-    rate: RateDTO;
+    rate: RateRequest;
     productDetail: IProductDetailOrderItem;
     retailerId: string;
 }
@@ -71,7 +72,7 @@ export async function getServerSideProps(context: {
                 id: order.id ?? "",
                 totalAmount: order.totalAmount ?? 0,
                 status: order.status ?? "",
-                user: order.user ?? INITIAL_USER_API_RESPONSE,
+                user: order.user ?? {} as UserAPIResponse,
                 shippingAddress: order.shippingAddress ?? {},
                 paymentMethod: order.payment ?? {},
                 orderItems: order.orderItems?.map((orderItem): IOrderItem => {
@@ -100,7 +101,7 @@ export async function getServerSideProps(context: {
             console.error('Error fetching order:', error);
             return {
                 props: {
-                    order: null,
+                    order: {} as IOrder,
                 },
             };
         }
@@ -126,14 +127,10 @@ const OrderDetails = ({order}: { order: IOrder }) => {
 
     const [orderItems, setOrderItems] = useState<IOrderItem[]>([]);
 
-    const [isError, setIsError] = useState<boolean>(false);
-
     useEffect(() => {
         if (order && order.orderItems) {
             dispatch(setLoadingOrderItem(false));
             setOrderItems(order.orderItems);
-        } else if (order == null) {
-            setIsError(true);
         }
     }, [order]);
 
@@ -176,13 +173,7 @@ const OrderDetails = ({order}: { order: IOrder }) => {
     return (
         <DefaultLayout>
             {
-                isError ? (
-                    <Result
-                        status="404"
-                        title="404"
-                        subTitle="Sorry, the page you visited does not exist."
-                        extra={<Button type="primary" onClick={() => router.push('/')}>Back Home</Button>}/>
-                ) : (
+                order.id ? (
                     <div>
                         {
                             isLoading ? (
@@ -397,6 +388,12 @@ const OrderDetails = ({order}: { order: IOrder }) => {
                             )
                         }
                     </div>
+                ) : (
+                    <Result
+                        status="404"
+                        title="404"
+                        subTitle="Xin lỗi, trang bạn đang tìm kiếm không tồn tại"
+                        extra={<Button type="primary" onClick={() => router.push('/')}>Tiếp tục mua sắm</Button>}/>
                 )
             }
         </DefaultLayout>

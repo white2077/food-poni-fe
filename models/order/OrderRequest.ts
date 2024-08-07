@@ -1,43 +1,31 @@
 import {OrderItemRequestDTO} from "../order_item/OrderItemRequest";
 
-export interface OrderRequestDTO {
+export interface OrderCreationRequestDTO {
 
-    orderItems?: OrderItemRequestDTO[];
+    orderItems: OrderItemRequestDTO[];
 
-    shippingAddress?: ShippingAddress;
+    shippingAddress: ShippingAddress;
 
-    note?: string;
+    note: string;
 
-    payment?: PaymentInfo;
+    payment: PaymentInfo;
 
 }
 
 export interface ShippingAddress {
 
-    fullName?: string;
+    fullName: string;
 
-    phoneNumber?: string;
+    phoneNumber: string;
 
-    address?: string;
+    address: string;
 
 }
 
 export interface PaymentInfo {
 
-    method?: string;
+    method: string;
 
-    status?: string;
+    status: string;
+
 }
-
-export interface RateDTO {
-    rate?: number,
-    message?: string,
-    images?: string[],
-}
-
-export const shippingAddress: ShippingAddress = {};
-
-export const paymentInfo: PaymentInfo = {};
-
-export const orderRequestDTO: OrderRequestDTO = {};
-

@@ -1,4 +1,4 @@
-import {INITIAL_USER_API_RESPONSE, UserAPIResponse} from "../user/UserResponseAPI";
+import {UserAPIResponse} from "../user/UserAPIResponse";
 
 export interface ProductAPIResponse {
 
@@ -28,34 +28,6 @@ export interface ProductAPIResponse {
 
     createdDate: Date;
 
-}
-
-export const INITIAL_PRODUCT_API_RESPONSE: ProductAPIResponse = {
-
-    id: "",
-
-    name: "",
-
-    slug: "",
-
-    shortDescription: "",
-
-    thumbnail: "",
-
-    status: false,
-
-    user: INITIAL_USER_API_RESPONSE,
-
-    sales: 0,
-
-    rate: 0,
-
-    rateCount: 0,
-
-    minPrice: 0,
-
-    maxPrice: 0,
-
-    createdDate: new Date()
+    updatedDate: Date;
 
 }

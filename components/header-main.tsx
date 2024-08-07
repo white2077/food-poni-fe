@@ -4,7 +4,7 @@ import {LogoutOutlined, QuestionCircleOutlined, ShoppingOutlined, UserOutlined} 
 import {NextRouter, useRouter} from 'next/router';
 import {RootState} from '../stores';
 import React, {useEffect} from "react";
-import {CurrentUser, INITIAL_CURRENT_USER, setCurrentUser} from "../stores/user.reducer";
+import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
 import Cart from "./cart";
 import SearchKeyword from "./search-keyword";
 import {deleteCookie, getCookie} from "cookies-next";
@@ -13,7 +13,7 @@ import Notification from "./notification";
 import SockJS from "sockjs-client";
 import {Client, IMessage} from "@stomp/stompjs";
 import {addNotification} from "../stores/notification.reducer";
-import {NotificationAPIResponse} from "../models/notification/NotificationResponseAPI";
+import {NotificationAPIResponse} from "../models/notification/NotificationAPIResponse";
 import jwtDecode from "jwt-decode";
 import {accessToken, api, apiWithToken} from "../utils/axios-config";
 import {AxiosError, AxiosResponse} from "axios";
@@ -22,12 +22,15 @@ import {setCurrentShippingAddress} from "../stores/address.reducer";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
 import Link from "next/link";
 import MenuMobile from "./menu-mobile";
-import {UserAPIResponse} from "../models/user/UserResponseAPI";
+import {UserAPIResponse} from "../models/user/UserAPIResponse";
 import ThemeSwitch from "./theme";
+<<<<<<< HEAD
 import Pet from "./pet";
 import CatBackground from "./pet";
 import Audio from "./audio";
 import AudioPlayer from "./audio";
+=======
+>>>>>>> 0ec1fe6e9947b9708c5347f5f341003246abaecc
 
 let sock: any = null;
 export default function HeaderMain() {
@@ -91,7 +94,7 @@ export default function HeaderMain() {
         if (currentUser.id) {
             if (path === '/login') {
                 deleteCookie(REFRESH_TOKEN);
-                dispatch(setCurrentUser(INITIAL_CURRENT_USER));
+                dispatch(setCurrentUser({} as CurrentUser));
                 setTimeout(() => {
                     window.location.href = path;
                 }, 0);

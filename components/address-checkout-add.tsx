@@ -2,7 +2,7 @@ import {NextRouter, useRouter} from "next/router";
 import {useState} from "react";
 import {SearchResult} from "../stores/search-position.reducer";
 import axios, {AxiosError, AxiosResponse} from "axios";
-import {AddressRequestDTO} from "../models/address/AddressRequest";
+import {AddressCreationRequestDTO} from "../models/address/AddressRequest";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {AutoComplete, Button, Form, Input, notification} from "antd";
@@ -69,7 +69,7 @@ export const AddressCheckoutAdd = () => {
     const onFinish = (values: any): void => {
         setPending(true);
 
-        const deliveryInfo: AddressRequestDTO = {
+        const deliveryInfo: AddressCreationRequestDTO = {
             fullName: values.fullname,
             phoneNumber: values.phoneNumber,
             address: selectedAddress?.display_name || "",

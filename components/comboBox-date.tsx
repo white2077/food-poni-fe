@@ -1,11 +1,12 @@
 import {useEffect, useState} from 'react';
 import {Select} from "antd";
+import {UserAPIResponse} from "../models/user/UserAPIResponse";
 
+const ComboBoxDate = ({user}: {user: UserAPIResponse}) => {
 
-const ComboBoxDate = () => {
-    const [selectedDay, setSelectedDay] = useState<number | ''>(29);
+    const [selectedDay, setSelectedDay] = useState<number | ''>(20);
     const [selectedMonth, setSelectedMonth] = useState<number | ''>(10);
-    const [selectedYear, setSelectedYear] = useState<number | ''>(2001);
+    const [selectedYear, setSelectedYear] = useState<number | ''>(2000);
 
     const days = Array.from({length: 31}, (_, index) => index + 1);
     const months = Array.from({length: 12}, (_, index) => index + 1);
@@ -15,7 +16,14 @@ const ComboBoxDate = () => {
         const currentYear = new Date().getFullYear();
         const yearsList = Array.from({length: currentYear - 1900 + 1}, (_, index) => currentYear - index);
         setYears(yearsList);
-    }, []);
+
+        if (user.birthday) {
+            const parsedBirthday = new Date(user.birthday);
+            setSelectedDay(parsedBirthday.getDate());
+            setSelectedMonth(parsedBirthday.getMonth() + 1);
+            setSelectedYear(parsedBirthday.getFullYear());
+        }
+    }, [user]);
 
     const handleDayChange = (value: number | '') => {
         setSelectedDay(value);

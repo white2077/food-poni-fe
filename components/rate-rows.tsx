@@ -9,6 +9,7 @@ import {AxiosResponse} from "axios";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
+import {Page} from "../models/Page";
 
 const RateRows = ({orderId}: { orderId: string }) => {
 
@@ -27,8 +28,8 @@ const RateRows = ({orderId}: { orderId: string }) => {
                     Authorization: 'Bearer ' + accessToken,
                 }
             })
-                .then(function (res: AxiosResponse<RateAPIResponse[]>) {
-                    setRates(res.data);
+                .then(function (res: AxiosResponse<Page<RateAPIResponse[]>>) {
+                    setRates(res.data.content);
                 })
                 .catch(function (res) {
                     notification.open({

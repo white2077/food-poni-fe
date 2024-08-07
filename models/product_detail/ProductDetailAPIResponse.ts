@@ -1,4 +1,4 @@
-import {INITIAL_PRODUCT_API_RESPONSE, ProductAPIResponse} from "../product/ProductAPIResponse";
+import {ProductAPIResponse} from "../product/ProductAPIResponse";
 
 export interface ProductDetailAPIResponse {
 
@@ -10,40 +10,16 @@ export interface ProductDetailAPIResponse {
 
     description: string;
 
-    sales: number;
-
-    rate: number;
-
-    rateCount: number;
-
     status: boolean;
 
     images: string[];
 
+    rate: number;
+
+    sales: number;
+
+    rateCount: number;
+
     product: ProductAPIResponse;
-
-}
-
-export const INITIAL_PRODUCT_DETAIL_API_RESPONSE: ProductDetailAPIResponse = {
-
-    id: '',
-
-    name: '',
-
-    price: 0,
-
-    description: '',
-
-    sales: 0,
-
-    rate: 0,
-
-    rateCount: 0,
-
-    status: false,
-
-    images: [],
-
-    product: INITIAL_PRODUCT_API_RESPONSE
 
 }

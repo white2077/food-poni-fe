@@ -13,11 +13,12 @@ export const getProductsPage = ({page, pageSize, status, categoryId}: {
         .then((res: AxiosResponse<Page<ProductAPIResponse[]>>) => res.data);
 }
 
-export const getProductsPageByRetailer = ({page, pageSize, status}: {
+export const getProductsPageByRetailer = ({rid, page, pageSize, status}: {
+    rid: string,
     page?: number,
     pageSize?: number,
     status?: boolean
 }): Promise<Page<ProductAPIResponse[]>> => {
-    return api.get(`/retailer/products?page=${page ?? ''}&pageSize=${pageSize ?? ''}&status=${status ?? ''}`)
+    return api.get(`/products/retailer/${rid}?page=${page ?? ''}&pageSize=${pageSize ?? ''}&status=${status ?? ''}`)
         .then((res: AxiosResponse<Page<ProductAPIResponse[]>>) => res.data);
 }

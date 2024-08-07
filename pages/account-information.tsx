@@ -15,7 +15,7 @@ import {NextRequest} from "next/server";
 import {getAddressesPage} from "../queries/address.query";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN, server} from "../utils/server";
-import {Page} from "../models/Page";
+import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {CurrentUser} from "../stores/user.reducer";
 import {useSelector} from "react-redux";
@@ -62,7 +62,7 @@ export async function getServerSideProps({req}: { req: NextRequest }) {
     };
 }
 
-const AccountInformation = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
+const AccountInformation = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<AddressAPIResponse[]> }) => {
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const [selectedItem, setSelectedItem] = useState<string>('1');

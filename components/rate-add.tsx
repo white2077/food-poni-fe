@@ -3,13 +3,13 @@ import {Button, Image, Input, Modal, notification, Rate} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import FileUploads from "./file-upload";
 import {RootState} from "../stores";
-import {RateDTO} from "../models/order/OrderRequest";
 import {setLoadingOrderItem} from "../stores/order.reducer";
 import {setShowModalAddRate, setShowModalFileUpload} from "../stores/rate.reducer";
 import {setSelectedFile} from "../stores/file-uploads.reducer";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
+import {RateRequest} from "../models/rate/RateRequest";
 
 const RateAdd = () => {
 
@@ -19,7 +19,7 @@ const RateAdd = () => {
 
     const showModalAddRate: boolean = useSelector((state: RootState) => state.rate.showModalAddRate);
 
-    const orderItemId: string = useSelector((state: RootState) => state.rate.selecOrderItemRate);
+    const orderItemId: string = useSelector((state: RootState) => state.rate.selectOrderItemRate);
 
     const images: string[] = useSelector((state: RootState) => state.fileUpload.selectedFile);
 
@@ -31,11 +31,11 @@ const RateAdd = () => {
 
     const [previewImage, setPreviewImage] = useState('');
 
-    const createRateDTO = (rate: number, message: string, images: string[]) => {
+    const createRate = (rate: number, message: string, images: string[]) => {
 
-        const rateDTO: RateDTO = {};
+        const rateRequest: RateRequest = {} as RateRequest;
         if (rate !== 0) {
-            rateDTO.rate = rate;
+            rateRequest.rate = rate;
         } else {
             notification.open({
                 type: "error",
@@ -45,14 +45,14 @@ const RateAdd = () => {
             return;
         }
         if (message !== "") {
-            rateDTO.message = message;
+            rateRequest.message = message;
         }
         if (images.length > 0) {
-            rateDTO.images = images;
+            rateRequest.images = images;
         }
         dispatch(setLoadingOrderItem(true));
         if (refreshToken) {
-            apiWithToken(refreshToken).post('/order-items/rate/' + orderItemId, rateDTO, {
+            apiWithToken(refreshToken).post('/order-items/rate/' + orderItemId, rateRequest, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 }
@@ -78,7 +78,7 @@ const RateAdd = () => {
                 }
             );
         }
-        return rateDTO;
+        return rateRequest;
     }
 
     // Handler for rate change
@@ -92,8 +92,7 @@ const RateAdd = () => {
     };
 
     const handleSubmit = (): void => {
-        const rateDTO: RateDTO = createRateDTO(rate, message, images) ?? {};
-        console.log(rateDTO); // You can use rateDTO for further processing
+        const rateRequest: RateRequest = createRate(rate, message, images) ?? {} as RateRequest;
     };
 
     const handleModalClose = (): void => {
