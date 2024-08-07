@@ -51,15 +51,12 @@ export const PersonalInformation = () => {
                         <Radio.Group defaultValue={true}>
                             <Space direction="vertical">
                                 <div className="flex gap-2">
-                                    <Radio value={true}>
+                                    <Radio value={currentUser.gender === true ? true : false}>
                                         <p>Nam</p>
                                     </Radio>
-                                    <Radio value={false}>
+                                    <Radio value={currentUser.gender === false ? true : false}>
                                         <p>Nữ</p>
                                     </Radio>
-                                    {/*<Radio value="3">*/}
-                                    {/*    <p>Khác</p>*/}
-                                    {/*</Radio>*/}
                                 </div>
                             </Space>
                         </Radio.Group>

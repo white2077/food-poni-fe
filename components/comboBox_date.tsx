@@ -1,11 +1,16 @@
 import {useEffect, useState} from 'react';
 import {Select} from "antd";
-
+import {CurrentUser} from "../stores/user.reducer";
+import {useSelector} from "react-redux";
+import {RootState} from "../stores";
 
 const ComboBoxDate = () => {
-    const [selectedDay, setSelectedDay] = useState<number | ''>(29);
+
+    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
+
+    const [selectedDay, setSelectedDay] = useState<number | ''>(20);
     const [selectedMonth, setSelectedMonth] = useState<number | ''>(10);
-    const [selectedYear, setSelectedYear] = useState<number | ''>(2001);
+    const [selectedYear, setSelectedYear] = useState<number | ''>(2000);
 
     const days = Array.from({length: 31}, (_, index) => index + 1);
     const months = Array.from({length: 12}, (_, index) => index + 1);
@@ -15,7 +20,13 @@ const ComboBoxDate = () => {
         const currentYear = new Date().getFullYear();
         const yearsList = Array.from({length: currentYear - 1900 + 1}, (_, index) => currentYear - index);
         setYears(yearsList);
-    }, []);
+
+        if (currentUser.birthday) {
+            setSelectedDay(currentUser.birthday.getDate());
+            setSelectedMonth(currentUser.birthday.getMonth() + 1);
+            setSelectedYear(currentUser.birthday.getFullYear());
+        }
+    }, [currentUser]);
 
     const handleDayChange = (value: number | '') => {
         setSelectedDay(value);
