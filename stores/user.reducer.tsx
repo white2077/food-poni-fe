@@ -8,6 +8,8 @@ export interface CurrentUser {
     addressId: string;
     username: string;
     email: string;
+    birthday: Date;
+    gender: boolean;
 }
 
 export interface ICurrentUserState {

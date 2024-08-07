@@ -14,6 +14,7 @@ import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
 import {api} from "../utils/axios-config";
 import {clientId, redirectUri, responseType, scopes} from "../utils/oauth2";
+import {UserAPIResponse} from "../models/user/UserAPIResponse";
 
 export interface IUserRemember {
     username: string;
@@ -76,10 +77,24 @@ const Login: NextPage = () => {
 
         api.post("/auth/login", user)
             .then(function (res: AxiosResponse<AuthAPIResponse>): void {
-                const refreshToken: string = res.data.refreshToken ?? "";
+                const payload: CurrentUser = jwtDecode(res.data.accessToken);
 
-                const payload: CurrentUser = jwtDecode(refreshToken);
-                dispatch(setCurrentUser(payload));
+                api.get("/users/" + payload.id)
+                    .then(function (res) {
+                        const userResponseDTO: UserAPIResponse = res.data;
+                        const currentUser: CurrentUser = {
+                            id: userResponseDTO.id,
+                            sub: userResponseDTO.id,
+                            role: userResponseDTO.role,
+                            avatar: userResponseDTO.avatar,
+                            addressId: userResponseDTO.address.id,
+                            username: userResponseDTO.username,
+                            email: userResponseDTO.email,
+                            birthday: new Date(userResponseDTO.birthday),
+                            gender: userResponseDTO.gender
+                        };
+                        dispatch(setCurrentUser(currentUser));
+                    });
 
                 setCookie(REFRESH_TOKEN, res.data.refreshToken, {
                     maxAge: 60 * 60 * 24 * 30,
