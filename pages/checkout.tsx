@@ -28,7 +28,7 @@ import {OrderItemRequestDTO} from "../models/order_item/OrderItemRequest";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {REFRESH_TOKEN} from "../utils/server";
 import {getCookie} from "cookies-next";
-import {Page} from "../models/Page";
+import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
 import AddressCheckoutAdd from "../components/address-checkout-add";
 import AddressCheckoutUpdate from "../components/address-checkout-update";
 import {NextRequest} from "next/server";
@@ -50,7 +50,7 @@ export async function getServerSideProps({req}: { req: NextRequest }) {
     };
 }
 
-const Checkout = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
+const Checkout = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<AddressAPIResponse[]> }) => {
 
     const router: NextRouter = useRouter();
 
