@@ -44,7 +44,6 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
     const [selectedStatus, setSelectedStatus] = useState<string>('');
 
     const handleChange = (value: string) => {
-        console.log(OrderStatus[value as keyof typeof OrderStatus]);
         setSelectedStatus(value);
     };
 
