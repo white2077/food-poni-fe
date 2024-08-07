@@ -16,7 +16,7 @@ import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
 import {ProductDetailAPIResponse} from "../models/product_detail/ProductDetailAPIResponse";
 import {RateAPIResponse} from "../models/rate/RateAPIResponse";
 import {Page} from "../models/Page";
-import ReadMore from "../components/read_more";
+import ReadMore from "../components/read-more";
 import Banner from "../components/slide-banner";
 import ProductRows from "../components/product-rows";
 import {getProductsPage} from "../queries/product.query";

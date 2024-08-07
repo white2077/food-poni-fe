@@ -13,7 +13,7 @@ import Link from "next/link";
 import {Progress} from "antd";
 import EmptyNotice from "./empty-notice";
 import Tym from "./tym";
-import Like from "./Like";
+import Like from "./like";
 import Start from "./start";
 
 interface ExpandedComments {

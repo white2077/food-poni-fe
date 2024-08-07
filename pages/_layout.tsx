@@ -5,6 +5,7 @@ import Link from "next/link";
 import ThemeSwitch from "../components/theme";
 import React from "react";
 import Footer from "../components/footer";
+import AudioPlayer from "../components/audio";
 
 interface SidebarLayoutProps {
     children: React.ReactNode,
@@ -21,6 +22,9 @@ export const SidebarLayout = ({children, sidebarContents}: SidebarLayoutProps) =
         <div>
             <HeaderBar/>
             <HeaderMain/>
+            <div className="fixed bottom-1 text-orange-500  right-1">
+                <AudioPlayer/>
+            </div>
             <div className='bg-[#F5F5FA]'>
                 <div className='px-2 max-w-screen-xl mx-auto py-4'>
                     <div className='flex gap-4'>
@@ -89,7 +93,7 @@ export const SidebarLayout = ({children, sidebarContents}: SidebarLayoutProps) =
                         </div>
                     </div>
                 </div>
-               <Footer/>
+                <Footer/>
             </div>
         </div>
     );
@@ -97,11 +101,13 @@ export const SidebarLayout = ({children, sidebarContents}: SidebarLayoutProps) =
 };
 
 export const DefaultLayout = ({children}: DefaultLayoutProps) => {
-
     return (
         <div>
             <HeaderBar/>
             <HeaderMain/>
+            <div className="fixed bottom-1 text-orange-500  right-1">
+                <AudioPlayer/>
+            </div>
             <div className='bg-[#F5F5FA]'>
                 <div className='px-2 max-w-screen-xl mx-auto py-4'>
                     {children}

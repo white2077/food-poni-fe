@@ -33,7 +33,7 @@ import AddressCheckoutAdd from "../components/address-checkout-add";
 import AddressCheckoutUpdate from "../components/address-checkout-update";
 import {NextRequest} from "next/server";
 import {getAddressesPage} from "../queries/address.query";
-import CardHome from "../components/card_home";
+import CardHome from "../components/card-home";
 
 
 

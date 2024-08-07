@@ -40,7 +40,7 @@ interface ProductRowProps {
     query: Promise<Page<ProductAPIResponse[]>>,
 }
 
-const RelatedProducts = ({title,query}: ProductRowProps) => {
+const RelatedProducts = ({title, query}: ProductRowProps) => {
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
     const [isLoading, setLoading] = React.useState<boolean>(false);
     const [productCards, setProductCards] = React.useState<IProductCard[]>([]);
@@ -92,7 +92,7 @@ const RelatedProducts = ({title,query}: ProductRowProps) => {
     for (let i = 0; i < productCards.length; i += 6) {
         productGroups.push(productCards.slice(i, i + 6));
     }
-    const CustomPrevArrow: React.FC<CustomArrowProps> = ({ onClick }) => {
+    const CustomPrevArrow: React.FC<CustomArrowProps> = ({onClick}) => {
         return (
             <div onClick={onClick}
                  className="custom-arrow next-arrow mx-2 absolute top-[47%] left-0 text-orange-400 text-xl w-8 h-8 hover:text-orange-500 cursor-pointer shadow-lg shadow-gray-400 bg-white z-50 rounded-full flex items-center justify-center">
@@ -124,7 +124,7 @@ const RelatedProducts = ({title,query}: ProductRowProps) => {
             <div className="mt-2">{title}</div>
             <div style={{maxWidth: '30rem', margin: 'auto'}}>
                 {isLoading ? (
-                   <Loading/>
+                    <Loading/>
                 ) : (
                     <Carousel
                         onLazyLoad={() => console.log('lazy load')}

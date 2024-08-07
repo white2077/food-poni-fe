@@ -14,6 +14,7 @@ import AddressDeliveryInformationAdd from "./address-delivery-information-add";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
 import {ErrorApiResponse} from "../models/ErrorApiResponse";
+import SelectedItemLabel from "./select-label";
 
 export const AddressDeliveryInformation = ({deliveryInformation}: {deliveryInformation: AddressAPIResponse[]}) => {
 
@@ -101,47 +102,51 @@ export const AddressDeliveryInformation = ({deliveryInformation}: {deliveryInfor
     };
 
     return (
-        <div className="w-[1000px] mx-auto">
-            <Button
-                className="my-[16px]"
-                onClick={handleAddAddressClick}>{showAddAddress ? "Quay lại" : "Thêm địa chỉ"}</Button>
-            {showAddAddress && (
-                <div className="w-[600px] mx-auto"><AddressDeliveryInformationAdd/></div>
-            )}
-            {!showAddAddress && (
-                <List
-                    grid={{gutter: 16, column: 1}}
-                    dataSource={deliveryInformation}
-                    renderItem={(item: AddressAPIResponse) => (
-                        <List.Item>
-                            <Card>
-                                <div className="flex justify-between">
-                                    <div>
+        <>
+            <SelectedItemLabel label={"Sổ địa chỉ"}/>
+            <div className="w-[1000px] mx-auto">
+                <Button
+                    className="my-[16px]"
+                    onClick={handleAddAddressClick}>{showAddAddress ? "Quay lại" : "Thêm địa chỉ"}</Button>
+                {showAddAddress && (
+                    <div className="w-[600px] mx-auto"><AddressDeliveryInformationAdd/></div>
+                )}
+                {!showAddAddress && (
+                    <List
+                        grid={{gutter: 16, column: 1}}
+                        dataSource={deliveryInformation}
+                        renderItem={(item: AddressAPIResponse) => (
+                            <List.Item>
+                                <Card>
+                                    <div className="flex justify-between">
                                         <div>
-                                            <span className="font-bold mr-[8px]">{item.fullName}</span>
-                                            <span className="mr-[8px]">|</span>
-                                            <span className="mr-[8px]">{item.phoneNumber}</span>
-                                            {(item.id === currentUser.addressId) &&
-                                                <span className="text-green-600"><CheckCircleOutlined/> Địa chỉ mặc định</span>
-                                            }
+                                            <div>
+                                                <span className="font-bold mr-[8px]">{item.fullName}</span>
+                                                <span className="mr-[8px]">|</span>
+                                                <span className="mr-[8px]">{item.phoneNumber}</span>
+                                                {(item.id === currentUser.addressId) &&
+                                                    <span className="text-green-600"><CheckCircleOutlined/> Địa chỉ mặc định</span>
+                                                }
+                                            </div>
+                                            <div>{item.address}</div>
                                         </div>
-                                        <div>{item.address}</div>
+                                        <div>
+                                            <Button type="text" className="!text-purple-600"
+                                                    onClick={() => updateShippingAddress(item.id ?? "")}>
+                                                Đặt làm mặc định
+                                            </Button>
+                                            <span className="ml-[16px]"
+                                                  hidden={item.id === currentUser.addressId}><DeleteOutlined
+                                                onClick={() => deleteDeliveryInformation(item.id ?? "")}/></span>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <Button type="text" className="!text-purple-600"
-                                                onClick={() => updateShippingAddress(item.id ?? "")}>
-                                            Đặt làm mặc định
-                                        </Button>
-                                        <span className="ml-[16px]" hidden={item.id === currentUser.addressId}><DeleteOutlined
-                                            onClick={() => deleteDeliveryInformation(item.id ?? "")}/></span>
-                                    </div>
-                                </div>
-                            </Card>
-                        </List.Item>
-                    )}
-                />
-            )}
-        </div>
+                                </Card>
+                            </List.Item>
+                        )}
+                    />
+                )}
+            </div>
+        </>
     );
 
 };
