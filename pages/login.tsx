@@ -150,8 +150,8 @@ const Login: NextPage = () => {
                 <Space direction="vertical" size="middle" style={{display: 'flex'}}>
                     <div>
                         <Avatar size={64} icon={<UserOutlined/>}/>
-                        <h2>Welcome back!...</h2>
-                        <span>Sign in to your account to continue</span>
+                        <h2>Chào mừng trở lại!...</h2>
+                        <span>Đăng nhập tài khoản của bạn để tiếp tục</span>
                     </div>
                     <Form
                         name="normal_login"
@@ -179,30 +179,30 @@ const Login: NextPage = () => {
                         </Form.Item>
                         <Form.Item>
                             <Form.Item name="remember" valuePropName="checked" noStyle>
-                                <Checkbox>Remember me</Checkbox>
+                                <Checkbox>Lưu thông tin đăng nhập</Checkbox>
                             </Form.Item>
 
                             <a className="login-form-forgot" href="">
-                                Forgot password
+                                Quên mật khẩu
                             </a>
                         </Form.Item>
 
                         <Form.Item>
                             <Button type="primary" htmlType="submit" className="login-form-button" loading={pending} disabled={pending}
                                     block>
-                                Log in
+                                Đăng nhập
                             </Button>
                         </Form.Item>
                     </Form>
                     <div>
                         <div style={{float: 'left'}}>
                             <Space>
-                                Other login method
+                                Đăng nhập bằng
                                 <GithubOutlined/>
                                 <GoogleOutlined onClick={() => handleGoogleLogin()} disabled={isLoadingGoogle} />
                             </Space>
                         </div>
-                        <a className='float-right' onClick={() => router.push('/signup')}>Register now</a>
+                        <a className='float-right' onClick={() => router.push('/signup')}>Đăng ký ngay</a>
                     </div>
                 </Space>
             </Card>
