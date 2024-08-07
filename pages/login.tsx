@@ -76,8 +76,6 @@ const Login: NextPage = () => {
 
         api.post("/auth/login", user)
             .then(function (res: AxiosResponse<AuthAPIResponse>): void {
-                setPending(false);
-
                 const refreshToken: string = res.data.refreshToken ?? "";
 
                 const payload: CurrentUser = jwtDecode(refreshToken);
@@ -100,17 +98,19 @@ const Login: NextPage = () => {
                     });
                 } else deleteCookie(REMEMBER_ME);
 
-                router.push('/');
+                router.push('/').then(() => {
+                    setPending(false);
+                });
 
             })
             .catch(function (res: AxiosError<ErrorApiResponse>): void {
-                setPending(false);
                 notification.open({
                     type: 'error',
                     message: 'Login message',
                     description: res.message,
                 });
-            });
+                setPending(false);
+            })
     };
 
     function handleGoogleLogin() {
@@ -188,7 +188,7 @@ const Login: NextPage = () => {
                         </Form.Item>
 
                         <Form.Item>
-                            <Button type="primary" htmlType="submit" className="login-form-button" loading={pending}
+                            <Button type="primary" htmlType="submit" className="login-form-button" loading={pending} disabled={pending}
                                     block>
                                 Log in
                             </Button>
