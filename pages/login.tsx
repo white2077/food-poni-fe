@@ -77,24 +77,9 @@ const Login: NextPage = () => {
 
         api.post("/auth/login", user)
             .then(function (res: AxiosResponse<AuthAPIResponse>): void {
-                const payload: CurrentUser = jwtDecode(res.data.accessToken);
+                const payload: CurrentUser = jwtDecode(res.data.refreshToken);
 
-                api.get("/users/" + payload.id)
-                    .then(function (res) {
-                        const userResponseDTO: UserAPIResponse = res.data;
-                        const currentUser: CurrentUser = {
-                            id: userResponseDTO.id,
-                            sub: userResponseDTO.id,
-                            role: userResponseDTO.role,
-                            avatar: userResponseDTO.avatar,
-                            addressId: userResponseDTO.address.id,
-                            username: userResponseDTO.username,
-                            email: userResponseDTO.email,
-                            birthday: new Date(userResponseDTO.birthday),
-                            gender: userResponseDTO.gender
-                        };
-                        dispatch(setCurrentUser(currentUser));
-                    });
+                dispatch(setCurrentUser(payload));
 
                 setCookie(REFRESH_TOKEN, res.data.refreshToken, {
                     maxAge: 60 * 60 * 24 * 30,

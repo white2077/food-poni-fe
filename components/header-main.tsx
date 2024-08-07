@@ -135,9 +135,7 @@ export default function HeaderMain() {
                             avatar: userResponseDTO.avatar,
                             addressId: userResponseDTO.address.id,
                             username: userResponseDTO.username,
-                            email: userResponseDTO.email,
-                            birthday: new Date(userResponseDTO.birthday),
-                            gender: userResponseDTO.gender
+                            email: userResponseDTO.email
                         };
                         dispatch(setCurrentUser(currentUser));
                     })

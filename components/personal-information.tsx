@@ -1,15 +1,29 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Button, Image, Input, Radio, Space} from "antd";
 import {DeleteOutlined, LockOutlined, MailOutlined, SafetyCertificateOutlined} from "@ant-design/icons";
-import {CurrentUser} from "../stores/user.reducer";
+import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {server} from "../utils/server";
 import ComboBoxDate from "./comboBox_date";
+import {api} from "../utils/axios-config";
+import {UserAPIResponse} from "../models/user/UserAPIResponse";
 
 export const PersonalInformation = () => {
 
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
+
+    const [user, setUser] = useState<UserAPIResponse>({} as UserAPIResponse);
+
+    useEffect(() => {
+        api.get("/users/" + currentUser.id)
+            .then(function (res) {
+                setUser(res.data);
+            })
+            .catch(function () {
+                console.log("Personal information: Can't get user information");
+            })
+    }, [currentUser]);
 
     return (
         <div className="bg-white p-3 rounded-lg grid lg:grid-cols-5 grid-cols-1 gap-4">
@@ -22,14 +36,14 @@ export const PersonalInformation = () => {
                                 width={110}
                                 height={110}
                                 className="object-center rounded-full shadow-lg border-4 border-orange-200 overflow-hidden object-cover "
-                                src={server + currentUser.avatar}
+                                src={server + user.avatar}
                             />
                         </div>
                     </div>
                     <div className="col-span-3 w-[100%] flex items-center">
                         <div className="px-4 sm:grid sm:grid-cols-[1fr,2fr] sm:gap-4 sm:px-0 ">
                             <dt className="text-[15px] flex items-center font-sans">Họ & Tên</dt>
-                            <Input value={currentUser.username}></Input>
+                            <Input value={user.username}></Input>
                         </div>
                     </div>
                 </div>
@@ -39,7 +53,7 @@ export const PersonalInformation = () => {
                             Ngày sinh
                         </div>
                     </div>
-                    <ComboBoxDate/>
+                    <ComboBoxDate user={user}/>
                 </div>
                 <div className="grid lg:grid-cols-4 mt-8">
                     <div className="col-span-1 w-[100%]">
@@ -51,10 +65,10 @@ export const PersonalInformation = () => {
                         <Radio.Group defaultValue={true}>
                             <Space direction="vertical">
                                 <div className="flex gap-2">
-                                    <Radio value={currentUser.gender === true ? true : false}>
+                                    <Radio value={user.gender === true ? true : false}>
                                         <p>Nam</p>
                                     </Radio>
-                                    <Radio value={currentUser.gender === false ? true : false}>
+                                    <Radio value={user.gender === false ? true : false}>
                                         <p>Nữ</p>
                                     </Radio>
                                 </div>
@@ -78,7 +92,7 @@ export const PersonalInformation = () => {
                                         <MailOutlined/>
                                         <div className="text-lg text-gray-600 ml-2 ">
                                             <div className="text-[15px]">Địa chỉ email</div>
-                                            <div className="text-[15px] w-full">{currentUser.email}</div>
+                                            <div className="text-[15px] w-full">{user.email}</div>
                                         </div>
                                     </div>
                                     <Button>Cập nhật</Button>
