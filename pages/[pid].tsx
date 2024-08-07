@@ -113,8 +113,8 @@ const ProductDetails = ({product}: { product: IProduct }) => {
     const getRates = (productDetailId: string | undefined) => {
         setLoadingRate(true);
         api.get(`/product-details/rate/${productDetailId}`)
-            .then(function (res: AxiosResponse<Page<RateAPIResponse>>) {
-                setRates(Array.isArray(res.data.content) ? res.data.content : []);
+            .then(function (res: AxiosResponse<Page<RateAPIResponse[]>>) {
+                setRates(res.data.content);
             })
             .catch(function (res) {
                 notification.open({
