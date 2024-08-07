@@ -190,7 +190,7 @@ const Login: NextPage = () => {
                         </Form.Item>
 
                         <Form.Item>
-                            <Button type="primary" htmlType="submit" className="login-form-button" loading={pending} disabled={pending}
+                            <Button type="primary" htmlType="submit" className="login-form-button" loading={pending} disabled={pending || isLoadingGoogle}
                                     block>
                                 Đăng nhập
                             </Button>
