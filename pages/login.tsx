@@ -108,7 +108,7 @@ const Login: NextPage = () => {
             .catch(function (res: AxiosError<ErrorApiResponse>): void {
                 notification.open({
                     type: 'error',
-                    message: 'Login message',
+                    message: 'Đăng nhập',
                     description: res.message,
                 });
                 setPending(false);
