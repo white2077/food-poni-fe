@@ -185,13 +185,12 @@ const OrderDetails = ({order}: { order: IOrder }) => {
                                     justifyContent: 'center'
                                 }} size="large"/>
                             ) : (
-                                <>
+                                <div>
                                     {order && (
                                         <Row className='lg:w-[1440px] px-2 mx-auto items-center'>
                                             <Col span={20}>
-                                                <Card title={'Order details #' + order.id?.substring(0, 7)}
-                                                      style={{marginTop: '20px'}}>
-                                                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                                <Card title={'Đơn hàng chi tiêt #' + order.id?.substring(0, 7)}>
+                                                    <div className="flex justify-between">
                                                         <Text strong>
                                                             {
                                                                 order.status.includes("PENDING") ?
@@ -201,7 +200,7 @@ const OrderDetails = ({order}: { order: IOrder }) => {
                                                         </Text>
                                                         <MessageOutlined/>
                                                     </div>
-                                                    <Divider></Divider>
+                                                    <Divider/>
                                                     <div className="flex justify-between gap-3">
                                                         <Card style={{backgroundColor: ''}} title="ĐỊA CHỈ NGƯỜI NHẬN"
                                                               className="w-full">
@@ -212,7 +211,7 @@ const OrderDetails = ({order}: { order: IOrder }) => {
                                                                 <Text>{'Address: ' + order.shippingAddress.address}</Text>
                                                             </div>
                                                             <div>
-                                                                <Text> {'Phone number: ' + order.shippingAddress.phoneNumber}</Text>
+                                                                <Text>{'Phone number: ' + order.shippingAddress.phoneNumber}</Text>
                                                             </div>
                                                         </Card>
                                                         <Card style={{backgroundColor: ''}} title="HÌNH THỨC GIAO HÀNG"
@@ -310,7 +309,8 @@ const OrderDetails = ({order}: { order: IOrder }) => {
                                                                             <div className="col-span-1">
                                                                                 <div
                                                                                     className="font-sans text-[17px] text-gray-600">
-                                                                                    {item.price}$
+                                                                                    {item.price}
+                                                                                    <sup>₫</sup>
                                                                                 </div>
                                                                             </div>
                                                                             <div className="col-span-1">
@@ -328,7 +328,8 @@ const OrderDetails = ({order}: { order: IOrder }) => {
                                                                             <div className="col-span-2 text-right">
                                                                                 <div
                                                                                     className="font-sans text-[17px] text-gray-600">
-                                                                                    {item.price * item.quantity}$
+                                                                                    {item.price * item.quantity}
+                                                                                    <sup>₫</sup>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -347,12 +348,17 @@ const OrderDetails = ({order}: { order: IOrder }) => {
                                                                 <div>Tổng cộng</div>
                                                             </div>
                                                             <div className="text-right gap-6">
-                                                                <div>{order.totalAmount}$</div>
+                                                                <div>
+                                                                    {order.totalAmount}
+                                                                    <sup>₫</sup>
+                                                                </div>
                                                                 <div>0</div>
                                                                 <div>0</div>
                                                                 <div>0</div>
                                                                 <div
-                                                                    className="text-2xl text-orange-600">{order.totalAmount}$
+                                                                    className="text-2xl text-orange-600">
+                                                                    {order.totalAmount}
+                                                                    <sup>₫</sup>
                                                                 </div>
                                                                 {/*giá sau khi giảm all ở đây nhé*/}
                                                             </div>
@@ -369,7 +375,7 @@ const OrderDetails = ({order}: { order: IOrder }) => {
                                                         {/*    >Đặt lại</Button>*/}
                                                         {/*</div>*/}
                                                     </div>
-                                                    <Link href="http://localhost:3000/orders">
+                                                    <Link href={'/orders'}>
                                                         <a>
                                                             <div className="text-orange-600 hover:text-orange-400 mt-4">
                                                                 <LeftOutlined/>Quay lại đơn hàng của tôi
@@ -382,7 +388,7 @@ const OrderDetails = ({order}: { order: IOrder }) => {
                                             <RateRows orderId={order.id}/>
                                         </Row>
                                     )}
-                                </>
+                                </div>
                             )
                         }
                     </div>
