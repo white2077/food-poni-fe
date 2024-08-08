@@ -1,5 +1,5 @@
 import {Badge, Card, Divider, Rate, Space} from "antd";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {IProductCard} from "./product-rows";
 import Link from "next/link";
 import {CurrentUser} from "../stores/user.reducer";
@@ -8,6 +8,10 @@ import {RootState} from "../stores";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {HistoryOutlined} from "@ant-design/icons";
 import {server} from "../utils/server";
+import {AxiosResponse} from "axios";
+import {Page} from "../models/Page";
+import {ProductDetailAPIResponse} from "../models/product_detail/ProductDetailAPIResponse";
+import {api} from "../utils/axios-config";
 
 
 export interface ElementDistance {
@@ -45,7 +49,19 @@ const ProductCard = ({product}: { product: IProductCard }) => {
 
     const [distance, setDistance] = useState<string>("");
 
-    const [time, setTime] = useState<string>("")
+    const [time, setTime] = useState<string>("");
+
+    const [productDetails, setProductDetails] = useState<ProductDetailAPIResponse[]>([]);
+
+    useEffect(() => {
+        api.get('/product-details/products/' + product.id)
+            .then((res: AxiosResponse<Page<ProductDetailAPIResponse[]>>) => {
+                setProductDetails(res.data.content);
+            })
+            .catch((res) => {
+                console.log(res);
+            })
+    }, [product]);
 
     // const getDistanceMatrix = async (originLat: number, originLng: number, destLat: number, destLng: number) => {
     //     const apiKey: string = 'dXWhFMOOlIYRZhbprENdNjcoAtYSFZOwWZiTSJEY0H1zoYNCDjk0ZfBlBOmyRYw0';
@@ -100,42 +116,80 @@ const ProductCard = ({product}: { product: IProductCard }) => {
     // }, [selectedAddress, currentUser, shippingAddress]);
 
     return (
-        <Link href={`/${product.id}`}>
-
-            <Card
-                size='small'
-                hoverable
-                cover={<img alt="example"
-                            className="aspect-square object-cover"
-                            src={product.thumbnail ? server + product.thumbnail : fallback}/>}
-            >
-                <Space direction="vertical" size="small" className="flex">
-                    <div className='flex items-center overflow-hidden'>
-                        <Badge className='mr-1 overflow-hidden'
-                               count={distance !== "" ? `Khoảng ${distance}` : "Khoảng cách không xác định"}
-                               color='#F36F24'/>
-                    </div>
-                    <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>
-                        {product.name}
-                    </div>
-                    <div>
-                        <Rate disabled allowHalf value={product.rate} className='text-sm mr-2'/>
-                        ({product.rate.toFixed(1)}/{product.rateCount})
-                    </div>
-                    <div className="flex justify-between items-center">
-                        <div className="text-left text-[20px] font-bold">
-                            ${product.minPrice}{product.maxPrice === product.minPrice ? "" : " - $" + product.maxPrice}
+        <div>
+            {
+                productDetails.length > 0 ? (
+                    <Link href={`/${product.id}`}>
+                        <Card
+                            size='small'
+                            hoverable
+                            cover={<img alt="example"
+                                        className="aspect-square object-cover"
+                                        src={product.thumbnail ? server + product.thumbnail : fallback}/>}
+                        >
+                            <Space direction="vertical" size="small" className="flex">
+                                <div className='flex items-center overflow-hidden'>
+                                    <Badge className='mr-1 overflow-hidden'
+                                           count={distance !== "" ? `Khoảng ${distance}` : "Khoảng cách không xác định"}
+                                           color='#F36F24'/>
+                                </div>
+                                <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>
+                                    {product.name}
+                                </div>
+                                <div>
+                                    <Rate disabled allowHalf value={product.rate} className='text-sm mr-2'/>
+                                    ({product.rate.toFixed(1)}/{product.rateCount})
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <div className="text-left text-[20px] font-bold">
+                                        ${product.minPrice}{product.maxPrice === product.minPrice ? "" : " - $" + product.maxPrice}
+                                    </div>
+                                    <div>Đã bán: {product.sales}</div>
+                                </div>
+                            </Space>
+                            <Divider className="my-[12px]"/>
+                            <div className="text-[14px]">
+                                <HistoryOutlined/> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"} {product.retailer}
+                            </div>
+                        </Card>
+                    </Link>
+                ) : (
+                    <Card
+                        className="bg-gray-100"
+                        size='small'
+                        hoverable
+                        cover={<img alt="example"
+                                    className="aspect-square object-cover"
+                                    src={product.thumbnail ? server + product.thumbnail : fallback}/>}
+                    >
+                        <Space direction="vertical" size="small" className="flex">
+                            <div className='flex items-center overflow-hidden'>
+                                <Badge className='mr-1 overflow-hidden'
+                                       count={distance !== "" ? `Khoảng ${distance}` : "Khoảng cách không xác định"}
+                                       color='#F36F24'/>
+                            </div>
+                            <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>
+                                {product.name}
+                            </div>
+                            <div>
+                                <Rate disabled allowHalf value={product.rate} className='text-sm mr-2'/>
+                                ({product.rate.toFixed(1)}/{product.rateCount})
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <div className="text-left text-[20px] font-bold">
+                                    ${product.minPrice}{product.maxPrice === product.minPrice ? "" : " - $" + product.maxPrice}
+                                </div>
+                                <div>Đã bán: {product.sales}</div>
+                            </div>
+                        </Space>
+                        <Divider className="my-[12px]"/>
+                        <div className="text-[14px]">
+                            <HistoryOutlined/> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"} {product.retailer}
                         </div>
-                        <div>Đã bán: {product.sales}</div>
-                    </div>
-                </Space>
-                <Divider className="my-[12px]"/>
-                <div className="text-[14px]">
-                    <HistoryOutlined/> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"} {product.retailer}
-                </div>
-
-            </Card>
-        </Link>
+                    </Card>
+                )
+            }
+        </div>
     );
 };
 

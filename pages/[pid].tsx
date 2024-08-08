@@ -202,7 +202,7 @@ const ProductDetails = ({product}: { product: IProduct }) => {
                                 />
                             </div>
                         </div>
-                        <ProductComment data={rates} isLoading={isLoadingRate}/>
+                        <ProductComment data={rates} productDetailSelected={productDetailSelected ?? {} as IProductDetail} isLoading={isLoadingRate}/>
                     </div>
                 ) : (
                     <Result

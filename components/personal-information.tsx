@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from "react";
-import {Button, Dropdown, Image, Input, MenuProps, Modal, Radio, Skeleton, Space} from "antd";
+import {Button, Image, Input, MenuProps, Modal, Radio, Space} from "antd";
 import {
     DeleteOutlined,
-    ExclamationCircleFilled, EyeOutlined,
+    ExclamationCircleFilled,
+    EyeOutlined,
     LockOutlined,
-    MailOutlined, PictureOutlined,
+    MailOutlined,
+    PictureOutlined,
     SafetyCertificateOutlined
 } from "@ant-design/icons";
-import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
+import {CurrentUser} from "../stores/user.reducer";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {server} from "../utils/server";
@@ -17,10 +19,8 @@ import {UserAPIResponse} from "../models/user/UserAPIResponse";
 import SelectedItemLabel from "./select-label";
 import UploadImg from "./upload";
 import ChangePassword from "./change-password";
-import ComboBoxDate from "./comboBox-date";
 import Loading from "./loading-product";
-import AudioPlayer from "./audio";
-
+import ComboboxDate from "./combobox-date";
 
 const {confirm} = Modal;
 export const PersonalInformation = () => {
@@ -159,7 +159,7 @@ export const PersonalInformation = () => {
                                             Ngày sinh
                                         </div>
                                     </div>
-                                    <ComboBoxDate user={user}/>
+                                    <ComboboxDate user={user}/>
                                 </div>
                                 <div className="grid lg:grid-cols-4 mt-8">
                                     <div className="col-span-1 w-[100%]">

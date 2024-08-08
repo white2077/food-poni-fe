@@ -5,7 +5,7 @@ import {AddressCreationRequestDTO} from "../models/address/AddressRequest";
 import {SearchResult} from "../stores/search-position.reducer";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
-import {ErrorApiResponse} from "../models/ErrorApiResponse";
+import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 import {NextRouter, useRouter} from "next/router";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
@@ -88,7 +88,7 @@ const AddressDeliveryInformationAdd = () => {
                         description: "Thêm địa chỉ thành công!",
                     });
                 })
-                .catch(function (res: AxiosError<ErrorApiResponse>) {
+                .catch(function (res: AxiosError<ErrorAPIResponse>) {
                     setPending(false);
                     notification.open({
                         type: 'error',

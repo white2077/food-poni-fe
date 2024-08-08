@@ -6,7 +6,7 @@ import {AddressCreationRequestDTO} from "../models/address/AddressRequest";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {AutoComplete, Button, Form, Input, notification} from "antd";
-import {ErrorApiResponse} from "../models/ErrorApiResponse";
+import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 import {useDispatch} from "react-redux";
 import {setCurrentShippingAddress} from "../stores/address.reducer";
 import {getCookie} from "cookies-next";
@@ -93,7 +93,7 @@ export const AddressCheckoutAdd = () => {
                         description: "Thêm địa chỉ thành công!",
                     });
                 })
-                .catch(function (res: AxiosError<ErrorApiResponse>) {
+                .catch(function (res: AxiosError<ErrorAPIResponse>) {
                     setPending(false);
                     notification.open({
                         type: 'error',

@@ -8,6 +8,7 @@ import EmptyNotice from "./empty-notice";
 import Tym from "./tym";
 import Like from "./like";
 import Start from "./start";
+import {IProductDetail} from "../pages/[pid]";
 
 interface ExpandedComments {
     [key: number]: boolean;
@@ -37,7 +38,7 @@ const getReviewText = ({rate}: { rate: any }) => {
     }
 };
 
-const ProductComment = ({data, isLoading}: { data: RateAPIResponse[], isLoading: boolean }) => {
+const ProductComment = ({data, productDetailSelected, isLoading}: { data: RateAPIResponse[], productDetailSelected: IProductDetail, isLoading: boolean }) => {
     const [selectedRating, setSelectedRating] = useState<number | null>(null);
     const [isButtonClicked, setIsButtonClicked] = useState(false);
 
@@ -66,31 +67,36 @@ const ProductComment = ({data, isLoading}: { data: RateAPIResponse[], isLoading:
             <div className="my-2 text-base font-medium">Tổng quan</div>
             <div>
                 <div className="flex gap-2 text-4xl items-center">
-                    <div>4.7</div>
-                    <div><Rate style={{fontSize: '30px'}} disabled value={4}/></div>
+                    <div>{productDetailSelected?.rate ? productDetailSelected.rate.toFixed(1) : 0}</div>
+                    <div><Rate style={{fontSize: '30px'}} allowHalf disabled value={productDetailSelected?.rate}/></div>
                 </div>
             </div>
-            <div className="my-2 text-gray-400">(900 đánh giá)</div>
+            <div className="my-2 text-gray-400">({productDetailSelected.rateCount} đánh giá)</div>
             <div className="text-gray-400">
-                <div className="flex gap-1"><Rate disabled value={5}/><Progress style={{maxWidth: '13%'}} percent={80}
+                <div className="flex gap-1"><Rate disabled value={5}/><Progress style={{maxWidth: '13%'}}
+                                                                                percent={data.filter(data => data.rate === 5).length/data.length*100}
                                                                                 showInfo={false}/>
-                    <div>90</div>
+                    <div>{data.filter(data => data.rate === 5).length}</div>
                 </div>
-                <div className="flex gap-1"><Rate disabled value={4}/><Progress style={{maxWidth: '13%'}} percent={70}
+                <div className="flex gap-1"><Rate disabled value={4}/><Progress style={{maxWidth: '13%'}}
+                                                                                percent={data.filter(data => data.rate === 4).length/data.length*100}
                                                                                 showInfo={false}/>
-                    <div>80</div>
+                    <div>{data.filter(data => data.rate === 4).length}</div>
                 </div>
-                <div className="flex gap-1"><Rate disabled value={3}/><Progress style={{maxWidth: '13%'}} percent={60}
+                <div className="flex gap-1"><Rate disabled value={3}/><Progress style={{maxWidth: '13%'}}
+                                                                                percent={data.filter(data => data.rate === 3).length/data.length*100}
                                                                                 showInfo={false}/>
-                    <div>70</div>
+                    <div>{data.filter(data => data.rate === 3).length}</div>
                 </div>
-                <div className="flex gap-1"><Rate disabled value={2}/><Progress style={{maxWidth: '13%'}} percent={50}
+                <div className="flex gap-1"><Rate disabled value={2}/><Progress style={{maxWidth: '13%'}}
+                                                                                percent={data.filter(data => data.rate === 2).length/data.length*100}
                                                                                 showInfo={false}/>
-                    <div>60</div>
+                    <div>{data.filter(data => data.rate === 2).length}</div>
                 </div>
-                <div className="flex gap-1"><Rate disabled value={1}/><Progress style={{maxWidth: '13%'}} percent={10}
+                <div className="flex gap-1"><Rate disabled value={1}/><Progress style={{maxWidth: '13%'}}
+                                                                                percent={data.filter(data => data.rate === 1).length/data.length*100}
                                                                                 showInfo={false}/>
-                    <div>50</div>
+                    <div>{data.filter(data => data.rate === 1).length}</div>
                 </div>
             </div>
 
