@@ -19,7 +19,7 @@ import {accessToken, api, apiWithToken} from "../utils/axios-config";
 import {AxiosError, AxiosResponse} from "axios";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {setCurrentShippingAddress} from "../stores/address.reducer";
-import {ErrorApiResponse} from "../models/ErrorApiResponse";
+import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 import Link from "next/link";
 import MenuMobile from "./menu-mobile";
 import {UserAPIResponse} from "../models/user/UserAPIResponse";
@@ -117,7 +117,7 @@ export default function HeaderMain() {
                 .then(function (res: AxiosResponse<AddressAPIResponse>): void {
                     dispatch(setCurrentShippingAddress(res.data));
                 })
-                .catch(function (res: AxiosError<ErrorApiResponse>): void {
+                .catch(function (res: AxiosError<ErrorAPIResponse>): void {
                     console.log("Shipping address message: ", res.message);
                 });
         }

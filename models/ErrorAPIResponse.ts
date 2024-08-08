@@ -1,4 +1,4 @@
-export interface ErrorApiResponse {
+export interface ErrorAPIResponse {
     error: {
         code: string,
         details: string[];

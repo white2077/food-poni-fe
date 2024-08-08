@@ -13,7 +13,7 @@ import {setCurrentShippingAddress} from "../stores/address.reducer";
 import AddressDeliveryInformationAdd from "./address-delivery-information-add";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
-import {ErrorApiResponse} from "../models/ErrorApiResponse";
+import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 import SelectedItemLabel from "./select-label";
 
 export const AddressDeliveryInformation = ({deliveryInformation}: {deliveryInformation: AddressAPIResponse[]}) => {
@@ -44,7 +44,7 @@ export const AddressDeliveryInformation = ({deliveryInformation}: {deliveryInfor
                 .then(function (res: AxiosResponse<AddressAPIResponse>): void {
                     dispatch(setCurrentShippingAddress(res.data));
                 })
-                .catch(function (res: AxiosError<ErrorApiResponse>): void {
+                .catch(function (res: AxiosError<ErrorAPIResponse>): void {
                     console.log("Shipping address message: ", res.message);
                 });
         }

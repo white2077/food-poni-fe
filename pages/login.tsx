@@ -11,7 +11,7 @@ import {AuthAPIResponse} from "../models/auth/AuthAPIResponse";
 import {AxiosError, AxiosResponse} from "axios";
 import jwtDecode from "jwt-decode";
 import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
-import {ErrorApiResponse} from "../models/ErrorApiResponse";
+import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 import {api} from "../utils/axios-config";
 import {clientId, redirectUri, responseType, scopes} from "../utils/oauth2";
 import {UserAPIResponse} from "../models/user/UserAPIResponse";
@@ -105,7 +105,7 @@ const Login: NextPage = () => {
                 });
 
             })
-            .catch(function (res: AxiosError<ErrorApiResponse>): void {
+            .catch(function (res: AxiosError<ErrorAPIResponse>): void {
                 notification.open({
                     type: 'error',
                     message: 'Đăng nhập',

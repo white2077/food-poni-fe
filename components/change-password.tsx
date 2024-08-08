@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {Button, Form, Input, notification} from 'antd';
 import {AxiosError} from "axios";
 import {accessToken, apiWithToken} from "../utils/axios-config";
-import {ErrorApiResponse} from "../models/ErrorApiResponse";
+import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 import {NextRouter, useRouter} from "next/router";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
@@ -39,7 +39,7 @@ const ChangePassword = () => {
                         description: "Đổi mật khẩu thành công!",
                     });
                 })
-                .catch(function (res: AxiosError<ErrorApiResponse>) {
+                .catch(function (res: AxiosError<ErrorAPIResponse>) {
                     setPending(false);
                     notification.open({
                         type: 'error',

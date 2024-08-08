@@ -10,7 +10,7 @@ import {REFRESH_TOKEN, server} from "../utils/server";
 import {AxiosError} from "axios";
 import {markIsReadNotification, setNotifications} from "../stores/notification.reducer";
 import {getNotificationsPageByCustomer} from "../queries/notification.query";
-import {ErrorApiResponse} from "../models/ErrorApiResponse";
+import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {format, formatDistanceToNow} from "date-fns";
 import {vi} from "date-fns/locale";
@@ -35,7 +35,7 @@ const Notification = () => {
             .then((res: Page<NotificationAPIResponse[]>) => {
                 dispatch(setNotifications(res.content))
             })
-            .catch((res: AxiosError<ErrorApiResponse>) => {
+            .catch((res: AxiosError<ErrorAPIResponse>) => {
                 if (res.response) {
 
                 } else {
