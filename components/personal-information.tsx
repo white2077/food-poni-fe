@@ -275,7 +275,6 @@ export const PersonalInformation = () => {
                                 </div>
                             </div>
                         </div>
-
                     )}
                 </>
             )}

@@ -32,7 +32,7 @@ export async function getServerSideProps({req}: { req: NextRequest }) {
             ePage: await getOrdersPage({
                 refreshToken: getCookie(REFRESH_TOKEN, {req}),
                 page: 0,
-                pageSize: 100,
+                pageSize: 10,
                 sort: 'createdDate,desc'
             })
         }
