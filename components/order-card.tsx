@@ -28,7 +28,7 @@ const statusColors: Record<string, string> = {
 const OrderCard = ({order}: { order: OrderAPIResponse }) => {
     return (
         <Badge.Ribbon text={statusText[order.status]} color={statusColors[order.status]}>
-            <Card hoverable={true} title={"#" + order.id?.substring(0, 7)}>
+            <Card hoverable={true} title={"Đơn hàng #" + order.id?.substring(0, 7)}>
                 <Row gutter={[16, 16]}>
                     {order?.orderItems?.map((item: OrderItemAPIResponse) => (
                         <Col span={24} key={item.id}>
