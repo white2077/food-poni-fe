@@ -169,7 +169,10 @@ const ProductDetails = ({product}: { product: IProduct }) => {
                                     <span className="text-lg m-1 border-b-2">{productDetailSelected?.sales}</span> Lượt bán
                                 </span>
                                     </div>
-                                    <h3 className='text-2xl font-semibold'>${price}</h3>
+                                    <h3 className='text-2xl font-semibold'>
+                                        {price}
+                                        <sup>₫</sup>
+                                    </h3>
                                 </Card>
                                 <Card hidden={product.productDetails?.length == 1} size='small' title='Loại sản phẩm' className="static">
                                     {(product.productDetails && product.productDetails.length > 1) && (
