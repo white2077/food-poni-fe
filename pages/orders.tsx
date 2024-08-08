@@ -107,13 +107,13 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
 
     return (
         <DefaultLayout>
-            <div style={{color: "black", textAlign: "left",}} className="">
+            <div className="text-black text-left">
                 <div className="mb-4">
-                    <div style={{textAlign: "left", width: "100%", marginBottom: "20px"}}>
-                        <Segmented<string>
+                    <div className="text-center w-full mb-4">
+                        <Segmented
+                            size="large"
                             options={orderStatusOptions}
                             onChange={handleChange}
-                            style={{width: "100%"}}
                         />
                     </div>
                     {
@@ -141,16 +141,18 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
                     }
                 </div>
             </div>
-            <div className="text-center">
-                <Pagination
-                    align="center"
-                    showSizeChanger
-                    defaultCurrent={1}
-                    onChange={onShowSizeChange}
-                    current={current}
-                    total={ePage.totalElements}
-                />
-            </div>
+            {
+                filteredOrders.length > 0 && (
+                    <Pagination
+                        align="center"
+                        showSizeChanger
+                        defaultCurrent={1}
+                        onChange={onShowSizeChange}
+                        current={current}
+                        total={ePage.totalElements}
+                    />
+                )
+            }
         </DefaultLayout>
     );
 
