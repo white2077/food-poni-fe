@@ -2,9 +2,9 @@ import {AxiosResponse} from "axios";
 import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
 import {OrderAPIResponse} from "../models/order/OrderAPIResponse";
 import {accessToken, apiWithToken} from "../utils/axios-config";
-import {getAllType} from "./type";
+import {QueryPageType} from "./type";
 
-export const getOrdersPage = ({refreshToken, page, pageSize, status, sort}: getAllType): Promise<Page<OrderAPIResponse[]>> => {
+export const getOrdersPage = ({refreshToken, page, pageSize, status, sort}: QueryPageType): Promise<Page<OrderAPIResponse[]>> => {
     if (refreshToken) {
         return apiWithToken(refreshToken)
             .get(`/customer/orders?page=${page ?? ''}&size=${pageSize ?? ''}&status=${status ?? ''}&sort=${sort ?? ''}`, {

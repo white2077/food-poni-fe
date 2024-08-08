@@ -34,11 +34,6 @@ const Banner: React.FC = () => (
                     <img className="w-full h-full object-cover rounded-lg" src="/img_2.png" alt="3.png"/>
                 </h3>
             </div>
-            <div>
-                <h3 style={contentStyle}>
-                    <img className="w-full h-full object-cover rounded-lg" src="/img_4.png" alt="1.png"/>
-                </h3>
-            </div>
         </Carousel>
     </div>
 );

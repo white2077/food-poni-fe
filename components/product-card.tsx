@@ -51,18 +51,6 @@ const ProductCard = ({product}: { product: IProductCard }) => {
 
     const [time, setTime] = useState<string>("");
 
-    const [productDetails, setProductDetails] = useState<ProductDetailAPIResponse[]>([]);
-
-    useEffect(() => {
-        api.get('/product-details/products/' + product.id)
-            .then((res: AxiosResponse<Page<ProductDetailAPIResponse[]>>) => {
-                setProductDetails(res.data.content);
-            })
-            .catch((res) => {
-                console.log(res);
-            })
-    }, [product]);
-
     // const getDistanceMatrix = async (originLat: number, originLng: number, destLat: number, destLng: number) => {
     //     const apiKey: string = 'dXWhFMOOlIYRZhbprENdNjcoAtYSFZOwWZiTSJEY0H1zoYNCDjk0ZfBlBOmyRYw0';
     //     const apiUrl: string = `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${originLat},${originLng}&destinations=${destLat},${destLng}&key=${apiKey}`;
@@ -118,7 +106,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
     return (
         <div>
             {
-                productDetails.length > 0 ? (
+                product.minPrice ? (
                     <Link href={`/${product.id}`}>
                         <Card
                             size='small'

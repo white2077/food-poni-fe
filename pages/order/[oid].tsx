@@ -268,9 +268,7 @@ const OrderDetails = ({order}: { order: IOrder }) => {
                                                                                             <div
                                                                                                 className="text-[14px]">
                                                                                                 Người bán: <Text
-                                                                                                style={{color: 'rgb(243, 111, 36)'}}>Oan
-                                                                                                hồn trinh
-                                                                                                nữ</Text>
+                                                                                                style={{color: 'rgb(243, 111, 36)'}}>{item.retailerId}</Text>
                                                                                             </div>
                                                                                             <div
                                                                                                 className="text-[14px]">
