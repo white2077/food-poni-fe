@@ -101,7 +101,6 @@ const ProductCard = ({product}: { product: IProductCard }) => {
 
     return (
         <Link href={`/${product.id}`}>
-
             <Card
                 size='small'
                 hoverable
@@ -133,7 +132,6 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                 <div className="text-[14px]">
                     <HistoryOutlined/> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"} {product.retailer}
                 </div>
-
             </Card>
         </Link>
     );
