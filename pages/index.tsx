@@ -29,7 +29,7 @@ const Home = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<ProductCategory
              src={server + '/upload/vertical-banner.png'} alt={""}/>
     ]
     const MyCustomTitle = <div className="flex items-center">
-        <img src="Sale.png" alt="Title" className="w-auto h-8 mr-2"/>
+        <img src="Sale.png" alt="Title" className="w-auto h-8 mr-2 mt-2"/>
     </div>;
     return (
         <SidebarLayout sidebarContents={sidebarContents}>

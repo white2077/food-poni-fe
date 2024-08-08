@@ -14,6 +14,7 @@ import {ErrorApiResponse} from "../models/ErrorApiResponse";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {format, formatDistanceToNow} from "date-fns";
 import {vi} from "date-fns/locale";
+import AudioPlayer from "./audio";
 
 const Notification = () => {
 
@@ -219,6 +220,7 @@ const Notification = () => {
                                     label: 'Để tạm đây :))',
                                     children:
                                         <div className="max-h-[480px] overflow-auto">
+                                            <AudioPlayer/>
                                             <div className="flex flex-col gap-4">
                                                 <div className="flex grow gap-2.5">
                                                     <div className="relative shrink-0 mt-0.5">

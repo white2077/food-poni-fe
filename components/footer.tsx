@@ -1,6 +1,7 @@
 import React from "react";
 import CatBackground from "./pet";
 import Link from "next/link";
+import Audio from "./audio";
 
 const Footer = () => {
     return (
@@ -12,8 +13,9 @@ const Footer = () => {
                         <div className="col">
                             <div className="in-col">
                                 <Link href="/">
-                                    <div className="font-family: 'Impact', 'fantasy'; text-4xl text-orange-500 cursor-pointer hover:text-orange-500">FoodPoni</div>
+                                    <div className="font-['Impact','fantasy'] text-4xl text-orange-500 cursor-pointer hover:text-orange-500">FoodPoni</div>
                                 </Link>
+
                             </div>
                             <div className="in-col">
                                 hi, we are always open for cooperation and suggestions, <br/>
@@ -80,14 +82,14 @@ const Footer = () => {
                             </div>
                             <div className="in-col">follow us on social networks:</div>
                             <div className="social">
-                                <Link href="https://www.facebook.com/profile.php?id=100085580808149">
+                                <a href="https://www.facebook.com/profile.php?id=100085580808149" target="_blank">
                                     <img src="https://i.postimg.cc/44pPB9wk/facebook.png" alt=""/>
-                                </Link>
+                                </a>
                                 <img src="https://i.postimg.cc/L8Q3nB4f/twitter.png" alt=""/>
                                 <img src="https://i.postimg.cc/TYG9S3Hy/instagram.png" alt=""/>
-                                <Link href="https://www.youtube.com/watch?v=SMNB0fNU1Nw&list=RDSMNB0fNU1Nw&index=1">
+                                <a href="https://www.youtube.com/watch?v=STzK1XrpoBs" target="_blank">
                                     <img src="https://i.postimg.cc/kGCxkTwr/youtube.png" alt=""/>
-                                </Link>
+                                </a>
                                 <img src="https://i.postimg.cc/CKZHDBd2/telegram.png" alt=""/>
                             </div>
                         </div>
@@ -102,6 +104,7 @@ const Footer = () => {
                                 <img src="https://i.postimg.cc/R0j1TSHZ/mastercard-PNG23.png" alt=""/>
                                 <img src="https://i.postimg.cc/sggJj0zs/paypal-logo-png-2119.png" alt=""/>
                                 <img src="https://i.postimg.cc/hjdsFzBm/American-Express-logo-PNG14.png" alt=""/>
+
                             </div>
                         </div>
                     </div>

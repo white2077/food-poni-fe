@@ -3,6 +3,7 @@ import {HomeFilled, SettingFilled, UserOutlined, WalletFilled} from "@ant-design
 import HeaderBar from "../components/header-bar";
 import React from "react";
 import Footer from "../components/footer";
+import AudioPlayer from "../components/audio";
 
 interface SidebarLayoutProps {
     children: React.ReactNode,
@@ -87,7 +88,7 @@ export const SidebarLayout = ({children, sidebarContents}: SidebarLayoutProps) =
                         </div>
                     </div>
                 </div>
-               <Footer/>
+                <Footer/>
             </div>
         </div>
     );
@@ -95,7 +96,6 @@ export const SidebarLayout = ({children, sidebarContents}: SidebarLayoutProps) =
 };
 
 export const DefaultLayout = ({children}: DefaultLayoutProps) => {
-
     return (
         <div>
             <HeaderBar/>

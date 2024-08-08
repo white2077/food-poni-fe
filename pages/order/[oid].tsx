@@ -19,7 +19,7 @@ import {CookieValueTypes, getCookie} from "cookies-next";
 import {accessToken, apiWithToken} from "../../utils/axios-config";
 import {REFRESH_TOKEN, server} from "../../utils/server";
 import {OrderAPIResponse} from "../../models/order/OrderAPIResponse";
-import HeadTable from "../../components/table_head";
+import HeadTable from "../../components/table-head";
 import Link from "next/link";
 import {RateRequest} from "../../models/rate/RateRequest";
 

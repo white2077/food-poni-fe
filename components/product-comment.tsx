@@ -6,7 +6,7 @@ import {RateAPIResponse} from "../models/rate/RateAPIResponse";
 import Link from "next/link";
 import EmptyNotice from "./empty-notice";
 import Tym from "./tym";
-import Like from "./Like";
+import Like from "./like";
 import Start from "./start";
 
 interface ExpandedComments {

@@ -21,6 +21,7 @@ import {CurrentUser} from "../stores/user.reducer";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
 import ChangePassword from "../components/change-password";
+import SelectedItemLabel from "../components/select-label";
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -109,7 +110,7 @@ const AccountInformation = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<A
                     </Col>
                 </div>
                 <Col>
-                    <div className="my-2 text-[20px] font-sans">{selectedItemLabel}</div>
+
                     {contentMap[selectedItem]}
                 </Col>
             </Flex>

@@ -9,6 +9,7 @@ import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
 import {Carousel} from "antd";
 
 import {CustomArrowProps} from "@ant-design/react-slick";
+import Loading from "./loading-product";
 
 export interface IProductCard {
     index: number,
@@ -111,10 +112,10 @@ const ProductRows = ({title, hasMenu, query}: ProductRowProps) => {
     return (
         <div className="p-4 bg-white rounded-lg">
             {hasMenu && <MenuMain filterProducts={filterProducts}/>}
-            <div className="mt-2">{title}</div>
+            <div className="mb-2 font-bold">{title}</div>
             <div style={{maxWidth: '59rem', margin: 'auto'}}>
                 {isLoading ? (
-                    <p>Loading...</p>
+                    <Loading/>
                 ) : (
                     <Carousel
                         onLazyLoad={() => console.log('lazy load')}
@@ -127,7 +128,7 @@ const ProductRows = ({title, hasMenu, query}: ProductRowProps) => {
                         {productGroups.map((group, index) => (
                             <div key={index}>
                                 <div
-                                    className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-2 mt-2'>
+                                    className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 pb-2 mt-2'>
                                     {group.map((productCard: IProductCard) => (
                                         <ProductCard key={productCard.id} product={productCard}/>
                                     ))}

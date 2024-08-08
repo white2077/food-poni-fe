@@ -25,6 +25,12 @@ import MenuMobile from "./menu-mobile";
 import {UserAPIResponse} from "../models/user/UserAPIResponse";
 import ThemeSwitch from "./theme";
 
+import Pet from "./pet";
+import CatBackground from "./pet";
+import Audio from "./audio";
+import AudioPlayer from "./audio";
+
+
 let sock: any = null;
 export default function HeaderMain() {
 
@@ -191,9 +197,14 @@ export default function HeaderMain() {
     return (
         <div className="grid grid-cols-[1fr_2fr_1fr] px-2 mx-auto items-center py-2 gap-4 max-w-screen-xl">
             <MenuMobile/>
-            <ThemeSwitch/>
-            <Link href="/" >
-               <div className="font-['Impact','fantasy'] text-4xl text-orange-400 cursor-pointer hover:text-orange-500">FoodPoni</div>
+
+
+            <Link href="/">
+                <div
+                    className="flex items-center gap-1 font-['Impact','fantasy'] text-4xl text-orange-400 cursor-pointer hover:text-orange-500">
+                <img src="/Logo.png" className="w-14 h-14"/>
+                    <div>FoodPoni</div>
+                </div>
             </Link>
             <SearchKeyword/>
             <div className='flex items-center justify-end gap-4'>
@@ -204,13 +215,13 @@ export default function HeaderMain() {
                             <Dropdown menu={{items}} placement='bottomRight' trigger={['click']}
                                       className="hover:bg-gray-200 rounded-lg p-1.5 cursor-pointer h-[100%] ">
                                 <a className="gap-1 flex items-center">
-                                   <div>
-                                       {currentUser.avatar
-                                           ? <Avatar
-                                               className="w-8 h-8 rounded-[100%] border-orange-400 border-2"
-                                               src={server + currentUser.avatar}/>
-                                           : <Avatar icon={<UserOutlined/>} size='large'/>}
-                                   </div>
+                                    <div>
+                                        {currentUser.avatar
+                                            ? <Avatar
+                                                className="w-8 h-8 rounded-[100%] border-orange-400 border-2"
+                                                src={server + currentUser.avatar}/>
+                                            : <Avatar icon={<UserOutlined/>} size='large'/>}
+                                    </div>
                                     <div className="text-gray-500 text-[15px]">Tài khoản</div>
                                 </a>
                             </Dropdown>
