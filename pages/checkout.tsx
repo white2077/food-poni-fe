@@ -275,18 +275,26 @@ const Checkout = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<AddressAPIR
                         <Card style={{marginBottom: "16px"}}>
                             <div className="flex justify-between">
                                 <div className="text-gray-500">Tạm tính</div>
-                                <span style={{float: 'right'}}>${totalAmount}</span>
+                                <span style={{float: 'right'}}>
+                                    {totalAmount}
+                                    <sup>₫</sup>
+                                </span>
                             </div>
                             <div className="flex justify-between">
                                 <div className="text-gray-500">Giảm giá</div>
-                                <span style={{float: 'right'}}>$0</span>
+                                <span className="float-right">
+                                    0
+                                    <sup>₫</sup>
+                                </span>
                             </div>
                             <Divider/>
                             <div className="flex justify-between">
                                 <div className="text-gray-500">Tổng tiền</div>
                                 <div className="grid">
-                                    <div className="text-2xl text-red-500 text-right"
-                                         style={{float: 'right'}}>${totalAmount}</div>
+                                    <div className="text-2xl text-red-500 text-right float-right">
+                                        {totalAmount}
+                                        <sup>₫</sup>
+                                    </div>
                                     <div className="right-0 text-gray-400">(Đã bao gồm VAT nếu có)</div>
                                 </div>
                             </div>

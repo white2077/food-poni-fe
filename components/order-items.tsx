@@ -101,12 +101,18 @@ const OrderItems = () => {
                                             <div className="ml-[16px]">{item.name}</div>
                                         </div>
                                     </Col>
-                                    <Col flex='9%' className="font-bold"> ${item.price}</Col>
+                                    <Col flex='9%' className="font-bold">
+                                        {item.price}
+                                        <sup>₫</sup>
+                                    </Col>
                                     <Col flex='13%'>
                                         <QuantityInput item={item} onChangeQuantity={onChangeQuantity}/>
                                     </Col>
                                     <Col flex='14%'
-                                         className="font-bold text-red-500">${item.price * item.quantity}</Col>
+                                         className="font-bold text-red-500">
+                                        {item.price * item.quantity}
+                                        <sup>₫</sup>
+                                    </Col>
                                     <Col flex='19%'>
                                         <TextArea
                                             placeholder="Ghi chú"
