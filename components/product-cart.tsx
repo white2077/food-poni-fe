@@ -7,9 +7,9 @@ import {RootState} from "../stores";
 import {CurrentUser} from "../stores/user.reducer";
 import {IRetailer} from "../pages/[pid]";
 import {server} from "../utils/server";
-import CustomInput from "./customInput ";
 import Link from "next/link";
 import Banner from "./slide-banner";
+import CustomInput from "./custom-input ";
 
 const ProductCart = ({id, price, thumbnail, name, retailer, status}: {
     id: string,

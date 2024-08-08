@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {Select} from "antd";
 import {UserAPIResponse} from "../models/user/UserAPIResponse";
 
-const ComboBoxDate = ({user}: {user: UserAPIResponse}) => {
+const ComboboxDate = ({user}: {user: UserAPIResponse}) => {
 
     const [selectedDay, setSelectedDay] = useState<number | ''>(20);
     const [selectedMonth, setSelectedMonth] = useState<number | ''>(10);
@@ -66,4 +66,4 @@ const ComboBoxDate = ({user}: {user: UserAPIResponse}) => {
     );
 };
 
-export default ComboBoxDate;
+export default ComboboxDate;
