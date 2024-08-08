@@ -130,7 +130,8 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <div className="text-left text-[20px] font-bold">
-                                        ${product.minPrice}{product.maxPrice === product.minPrice ? "" : " - $" + product.maxPrice}
+                                        {product.minPrice}{product.maxPrice === product.minPrice ? "" : " - $" + product.maxPrice}
+                                        <sup>₫</sup>
                                     </div>
                                     <div>Đã bán: {product.sales}</div>
                                 </div>
@@ -161,11 +162,11 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                             </div>
                             <div>
                                 <Rate disabled allowHalf value={product.rate} className='text-sm mr-2'/>
-                                ({product.rate.toFixed(1)}/{product.rateCount})
+                                ({product.rate.toFixed(1)}/0)
                             </div>
                             <div className="flex justify-between items-center">
                                 <div className="text-left text-[20px] font-bold">
-                                    ${product.minPrice}{product.maxPrice === product.minPrice ? "" : " - $" + product.maxPrice}
+                                    Hết hàng
                                 </div>
                                 <div>Đã bán: {product.sales}</div>
                             </div>
