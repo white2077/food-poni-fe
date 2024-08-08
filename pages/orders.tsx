@@ -1,6 +1,6 @@
 import {DefaultLayout} from "./_layout";
-import {GetProp, Pagination, PaginationProps, Segmented, UploadProps} from "antd";
-import React, {useEffect, useState} from "react";
+import {GetProp, Pagination, PaginationProps, Result, Segmented, UploadProps} from "antd";
+import React, {useState} from "react";
 import OrderCard from "../components/order-card";
 import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
 import {getCookie} from "cookies-next";
@@ -11,6 +11,8 @@ import {NextRequest} from "next/server";
 import {QueryPageType} from "../queries/type";
 import {AxiosError} from "axios";
 import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
+import Loading from "../components/loading-product";
+import {ShoppingOutlined} from "@ant-design/icons";
 
 enum OrderStatus {
     PENDING,
@@ -53,6 +55,7 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
     const [current, setCurrent] = useState<number>(1);
 
     const onShowSizeChange: PaginationProps['onShowSizeChange'] = (current, pageSize) => {
+        console.log(current, pageSize);
         setCurrent(current);
         queryPage({page: current - 1, pageSize});
     };
@@ -113,14 +116,32 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
                             style={{width: "100%"}}
                         />
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
-                        {filteredOrders.map((order: OrderAPIResponse) => (
-                            <div key={order.id}>
-                                <OrderCard order={order}/>
+                    {
+                        isLoading ? <Loading/> : (
+                            <div>
+                                {
+                                    filteredOrders.length === 0 ? (
+                                        <Result
+                                            icon={<ShoppingOutlined />}
+                                            title="Chưa có đơn hàng"
+                                        />
+                                    ) : (
+                                        <div
+                                            className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
+                                            {filteredOrders.map((order: OrderAPIResponse) => (
+                                                <div key={order.id}>
+                                                    <OrderCard order={order}/>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )
+                                }
                             </div>
-                        ))}
-                    </div>
+                        )
+                    }
                 </div>
+            </div>
+            <div className="text-center">
                 <Pagination
                     align="center"
                     showSizeChanger
