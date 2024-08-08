@@ -139,6 +139,8 @@ const ProductComment = ({data, productDetailSelected, isLoading}: { data: RateAP
                         <EmptyNotice w="32" h="32" src="/Star.png" message="Chưa có đánh giá nào"/>
                 }}
                 pagination={{
+                    position: 'bottom',
+                    align: 'center',
                     onChange: (page) => {
                         console.log(page);
                     },
