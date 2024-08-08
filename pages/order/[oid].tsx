@@ -189,7 +189,7 @@ const OrderDetails = ({order}: { order: IOrder }) => {
                                     {order && (
                                         <Row className='lg:w-[1440px] px-2 mx-auto items-center'>
                                             <Col span={20}>
-                                                <Card title={'Đơn hàng chi tiêt #' + order.id?.substring(0, 7)}>
+                                                <Card title={'Đơn hàng chi tiết #' + order.id?.substring(0, 7)}>
                                                     <div className="flex justify-between">
                                                         <Text strong>
                                                             {
