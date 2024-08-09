@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Image, Input, MenuProps, Modal, Radio, Space} from "antd";
+import {Button, Dropdown, Image, Input, MenuProps, Modal, Radio, Space} from "antd";
 import {
     DeleteOutlined,
     ExclamationCircleFilled,
@@ -13,7 +13,6 @@ import {CurrentUser} from "../stores/user.reducer";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {server} from "../utils/server";
-
 import {api} from "../utils/axios-config";
 import {UserAPIResponse} from "../models/user/UserAPIResponse";
 import SelectedItemLabel from "./select-label";
@@ -21,6 +20,7 @@ import UploadImg from "./upload";
 import ChangePassword from "./change-password";
 import Loading from "./loading-product";
 import ComboboxDate from "./combobox-date";
+import Link from "next/link";
 
 const {confirm} = Modal;
 export const PersonalInformation = () => {
@@ -101,7 +101,15 @@ export const PersonalInformation = () => {
         <>
             {showAddAddress ? (
                 <div className="w-[600px] mx-auto">
-                    <SelectedItemLabel label={"Đổi mật khẩu"}/>
+                    <div className="flex items-center">
+                        <button  onClick={handleAddAddressClick} className="my-2 text-[20px] font-medium text-gray-400 hover:text-gray-500">Thông tin tài khoản</button>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 15" fill="none">
+                            <path fillRule="evenodd" clipRule="evenodd"
+                                  d="M5.91107 3.41107C6.23651 3.08563 6.76414 3.08563 7.08958 3.41107L12.0896 8.41107C12.415 8.73651 12.415 9.26415 12.0896 9.58958L7.08958 14.5896C6.76414 14.915 6.23651 14.915 5.91107 14.5896C5.58563 14.2641 5.58563 13.7365 5.91107 13.4111L10.3218 9.00033L5.91107 4.58958C5.58563 4.26414 5.58563 3.73651 5.91107 3.41107Z"
+                                  fill="#f36f24"></path>
+                        </svg>
+                        <SelectedItemLabel label={"Đổi mật khẩu"}/>
+                    </div>
                     <ChangePassword/>
                 </div>
             ) : (
@@ -127,6 +135,7 @@ export const PersonalInformation = () => {
                         height={500}
                         footer={null}
                     >
+                        <img src={server + user.avatar} className="rounded-lg object-cover"/>
                     </Modal>
                     <SelectedItemLabel label={"Thông tin cá nhân"}/>
                     {isLoading ? (
@@ -137,11 +146,17 @@ export const PersonalInformation = () => {
                                 <div className="mb-3 text-[15px] text-gray-500 font-sans">Thông tin cá nhân</div>
                                 <div className="grid lg:grid-cols-4">
                                     <div className="col-span-1">
-                                        <div className="flex flex-col items-center mr-5 gap-5">
+                                        <div className="flex flex-col items-center mr-5 gap-5 relative">
+                                            <Dropdown menu={{items}} placement="bottom" arrow>
+                                                <button
+                                                    className="absolute z-50 bg-gray-400 w-5 h-5 flex justify-center items-center rounded-full bottom-2 right-2">
+                                                    <img className="w-3 h-3" src="/pen.png"/></button>
+                                            </Dropdown>
                                             <Image
+                                                preview={false}
                                                 width={110}
                                                 height={110}
-                                                className="object-center rounded-full shadow-lg border-4 border-orange-200 overflow-hidden object-cover "
+                                                className="z-30 object-center rounded-full shadow-lg border-4 border-orange-200 overflow-hidden object-cover "
                                                 src={server + user.avatar}
                                             />
                                         </div>
@@ -275,7 +290,6 @@ export const PersonalInformation = () => {
                                 </div>
                             </div>
                         </div>
-
                     )}
                 </>
             )}

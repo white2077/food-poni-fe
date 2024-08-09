@@ -19,7 +19,6 @@ import {accessToken, api, apiWithToken} from "../utils/axios-config";
 import {AxiosError, AxiosResponse} from "axios";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {setCurrentShippingAddress} from "../stores/address.reducer";
-import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 import Link from "next/link";
 import MenuMobile from "./menu-mobile";
 import {UserAPIResponse} from "../models/user/UserAPIResponse";
@@ -29,6 +28,7 @@ import Pet from "./pet";
 import CatBackground from "./pet";
 import Audio from "./audio";
 import AudioPlayer from "./audio";
+import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 
 
 let sock: any = null;

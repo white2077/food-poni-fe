@@ -143,43 +143,39 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                         </Card>
                     </Link>
                 ) : (
-                    <Card
-                        className="bg-gray-100"
-                        size='small'
-                        hoverable
-                        cover={<img alt="example"
-                                    className="aspect-square object-cover"
-                                    src={product.thumbnail ? server + product.thumbnail : fallback}/>}
-                    >
-                        <Space direction="vertical" size="small" className="flex">
-                            <div className='flex items-center overflow-hidden'>
-                                <Badge className='mr-1 overflow-hidden'
-                                       count={distance !== "" ? `Khoảng ${distance}` : "Khoảng cách không xác định"}
-                                       color='#F36F24'/>
-                            </div>
-                            <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>
-                                {product.name}
-                            </div>
-                            <div>
-                                <Rate disabled allowHalf value={product.rate} className='text-sm mr-2'/>
-                                ({product.rate.toFixed(1)}/0)
-                            </div>
-                            <div className="flex justify-between items-center">
-                                <div className="text-left text-[20px] font-bold">
-                                    Hết hàng
+                    <div className="backdrop-blur-sm bg-gray-300 bg-opacity-50 z-30 rounded-lg">
+                        <Card
+                            className="-z-10"
+                            size='small'
+                            cover={<img alt="example"
+                                        className="aspect-square object-cover"
+                                        src={product.thumbnail ? server + product.thumbnail : fallback}/>}
+                        >
+                            <Space direction="vertical" size="small" className="flex">
+                                <div className='flex items-center overflow-hidden'>
+                                    <Badge className='mr-1 overflow-hidden'
+                                           count={distance !== "" ? `Khoảng ${distance}` : "Khoảng cách không xác định"}
+                                           color='#F36F24'/>
                                 </div>
-                                <div>Đã bán: {product.sales}</div>
-                            </div>
-                        </Space>
-                        <Divider className="my-[12px]"/>
-                        <div className="text-[14px]">
-                            <HistoryOutlined/> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"} {product.retailer}
-                        </div>
-                    </Card>
+                                <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>
+                                    {product.name}
+                                </div>
+                                <div>
+                                    <Rate disabled allowHalf value={product.rate} className='text-sm mr-2'/>
+                                    ({product.rate.toFixed(1)}/0)
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <div className="text-left text-[20px] font-bold">
+                                        Hết hàng
+                                    </div>
+                                </div>
+                            </Space>
+                        </Card>
+                    </div>
                 )
             }
         </div>
     );
-};
+}
 
 export default ProductCard;
