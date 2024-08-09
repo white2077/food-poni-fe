@@ -157,7 +157,7 @@ const Login: NextPage = () => {
             <Card className="w-[350px] m-auto" loading={isLoading}>
                 <Space direction="vertical" size="small" style={{display: 'flex'}}>
                     <div className="mb-4 flex flex-col gap-2">
-                        <div className="flex justify-center font-medium text-xl gap-2">Sing in <span
+                        <div className="flex justify-center font-medium text-xl gap-1">Đăng nhập<span
                             className="text-orange-500 font-['Impact','fantasy'] flex"> <img src="/Logo.png"
                                                                                              className="w-6 h-6"/>FoodPoni</span>
                         </div>
@@ -183,7 +183,7 @@ const Login: NextPage = () => {
                                     d="M12.2606 4.74998C14.0691 4.74998 15.6834 5.35999 16.9605 6.54999L20.4548 3.12999C18.3398 1.18999 15.571 -1.52588e-05 12.2606 -1.52588e-05C7.46882 -1.52588e-05 3.33089 2.69999 1.31812 6.61999L5.38453 9.70999C6.35515 6.85999 9.06269 4.74998 12.2606 4.74998Z"
                                     fill="#EA4335"/>
                             </svg>
-                            <span className="text-[#4b5675]">Use Google</span>
+                            <span className="text-[#4b5675]">Google</span>
                         </button>
                         <a className="btn btn-light btn-sm justify-center" href="#">
                             <img alt="" src="/Facebook.png" className="w-5 h-5"/>
@@ -193,7 +193,7 @@ const Login: NextPage = () => {
                     <div className="flex items-center gap-2">
                       <span className="border-t border-gray-200 w-full">
                       </span>
-                        <span className="text-sm font-medium text-gray-400 uppercase">Or</span>
+                        <span className="text-sm font-medium text-gray-400 uppercase">Hoặc</span>
                         <span className="border-t border-gray-200 w-full"></span>
                     </div>
                     <Form
@@ -202,7 +202,7 @@ const Login: NextPage = () => {
                         initialValues={{remember: true}}
                         onFinish={onFinish}
                     >
-                        <div className="flex flex-col gap-1 font-medium">Email</div>
+                        <div className="flex flex-col gap-1 font-medium">Email hoặc username</div>
                         <Form.Item
                             name="username"
                             rules={[{required: true, message: 'Please input your Username or Email!'}]}
@@ -210,7 +210,7 @@ const Login: NextPage = () => {
                         >
                             <Input className="!py-2 font-medium" placeholder="Username"/>
                         </Form.Item>
-                        <div className="flex font-medium  justify-between">Password
+                        <div className="flex font-medium  justify-between">Mật khẩu
                             <a className="login-form-forgot" href="">
                                 Quên mật khẩu?
                             </a></div>
