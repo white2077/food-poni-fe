@@ -205,10 +205,10 @@ const Login: NextPage = () => {
                         <div className="flex flex-col gap-1 font-medium">Email hoặc username</div>
                         <Form.Item
                             name="username"
-                            rules={[{required: true, message: 'Please input your Username or Email!'}]}
+                            rules={[{required: true, message: 'Vui lòng nhập username hoặc email của bạn!'}]}
                             initialValue={username}
                         >
-                            <Input className="!py-2 font-medium" placeholder="Username"/>
+                            <Input className="!py-2 font-medium" placeholder="Email hoặc username"/>
                         </Form.Item>
                         <div className="flex font-medium  justify-between">Mật khẩu
                             <a className="login-form-forgot" href="">
@@ -216,10 +216,10 @@ const Login: NextPage = () => {
                             </a></div>
                         <Form.Item
                             name="password"
-                            rules={[{required: true, message: 'Please input your Password!'}]}
+                            rules={[{required: true, message: 'Vui lòng nhập mật khẩu của bạn!'}]}
                             initialValue={password}
                         >
-                            <Input.Password className="!py-2 font-medium" placeholder="Password"/>
+                            <Input.Password className="!py-2 font-medium" placeholder="Mật khẩu"/>
                         </Form.Item>
                         <Form.Item>
                             <Form.Item name="remember" valuePropName="checked" noStyle>
