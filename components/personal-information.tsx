@@ -10,7 +10,7 @@ import {
     SafetyCertificateOutlined
 } from "@ant-design/icons";
 import {CurrentUser} from "../stores/user.reducer";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {server} from "../utils/server";
 import {api} from "../utils/axios-config";
@@ -19,15 +19,12 @@ import SelectedItemLabel from "./select-label";
 import ChangePassword from "./change-password";
 import Loading from "./loading-product";
 import ComboboxDate from "./combobox-date";
-import FileUploads from "./file-upload";
-import {setShowModalFileUpload} from "../stores/rate.reducer";
 import UploadImg from "./upload";
+import ChangeAvatar from "./change-avatar";
 
 const {confirm} = Modal;
 
 export const PersonalInformation = () => {
-
-    const dispatch = useDispatch();
 
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
@@ -107,11 +104,11 @@ export const PersonalInformation = () => {
     ];
 
     return (
-        <>
+        <div>
             {showAddAddress ? (
                 <div className="w-[600px] mx-auto">
                     <div className="flex items-center">
-                        <button  onClick={handleAddAddressClick} className="my-2 text-[20px] font-medium text-gray-400 hover:text-gray-500">Thông tin tài khoản</button>
+                        <button onClick={handleAddAddressClick} className="my-2 text-[20px] font-medium text-gray-400 hover:text-gray-500">Thông tin tài khoản</button>
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 15" fill="none">
                             <path fillRule="evenodd" clipRule="evenodd"
                                   d="M5.91107 3.41107C6.23651 3.08563 6.76414 3.08563 7.08958 3.41107L12.0896 8.41107C12.415 8.73651 12.415 9.26415 12.0896 9.58958L7.08958 14.5896C6.76414 14.915 6.23651 14.915 5.91107 14.5896C5.58563 14.2641 5.58563 13.7365 5.91107 13.4111L10.3218 9.00033L5.91107 4.58958C5.58563 4.26414 5.58563 3.73651 5.91107 3.41107Z"
@@ -131,8 +128,10 @@ export const PersonalInformation = () => {
                         onCancel={() => setOpenUpdate(false)}
                         width={500}
                         height={500}
+                        footer={null}
                     >
-                        <UploadImg/>
+                        {/*<UploadImg/>*/}
+                        <ChangeAvatar/>
                     </Modal>
                     <Modal
                         title="Xem ảnh đại diện"
@@ -302,7 +301,7 @@ export const PersonalInformation = () => {
                     )}
                 </div>
             )}
-        </>
+        </div>
     );
 };
 

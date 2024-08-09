@@ -3,12 +3,12 @@ import {FileUploadAPIResponse} from "../models/file/FileUploadAPIResponse";
 
 export interface IFileUploadsState {
     filesUpload: FileUploadAPIResponse[];
-    selectedFile: string[];
+    selectedMultiFile: string[];
 }
 
 const initialState: IFileUploadsState = {
     filesUpload: [],
-    selectedFile: []
+    selectedMultiFile: [],
 }
 
 const fileUploadsSlide = createSlice({
@@ -19,12 +19,16 @@ const fileUploadsSlide = createSlice({
             ...state,
             filesUpload: payload
         }),
-        setSelectedFile: (state, {payload}: { payload: string[] }) => ({
+        selectedMultiFile: (state, {payload}: { payload: string[] }) => ({
             ...state,
-            selectedFile: payload
+            selectedMultiFile: payload
+        }),
+        unSelectedMultiFile: (state) => ({
+            ...state,
+            selectedMultiFile: []
         })
     }
 });
 
-export const {setFileUploads,setSelectedFile} = fileUploadsSlide.actions;
+export const {setFileUploads, selectedMultiFile, unSelectedMultiFile} = fileUploadsSlide.actions;
 export default fileUploadsSlide.reducer;

@@ -2,7 +2,7 @@ import {Button, Divider, List, message, Modal, notification, Upload} from 'antd'
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {UploadOutlined} from "@ant-design/icons";
-import {setFileUploads, setSelectedFile} from "../stores/file-uploads.reducer";
+import {selectedMultiFile, setFileUploads} from "../stores/file-uploads.reducer";
 import {setShowModalFileUpload} from "../stores/rate.reducer";
 import {RootState} from "../stores";
 import {accessToken, apiWithToken} from "../utils/axios-config";
@@ -112,7 +112,7 @@ const FileUploads = () => {
 
     const handleSetFileUpload = (): void => {
         if (selectedFiles.length > 0) {
-            dispatch(setSelectedFile(selectedFiles));
+            dispatch(selectedMultiFile(selectedFiles));
             dispatch(setShowModalFileUpload(false));
         } else {
             messageApi.open({
@@ -139,7 +139,7 @@ const FileUploads = () => {
 
                             <div className="flex border-2 border-orange-200  absolute top-1 w-6 h-6 right-3  rounded-full" style={{backgroundColor:'rgba(128, 128, 128, 0.5)'}}>
                                 {selectedFiles.includes(file.url) && (
-                                    <div onClick={() => handleToggleFileSelect(file.url)}
+                                    <div onClick={(e) => {e.stopPropagation(); handleToggleFileSelect(file.url);}}
                                          className=" flex justify-center items-center w-full h-full bg-orange-400 text-white rounded-full ">✓</div>
                                 )}
                             </div>

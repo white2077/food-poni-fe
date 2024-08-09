@@ -5,11 +5,11 @@ import FileUploads from "./file-upload";
 import {RootState} from "../stores";
 import {setLoadingOrderItem} from "../stores/order.reducer";
 import {setShowModalAddRate, setShowModalFileUpload} from "../stores/rate.reducer";
-import {setSelectedFile} from "../stores/file-uploads.reducer";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
 import {RateRequest} from "../models/rate/RateRequest";
+import {selectedMultiFile} from "../stores/file-uploads.reducer";
 
 const RateAdd = () => {
 
@@ -21,7 +21,7 @@ const RateAdd = () => {
 
     const orderItemId: string = useSelector((state: RootState) => state.rate.selectOrderItemRate);
 
-    const images: string[] = useSelector((state: RootState) => state.fileUpload.selectedFile);
+    const images: string[] = useSelector((state: RootState) => state.fileUpload.selectedMultiFile);
 
     const [rate, setRate] = useState<number>(0);
 
@@ -92,12 +92,12 @@ const RateAdd = () => {
     };
 
     const handleSubmit = (): void => {
-        const rateRequest: RateRequest = createRate(rate, message, images) ?? {} as RateRequest;
+        createRate(rate, message, images) ?? {} as RateRequest;
     };
 
     const handleModalClose = (): void => {
         dispatch(setShowModalAddRate(false));
-        dispatch(setSelectedFile([]));
+        dispatch(selectedMultiFile([]));
         setRate(0);
         setMessage("");
     }
