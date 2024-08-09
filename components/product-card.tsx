@@ -170,6 +170,10 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                                     </div>
                                 </div>
                             </Space>
+                            <Divider className="my-[12px]"/>
+                            <div className="text-[14px]">
+                                <HistoryOutlined/> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"} {product.retailer}
+                            </div>
                         </Card>
                     </div>
                 )
