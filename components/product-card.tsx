@@ -130,7 +130,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <div className="text-left text-[20px] font-bold">
-                                        {product.minPrice}{product.maxPrice === product.minPrice ? "" : " - $" + product.maxPrice}
+                                        {product.minPrice}{product.maxPrice === product.minPrice ? "" : " - " + product.maxPrice}
                                         <sup>₫</sup>
                                     </div>
                                     <div>Đã bán: {product.sales}</div>
