@@ -1,13 +1,5 @@
 import type {NextPage} from 'next'
-import {Avatar, Button, Card, Form, Input, notification, Space} from 'antd';
-import {
-    GithubOutlined,
-    GoogleOutlined,
-    LockOutlined,
-    MailOutlined,
-    UnlockOutlined,
-    UserOutlined
-} from "@ant-design/icons";
+import {Button, Card, Form, Input, notification, Space} from 'antd';
 import React, {useEffect, useState} from "react";
 import {setCookie} from "cookies-next";
 import {REMEMBER_ME} from "../utils/server";
@@ -72,7 +64,7 @@ const Signup: NextPage = () => {
             <Card style={{width: "350px", margin: "auto"}} loading={isLoading}>
                 <Space direction="vertical" size="middle" style={{display: 'flex'}}>
                     <div className="my-2 flex flex-col gap-2">
-                        <div className="flex justify-center font-medium text-xl gap-2">Sing up <span
+                        <div className="flex justify-center font-medium text-xl gap-2">Đăng ký<span
                             className="text-orange-500 font-['Impact','fantasy'] flex"> <img src="/Logo.png" className="w-6 h-6"/>FoodPoni</span>
                         </div>
                         <div className="flex justify-center gap-1 font-medium text-gray-500">
@@ -97,7 +89,7 @@ const Signup: NextPage = () => {
                                     d="M12.2606 4.74998C14.0691 4.74998 15.6834 5.35999 16.9605 6.54999L20.4548 3.12999C18.3398 1.18999 15.571 -1.52588e-05 12.2606 -1.52588e-05C7.46882 -1.52588e-05 3.33089 2.69999 1.31812 6.61999L5.38453 9.70999C6.35515 6.85999 9.06269 4.74998 12.2606 4.74998Z"
                                     fill="#EA4335"/>
                             </svg>
-                            <span className="text-[#4b5675]">Use Google</span>
+                            <span className="text-[#4b5675]">Google</span>
                         </a>
                         <a className="btn btn-light btn-sm justify-center" href="#">
                             <img alt="" src="/Facebook.png" className="w-5 h-5"/>
@@ -107,7 +99,7 @@ const Signup: NextPage = () => {
                     <div className="flex items-center gap-2">
                       <span className="border-t border-gray-200 w-full">
                       </span>
-                        <span className="text-sm font-medium text-gray-400 uppercase">Or</span>
+                        <span className="text-sm font-medium text-gray-400 uppercase">Hoặc</span>
                         <span className="border-t border-gray-200 w-full"></span>
                     </div>
                     <Form
@@ -119,7 +111,7 @@ const Signup: NextPage = () => {
                         <div className="font-medium flex flex-col gap-1">Username</div>
                         <Form.Item
                             name="username"
-                            rules={[{required: true, message: 'Please input your Username or Email!'}]}
+                            rules={[{required: true, message: 'Vui lòng nhập username của bạn!'}]}
                         >
                             <Input
                                 className="py-2"
@@ -129,37 +121,37 @@ const Signup: NextPage = () => {
                         <Form.Item
                             name="email"
                             rules={[
-                                {required: true, message: 'Please input your Email!'},
-                                {type: 'email', message: 'Please enter a valid email address'}
+                                {required: true, message: 'Vui lòng nhập email của bạn!'},
+                                {type: 'email', message: 'Sai định dạng email!'},
                             ]}
                         >
                             <Input
                                 className="py-2"
                                 placeholder="Email"/>
                         </Form.Item>
-                        <div className="font-medium flex flex-col gap-1">Password</div>
+                        <div className="font-medium flex flex-col gap-1">Mật khẩu</div>
                         <Form.Item
                             name="password"
-                            rules={[{required: true, message: 'Please input your Password!'}]}
+                            rules={[{required: true, message: 'Vui lòng nhập mật khẩu của bạn!'}]}
                         >
                             <Input.Password
                                 className="py-2"
                                 type="password"
-                                placeholder="Password"
+                                placeholder="Mật khẩu"
                             />
                         </Form.Item>
-                        <div className="font-medium flex flex-col gap-1">Confirm Password</div>
+                        <div className="font-medium flex flex-col gap-1">Nhập lại mật khẩu</div>
                         <Form.Item
                             name="rePassword"
                             dependencies={['password']}
                             rules={[
-                                {required: true, message: 'Please input your Password!'},
+                                {required: true, message: 'Vui lòng nhập lại mật khẩu của bạn!'},
                                 ({getFieldValue}) => ({
                                     validator(_, value) {
                                         if (!value || getFieldValue('password') === value) {
                                             return Promise.resolve();
                                         }
-                                        return Promise.reject(new Error('The two passwords that you entered do not match!'));
+                                        return Promise.reject(new Error('Mật khẩu chưa trùng khớp!'));
                                     },
                                 }),
                             ]}
@@ -167,7 +159,7 @@ const Signup: NextPage = () => {
                             <Input.Password
                                 className="py-2"
                                 type="password"
-                                placeholder="Re-enter password"
+                                placeholder="Nhập lại mật khẩu"
                             />
                         </Form.Item>
                         <Form.Item>
