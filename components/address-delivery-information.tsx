@@ -13,8 +13,8 @@ import {setCurrentShippingAddress} from "../stores/address.reducer";
 import AddressDeliveryInformationAdd from "./address-delivery-information-add";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
-import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 import SelectedItemLabel from "./select-label";
+import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 
 export const AddressDeliveryInformation = ({deliveryInformation}: {deliveryInformation: AddressAPIResponse[]}) => {
 

@@ -10,11 +10,11 @@ import {REFRESH_TOKEN, server} from "../utils/server";
 import {AxiosError} from "axios";
 import {markIsReadNotification, setNotifications} from "../stores/notification.reducer";
 import {getNotificationsPageByCustomer} from "../queries/notification.query";
-import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {format, formatDistanceToNow} from "date-fns";
 import {vi} from "date-fns/locale";
 import AudioPlayer from "./audio";
+import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 
 const Notification = () => {
 
