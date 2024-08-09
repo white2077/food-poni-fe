@@ -1,10 +1,12 @@
 import React, {useState} from 'react';
-import {Upload} from 'antd';
 import type {GetProp, UploadFile, UploadProps} from 'antd';
+import {Upload} from 'antd';
 import ImgCrop from 'antd-img-crop';
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
-const UploadImg: React.FC = () => {
+
+const UploadImg = () => {
+
     const [fileList, setFileList] = useState<UploadFile[]>([]);
 
     const onChange: UploadProps['onChange'] = ({fileList: newFileList}) => {
@@ -34,7 +36,7 @@ const UploadImg: React.FC = () => {
                 onChange={onChange}
                 onPreview={onPreview}
             >
-                {fileList.length < 1 && '+ Upload'}
+                {fileList.length < 5 && '+ Upload'}
             </Upload>
         </ImgCrop>
     );

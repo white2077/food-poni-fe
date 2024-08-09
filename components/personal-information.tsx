@@ -10,28 +10,57 @@ import {
     SafetyCertificateOutlined
 } from "@ant-design/icons";
 import {CurrentUser} from "../stores/user.reducer";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {server} from "../utils/server";
 import {api} from "../utils/axios-config";
 import {UserAPIResponse} from "../models/user/UserAPIResponse";
 import SelectedItemLabel from "./select-label";
-import UploadImg from "./upload";
 import ChangePassword from "./change-password";
 import Loading from "./loading-product";
 import ComboboxDate from "./combobox-date";
-import Link from "next/link";
+import FileUploads from "./file-upload";
+import {setShowModalFileUpload} from "../stores/rate.reducer";
+import UploadImg from "./upload";
 
 const {confirm} = Modal;
+
 export const PersonalInformation = () => {
 
+    const dispatch = useDispatch();
+
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
+
     const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
+
+    const [openUpdate, setOpenUpdate] = useState(false);
+
+    const [open, setOpen] = useState(false);
+
+    const [user, setUser] = useState<UserAPIResponse>({} as UserAPIResponse);
+
+    const [isLoading, setLoading] = useState<boolean>(false);
+
+    useEffect(() => {
+        getUserById();
+    }, [currentUser]);
+
+    const getUserById = () => {
+        setLoading(true);
+        api.get("/users/" + currentUser.id)
+            .then((res) => {
+                setUser(res.data);
+            })
+            .catch(() => {
+                console.log("Personal information: Can't get user information");
+            })
+            .finally(() => setLoading(false));
+    }
+
     const handleAddAddressClick = (): void => {
         setShowAddAddress(!showAddAddress);
     };
-    const [openUpdate, setOpenUpdate] = useState(false);
-    const [open, setOpen] = useState(false);
+
     const showDeleteConfirm = () => {
         confirm({
             title: 'Bạn có chắc muốn xoá ảnh đại diện ?',
@@ -77,26 +106,6 @@ export const PersonalInformation = () => {
         },
     ];
 
-    const [user, setUser] = useState<UserAPIResponse>({} as UserAPIResponse);
-
-    const [isLoading, setLoading] = useState<boolean>(false);
-
-    useEffect(() => {
-        getUserById();
-    }, [currentUser]);
-
-    const getUserById = () => {
-        setLoading(true);
-        api.get("/users/" + currentUser.id)
-            .then((res) => {
-                setUser(res.data);
-            })
-            .catch(() => {
-                console.log("Personal information: Can't get user information");
-            })
-            .finally(() => setLoading(false));
-    }
-
     return (
         <>
             {showAddAddress ? (
@@ -113,7 +122,7 @@ export const PersonalInformation = () => {
                     <ChangePassword/>
                 </div>
             ) : (
-                <>
+                <div>
                     <Modal
                         title="Cập nhật ảnh đại diện"
                         centered
@@ -291,7 +300,7 @@ export const PersonalInformation = () => {
                             </div>
                         </div>
                     )}
-                </>
+                </div>
             )}
         </>
     );

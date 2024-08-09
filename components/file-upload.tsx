@@ -89,8 +89,8 @@ const FileUploads = () => {
                     // dispatch(deleteAllItem({}));
                     notification.open({
                         type: 'success',
-                        message: 'Đánh giá',
-                        description: 'Đánh giá thành công',
+                        message: 'Hình ảnh',
+                        description: 'Tải hình ảnh thành công',
                     });
                     getFileUploads();
                 })
