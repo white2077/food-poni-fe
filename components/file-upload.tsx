@@ -98,7 +98,7 @@ const FileUploads = () => {
                     // setPending(false);
                     notification.open({
                         type: 'error',
-                        message: 'Đánh giá',
+                        message: 'Hình ảnh',
                         description: res.message
                     });
                 });
@@ -123,7 +123,7 @@ const FileUploads = () => {
     }
 
     return (
-        <Modal title="Upload Files" open={showModalFileUpload} footer={null}
+        <Modal title="Tải hình ảnh" open={showModalFileUpload} footer={null}
                onCancel={() => dispatch(setShowModalFileUpload(false))}>
             <List className="scrollbar-rounded overflow-scroll max-h-96 h-96 p-2 "
                 grid={{gutter: 16, xs: 1, sm: 2, md: 2, lg: 4, xl: 4, xxl: 4}}

@@ -71,19 +71,17 @@ const ChangeAvatar = () => {
                 <div
                     className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-2 overflow-scroll scrollbar-rounded max-h-96">
                     <div>
-                        <Button style={{width: '100%', height: '8rem'}}
+                        <Button className="w-full !h-32"
                                 onClick={() => dispatch(setShowModalFileUpload(true))}>Chọn ảnh</Button>
                     </div>
                     {images.map((url, index) => (
                         <div key={index} className="relative inline-block">
                             <div
-                                onClick={() => handleToggleFileSelect(url)}
-                                className="p-0">
+                                onClick={() => handleToggleFileSelect(url)}>
                                 <img src={url}
                                      alt={`Image ${index}`}
                                      className="w-32 h-32 object-cover rounded-lg"
                                 />
-
                                 <div
                                     className="flex border-2 border-orange-200 absolute top-1 w-6 h-6 right-1 rounded-full"
                                     style={{backgroundColor: 'rgba(128, 128, 128, 0.5)'}}>
@@ -92,14 +90,14 @@ const ChangeAvatar = () => {
                                             e.stopPropagation();
                                             handleToggleFileSelect(url);
                                         }}
-                                             className=" flex justify-center items-center w-full h-full bg-orange-400 text-white rounded-full ">✓</div>
+                                             className="flex justify-center items-center w-full h-full bg-orange-400 text-white rounded-full">✓</div>
                                     )}
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
-                <div style={{marginTop: 20, textAlign: "center"}}>
+                <div className="mt-4 text-center">
                     <Button type="primary" onClick={handleSubmit}>Cập nhật</Button>
                 </div>
             </div>

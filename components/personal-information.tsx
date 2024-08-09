@@ -122,7 +122,6 @@ export const PersonalInformation = () => {
                 <div>
                     <Modal
                         title="Cập nhật ảnh đại diện"
-                        centered
                         open={openUpdate}
                         onOk={() => setOpenUpdate(false)}
                         onCancel={() => setOpenUpdate(false)}
@@ -130,7 +129,6 @@ export const PersonalInformation = () => {
                         height={500}
                         footer={null}
                     >
-                        {/*<UploadImg/>*/}
                         <ChangeAvatar/>
                     </Modal>
                     <Modal
