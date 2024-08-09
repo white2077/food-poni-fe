@@ -343,7 +343,7 @@ const OrderDetails = ({order}: { order: IOrder }) => {
                                                             <div className="text-right text-gray-400">
                                                                 <div>Tạm tính</div>
                                                                 <div>Phí vận chuyển</div>
-                                                                <div>Khuyễn mãi vận chuyển</div>
+                                                                <div>Khuyến mãi vận chuyển</div>
                                                                 <div>Giảm giá</div>
                                                                 <div>Tổng cộng</div>
                                                             </div>
