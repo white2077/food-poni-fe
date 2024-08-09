@@ -101,7 +101,10 @@ const ProductCart = ({id, price, thumbnail, name, retailer, status}: {
                     <div>
                         <div className='text-md font-medium mb-2'>Tạm tính</div>
                         <div>
-                            <div className='text-2xl font-semibold'>${price * quantity}</div>
+                            <div className='text-2xl font-semibold'>
+                                {price * quantity}
+                                <sup>₫</sup>
+                            </div>
                         </div>
                     </div>
                 </div>

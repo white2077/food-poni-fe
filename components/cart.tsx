@@ -71,7 +71,7 @@ const Cart = () => {
     }, [carts]);
 
     return (
-        <>
+        <div>
             <a onClick={showDrawer}>
                 <Badge count={totalCartItems}>
                     <Avatar shape="square" icon={<ShoppingCartOutlined/>} size='large'/>
@@ -113,12 +113,18 @@ const Cart = () => {
                                                 title={<span>{item.name}</span>}
                                                 description={
                                                     <span>
-                                                    <span style={{marginRight: "10px"}}>${item.price}</span>
+                                                    <span style={{marginRight: "10px"}}>
+                                                        {item.price}
+                                                        <sup>₫</sup>
+                                                    </span>
                                                 </span>
                                                 }
                                             />
                                             <div className="mb-auto">
-                                                <div className="text-right mb-auto">${item.price * item.quantity}</div>
+                                                <div className="text-right mb-auto">
+                                                    {item.price * item.quantity}
+                                                    <sup>₫</sup>
+                                                </div>
                                                 <QuantityInput item={item} onChangeQuantity={onChangeQuantity}/>
                                             </div>
                                         </List.Item>
@@ -133,7 +139,10 @@ const Cart = () => {
                     <div>
                         <div className="mt-3 flex justify-between">
                             <div>Tổng tiền</div>
-                            <div>${totalPrice}</div>
+                            <div>
+                                {totalPrice}
+                                <sup>₫</sup>
+                            </div>
                         </div>
                         <Divider/>
                         <Button className="my-5s mt-2" type='primary' danger block disabled={pending} loading={pending}
@@ -143,7 +152,7 @@ const Cart = () => {
                     </div>
                 )}
             </Drawer>
-        </>
+        </div>
     );
 };
 

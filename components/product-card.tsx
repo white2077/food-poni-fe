@@ -51,18 +51,6 @@ const ProductCard = ({product}: { product: IProductCard }) => {
 
     const [time, setTime] = useState<string>("");
 
-    const [productDetails, setProductDetails] = useState<ProductDetailAPIResponse[]>([]);
-
-    useEffect(() => {
-        api.get('/product-details/products/' + product.id)
-            .then((res: AxiosResponse<Page<ProductDetailAPIResponse[]>>) => {
-                setProductDetails(res.data.content);
-            })
-            .catch((res) => {
-                console.log(res);
-            })
-    }, [product]);
-
     // const getDistanceMatrix = async (originLat: number, originLng: number, destLat: number, destLng: number) => {
     //     const apiKey: string = 'dXWhFMOOlIYRZhbprENdNjcoAtYSFZOwWZiTSJEY0H1zoYNCDjk0ZfBlBOmyRYw0';
     //     const apiUrl: string = `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${originLat},${originLng}&destinations=${destLat},${destLng}&key=${apiKey}`;
@@ -118,7 +106,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
     return (
         <div>
             {
-                productDetails.length > 0 ? (
+                product.minPrice ? (
                     <Link href={`/${product.id}`}>
                         <Card
                             size='small'
@@ -142,7 +130,8 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <div className="text-left text-[20px] font-bold">
-                                        ${product.minPrice}{product.maxPrice === product.minPrice ? "" : " - $" + product.maxPrice}
+                                        {product.minPrice}{product.maxPrice === product.minPrice ? "" : " - $" + product.maxPrice}
+                                        <sup>₫</sup>
                                     </div>
                                     <div>Đã bán: {product.sales}</div>
                                 </div>
@@ -158,7 +147,6 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                         <Card
                             className="-z-10"
                             size='small'
-
                             cover={<img alt="example"
                                         className="aspect-square object-cover"
                                         src={product.thumbnail ? server + product.thumbnail : fallback}/>}
@@ -174,25 +162,20 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                                 </div>
                                 <div>
                                     <Rate disabled allowHalf value={product.rate} className='text-sm mr-2'/>
-                                    ({product.rate.toFixed(1)}/{product.rateCount})
+                                    ({product.rate.toFixed(1)}/0)
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <div className="text-left text-[20px] font-bold">
-                                        ${product.minPrice}{product.maxPrice === product.minPrice ? "" : " - $" + product.maxPrice}
+                                        Hết hàng
                                     </div>
-                                    <div>Đã bán: {product.sales}</div>
                                 </div>
                             </Space>
-                            <Divider className="my-[12px]"/>
-                            <div className="text-[14px]">
-                                <HistoryOutlined/> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"} {product.retailer}
-                            </div>
                         </Card>
                     </div>
                 )
             }
         </div>
     );
-};
+}
 
 export default ProductCard;
