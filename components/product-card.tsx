@@ -1,5 +1,5 @@
 import {Badge, Card, Divider, Rate, Space} from "antd";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {IProductCard} from "./product-rows";
 import Link from "next/link";
 import {CurrentUser} from "../stores/user.reducer";
@@ -8,10 +8,6 @@ import {RootState} from "../stores";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {HistoryOutlined} from "@ant-design/icons";
 import {server} from "../utils/server";
-import {AxiosResponse} from "axios";
-import {Page} from "../models/Page";
-import {ProductDetailAPIResponse} from "../models/product_detail/ProductDetailAPIResponse";
-import {api} from "../utils/axios-config";
 
 
 export interface ElementDistance {

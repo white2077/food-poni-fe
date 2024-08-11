@@ -22,12 +22,6 @@ import {setCurrentShippingAddress} from "../stores/address.reducer";
 import Link from "next/link";
 import MenuMobile from "./menu-mobile";
 import {UserAPIResponse} from "../models/user/UserAPIResponse";
-import ThemeSwitch from "./theme";
-
-import Pet from "./pet";
-import CatBackground from "./pet";
-import Audio from "./audio";
-import AudioPlayer from "./audio";
 import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 
 

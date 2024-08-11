@@ -32,9 +32,16 @@ const userSlide = createSlice({
                 ...state.currentUser,
                 addressId: payload
             }
+        }),
+        updateAvatar: (state, {payload}: {payload: string}) => ({
+            ...state,
+            currentUser: {
+                ...state.currentUser,
+                avatar: payload
+            }
         })
     }
 });
 
-export const {setCurrentUser, updateAddressId} = userSlide.actions;
+export const {setCurrentUser, updateAddressId, updateAvatar} = userSlide.actions;
 export default userSlide.reducer;
