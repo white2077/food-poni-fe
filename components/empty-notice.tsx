@@ -9,7 +9,7 @@ class EmptyNotice extends React.Component<{ w: any, h: any, src: any, message: a
                     <div className="flex justify-center">
                         <img className={`w-${w} h-${h} object-cover`} src={src} alt="No Product"/>
                     </div>
-                    <div className="text-2xl text-gray-500 font-medium">{message}</div>
+                    <div className="text-2xl text-center text-gray-500 font-medium">{message}</div>
                 </div>
             </div>
         );

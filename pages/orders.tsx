@@ -13,6 +13,7 @@ import {AxiosError} from "axios";
 import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 import Loading from "../components/loading-product";
 import {ShoppingOutlined} from "@ant-design/icons";
+import EmptyNotice from "../components/empty-notice";
 
 enum OrderStatus {
     PENDING,
@@ -109,8 +110,9 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
         <DefaultLayout>
             <div className="text-black text-left">
                 <div className="mb-4">
-                    <div className="text-center w-full mb-4">
+                    <div className="text-center w-full mb-4 !sticky top-5 z-50">
                         <Segmented
+                            className="!bg-orange-500 !text-white !sticky"
                             size="large"
                             options={orderStatusOptions}
                             onChange={handleChange}
@@ -121,10 +123,8 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
                             <div>
                                 {
                                     filteredOrders.length === 0 ? (
-                                        <Result
-                                            icon={<ShoppingOutlined />}
-                                            title="Chưa có đơn hàng"
-                                        />
+
+                                        <EmptyNotice w="72" h="60" src="/no-oder.png" message="Chưa có oder nào"/>
                                     ) : (
                                         <div
                                             className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">

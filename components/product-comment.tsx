@@ -136,7 +136,7 @@ const ProductComment = ({data, productDetailSelected, isLoading}: { data: RateAP
                 size="large"
                 locale={{
                     emptyText:
-                        <EmptyNotice w="32" h="32" src="/Star.png" message="Chưa có đánh giá nào"/>
+                        <EmptyNotice w="72" h="60" src="/no-comment.png" message="Chưa có đánh giá nào"/>
                 }}
                 pagination={{
                     position: 'bottom',
