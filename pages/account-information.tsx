@@ -20,8 +20,6 @@ import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {CurrentUser} from "../stores/user.reducer";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
-import ChangePassword from "../components/change-password";
-import SelectedItemLabel from "../components/select-label";
 
 type MenuItem = Required<MenuProps>['items'][number];
 

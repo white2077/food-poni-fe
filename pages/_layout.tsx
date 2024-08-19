@@ -3,7 +3,6 @@ import {HomeFilled, SettingFilled, UserOutlined, WalletFilled} from "@ant-design
 import HeaderBar from "../components/header-bar";
 import React from "react";
 import Footer from "../components/footer";
-import AudioPlayer from "../components/audio";
 
 interface SidebarLayoutProps {
     children: React.ReactNode,

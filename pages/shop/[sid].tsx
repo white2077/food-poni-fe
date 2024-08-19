@@ -1,6 +1,6 @@
 import {DefaultLayout} from "../_layout";
 import MenuShop from "../../components/menu-shop";
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {EnvironmentOutlined, MailOutlined, ShopOutlined, StarOutlined} from "@ant-design/icons";
 import {ParsedUrlQuery} from "querystring";
 import {AxiosResponse} from "axios";

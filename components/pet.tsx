@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react';
 import gsap from 'gsap';
-import AudioPlayer from "./audio";
 
 const CatBackground = () => {
     useEffect(() => {

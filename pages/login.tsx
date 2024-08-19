@@ -1,13 +1,5 @@
 import type {NextApiRequest, NextApiResponse, NextPage} from 'next'
-import {Avatar, Button, Card, Checkbox, Form, Input, notification, Space} from 'antd';
-import {
-    EyeInvisibleOutlined,
-    EyeTwoTone,
-    GithubOutlined,
-    GoogleOutlined,
-    LockOutlined,
-    UserOutlined
-} from "@ant-design/icons";
+import {Button, Card, Checkbox, Form, Input, notification, Space} from 'antd';
 import React, {useEffect, useState} from "react";
 import {deleteCookie, getCookie, setCookie} from "cookies-next";
 import {REFRESH_TOKEN, REMEMBER_ME, server} from "../utils/server";
@@ -20,7 +12,6 @@ import jwtDecode from "jwt-decode";
 import {CurrentUser, setCurrentUser} from "../stores/user.reducer";
 import {api} from "../utils/axios-config";
 import {clientId, redirectUri, responseType, scopes} from "../utils/oauth2";
-import {UserAPIResponse} from "../models/user/UserAPIResponse";
 import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 
 export interface IUserRemember {

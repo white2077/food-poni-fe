@@ -19,7 +19,6 @@ import SelectedItemLabel from "./select-label";
 import ChangePassword from "./change-password";
 import Loading from "./loading-product";
 import ComboboxDate from "./combobox-date";
-import UploadImg from "./upload";
 import ChangeAvatar from "./change-avatar";
 
 const {confirm} = Modal;
