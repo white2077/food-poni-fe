@@ -152,8 +152,7 @@ const Login: NextPage = () => {
     }
 
     return (
-        <div
-            className='font-medium bg-[url("/logo-bg.jpeg")] bg-cover bg-center bg-no-repeat h-screen flex justify-center  items-center'>
+        <div className='font-medium bg-[url("/logo-bg.jpeg")] bg-cover bg-center bg-no-repeat h-screen flex justify-center  items-center'>
             <Card className="w-[350px] m-auto" loading={isLoading}>
                 <Space direction="vertical" size="small" style={{display: 'flex'}}>
                     <div className="mb-4 flex flex-col gap-2">

@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+
 module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -8,18 +9,14 @@ module.exports = {
     extend: {
       colors: {
         'primary': '#F36F24',
-        // 'secondary': presetPrimaryColors.indigo,
-        // 'success': presetPrimaryColors.green,
-        // 'danger': presetPrimaryColors.red,
-        // 'warning': presetPrimaryColors.red
       },
       fontFamily: {
-        'sans': ['Poppins', 'sans-serif']
-      }
+        'sans': ['Nunito', 'sans-serif']
+      },
+
     },
   },
   plugins: [
     require('tailwind-scrollbar'),
   ],
-
 }

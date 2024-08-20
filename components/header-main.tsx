@@ -197,11 +197,9 @@ export default function HeaderMain() {
     return (
         <div className="grid grid-cols-[1fr_2fr_1fr] px-2 mx-auto items-center py-2 gap-4 max-w-screen-xl">
             <MenuMobile/>
-
-
             <Link href="/">
                 <div
-                    className="flex items-center gap-1 font-['Impact','fantasy'] text-4xl text-orange-400 cursor-pointer hover:text-orange-500">
+                    className="flex items-center gap-1 nunito  text-4xl text-orange-400 cursor-pointer hover:text-orange-500">
                 <img src="/logo-02.png" className="w-14 h-14"/>
                     <div>FoodPoni</div>
                 </div>

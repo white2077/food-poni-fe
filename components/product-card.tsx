@@ -115,13 +115,13 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                                         className="aspect-square object-cover"
                                         src={product.thumbnail ? server + product.thumbnail : fallback}/>}
                         >
-                            <Space direction="vertical" size="small" className="flex">
-                                <div className='flex items-center overflow-hidden'>
-                                    <Badge className='mr-1 overflow-hidden'
+                            <Space direction="vertical" size="small" className="flex font-sans">
+                                <div className='flex items-center overflow-hidden '>
+                                    <Badge className='mr-1 overflow-hidden font-sans '
                                            count={distance !== "" ? `Khoảng ${distance}` : "Khoảng cách không xác định"}
                                            color='#F36F24'/>
                                 </div>
-                                <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>
+                                <div className='text-left overflow-hidden text-ellipsis  whitespace-nowrap'>
                                     {product.name}
                                 </div>
                                 <div>
@@ -129,7 +129,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                                     ({product.rate.toFixed(1)}/{product.rateCount})
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <div className="text-left text-[20px] font-bold">
+                                    <div className="text-left text-[20px] nunito">
                                         {product.minPrice}{product.maxPrice === product.minPrice ? "" : " - " + product.maxPrice}
                                         <sup>₫</sup>
                                     </div>
@@ -137,8 +137,8 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                                 </div>
                             </Space>
                             <Divider className="my-[12px]"/>
-                            <div className="text-[14px]">
-                                <HistoryOutlined/> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"} {product.retailer}
+                            <div className="text-[14px] font-sans">
+                                <HistoryOutlined/> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"} <span className="text-orange-500">{product.retailer}</span>
                             </div>
                         </Card>
                     </Link>
@@ -153,7 +153,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                         >
                             <Space direction="vertical" size="small" className="flex">
                                 <div className='flex items-center overflow-hidden'>
-                                    <Badge className='mr-1 overflow-hidden'
+                                    <Badge className='mr-1 overflow-hidden font-sans'
                                            count={distance !== "" ? `Khoảng ${distance}` : "Khoảng cách không xác định"}
                                            color='#F36F24'/>
                                 </div>
@@ -165,14 +165,14 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                                     ({product.rate.toFixed(1)}/0)
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <div className="text-left text-[20px] font-bold">
+                                    <div className="text-left text-[20px] nunito">
                                         Hết hàng
                                     </div>
                                 </div>
                             </Space>
                             <Divider className="my-[12px]"/>
-                            <div className="text-[14px]">
-                                <HistoryOutlined/> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"} {product.retailer}
+                            <div className="text-[14px] font-sans">
+                                <HistoryOutlined/> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"} <span className="text-orange-500">{product.retailer}</span>
                             </div>
                         </Card>
                 )

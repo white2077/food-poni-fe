@@ -6,14 +6,16 @@ import Audio from "./audio";
 const Footer = () => {
     return (
         <div className="bg-[#f5f5fa]">
-            <CatBackground />
+            <CatBackground/>
             <footer>
                 <div className="container">
                     <div className="content">
                         <div className="col">
                             <div className="in-col">
                                 <Link href="/">
-                                    <div className="font-['Impact','fantasy'] text-4xl text-orange-500 cursor-pointer hover:text-orange-500">FoodPoni</div>
+                                    <div
+                                        className="font-['Impact','fantasy'] text-4xl text-orange-500 cursor-pointer hover:text-orange-500">FoodPoni
+                                    </div>
                                 </Link>
 
                             </div>

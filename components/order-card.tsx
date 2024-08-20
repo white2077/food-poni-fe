@@ -27,14 +27,14 @@ const statusColors: Record<string, string> = {
 
 const OrderCard = ({order}: { order: OrderAPIResponse }) => {
     return (
-        <Badge.Ribbon text={statusText[order.status]} color={statusColors[order.status]}>
-            <Card hoverable={true} title={"Đơn hàng #" + order.id?.substring(0, 7)}>
+        <Badge.Ribbon text={statusText[order.status]} color={statusColors[order.status]} className="font-sans">
+            <Card className="font-sans"  hoverable={true} title={"Đơn hàng #" + order.id?.substring(0, 7)}>
                 <Row gutter={[16, 16]} className="!overflow-y-scroll max-h-36 scrollbar-rounded">
                     {order?.orderItems?.map((item: OrderItemAPIResponse) => (
                         <Col span={24} key={item.id}>
                             <Link href={`/order/${order.id}`}>
                                 <div
-                                    className="overflow-hidden rounded-lg p-2 hover:bg-gray-100 hover:border-orange-300 border-2">
+                                    className="overflow-hidden rounded-lg p-2 hover:bg-gray-100 hover:border-orange-300 border-2 font-sans">
                                     <Row gutter={[16, 16]}>
                                         <Col span={5} className="flex justify-center items-center">
                                             <div>
@@ -45,40 +45,40 @@ const OrderCard = ({order}: { order: OrderAPIResponse }) => {
                                                         src={item?.productDetail?.product?.thumbnail ? server + item.productDetail.product.thumbnail : ""}
                                                         className="object-cover rounded-lg border-2 border-orange-300"
                                                     />
-                                                    <p className="absolute text-xs border-orange-300 border-2 bottom-0 right-0 text-orange-600 bg-gray-100 font-medium  px-1 rounded-br-lg rounded-tl-lg">
+                                                    <p className="absolute text-xs border-orange-300 border-2 bottom-0 right-0 text-orange-600 bg-gray-100 nunito  px-1 rounded-br-lg rounded-tl-lg">
                                                         X{item.quantity}</p>
                                                 </div>
                                             </div>
                                         </Col>
                                         <Col span={19} className="justify-between">
-                                            <div className="flex justify-between font-medium">
+                                            <div className="flex justify-between nunito">
 
                                                 <div
-                                                    className="text-orange-600 text-base">{item.productDetail?.product?.name}{item.productDetail?.name ? "- " + item.productDetail?.name : ""}</div>
+                                                    className="text-orange-600 text-base">{item.productDetail?.product?.name}{item.productDetail?.name ? " - " + item.productDetail?.name : ""}</div>
                                                 <div>
                                                     {item.price}
                                                     <sup>₫</sup>
                                                 </div>
                                             </div>
-                                            <div className="flex gap-2">
+                                            <div className="flex gap-2 font-sans">
                                                 <div><EnvironmentOutlined/></div>
                                                 <div>{order.shippingAddress?.address}</div>
                                             </div>
-                                            <div className="flex gap-2">
+                                            <div className="flex gap-2 font-sans">
                                                 <div><FieldTimeOutlined/></div>
                                                 <div>{format(new Date(order.createdDate ?? ""), "yyyy-MM-dd HH:mm:ss")}</div>
                                             </div>
                                             {order.status === "COMPLETED" && Object.keys(item.rate ?? {}).length === 0 ? (
-                                                <div className="flex gap-2">
+                                                <div className="flex gap-2 font-sans">
                                                     <FormOutlined/>
-                                                    <Text type="success" className="text-green-400 font-medium">Đánh
+                                                    <Text type="success" className="text-green-400 font-sans">Đánh
                                                         giá ngay để nhận ưu đãi</Text>
                                                 </div>
                                             ) : (
                                                 Object.keys(item.rate ?? {}).length !== 0 && (
                                                     <div className="flex gap-2 items-center">
                                                         <FormOutlined/>
-                                                        <div className="text-red-500 font-medium">Bạn đã đánh
+                                                        <div className="text-red-500 font-sans">Bạn đã đánh
                                                             giá
                                                         </div>
                                                     </div>
@@ -91,9 +91,9 @@ const OrderCard = ({order}: { order: OrderAPIResponse }) => {
                         </Col>
                     ))}
                 </Row>
-                <div className="flex justify-end mt-4 text-xl gap-2 font-medium">
+                <div className="flex justify-end mt-4 text-xl gap-2 font-sans">
                     <div className="text-gray-400">Tổng tiền:</div>
-                    <div>
+                    <div className="nunito text-green-600">
                         {order.totalAmount}
                         <sup>₫</sup>
                     </div>
