@@ -90,7 +90,7 @@ const AccountInformation = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<A
                         />
                         <div className="mx-2">
                             <span className="text-[13px] text-gray-500 font-extralight">Tài khoản của</span>
-                            <div>{currentUser.username}</div>
+                            <div className="nunito text-orange-500">{currentUser.username}</div>
                         </div>
                     </div>
                     <Col>

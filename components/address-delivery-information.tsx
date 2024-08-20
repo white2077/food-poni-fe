@@ -104,7 +104,7 @@ export const AddressDeliveryInformation = ({deliveryInformation}: {deliveryInfor
     return (
         <>
             <SelectedItemLabel label={"Sổ địa chỉ"}/>
-            <div className="w-[1000px] mx-auto">
+            <div className="w-[1000px] mx-auto font-sans">
                 <Button
                     className="my-[16px]"
                     onClick={handleAddAddressClick}>{showAddAddress ? "Quay lại" : "Thêm địa chỉ"}</Button>
@@ -121,17 +121,17 @@ export const AddressDeliveryInformation = ({deliveryInformation}: {deliveryInfor
                                     <div className="flex justify-between">
                                         <div>
                                             <div>
-                                                <span className="font-bold mr-[8px]">{item.fullName}</span>
-                                                <span className="mr-[8px]">|</span>
-                                                <span className="mr-[8px]">{item.phoneNumber}</span>
+                                                <span className="nunito mr-[8px] text-orange-500">{item.fullName}</span>
+                                                <span className="font-sans mr-[8px]">|</span>
+                                                <span className="font-sans mr-[8px]">{item.phoneNumber}</span>
                                                 {(item.id === currentUser.addressId) &&
-                                                    <span className="text-green-600"><CheckCircleOutlined/> Địa chỉ mặc định</span>
+                                                    <span className="text-green-600 font-sans"><CheckCircleOutlined/> Địa chỉ mặc định</span>
                                                 }
                                             </div>
-                                            <div>{item.address}</div>
+                                            <div className="font-sans">{item.address}</div>
                                         </div>
                                         <div>
-                                            <Button type="text" className="!text-purple-600"
+                                            <Button type="text" className="!text-purple-600 font-sans"
                                                     onClick={() => updateShippingAddress(item.id ?? "")}>
                                                 Đặt làm mặc định
                                             </Button>
