@@ -29,29 +29,32 @@ const OrderCard = ({order}: { order: OrderAPIResponse }) => {
     return (
         <Badge.Ribbon text={statusText[order.status]} color={statusColors[order.status]}>
             <Card hoverable={true} title={"Đơn hàng #" + order.id?.substring(0, 7)}>
-                <Row gutter={[16, 16]}>
+                <Row gutter={[16, 16]} className="!overflow-y-scroll max-h-36 scrollbar-rounded">
                     {order?.orderItems?.map((item: OrderItemAPIResponse) => (
                         <Col span={24} key={item.id}>
                             <Link href={`/order/${order.id}`}>
                                 <div
-                                    className="overflow-hidden rounded-lg p-2 hover:bg-gray-100 hover:border-orange-300 border-2 ">
+                                    className="overflow-hidden rounded-lg p-2 hover:bg-gray-100 hover:border-orange-300 border-2">
                                     <Row gutter={[16, 16]}>
-                                        <Col span={5}>
-                                            <div className="flex justify-center">
-                                                <div className='relative' style={{position: 'relative'}}>
+                                        <Col span={5} className="flex justify-center items-center">
+                                            <div>
+                                                <div className='!relative flex'>
                                                     <Image
                                                         height='100px'
                                                         preview={false}
                                                         src={item?.productDetail?.product?.thumbnail ? server + item.productDetail.product.thumbnail : ""}
                                                         className="object-cover rounded-lg border-2 border-orange-300"
                                                     />
-                                                    <p className="font-['Impact','fantasy'] absolute text-xs border-orange-300 border-2 bottom-1.5 right-0 text-orange-600 bg-gray-100  px-1 rounded-br-lg rounded-tl-lg">x{item.quantity}</p>
+                                                    <p className="absolute text-xs border-orange-300 border-2 bottom-0 right-0 text-orange-600 bg-gray-100 font-medium  px-1 rounded-br-lg rounded-tl-lg">
+                                                        X{item.quantity}</p>
                                                 </div>
                                             </div>
                                         </Col>
                                         <Col span={19} className="justify-between">
-                                            <div className="flex justify-between">
-                                                <div>{item.productDetail?.product?.name}{item.productDetail?.name ? "- " + item.productDetail?.name : ""}</div>
+                                            <div className="flex justify-between font-medium">
+
+                                                <div
+                                                    className="text-orange-600 text-base">{item.productDetail?.product?.name}{item.productDetail?.name ? "- " + item.productDetail?.name : ""}</div>
                                                 <div>
                                                     {item.price}
                                                     <sup>₫</sup>
@@ -68,15 +71,16 @@ const OrderCard = ({order}: { order: OrderAPIResponse }) => {
                                             {order.status === "COMPLETED" && Object.keys(item.rate ?? {}).length === 0 ? (
                                                 <div className="flex gap-2">
                                                     <FormOutlined/>
-                                                    <Text type="success" className="text-green-600 text-base font-sans">Đánh
+                                                    <Text type="success" className="text-green-400 font-medium">Đánh
                                                         giá ngay để nhận ưu đãi</Text>
                                                 </div>
                                             ) : (
                                                 Object.keys(item.rate ?? {}).length !== 0 && (
-                                                    <div className="flex gap-2">
+                                                    <div className="flex gap-2 items-center">
                                                         <FormOutlined/>
-                                                        <Text className="text-red-600 text-base font-sans">Bạn đã đánh
-                                                            giá</Text>
+                                                        <div className="text-red-500 font-medium">Bạn đã đánh
+                                                            giá
+                                                        </div>
                                                     </div>
                                                 )
                                             )}
@@ -87,7 +91,7 @@ const OrderCard = ({order}: { order: OrderAPIResponse }) => {
                         </Col>
                     ))}
                 </Row>
-                <div className="flex justify-end mt-4 text-xl gap-2">
+                <div className="flex justify-end mt-4 text-xl gap-2 font-medium">
                     <div className="text-gray-400">Tổng tiền:</div>
                     <div>
                         {order.totalAmount}

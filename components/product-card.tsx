@@ -139,10 +139,10 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                         </Card>
                     </Link>
                 ) : (
-                    <div className="backdrop-blur-sm bg-gray-300 bg-opacity-50 z-30 rounded-lg">
                         <Card
-                            className="-z-10"
+                            className="!border-gray-400 opacity-20"
                             size='small'
+                            hoverable
                             cover={<img alt="example"
                                         className="aspect-square object-cover"
                                         src={product.thumbnail ? server + product.thumbnail : fallback}/>}
@@ -171,7 +171,6 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                                 <HistoryOutlined/> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"} {product.retailer}
                             </div>
                         </Card>
-                    </div>
                 )
             }
         </div>

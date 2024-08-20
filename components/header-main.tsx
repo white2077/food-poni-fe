@@ -196,7 +196,7 @@ export default function HeaderMain() {
             <Link href="/">
                 <div
                     className="flex items-center gap-1 font-['Impact','fantasy'] text-4xl text-orange-400 cursor-pointer hover:text-orange-500">
-                <img src="/Logo.png" className="w-14 h-14"/>
+                <img src="/logo-02.png" className="w-14 h-14"/>
                     <div>FoodPoni</div>
                 </div>
             </Link>
