@@ -22,6 +22,7 @@ import {OrderAPIResponse} from "../../models/order/OrderAPIResponse";
 import HeadTable from "../../components/table-head";
 import Link from "next/link";
 import {RateRequest} from "../../models/rate/RateRequest";
+import {format} from "date-fns";
 
 const {Text} = Typography;
 
@@ -33,6 +34,9 @@ export interface IOrder {
     orderItems: IOrderItem[];
     shippingAddress: ShippingAddress;
     paymentMethod: PaymentInfo;
+    shippingFee: number;
+    retailer: UserAPIResponse;
+    createdDate: Date;
 }
 
 export interface IProductDetailOrderItem {
@@ -91,6 +95,9 @@ export async function getServerSideProps(context: {
                         retailerId: orderItem.productDetail?.product?.user?.id ?? "",
                     }
                 }) ?? [],
+                shippingFee: order.shippingFee ?? 0,
+                retailer: order.retailer ?? {} as UserAPIResponse,
+                createdDate: order.createdDate ?? new Date(),
             };
             return {
                 props: {
@@ -208,16 +215,16 @@ const OrderDetails = ({order}: { order: IOrder }) => {
                                                                 <Text>{order.shippingAddress.fullName}</Text>
                                                             </div>
                                                             <div>
-                                                                <Text>{'Address: ' + order.shippingAddress.address}</Text>
+                                                                <Text>{'Địa chỉ: ' + order.shippingAddress.address}</Text>
                                                             </div>
                                                             <div>
-                                                                <Text>{'Phone number: ' + order.shippingAddress.phoneNumber}</Text>
+                                                                <Text>{'Số điện thoại: ' + order.shippingAddress.phoneNumber}</Text>
                                                             </div>
                                                         </Card>
                                                         <Card style={{backgroundColor: ''}} title="HÌNH THỨC GIAO HÀNG"
                                                               className="w-full">
                                                             <div className="">
-                                                                <Text>{'giao hàng nhanh'}</Text>
+                                                                <Text>{'Giao hàng nhanh'}</Text>
                                                             </div>
                                                             <div>
                                                                 <Text>{'Giao vào thứ 5 ,11/11'}</Text>
@@ -267,11 +274,11 @@ const OrderDetails = ({order}: { order: IOrder }) => {
                                                                                             <div
                                                                                                 className="text-[14px]">
                                                                                                 Người bán: <Text
-                                                                                                style={{color: 'rgb(243, 111, 36)'}}>{item.retailerId}</Text>
+                                                                                                style={{color: 'rgb(243, 111, 36)'}}>{order.retailer.username}</Text>
                                                                                             </div>
                                                                                             <div
                                                                                                 className="text-[14px]">
-                                                                                                Ngày bán: 11/11/2021
+                                                                                                Ngày bán: {format(new Date(order.createdDate ?? ""), "yyyy-MM-dd HH:mm:ss")}
                                                                                             </div>
                                                                                             <div className="flex gap-2">
                                                                                                 <Button
@@ -352,12 +359,15 @@ const OrderDetails = ({order}: { order: IOrder }) => {
                                                                     {order.totalAmount}
                                                                     <sup>₫</sup>
                                                                 </div>
-                                                                <div>0</div>
+                                                                <div>
+                                                                    {order.shippingFee}
+                                                                    <sup>₫</sup>
+                                                                </div>
                                                                 <div>0</div>
                                                                 <div>0</div>
                                                                 <div
                                                                     className="text-2xl text-orange-600">
-                                                                    {order.totalAmount}
+                                                                    {order.totalAmount + order.shippingFee}
                                                                     <sup>₫</sup>
                                                                 </div>
                                                                 {/*giá sau khi giảm all ở đây nhé*/}
