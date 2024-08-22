@@ -124,7 +124,7 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
                                 {
                                     filteredOrders.length === 0 ? (
 
-                                        <EmptyNotice w="42" h="32" src="/no-oder.png" message="Chưa có oder nào"/>
+                                        <EmptyNotice w="42" h="32" src="/no-oder.png" message="Chưa có đơn hàng nào"/>
                                     ) : (
                                         <div
                                             className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">

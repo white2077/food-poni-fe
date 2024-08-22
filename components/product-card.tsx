@@ -140,7 +140,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                     </Link>
                 ) : (
                         <Card
-                            className="!border-gray-400 opacity-20"
+                            className="!border-gray-400 opacity-20 "
                             size='small'
                             hoverable
                             cover={<img alt="example"

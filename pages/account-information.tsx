@@ -20,6 +20,7 @@ import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {CurrentUser} from "../stores/user.reducer";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
+import Support from "../components/support";
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -74,7 +75,8 @@ const AccountInformation = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<A
 
     const contentMap: { [key: string]: React.ReactNode } = {
         '1': <PersonalInformation/>,
-        '2': <AddressDeliveryInformation deliveryInformation={ePage.content}/>
+        '2': <AddressDeliveryInformation deliveryInformation={ePage.content}/>,
+        '6': <Support/>
     };
 
     return (

@@ -27,7 +27,7 @@ export const PersonalInformation = () => {
 
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
-    const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
+    const [showChangePassword, setShowAddAddress] = useState<boolean>(false);
 
     const [openUpdate, setOpenUpdate] = useState(false);
 
@@ -54,7 +54,7 @@ export const PersonalInformation = () => {
     }
 
     const handleAddAddressClick = (): void => {
-        setShowAddAddress(!showAddAddress);
+        setShowAddAddress(!showChangePassword);
     };
 
     const showDeleteConfirm = () => {
@@ -104,10 +104,12 @@ export const PersonalInformation = () => {
 
     return (
         <div>
-            {showAddAddress ? (
-                <div className="w-[600px] mx-auto">
+            {showChangePassword ? (
+                <>
                     <div className="flex items-center">
-                        <button onClick={handleAddAddressClick} className="text-xl font-sans text-gray-400 hover:text-gray-500">Thông tin cá nhân</button>
+                        <button onClick={handleAddAddressClick}
+                                className="text-xl font-sans text-gray-400 hover:text-gray-500">Thông tin cá nhân
+                        </button>
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18" fill="none">
                             <path fillRule="evenodd" clipRule="evenodd"
                                   d="M5.91107 3.41107C6.23651 3.08563 6.76414 3.08563 7.08958 3.41107L12.0896 8.41107C12.415 8.73651 12.415 9.26415 12.0896 9.58958L7.08958 14.5896C6.76414 14.915 6.23651 14.915 5.91107 14.5896C5.58563 14.2641 5.58563 13.7365 5.91107 13.4111L10.3218 9.00033L5.91107 4.58958C5.58563 4.26414 5.58563 3.73651 5.91107 3.41107Z"
@@ -115,8 +117,18 @@ export const PersonalInformation = () => {
                         </svg>
                         <SelectedItemLabel label={"Đổi mật khẩu"}/>
                     </div>
-                    <ChangePassword/>
-                </div>
+                    <div className="bg-white p-3 rounded-lg grid lg:grid-cols-5">
+                        <div className=" col-span-1">
+
+                        </div>
+                        <div className=" col-span-3">
+                            <ChangePassword/>
+                        </div>
+                        <div className=" col-span-1">
+
+                        </div>
+                    </div>
+                </>
             ) : (
                 <div>
                     <Modal
@@ -142,7 +154,7 @@ export const PersonalInformation = () => {
                     >
                         <img src={server + user.avatar} className="rounded-lg object-cover"/>
                     </Modal>
-                    <SelectedItemLabel  label={"Thông tin cá nhân"}/>
+                    <SelectedItemLabel label={"Thông tin cá nhân"}/>
                     {isLoading ? (
                         <Loading/>
                     ) : (
