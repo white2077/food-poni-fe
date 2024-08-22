@@ -22,4 +22,8 @@ export interface OrderAPIResponse {
 
     createdDate: Date;
 
+    shippingFee: number;
+
+    retailer: UserAPIResponse;
+
 }
