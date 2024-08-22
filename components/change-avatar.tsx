@@ -10,6 +10,7 @@ import {REFRESH_TOKEN} from "../utils/server";
 import {UserUpdateAvatarRequestDTO} from "../models/user/UserRequest";
 import {unSelectedMultiFile} from "../stores/file-uploads.reducer";
 import {NextRouter, useRouter} from "next/router";
+import {updateAvatar} from "../stores/user.reducer";
 
 const ChangeAvatar = () => {
 
@@ -40,6 +41,7 @@ const ChangeAvatar = () => {
                 }
             })
                 .then(() => {
+                    dispatch(updateAvatar(image));
                     router.push("/account-information");
                     notification.open({
                         type: 'success',

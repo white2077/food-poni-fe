@@ -4,7 +4,6 @@ import {RootState} from "../stores";
 import {Page} from "../models/Page";
 import {CurrentUser} from "../stores/user.reducer";
 import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
-import ProductRowLoading from "./product-row-skeleton";
 import {CustomArrowProps} from "@ant-design/react-slick";
 import ProductCardRelated from "./related-products-card";
 import Loading from "./loading-product";

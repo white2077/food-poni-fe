@@ -1,7 +1,6 @@
 import React from "react";
 import CatBackground from "./pet";
 import Link from "next/link";
-import Audio from "./audio";
 
 const Footer = () => {
     return (

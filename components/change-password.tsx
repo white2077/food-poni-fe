@@ -52,10 +52,10 @@ const ChangePassword = () => {
     };
 
     return (
-        <div className="w-full bg-white flex justify-center rounded-lg">
+        <div className="bg-white rounded-lg flex items-center justify-center mx-32">
             <Form
                 name="normal_change-password"
-                className="change-password-form my-[16px] p-2 w-[50%] border-[1px] rounded-lg"
+                className="change-password-form my-1 p-2 border-[1px] rounded-lg w-72"
                 onFinish={onFinish}
             >
                 <div>Mật khẩu hiện tại</div>

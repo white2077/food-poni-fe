@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useRef, useState} from 'react';
 
 const AudioPlayer = () => {
     const audioFiles = ["/chill1.mp3", "/chill2.mp3", "/chill3.mp3", "/chill4.mp3", "/chill5.mp3"];
