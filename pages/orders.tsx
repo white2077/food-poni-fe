@@ -39,7 +39,6 @@ export async function getServerSideProps({req}: { req: NextRequest }) {
                 refreshToken: getCookie(REFRESH_TOKEN, {req}),
                 page: 0,
                 pageSize: 10,
-                sort: 'createdDate,desc'
             })
         }
     };
@@ -66,8 +65,7 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
         getOrdersPage({
                 refreshToken: getCookie(REFRESH_TOKEN),
                 page: page ?? orderPage.number,
-                pageSize: pageSize ?? orderPage.size,
-                sort: 'createdDate,desc'
+                pageSize: pageSize ?? orderPage.size
             }
         ).then((res: Page<OrderAPIResponse[]>) => setOrderPage(res))
             .catch((res: AxiosError<ErrorAPIResponse>) => {

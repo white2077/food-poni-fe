@@ -11,15 +11,15 @@ const Loading = () => {
             </clipPath>
             <defs>
                 <linearGradient id="pl-grad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#000"/>
-                    <stop offset="100%" stop-color="#fff"/>
+                    <stop offset="0%" stopColor="#000"/>
+                    <stop offset="100%" stopColor="#fff"/>
                 </linearGradient>
                 <mask id="pl-mask">
                     <rect x="0" y="0" width="88" height="80" fill="url(#pl-grad)"/>
                 </mask>
             </defs>
             <g fill="currentColor">
-                <g fill="none" stroke-dasharray="20 221" stroke-dashoffset="20" stroke-linecap="round" stroke-width="4">
+                <g fill="none" strokeDasharray="20 221" strokeDashoffset="20" strokeLinecap="round" strokeWidth="4">
                     <g stroke="hsl(38,90%,50%)">
                         <circle className="pl__ring" cx="44" cy="40" r="35" transform="rotate(90,44,40)"/>
                     </g>
@@ -45,7 +45,7 @@ const Loading = () => {
                     </g>
                 </g>
                 <g className="pl__pan">
-                    <rect rx="2" ry="2" x="4" y="66" width="68" height="14" clip-path="url(#pan-clip)" id="pan"/>
+                    <rect rx="2" ry="2" x="4" y="66" width="68" height="14" clipPath="url(#pan-clip)" id="pan"/>
                     <rect rx="2" ry="2" x="76" y="66" width="48" height="7"/>
                 </g>
                 <rect className="pl__shadow" fill="hsla(223,10%,50%,0.2)" rx="3.5" ry="3.5" x="10" y="121" width="60"

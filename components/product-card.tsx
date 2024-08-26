@@ -134,43 +134,45 @@ const ProductCard = ({product}: { product: IProductCard }) => {
                             </Space>
                             <Divider className="my-[12px]"/>
                             <div className="text-[14px] font-sans">
-                                <HistoryOutlined/> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"} <span className="text-orange-500">{product.retailer}</span>
+                                <HistoryOutlined/> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"}
+                                <span className="text-orange-500">{product.retailer}</span>
                             </div>
                         </Card>
                     </Link>
                 ) : (
-                        <Card
-                            className="!border-gray-400 opacity-20"
-                            size='small'
-                            hoverable
-                            cover={<img alt="example"
-                                        className="aspect-square object-cover"
-                                        src={product.thumbnail ? server + product.thumbnail : fallback}/>}
-                        >
-                            <Space direction="vertical" size="small" className="flex">
-                                <div className='flex items-center overflow-hidden'>
-                                    <Badge className='mr-1 overflow-hidden font-sans'
-                                           count={distance !== "" ? `Khoảng ${distance}` : "Khoảng cách không xác định"}
-                                           color='#F36F24'/>
-                                </div>
-                                <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>
-                                    {product.name}
-                                </div>
-                                <div>
-                                    <Rate disabled allowHalf value={product.rate} className='text-sm mr-2'/>
-                                    ({product.rate.toFixed(1)}/0)
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <div className="text-left text-[20px] nunito">
-                                        Hết hàng
-                                    </div>
-                                </div>
-                            </Space>
-                            <Divider className="my-[12px]"/>
-                            <div className="text-[14px] font-sans">
-                                <HistoryOutlined/> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"} <span className="text-orange-500">{product.retailer}</span>
+                    <Card
+                        className="!border-gray-400 opacity-20"
+                        size='small'
+                        hoverable
+                        cover={<img alt="example"
+                                    className="aspect-square object-cover"
+                                    src={product.thumbnail ? server + product.thumbnail : fallback}/>}
+                    >
+                        <Space direction="vertical" size="small" className="flex">
+                            <div className='flex items-center overflow-hidden'>
+                                <Badge className='mr-1 overflow-hidden font-sans'
+                                       count={distance !== "" ? `Khoảng ${distance}` : "Khoảng cách không xác định"}
+                                       color='#F36F24'/>
                             </div>
-                        </Card>
+                            <div className='text-left overflow-hidden text-ellipsis whitespace-nowrap'>
+                                {product.name}
+                            </div>
+                            <div>
+                                <Rate disabled allowHalf value={product.rate} className='text-sm mr-2'/>
+                                ({product.rate.toFixed(1)}/0)
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <div className="text-left text-[20px] nunito">
+                                    Hết hàng
+                                </div>
+                            </div>
+                        </Space>
+                        <Divider className="my-[12px]"/>
+                        <div className="text-[14px] font-sans">
+                            <HistoryOutlined/> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"} <span
+                            className="text-orange-500">{product.retailer}</span>
+                        </div>
+                    </Card>
                 )
             }
         </div>

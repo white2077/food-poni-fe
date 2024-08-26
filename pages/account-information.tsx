@@ -15,7 +15,7 @@ import {NextRequest} from "next/server";
 import {getAddressesPage} from "../queries/address.query";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN, server} from "../utils/server";
-import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
+import {Page} from "../models/Page";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
 import {CurrentUser} from "../stores/user.reducer";
 import {useSelector} from "react-redux";
@@ -114,5 +114,4 @@ const AccountInformation = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
         </DefaultLayout>
     );
 };
-
 export default AccountInformation;
