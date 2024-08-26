@@ -1,20 +1,19 @@
 import HeaderMain from "../components/header-main";
 import {HomeFilled, SettingFilled, UserOutlined, WalletFilled} from "@ant-design/icons";
 import HeaderBar from "../components/header-bar";
-import React from "react";
+import React, {ReactNode} from "react";
 import Footer from "../components/footer";
 
 interface SidebarLayoutProps {
-    children: React.ReactNode,
-    sidebarContents: JSX.Element[]
+    children: ReactNode,
+    sidebarContents: ReactNode[]
 }
 
 interface DefaultLayoutProps {
-    children: React.ReactNode
+    children: ReactNode
 }
 
 export const SidebarLayout = ({children, sidebarContents}: SidebarLayoutProps) => {
-
     return (
         <div>
             <HeaderBar/>
@@ -23,7 +22,7 @@ export const SidebarLayout = ({children, sidebarContents}: SidebarLayoutProps) =
                 <div className='px-2 max-w-screen-xl mx-auto py-4'>
                     <div className='flex gap-4'>
                         <div className='hidden md:flex flex-col gap-4 w-[260px] shrink-0'>
-                            {sidebarContents.map((item: JSX.Element) => item)}
+                            {sidebarContents.map((item) => item)}
                         </div>
                         {children}
                     </div>
@@ -91,7 +90,6 @@ export const SidebarLayout = ({children, sidebarContents}: SidebarLayoutProps) =
             </div>
         </div>
     );
-
 };
 
 export const DefaultLayout = ({children}: DefaultLayoutProps) => {
@@ -166,5 +164,4 @@ export const DefaultLayout = ({children}: DefaultLayoutProps) => {
             </div>
         </div>
     );
-
 };

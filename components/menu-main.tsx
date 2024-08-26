@@ -17,12 +17,10 @@ interface MainMenuProps {
 
 export default function MenuMain({filterProducts}: MainMenuProps) {
 
-    const dispatch = useDispatch();
-
     return (
         <Menu className="block rounded-lg"
               onSelect={({key}: { key: string }) => filterProducts(key)}
-              defaultSelectedKeys={["all"]}
+              defaultSelectedKeys={["bestsellers"]}
               mode='horizontal'
               items={items}/>
     );
@@ -31,9 +29,9 @@ export default function MenuMain({filterProducts}: MainMenuProps) {
 
 const items: MenuProps['items'] = [
     {
-        label: 'Tất cả',
-        key: 'all',
-        icon: <AppstoreOutlined/>,
+        label: 'Bán chạy nhất',
+        key: 'bestsellers',
+        icon: <CrownOutlined/>,
     },
     {
         label: 'Gần bạn',
@@ -49,11 +47,6 @@ const items: MenuProps['items'] = [
         label: 'Mới nhất',
         key: 'bestnews',
         icon: <TagOutlined/>,
-    },
-    {
-        label: 'Bán chạy nhất',
-        key: 'bestsellers',
-        icon: <CrownOutlined/>,
     },
     {
         label: 'Đánh giá hàng đầu',

@@ -209,7 +209,7 @@ const ShopDetail = ({user}: { user: UserAPIResponse }) => {
                             <MenuShop filterProducts={filterProducts}></MenuShop>
                             <div>
                                 <div className="py-4 w-48">
-                                    <img src={"/Sale.png"}/>
+                                    <img src={"/sale.png"}/>
                                 </div>
                                 <div
                                     className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 bg-white'>

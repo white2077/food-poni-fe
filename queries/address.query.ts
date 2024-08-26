@@ -3,6 +3,7 @@ import {accessToken, apiWithToken} from "../utils/axios-config";
 import {AxiosResponse} from "axios";
 import {CookieValueTypes} from "cookies-next";
 import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
+import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 
 export const getAddressesPage = ({refreshToken, page, pageSize}: {
     refreshToken?: CookieValueTypes,
@@ -15,7 +16,10 @@ export const getAddressesPage = ({refreshToken, page, pageSize}: {
                 headers: {
                     Authorization: "Bearer " + accessToken
                 }
-            }).then((res: AxiosResponse<Page<AddressAPIResponse[]>>) => res.data);
+            }).then((res: AxiosResponse<Page<AddressAPIResponse[]>>) => res.data)
+            .catch((res: AxiosResponse<ErrorAPIResponse>) => {
+                throw res;
+            });
     }
-    return Promise.resolve(INITIAL_PAGE_API_RESPONSE);
+    return Promise.reject();
 }

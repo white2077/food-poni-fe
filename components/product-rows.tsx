@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactNode, useEffect, useState} from 'react';
 import ProductCard from "./product-card";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
@@ -10,6 +10,7 @@ import {Carousel} from "antd";
 
 import {CustomArrowProps} from "@ant-design/react-slick";
 import Loading from "./loading-product";
+import {getProductsCardPage} from "../queries/product.query";
 
 export interface IProductCard {
     index: number,
@@ -26,64 +27,54 @@ export interface IProductCard {
 }
 
 interface ProductRowProps {
-    title: string | JSX.Element,
+    title?: string | ReactNode,
     hasMenu?: boolean,
-    query: Promise<Page<ProductAPIResponse[]>>,
+    query: Promise<Page<IProductCard[]>>,
 }
 
 const ProductRows = ({title, hasMenu, query}: ProductRowProps) => {
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
-    const [isLoading, setLoading] = React.useState<boolean>(false);
-    const [productCards, setProductCards] = React.useState<IProductCard[]>([]);
-    React.useEffect(() => {
+    const [isLoading, setLoading] = useState<boolean>(false);
+    const [productCards, setProductCards] = useState<IProductCard[]>([]);
+    useEffect(() => {
         setLoading(true);
-        query.then((res: Page<ProductAPIResponse[]>) => {
-            setProductCards(res.content.map((product: ProductAPIResponse, index: number) => {
-                return {
-                    index,
-                    id: product.id,
-                    name: product.name,
-                    thumbnail: product.thumbnail,
-                    minPrice: product.minPrice,
-                    maxPrice: product.maxPrice,
-                    rate: product.rate,
-                    retailer: product.user.username,
-                    rateCount: product.rateCount,
-                    sales: product.sales,
-                    createdDate: product.createdDate,
-                } as IProductCard
-            }));
-        }).finally(() => setLoading(false));
-    }, []);
+        query.then((res: Page<IProductCard[]>) => setProductCards(res.content))
+            .finally(() => setLoading(false));
+    }, [])
     const filterProducts = (key: string) => {
-        const copy = [...productCards];
         switch (key) {
             case "nearby":
                 break;
             case "promotion":
                 break;
             case "bestnews":
-                copy.sort((a: IProductCard, b: IProductCard) =>
-                    new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime());
+                setLoading(true);
+                getProductsCardPage({page: 0, pageSize: 10, status: true, sort: ["updatedDate,desc"]})
+                    .then((res: Page<IProductCard[]>) => setProductCards(res.content))
+                    .finally(() => setLoading(false));
                 break;
             case "bestsellers":
-                copy.sort((a: IProductCard, b: IProductCard) => b.sales - a.sales);
+                setLoading(true);
+                getProductsCardPage({page: 0, pageSize: 10, status: true, sort: ["sales,desc"]})
+                    .then((res: Page<IProductCard[]>) => setProductCards(res.content))
+                    .finally(() => setLoading(false));
                 break;
             case "toprates":
-                copy.sort((a: IProductCard, b: IProductCard) => b.rate - a.rate);
+                setLoading(true);
+                getProductsCardPage({page: 0, pageSize: 10, status: true, sort: ["rate,desc"]})
+                    .then((res: Page<IProductCard[]>) => setProductCards(res.content))
+                    .finally(() => setLoading(false));
                 break;
             default:
-                copy.sort((a: IProductCard, b: IProductCard) => a.index - b.index);
                 break;
         }
-        setProductCards(copy);
     };
 
     const productGroups = [];
     for (let i = 0; i < productCards.length; i += 4) {
         productGroups.push(productCards.slice(i, i + 4));
     }
-    const CustomPrevArrow: React.FC<CustomArrowProps> = ({ onClick }) => {
+    const CustomPrevArrow: React.FC<CustomArrowProps> = ({onClick}) => {
         return (
             <div onClick={onClick}
                  className="custom-arrow next-arrow mx-2 absolute top-[50%] left-0 text-orange-400 text-xl w-8 h-8 hover:text-orange-500 cursor-pointer shadow-lg shadow-gray-400 bg-white z-50 rounded-full flex items-center justify-center">
@@ -101,9 +92,9 @@ const ProductRows = ({title, hasMenu, query}: ProductRowProps) => {
             <div onClick={onClick}
                  className="custom-arrow next-arrow mx-2 absolute top-[50%] right-0 text-orange-400 text-xl w-8 h-8 hover:text-orange-500 cursor-pointer shadow-lg shadow-gray-400 bg-white rounded-full flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none">
-                <path fillRule="evenodd" clipRule="evenodd"
-                      d="M5.91107 3.41107C6.23651 3.08563 6.76414 3.08563 7.08958 3.41107L12.0896 8.41107C12.415 8.73651 12.415 9.26415 12.0896 9.58958L7.08958 14.5896C6.76414 14.915 6.23651 14.915 5.91107 14.5896C5.58563 14.2641 5.58563 13.7365 5.91107 13.4111L10.3218 9.00033L5.91107 4.58958C5.58563 4.26414 5.58563 3.73651 5.91107 3.41107Z"
-                      fill="#f36f24"></path>
+                    <path fillRule="evenodd" clipRule="evenodd"
+                          d="M5.91107 3.41107C6.23651 3.08563 6.76414 3.08563 7.08958 3.41107L12.0896 8.41107C12.415 8.73651 12.415 9.26415 12.0896 9.58958L7.08958 14.5896C6.76414 14.915 6.23651 14.915 5.91107 14.5896C5.58563 14.2641 5.58563 13.7365 5.91107 13.4111L10.3218 9.00033L5.91107 4.58958C5.58563 4.26414 5.58563 3.73651 5.91107 3.41107Z"
+                          fill="#f36f24"></path>
                 </svg>
             </div>
         );

@@ -15,7 +15,7 @@ const ProductCategory = ({categoryList}: { categoryList: ProductCategoryAPIRespo
 
     const dispatch = useDispatch();
 
-    let items: ICategory[] = [{key: "all", label: <span className="font-bold">All</span>}];
+    let items: ICategory[] = [];
 
     const [categories, setCategories] = useState<ICategory[]>([]);
 

@@ -49,18 +49,19 @@ const items: MenuProps['items'] = [
 ];
 
 export async function getServerSideProps({req}: { req: NextRequest }) {
-    return {
-        props: {
-            ePage: await getAddressesPage({
-                refreshToken: getCookie(REFRESH_TOKEN, {req}),
-                page: 0,
-                pageSize: 10
-            })
-        }
-    };
+    try {
+        const ePage: Page<AddressAPIResponse[]> = await getAddressesPage({
+            refreshToken: getCookie(REFRESH_TOKEN, {req}),
+            page: 0,
+            pageSize: 10
+        });
+        return {props: {ePage}};
+    } catch (e) {
+        throw e;
+    }
 }
 
-const AccountInformation = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<AddressAPIResponse[]> }) => {
+const AccountInformation = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const [selectedItem, setSelectedItem] = useState<string>('1');
