@@ -42,44 +42,44 @@ export default function HeaderMain() {
         {
             key: '1',
             label: (
-                <span id='account-information' onClick={() => handleItemClick('/account-information')}>
+                <span id='account-information' onClick={() => handleItemClick('/account-information')} className="flex w-full h-full">
                     <span style={{marginRight: '5px'}}>
                         <UserOutlined/>
                     </span>
-                    <span>Thông tin tài khoản</span>
+                    <div className="w-full">Thông tin tài khoản</div>
                 </span>
             ),
         },
         {
             key: '2',
             label: (
-                <span id='your-orders' onClick={() => handleItemClick('/orders')}>
+                <span id='your-orders' onClick={() => handleItemClick('/orders')} className="flex w-full h-full">
                     <span style={{marginRight: '5px'}}>
                         <ShoppingOutlined/>
                     </span>
-                    <span>Đơn hàng của bạn</span>
+                    <div className="w-full">Đơn hàng của bạn</div>
                 </span>
             ),
         },
         {
             key: '3',
             label: (
-                <span id='aaa' onClick={() => handleItemClick('/')}>
+                <span id='aaa' onClick={() => handleItemClick('/')} className="flex w-full h-full">
                     <span style={{marginRight: '5px'}}>
                         <QuestionCircleOutlined/>
                     </span>
-                    <span>Trung tâm hỗ trợ</span>
+                    <div className="w-full">Trung tâm hỗ trợ</div>
                 </span>
             ),
         },
         {
             key: '4',
             label: (
-                <span id='logout' onClick={() => handleItemClick('/login')}>
+                <span id='logout' onClick={() => handleItemClick('/login')} className="flex w-full h-full">
                     <span style={{marginRight: '5px'}}>
                         <LogoutOutlined/>
                     </span>
-                    <span>Đăng xuất</span>
+                        <div className="w-full">Đăng xuất</div>
                 </span>
             ),
         },

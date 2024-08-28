@@ -28,16 +28,17 @@ const statusColors: Record<string, string> = {
 const OrderCard = ({order}: { order: OrderAPIResponse }) => {
     return (
         <Badge.Ribbon text={statusText[order.status]} color={statusColors[order.status]} className="font-sans">
-            <Card className="font-sans"  hoverable={true} title={"Đơn hàng #" + order.id?.substring(0, 7)}>
-                <Row gutter={[16, 16]} className="!overflow-y-scroll max-h-36 scrollbar-rounded">
+            <Card className="font-sans min-h-60  !border-orange-200"  hoverable={true} title={"Đơn hàng #" + order.id?.substring(0, 7)}>
+                <Row gutter={[16, 16]} className="!overflow-y-scroll min-h-[8.3rem] max-h-[8.3rem] scrollbar-rounded">
                     {order?.orderItems?.map((item: OrderItemAPIResponse) => (
                         <Col span={24} key={item.id}>
-                            <Link href={`/don-hang/${order.id}`}>
+                            <Link href={`/order/${order.id}`} legacyBehavior>
                                 <div
                                     className="overflow-hidden rounded-lg p-2 hover:bg-gray-100 hover:border-orange-300 border-2 font-sans">
                                     <Row gutter={[16, 16]}>
                                         <Col span={5} className="flex justify-center items-center">
                                             <div>
+
                                                 <div className='!relative flex'>
                                                     <Image
                                                         height='100px'
@@ -100,7 +101,7 @@ const OrderCard = ({order}: { order: OrderAPIResponse }) => {
                 </div>
                 <div className="flex justify-end mt-4  ">
                     <div className="flex gap-2 j">
-                        <Link href={`/don-hang/${order.id}`}>
+                        <Link href={`/order/${order.id}`} legacyBehavior>
                             <Button style={{backgroundColor: '#F36F24', color: 'white'}}>Chi tiết</Button>
                         </Link>
                         <Button style={{backgroundColor: '#F36F24', color: 'white'}}>Đặt lại</Button>

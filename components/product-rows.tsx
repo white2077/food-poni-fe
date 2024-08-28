@@ -10,6 +10,7 @@ import {Carousel} from "antd";
 import {CustomArrowProps} from "@ant-design/react-slick";
 import Loading from "./loading-product";
 import {getProductsCardPage} from "../queries/product.query";
+import Link from "next/link";
 
 export interface IProductCard {
     index: number,
@@ -29,9 +30,10 @@ interface ProductRowProps {
     title?: string | ReactNode,
     hasMenu?: boolean,
     query: Promise<Page<IProductCard[]>>,
+    legacyBehavior?: boolean;
 }
 
-const ProductRows = ({title, hasMenu, query}: ProductRowProps) => {
+const ProductRows = ({title, hasMenu, query, legacyBehavior}: ProductRowProps) => {
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
     const [isLoading, setLoading] = useState<boolean>(false);
     const [productCards, setProductCards] = useState<IProductCard[]>([]);
@@ -73,10 +75,14 @@ const ProductRows = ({title, hasMenu, query}: ProductRowProps) => {
     for (let i = 0; i < productCards.length; i += 4) {
         productGroups.push(productCards.slice(i, i + 4));
     }
-    const CustomPrevArrow: React.FC<CustomArrowProps> = ({onClick}) => {
+    const CustomPrevArrow: React.FC<CustomArrowProps> = ({onClick, currentSlide}) => {
+        if (currentSlide === 0) {
+            return null; // Ẩn nút "Prev" khi ở trang đầu tiên
+        }
+
         return (
             <div onClick={onClick}
-                 className="custom-arrow next-arrow mx-2 absolute top-[50%] left-0 text-orange-400 text-xl w-8 h-8 hover:text-orange-500 cursor-pointer shadow-lg shadow-gray-400 bg-white z-50 rounded-full flex items-center justify-center">
+                 className="custom-arrow prev-arrow mx-2 absolute top-[50%] left-0 text-orange-400 text-xl w-8 h-8 hover:text-orange-500 cursor-pointer shadow-lg shadow-gray-400 bg-white z-50 rounded-full flex items-center justify-center">
                 <svg width="20" height="20" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path fillRule="evenodd" clipRule="evenodd"
                           d="M12.0899 14.5899C11.7645 14.9153 11.2368 14.9153 10.9114 14.5899L5.91139 9.58991C5.58596 9.26447 5.58596 8.73683 5.91139 8.4114L10.9114 3.41139C11.2368 3.08596 11.7645 3.08596 12.0899 3.41139C12.4153 3.73683 12.4153 4.26447 12.0899 4.58991L7.67916 9.00065L12.0899 13.4114C12.4153 13.7368 12.4153 14.2645 12.0899 14.5899Z"
@@ -85,8 +91,11 @@ const ProductRows = ({title, hasMenu, query}: ProductRowProps) => {
             </div>
         );
     };
+    const CustomNextArrow: React.FC<CustomArrowProps> = ({onClick, currentSlide, slideCount}) => {
+        if (slideCount === undefined || currentSlide === slideCount - 1) {
+            return null;
+        }
 
-    const CustomNextArrow: React.FC<CustomArrowProps> = ({onClick}) => {
         return (
             <div onClick={onClick}
                  className="custom-arrow next-arrow mx-2 absolute top-[50%] right-0 text-orange-400 text-xl w-8 h-8 hover:text-orange-500 cursor-pointer shadow-lg shadow-gray-400 bg-white rounded-full flex items-center justify-center">
@@ -98,11 +107,19 @@ const ProductRows = ({title, hasMenu, query}: ProductRowProps) => {
             </div>
         );
     };
-
     return (
         <div className="p-4 bg-white rounded-lg">
             {hasMenu && <MenuMain filterProducts={filterProducts}/>}
-            <div className="mb-2 font-bold">{title}</div>
+            <div className="flex justify-between">
+                <div className=" font-bold text-xl">{title}</div>
+                {legacyBehavior &&
+                    <Link href="/red-more-row">
+                        <div
+                            className="flex items-end h-full font-sans text-orange-400 hover:text-orange-500 cursor-pointer">Xem
+                            thêm
+                        </div>
+                    </Link>}
+            </div>
             <div style={{maxWidth: '59rem', margin: 'auto'}}>
                 {isLoading ? (
                     <Loading/>
@@ -118,7 +135,7 @@ const ProductRows = ({title, hasMenu, query}: ProductRowProps) => {
                         {productGroups.map((group, index) => (
                             <div key={index}>
                                 <div
-                                    className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 pb-2 mt-2'>
+                                    className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 pb-2 mt-3'>
                                     {group.map((productCard: IProductCard) => (
                                         <ProductCard key={productCard.id} product={productCard}/>
                                     ))}
