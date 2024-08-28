@@ -5,7 +5,6 @@ import {RootState} from "../stores";
 import {Page} from "../models/Page";
 import {CurrentUser} from "../stores/user.reducer";
 import MenuMain from "./menu-main";
-import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
 import {Carousel} from "antd";
 
 import {CustomArrowProps} from "@ant-design/react-slick";

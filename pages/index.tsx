@@ -7,7 +7,7 @@ import SearchPosition from "../components/search-position";
 import {Page} from "../models/Page";
 import {ProductCategoryAPIResponse} from "../models/product_category/ProductCategoryAPIResponse";
 import {server} from "../utils/server";
-import {getProductsCardPage, getProductsPage} from "../queries/product.query";
+import {getProductsCardPage} from "../queries/product.query";
 import {getCategoriesPage} from "../queries/product_category.query";
 
 export async function getServerSideProps() {

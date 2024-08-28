@@ -7,7 +7,6 @@ import orderReducer from "./order.reducer";
 import fileUploadsReducer from "./file-uploads.reducer";
 import searchPositionReducer from "./search-position.reducer";
 import rateReducer from "./rate.reducer";
-import productCategoryReducer from "./product-category.reducer";
 import notificationReducer from "./notification.reducer";
 import mainMenuReducer from "./main-menu.reducer";
 
@@ -20,7 +19,6 @@ const rootReducer = combineReducers({
     order: orderReducer,
     fileUpload: fileUploadsReducer,
     searchPosition: searchPositionReducer,
-    productCategory: productCategoryReducer,
     mainMenu: mainMenuReducer,
     notification: notificationReducer
 });

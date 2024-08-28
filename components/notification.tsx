@@ -33,7 +33,7 @@ const Notification = () => {
             pageSize: pageSize
         })
             .then((res: Page<NotificationAPIResponse[]>) => {
-                dispatch(setNotifications(res.content))
+                dispatch(setNotifications(res.content));
             })
             .catch((res: AxiosError<ErrorAPIResponse>) => {
                 if (res.response) {
@@ -45,7 +45,7 @@ const Notification = () => {
                         description: res.message,
                     });
                 }
-                dispatch(setNotifications([]))
+                dispatch(setNotifications([]));
             })
     }
 

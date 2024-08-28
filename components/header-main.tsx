@@ -23,6 +23,8 @@ import Link from "next/link";
 import MenuMobile from "./menu-mobile";
 import {UserAPIResponse} from "../models/user/UserAPIResponse";
 import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
+import {getAddressById} from "../queries/address.query";
+import {getUserById} from "../queries/user.query";
 
 
 let sock: any = null;
@@ -103,15 +105,11 @@ export default function HeaderMain() {
         const addressId: string = currentUser.addressId ?? "";
 
         if (addressId !== "" && refreshToken) {
-            apiWithToken(refreshToken).get(`/addresses/${addressId}`, {
-                headers: {
-                    Authorization: 'Bearer ' + accessToken,
-                }
-            })
-                .then(function (res: AxiosResponse<AddressAPIResponse>): void {
-                    dispatch(setCurrentShippingAddress(res.data));
+            getAddressById(addressId, {refreshToken: refreshToken})
+                .then(res => {
+                    dispatch(setCurrentShippingAddress(res));
                 })
-                .catch(function (res: AxiosError<ErrorAPIResponse>): void {
+                .catch(res => {
                     console.log("Shipping address message: ", res.message);
                 });
         }
@@ -125,9 +123,9 @@ export default function HeaderMain() {
         if (refreshToken) {
             if (!currentUser.id) {
                 const user: CurrentUser = jwtDecode(refreshToken);
-                api.get("/users/" + user.id)
-                    .then(function (res) {
-                        const userResponseDTO: UserAPIResponse = res.data;
+                getUserById(user.id)
+                    .then(res => {
+                        const userResponseDTO: UserAPIResponse = res;
                         const currentUser: CurrentUser = {
                             id: userResponseDTO.id,
                             sub: userResponseDTO.id,
@@ -138,7 +136,7 @@ export default function HeaderMain() {
                             email: userResponseDTO.email
                         };
                         dispatch(setCurrentUser(currentUser));
-                    })
+                    });
             }
 
             if (!sock) {
@@ -194,7 +192,7 @@ export default function HeaderMain() {
             <Link href="/">
                 <div
                     className="flex items-center gap-1 nunito  text-4xl text-orange-400 cursor-pointer hover:text-orange-500">
-                <img src="/logo-02.png" className="w-14 h-14"/>
+                    <img src="/logo-02.png" className="w-14 h-14"/>
                     <div>FoodPoni</div>
                 </div>
             </Link>

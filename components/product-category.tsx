@@ -2,9 +2,9 @@ import React, {ReactElement, useEffect, useState} from 'react';
 import type {MenuProps} from 'antd';
 import {Menu} from 'antd';
 import {useDispatch} from "react-redux";
-import {setSelectedProductCategory} from "../stores/product-category.reducer";
 import {ProductCategoryAPIResponse} from "../models/product_category/ProductCategoryAPIResponse";
 import {server} from "../utils/server";
+import {NextRouter, useRouter} from "next/router";
 
 export interface ICategory {
     key: string;
@@ -12,6 +12,8 @@ export interface ICategory {
 }
 
 const ProductCategory = ({categoryList}: { categoryList: ProductCategoryAPIResponse[] }) => {
+
+    const router: NextRouter = useRouter();
 
     const dispatch = useDispatch();
 
@@ -44,7 +46,7 @@ const ProductCategory = ({categoryList}: { categoryList: ProductCategoryAPIRespo
     };
 
     const onClick: MenuProps['onClick'] = (e): void => {
-        dispatch(setSelectedProductCategory(e.key));
+        router.push(`/danh-muc/${e.key}`);
     };
 
     return (

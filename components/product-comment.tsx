@@ -8,7 +8,7 @@ import EmptyNotice from "./empty-notice";
 import Tym from "./tym";
 import Like from "./like";
 import Start from "./start";
-import {IProductDetail} from "../pages/[pid]";
+import {IProductDetail} from "../pages/san-pham/[pid]";
 
 interface ExpandedComments {
     [key: number]: boolean;

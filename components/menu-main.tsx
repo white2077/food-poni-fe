@@ -1,15 +1,7 @@
 import React from 'react';
-import {
-    AppstoreOutlined,
-    CrownOutlined,
-    DollarOutlined,
-    EnvironmentOutlined,
-    StarOutlined,
-    TagOutlined
-} from '@ant-design/icons';
+import {CrownOutlined, DollarOutlined, EnvironmentOutlined, StarOutlined, TagOutlined} from '@ant-design/icons';
 import type {MenuProps} from 'antd';
 import {Menu} from 'antd';
-import {useDispatch} from "react-redux";
 
 interface MainMenuProps {
     filterProducts: (key: string) => void

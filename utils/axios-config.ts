@@ -34,6 +34,7 @@ export const apiWithToken = (refreshToken: CookieValueTypes) => {
                 .catch((res: AxiosError<ErrorAPIResponse>) => {
                     if (res.status && res.status === 401) {
                         deleteCookie(REFRESH_TOKEN);
+                        window.location.href = "/login";
                     }
                     throw res;
                 });

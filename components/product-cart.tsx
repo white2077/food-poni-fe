@@ -1,11 +1,11 @@
-import {Button, Card, Flex, Rate} from "antd";
+import {Button, Card, Flex} from "antd";
 import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {addItem, deleteAllItem, ICart, ICartItem} from "../stores/cart.reducer";
 import {NextRouter, useRouter} from "next/router";
 import {RootState} from "../stores";
 import {CurrentUser} from "../stores/user.reducer";
-import {IRetailer} from "../pages/[pid]";
+import {IRetailer} from "../pages/san-pham/[pid]";
 import {server} from "../utils/server";
 import Link from "next/link";
 import Banner from "./slide-banner";
@@ -62,7 +62,7 @@ const ProductCart = ({id, price, thumbnail, name, retailer, status}: {
             <Card className='text-left text-black h-fit' size='small'>
                 <div className="flex justify-between">
                     <div className="flex">
-                        <Link href={`/shop/${retailer.id}`}>
+                        <Link href={`/cua-hang/${retailer.id}`}>
                             <a>
                                 <img className="w-12 h-12 rounded-[100%] overflow-hidden object-cover"
                                      src={server + retailer.avatar}

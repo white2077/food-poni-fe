@@ -61,7 +61,11 @@ export async function getServerSideProps({req}: { req: NextRequest }) {
     }
 }
 
-const AccountInformation = ({ePage}: { ePage: Page<AddressAPIResponse[]> }) => {
+interface AccountInformationPageProps {
+    ePage: Page<AddressAPIResponse[]>
+}
+
+const AccountInformation = ({ePage}: AccountInformationPageProps) => {
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const [selectedItem, setSelectedItem] = useState<string>('1');

@@ -1,6 +1,6 @@
 import {Card} from "antd";
 import React from "react";
-import {IRetailer} from "../pages/[pid]";
+import {IRetailer} from "../pages/san-pham/[pid]";
 
 const ProductRetailer = ({retailer}: { retailer: IRetailer }) => {
 

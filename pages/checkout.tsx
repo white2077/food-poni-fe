@@ -28,29 +28,33 @@ import {OrderItemRequestDTO} from "../models/order_item/OrderItemRequest";
 import {accessToken, apiWithToken} from "../utils/axios-config";
 import {REFRESH_TOKEN} from "../utils/server";
 import {getCookie} from "cookies-next";
-import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
+import {Page} from "../models/Page";
 import AddressCheckoutAdd from "../components/address-checkout-add";
 import AddressCheckoutUpdate from "../components/address-checkout-update";
 import {NextRequest} from "next/server";
 import {getAddressesPage} from "../queries/address.query";
 import CardHome from "../components/card-home";
 
-
 const {TextArea} = Input;
 
 export async function getServerSideProps({req}: { req: NextRequest }) {
-    return {
-        props: {
-            ePage: await getAddressesPage({
-                refreshToken: getCookie(REFRESH_TOKEN, {req}),
-                page: 0,
-                pageSize: 10
-            })
-        }
-    };
+    try {
+        const data = await getAddressesPage({
+            refreshToken: getCookie(REFRESH_TOKEN, {req}),
+            page: 0,
+            pageSize: 10
+        });
+        return {props: {ePage: data}}
+    } catch (e) {
+        throw e;
+    }
 }
 
-const Checkout = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<AddressAPIResponse[]> }) => {
+interface CheckoutPageProps {
+    ePage: Page<AddressAPIResponse[]>
+}
+
+const Checkout = ({ePage}: CheckoutPageProps) => {
 
     const router: NextRouter = useRouter();
 

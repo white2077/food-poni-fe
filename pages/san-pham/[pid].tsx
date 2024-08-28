@@ -1,24 +1,25 @@
 import {NextRouter, useRouter} from "next/router";
-import {DefaultLayout} from "./_layout";
+import {DefaultLayout} from "../_layout";
 import React, {useEffect, useState} from "react";
 import {Button, Card, notification, Radio, Rate, Result} from "antd";
-import ProductGallery from "../components/product-gallery";
-import ProductCart from "../components/product-cart";
+import ProductGallery from "../../components/product-gallery";
+import ProductCart from "../../components/product-cart";
 import {AxiosResponse} from "axios";
-import ProductComment from "../components/product-comment";
-import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
+import ProductComment from "../../components/product-comment";
+import {AddressAPIResponse} from "../../models/address/AddressAPIResponse";
 import {useSelector} from "react-redux";
-import {RootState} from "../stores";
+import {RootState} from "../../stores";
 import {ParsedUrlQuery} from "querystring";
-import {api} from "../utils/axios-config";
-import {server} from "../utils/server";
-import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
-import {ProductDetailAPIResponse} from "../models/product_detail/ProductDetailAPIResponse";
-import {RateAPIResponse} from "../models/rate/RateAPIResponse";
-import {Page} from "../models/Page";
-import ReadMore from "../components/read-more";
-import {getProductsPage} from "../queries/product.query";
-import RelatedProducts from "../components/related-products";
+import {api} from "../../utils/axios-config";
+import {server} from "../../utils/server";
+import {ProductAPIResponse} from "../../models/product/ProductAPIResponse";
+import {ProductDetailAPIResponse} from "../../models/product_detail/ProductDetailAPIResponse";
+import {RateAPIResponse} from "../../models/rate/RateAPIResponse";
+import {Page} from "../../models/Page";
+import ReadMore from "../../components/read-more";
+import {getProductById, getProductsCardPage} from "../../queries/product.query";
+import RelatedProducts from "../../components/related-products";
+import {getProductDetailsByProductId} from "../../queries/product-detail.query";
 
 export interface IProduct {
     id: string;
@@ -48,12 +49,14 @@ export interface IRetailer {
 
 export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
     const {pid} = context.params;
-    try {
-        const resProduct: AxiosResponse<ProductAPIResponse> = await api.get('/products/' + pid);
-        const product: ProductAPIResponse = resProduct.data;
 
-        const resProductDetails: AxiosResponse<Page<ProductDetailAPIResponse[]>> = await api.get('/product-details/products/' + pid);
-        const productDetails: Page<ProductDetailAPIResponse[]> = resProductDetails.data;
+    if (typeof pid !== 'string') {
+        throw new Error('invalid pid');
+    }
+
+    try {
+        const product: ProductAPIResponse = await getProductById(pid);
+        const productDetails: Page<ProductDetailAPIResponse[]> = await getProductDetailsByProductId(pid);
 
         const productMapped: IProduct = {
             id: product.id,
@@ -75,25 +78,19 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
                 sales: productDetail.sales,
                 status: productDetail.status
             }))
-
         };
 
-        return {
-            props: {
-                product: productMapped,
-            },
-        };
-    } catch (error) {
-        console.error('Error fetching product:', error);
-        return {
-            props: {
-                product: {} as IProduct,
-            },
-        };
+        return {props: {product: productMapped}}
+    } catch (e) {
+        throw e;
     }
 }
 
-const ProductDetails = ({product}: { product: IProduct }) => {
+interface ProductDetailPageProps {
+    product: IProduct
+}
+
+const ProductDetails = ({product}: ProductDetailPageProps) => {
 
     const router: NextRouter = useRouter();
 
@@ -191,7 +188,7 @@ const ProductDetails = ({product}: { product: IProduct }) => {
                                 <Card size='small' title='Mô tả ngắn'>
                                     <div className="text-black" dangerouslySetInnerHTML={{__html: product.shortDescription || ''}}></div>
                                 </Card>
-                                <RelatedProducts title="Sản phẩm liên quan" query={getProductsPage({status: true})}/>
+                                <RelatedProducts title="Sản phẩm liên quan" query={getProductsCardPage({page: 0, pageSize: 20, status: true})}/>
                                 <ReadMore content={description}/>
                             </div>
                             <div className="sticky top-5">

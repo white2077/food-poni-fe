@@ -1,19 +1,18 @@
 import {DefaultLayout} from "./_layout";
-import {GetProp, Pagination, PaginationProps, Result, Segmented, UploadProps} from "antd";
+import {GetProp, Pagination, PaginationProps, Segmented, UploadProps} from "antd";
 import React, {useState} from "react";
 import OrderCard from "../components/order-card";
-import {INITIAL_PAGE_API_RESPONSE, Page} from "../models/Page";
+import {Page} from "../models/Page";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
 import {OrderAPIResponse} from "../models/order/OrderAPIResponse";
 import {getOrdersPage} from "../queries/order.query";
-import {NextRequest} from "next/server";
-import {QueryPageType} from "../queries/type";
 import {AxiosError} from "axios";
 import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 import Loading from "../components/loading-product";
-import {ShoppingOutlined} from "@ant-design/icons";
 import EmptyNotice from "../components/empty-notice";
+import {NextRequest} from "next/server";
+import {QueryParams} from "../queries/type";
 
 enum OrderStatus {
     PENDING,
@@ -33,22 +32,28 @@ const getBase64 = (file: FileType): Promise<string> =>
     });
 
 export async function getServerSideProps({req}: { req: NextRequest }) {
-    return {
-        props: {
-            ePage: await getOrdersPage({
-                refreshToken: getCookie(REFRESH_TOKEN, {req}),
-                page: 0,
-                pageSize: 10,
-            })
-        }
-    };
+    try {
+        const data = await getOrdersPage({
+            refreshToken: getCookie(REFRESH_TOKEN, {req}),
+            page: 0,
+            pageSize: 10,
+            sort: ["createdDate,desc"]
+        });
+        return {props: {ePage: data}}
+    } catch (e) {
+        throw e;
+    }
 }
 
-const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIResponse[]> }) => {
+interface OrderPageProps {
+    ePage: Page<OrderAPIResponse[]>,
+}
 
-    const [orderPage, setOrderPage] = React.useState<Page<OrderAPIResponse[]>>(ePage);
+const Orders = ({ePage}: OrderPageProps) => {
 
-    const [isLoading, setLoading] = React.useState<boolean>(false);
+    const [orderPage, setOrderPage] = useState<Page<OrderAPIResponse[]>>(ePage);
+
+    const [isLoading, setLoading] = useState<boolean>(false);
 
     const [selectedStatus, setSelectedStatus] = useState<string>('');
 
@@ -60,7 +65,7 @@ const Orders = ({ePage = INITIAL_PAGE_API_RESPONSE}: { ePage: Page<OrderAPIRespo
         queryPage({page: current - 1, pageSize});
     };
 
-    const queryPage = ({page, pageSize}: QueryPageType): void => {
+    const queryPage = ({page, pageSize}: QueryParams): void => {
         setLoading(true);
         getOrdersPage({
                 refreshToken: getCookie(REFRESH_TOKEN),

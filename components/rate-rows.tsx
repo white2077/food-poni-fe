@@ -10,6 +10,7 @@ import {accessToken, apiWithToken} from "../utils/axios-config";
 import {getCookie} from "cookies-next";
 import {REFRESH_TOKEN} from "../utils/server";
 import {Page} from "../models/Page";
+import {getRateByCustomerAndOrderId} from "../queries/rate.query";
 
 const RateRows = ({orderId}: { orderId: string }) => {
 
@@ -23,21 +24,17 @@ const RateRows = ({orderId}: { orderId: string }) => {
 
     const getRates = (): void => {
         if (refreshToken) {
-            apiWithToken(refreshToken).get('/customer/orders/rate/' + orderId, {
-                headers: {
-                    Authorization: 'Bearer ' + accessToken,
-                }
-            })
-                .then(function (res: AxiosResponse<Page<RateAPIResponse[]>>) {
-                    setRates(res.data.content);
+            getRateByCustomerAndOrderId(orderId, {refreshToken: refreshToken})
+                .then(res => {
+                    setRates(res.content);
                 })
-                .catch(function (res) {
+                .catch(res => {
                     notification.open({
                         type: 'error',
                         message: 'Đánh giá',
                         description: res.message
                     });
-                })
+                });
         }
     }
 

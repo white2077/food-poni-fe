@@ -103,7 +103,7 @@ const ProductCard = ({product}: { product: IProductCard }) => {
         <div>
             {
                 product.minPrice ? (
-                    <Link href={`/${product.id}`}>
+                    <Link href={`/san-pham/${product.id}`}>
                         <Card
                             size='small'
                             hoverable

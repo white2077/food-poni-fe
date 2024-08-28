@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {IRetailer} from "../pages/[pid]";
+import {IRetailer} from "../pages/san-pham/[pid]";
 
 export interface ICart {
 

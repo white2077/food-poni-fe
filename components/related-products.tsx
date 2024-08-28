@@ -26,7 +26,7 @@ export interface IProductCard {
 
 interface ProductRowProps {
     title: string | JSX.Element,
-    query: Promise<Page<ProductAPIResponse[]>>,
+    query: Promise<Page<IProductCard[]>>,
 }
 
 const RelatedProducts = ({title, query}: ProductRowProps) => {
@@ -35,22 +35,8 @@ const RelatedProducts = ({title, query}: ProductRowProps) => {
     const [productCards, setProductCards] = React.useState<IProductCard[]>([]);
     React.useEffect(() => {
         setLoading(true);
-        query.then((res: Page<ProductAPIResponse[]>) => {
-            setProductCards(res.content.map((product: ProductAPIResponse, index: number) => {
-                return {
-                    index,
-                    id: product.id,
-                    name: product.name,
-                    thumbnail: product.thumbnail,
-                    minPrice: product.minPrice,
-                    maxPrice: product.maxPrice,
-                    rate: product.rate,
-                    retailer: product.user.username,
-                    rateCount: product.rateCount,
-                    sales: product.sales,
-                    createdDate: product.createdDate,
-                } as IProductCard
-            }));
+        query.then((res: Page<IProductCard[]>) => {
+            setProductCards(res.content);
         }).finally(() => setLoading(false));
     }, []);
     const filterProducts = (key: string) => {

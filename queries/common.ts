@@ -1,6 +1,5 @@
 import {QueryParams} from "./type";
 
-
 export default function generateQueryString(url: string, params?: QueryParams): string {
     const {page, pageSize, status, sort} = params ?? {} as QueryParams;
     let queryString = '';
