@@ -1,16 +1,11 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import ProductCard from "./product-card";
-import {useSelector} from "react-redux";
-import {RootState} from "../stores";
-import {Page} from "../models/Page";
-import {CurrentUser} from "../stores/user.reducer";
+import { useSelector } from "react-redux";
+import { RootState } from "../stores";
+import { Page } from "../models/Page";
+import { CurrentUser } from "../stores/user.reducer";
 import MenuMain from "./menu-main";
-import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
-import {Button, Carousel} from "antd";
-
-import {CustomArrowProps} from "@ant-design/react-slick";
-import Loading from "./loading-product";
-import Link from "next/link";
+import { Button } from "antd";
 import ProductRowLoading from "./product-row-skeleton";
 
 export interface IProductCard {
@@ -32,7 +27,7 @@ interface ProductRowProps {
     query: Promise<Page<IProductCard[]>>,
 }
 
-const ProductRowsSale = ({hasMenu, query}: ProductRowProps) => {
+const ProductRowsSale = ({ hasMenu, query }: ProductRowProps) => {
     const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
     const [isLoading, setLoading] = React.useState<boolean>(false);
     const [productCards, setProductCards] = React.useState<IProductCard[]>([]);
@@ -70,24 +65,27 @@ const ProductRowsSale = ({hasMenu, query}: ProductRowProps) => {
 
     return (
         <>
-            <div className="p-4 bg-white rounded-lg mb-5">
-                {hasMenu && <MenuMain filterProducts={filterProducts}/>}
-                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-2'>
+            <div className="p-2 sm:p-4 bg-white rounded-lg mb-3 sm:mb-5">
+                {hasMenu && <MenuMain filterProducts={filterProducts} />}
+                <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4 mt-2'>
                     {isLoading ? (
-                        <ProductRowLoading count={8}/>
+                        <ProductRowLoading count={8} />
                     ) : (
                         productsToShow.length !== 0 ? (
                             productsToShow.map((productCard) => (
-                                <ProductCard key={productCard.id} product={productCard}/>
+                                <ProductCard key={productCard.id} product={productCard} />
                             ))
                         ) : (
-                            "Không có dữ liệu!"
+                            <div className="col-span-full text-center text-gray-500">Không có dữ liệu!</div>
                         )
                     )}
                 </div>
             </div>
-            <div className="w-full flex justify-center">
-                <Button className="!text-orange-500" onClick={() => setShowAll(!showAll)}>
+            <div className="w-full flex justify-center mt-2 sm:mt-4">
+                <Button 
+                    className="!text-orange-500 text-sm sm:text-base px-3 sm:px-4 py-1 sm:py-2" 
+                    onClick={() => setShowAll(!showAll)}
+                >
                     {showAll ? 'Ẩn bớt' : 'Xem thêm'}
                 </Button>
             </div>

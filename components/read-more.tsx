@@ -1,58 +1,51 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Card} from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { Card } from 'antd';
 
 interface ReadMoreProps {
     content?: string;
 }
 
-const ReadMore: React.FC<ReadMoreProps> = ({content}) => {
+const ReadMore: React.FC<ReadMoreProps> = ({ content }) => {
     const [expanded, setExpanded] = useState(false);
     const [height, setHeight] = useState('500px');
-    const [opacity, setOpacity] = useState(0);
-    const [buttonText, setButtonText] = useState('Xem thêm');
-    const [showButton, setShowButton] = useState(true);
+    const [showButton, setShowButton] = useState(false);
     const contentRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (expanded) {
-            const contentHeight = contentRef.current?.scrollHeight;
-            setHeight(`${contentHeight}px`);
-            setOpacity(1);
-        } else {
-            setHeight('500px');
-            setOpacity(1);
-        }
-    }, [expanded]);
 
     useEffect(() => {
         if (contentRef.current && contentRef.current.scrollHeight > 500) {
             setShowButton(true);
-        } else {
-            setShowButton(false);
         }
     }, [content]);
 
+    useEffect(() => {
+        if (expanded && contentRef.current) {
+            setHeight(`${contentRef.current.scrollHeight}px`);
+        } else {
+            setHeight('500px');
+        }
+    }, [expanded]);
+
     const toggleDescription = () => {
         setExpanded(!expanded);
-        setButtonText(expanded ? 'Xem thêm' : 'Ẩn bớt');
     };
-
-    const sanitizedDescription = content || '';
 
     return (
         <Card size="small" title="Mô tả">
-            <div className="description-container bg-center relative">
+            <div className="description-container relative">
                 <div
                     ref={contentRef}
-                    className={`text-black overflow-clip transition-all `}
-                    dangerouslySetInnerHTML={{__html: sanitizedDescription}}
-                    style={{maxHeight: height, opacity: opacity}}
-                ></div>
+                    className="text-black overflow-hidden transition-all"
+                    dangerouslySetInnerHTML={{ __html: content || '' }}
+                    style={{ maxHeight: height }}
+                />
                 {showButton && (
                     <button
                         onClick={toggleDescription}
-                        className="absolute text-sm inset-x-0 bottom-[0.01%] text-gray-600 font-sans w-full hover:text-orange-500 bg-gradient-to-t from-white via-white-900 to-transparent size-24">
-                        <div className="w-full h-full flex items-end justify-center">{buttonText}</div>
+                        className="absolute inset-x-0 bottom-0 w-full text-sm text-gray-600 hover:text-orange-500 bg-gradient-to-t from-white to-transparent h-24"
+                    >
+                        <div className="flex items-end justify-center h-full">
+                            {expanded ? 'Ẩn bớt' : 'Xem thêm'}
+                        </div>
                     </button>
                 )}
             </div>
