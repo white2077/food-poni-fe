@@ -1,16 +1,16 @@
-import {NextRouter, useRouter} from "next/router";
-import {useState} from "react";
-import {SearchResult} from "../stores/search-position.reducer";
-import axios, {AxiosError, AxiosResponse} from "axios";
-import {AddressCreationRequestDTO} from "../models/address/AddressRequest";
-import {accessToken, apiWithToken} from "../utils/axios-config";
-import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
-import {AutoComplete, Button, Form, Input, notification} from "antd";
-import {useDispatch} from "react-redux";
-import {setCurrentShippingAddress} from "../stores/address.reducer";
-import {getCookie} from "cookies-next";
-import {REFRESH_TOKEN} from "../utils/server";
-import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
+import { NextRouter, useRouter } from "next/router";
+import { useState } from "react";
+import { SearchResult } from "../stores/search-position.reducer";
+import axios, { AxiosError, AxiosResponse } from "axios";
+import { AddressCreationRequestDTO } from "../models/address/AddressRequest";
+import { accessToken, apiWithToken } from "../utils/axios-config";
+import { AddressAPIResponse } from "../models/address/AddressAPIResponse";
+import { AutoComplete, Button, Form, Input, notification } from "antd";
+import { useDispatch } from "react-redux";
+import { setCurrentShippingAddress } from "../stores/address.reducer";
+import { getCookie } from "cookies-next";
+import { REFRESH_TOKEN } from "../utils/server";
+import { ErrorAPIResponse } from "../models/ErrorAPIResponse";
 
 export const AddressCheckoutAdd = () => {
 
@@ -112,17 +112,17 @@ export const AddressCheckoutAdd = () => {
         >
             <Form.Item
                 name="fullname"
-                rules={[{required: true, message: 'Vui lòng nhập họ tên!'}]}>
-                <Input placeholder="Họ tên"/>
+                rules={[{ required: true, message: 'Vui lòng nhập họ tên!' }]}>
+                <Input placeholder="Họ tên" />
             </Form.Item>
             <Form.Item
                 name="phoneNumber"
-                rules={[{required: true, message: 'Vui lòng nhập số điện thoại!'}]}>
-                <Input placeholder="Số điện thoại"/>
+                rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}>
+                <Input placeholder="Số điện thoại" />
             </Form.Item>
             <Form.Item
                 name="yourAddress"
-                rules={[{required: true, message: 'Vui lòng chọn địa chỉ!'}]}>
+                rules={[{ required: true, message: 'Vui lòng nhập địa chỉ!' }]}>
                 <AutoComplete
                     options={dataSource.map((result: SearchResult, index: number) => ({
                         value: result.display_name,
@@ -133,8 +133,8 @@ export const AddressCheckoutAdd = () => {
                     onSelect={onSelect}
                     onSearch={onSearch}
                     placeholder="Tìm kiếm địa chỉ tại đây"
-                    style={{width: '100%'}}>
-                    <Input.Search enterButton/>
+                    style={{ width: '100%' }}>
+                    <Input.Search enterButton />
                 </AutoComplete>
             </Form.Item>
             <Form.Item>
@@ -142,7 +142,7 @@ export const AddressCheckoutAdd = () => {
                     Thêm địa chỉ
                 </Button>
             </Form.Item>
-        </Form>
+        </Form >
     );
 
 }

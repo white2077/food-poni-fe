@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
-import {AimOutlined} from '@ant-design/icons';
-import {AutoComplete, Button, Space} from 'antd';
-import axios, {AxiosResponse} from "axios";
-import {useDispatch} from "react-redux";
-import {SearchResult, setSelectedAddress} from "../stores/search-position.reducer";
+import React, { useState } from 'react';
+import { AimOutlined } from '@ant-design/icons';
+import { AutoComplete, Button, Space } from 'antd';
+import axios, { AxiosResponse } from "axios";
+import { useDispatch } from "react-redux";
+import { SearchResult, setSelectedAddress } from "../stores/search-position.reducer";
 
 const SearchPosition = () => {
 
@@ -101,7 +101,7 @@ const SearchPosition = () => {
         <div className='absolute w-full md:w-2/3 lg:w-1/2 bottom-1 p-4 z-10'>
             <Space.Compact className='w-full'>
                 <AutoComplete
-                    className='w-full'
+                    className=' lg:w-full md:w-2/3 '
                     placeholder="Nhập địa chỉ của bạn tại đây..."
                     onSearch={onSearch}
                     onSelect={onSelect}
@@ -109,7 +109,7 @@ const SearchPosition = () => {
                 >
                     {renderOptions()}
                 </AutoComplete>
-                <Button size='large' icon={<AimOutlined/>} loading={pending} onClick={getCurrentLocation}/>
+                <Button size='large' icon={<AimOutlined />} loading={pending} onClick={getCurrentLocation} />
             </Space.Compact>
         </div>
     );
