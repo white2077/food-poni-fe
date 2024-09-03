@@ -1,5 +1,5 @@
-import {ProductDetailAPIResponse} from "../product_detail/ProductDetailAPIResponse";
 import {UserIdDTO} from "../user/UserRequest";
+import {ProductDetailIdDTO} from "../product_detail/ProductDetailRequest";
 
 export interface CartCreationRequestDTO {
 
@@ -9,7 +9,7 @@ export interface CartCreationRequestDTO {
 
     quantity: number;
 
-    productDetail: ProductDetailAPIResponse;
+    productDetail: ProductDetailIdDTO;
 
     checked: boolean;
 
