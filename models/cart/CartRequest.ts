@@ -1,11 +1,11 @@
-import {UserAPIResponse} from "../user/UserAPIResponse";
 import {ProductDetailAPIResponse} from "../product_detail/ProductDetailAPIResponse";
+import {UserIdDTO} from "../user/UserRequest";
 
 export interface CartCreationRequestDTO {
 
-    user: UserAPIResponse;
+    user: UserIdDTO;
 
-    retailer: UserAPIResponse;
+    retailer: UserIdDTO;
 
     quantity: number;
 
