@@ -79,7 +79,7 @@ const Cart = () => {
             </a>
             <Drawer title="Giỏ hàng" onClose={onClose} open={open}>
                 {carts.length === 0 ? (
-                    <EmptyNotice w="60" h="60" src="/NoProduct.png" message="Chưa có sản phẩm nào" />
+                    <EmptyNotice w="60" h="60" src="/no-product.png" message="Giỏ hàng trống" />
                 ) : (
                     carts.map((cart: ICart) => (
                         cart.cartItems.length > 0 ? (
