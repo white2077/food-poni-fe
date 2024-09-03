@@ -42,12 +42,12 @@ const ProductCart = ({id, price, thumbnail, name, retailer, status}: {
     const refreshToken = getCookie(REFRESH_TOKEN);
 
     const addToCart = (): void => {
-        if (currentUser.id) {
-            const payload: ICartItem = {id, price, thumbnail, name, quantity, retailer} as ICartItem;
-            dispatch(addItem(payload));
-        } else {
-            router.push("/login");
-        }
+        // if (currentUser.id) {
+        //     const payload: ICartItem = {id, price, thumbnail, name, quantity, retailer} as ICartItem;
+        //     dispatch(addItem(payload));
+        // } else {
+        //     router.push("/login");
+        // }
 
         if (currentUser.id) {
             const cartPayload: CartCreationRequestDTO = {
