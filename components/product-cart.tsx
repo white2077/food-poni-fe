@@ -1,4 +1,4 @@
-import {Button, Card, Flex} from "antd";
+import {Button, Card, Flex, notification} from "antd";
 import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {addItem, deleteAllItem, ICart, ICartItem} from "../stores/cart.reducer";
@@ -6,10 +6,15 @@ import {NextRouter, useRouter} from "next/router";
 import {RootState} from "../stores";
 import {CurrentUser} from "../stores/user.reducer";
 import {IRetailer} from "../pages/san-pham/[pid]";
-import {server} from "../utils/server";
+import {REFRESH_TOKEN, server} from "../utils/server";
 import Link from "next/link";
 import Banner from "./slide-banner";
 import CustomInput from "./custom-input ";
+import {CartCreationRequestDTO} from "../models/cart/CartRequest";
+import {getCookie} from "cookies-next";
+import {accessToken, apiWithToken} from "../utils/axios-config";
+import {AxiosError, AxiosResponse} from "axios";
+import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 
 const ProductCart = ({id, price, thumbnail, name, retailer, status}: {
     id: string,
@@ -34,10 +39,49 @@ const ProductCart = ({id, price, thumbnail, name, retailer, status}: {
 
     const [pending, setPending] = useState<boolean>(false);
 
+    const refreshToken = getCookie(REFRESH_TOKEN);
+
     const addToCart = (): void => {
         if (currentUser.id) {
             const payload: ICartItem = {id, price, thumbnail, name, quantity, retailer} as ICartItem;
             dispatch(addItem(payload));
+        } else {
+            router.push("/login");
+        }
+
+        if (currentUser.id) {
+            const cartPayload: CartCreationRequestDTO = {
+                user: {
+                    id: currentUser.id
+                },
+                retailer: {
+                    id: retailer.id
+                },
+                quantity,
+                productDetail: {id},
+                checked: true
+            };
+            if (refreshToken) {
+                apiWithToken(refreshToken).post("/carts", cartPayload, {
+                    headers: {
+                        Authorization: 'Bearer ' + accessToken,
+                    }
+                })
+                    .then(function (res: AxiosResponse<CartCreationRequestDTO>) {
+                        notification.open({
+                            type: 'success',
+                            message: 'Giỏ hàng',
+                            description: "Thêm sản phẩm vào giỏ hàng thành công!",
+                        });
+                    })
+                    .catch(function (res: AxiosError<ErrorAPIResponse>) {
+                        notification.open({
+                            type: 'error',
+                            message: 'Giỏ hàng',
+                            description: res.message,
+                        });
+                    });
+            }
         } else {
             router.push("/login");
         }
@@ -85,8 +129,8 @@ const ProductCart = ({id, price, thumbnail, name, retailer, status}: {
                                     </span>
                                 </div>
                                 <div>
-                                 <p className=" text-gray-400 font-normal">(69 đánh giá)</p>
-                                 </div>
+                                    <p className=" text-gray-400 font-normal">(69 đánh giá)</p>
+                                </div>
                             </div>
                         </div>
                     </div>
