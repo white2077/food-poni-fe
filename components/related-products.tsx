@@ -95,7 +95,6 @@ const RelatedProducts = ({ title, query }: ProductRowProps) => {
 
     return (
         <div className="p-4 bg-white rounded-lg">
-
             <div className="mt-2">{title}</div>
             <div style={{ maxWidth: '30rem', margin: 'auto' }}>
                 {isLoading ? (
@@ -114,7 +113,7 @@ const RelatedProducts = ({ title, query }: ProductRowProps) => {
                         {productGroups.map((group, index) => (
                             <div key={index}>
                                 <div
-                                    className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 pb-2 mt-2'>
+                                    className='grid grid-cols-1 grid-cols-3 gap-4 pb-2 mt-2'>
                                     {group.map((productCard: IProductCard) => (
                                         <ProductCardRelated key={productCard.id} product={productCard} />
                                     ))}

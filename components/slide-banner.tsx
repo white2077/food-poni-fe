@@ -1,5 +1,5 @@
 import React from 'react';
-import {Carousel} from 'antd';
+import { Carousel } from 'antd';
 
 const contentStyle: React.CSSProperties = {
     height: '140px',
@@ -12,26 +12,26 @@ const contentStyle: React.CSSProperties = {
 };
 
 const Banner: React.FC = () => (
-    <div style={{maxWidth: '22rem', margin: 'auto'}}>
+    <div className='lg:max-w-[22rem] w-full'>
         <Carousel arrows infinite autoplay>
             <div>
                 <h3 style={contentStyle}>
-                    <img className="w-full h-full object-cover rounded-lg" src="/img_1.png" alt="1.png"/>
+                    <img className="w-full h-full object-cover rounded-lg" src="/img_1.png" alt="1.png" />
                 </h3>
             </div>
             <div>
                 <h3 style={contentStyle}>
-                    <img className="w-full h-full object-cover rounded-lg" src="/img_2.png" alt="2.png"/>
+                    <img className="w-full h-full object-cover rounded-lg" src="/img_2.png" alt="2.png" />
                 </h3>
             </div>
             <div>
                 <h3 style={contentStyle}>
-                    <img className="w-full h-full object-cover rounded-lg" src="/img_1.png" alt="3.png"/>
+                    <img className="w-full h-full object-cover rounded-lg" src="/img_1.png" alt="3.png" />
                 </h3>
             </div>
             <div>
                 <h3 style={contentStyle}>
-                    <img className="w-full h-full object-cover rounded-lg" src="/img_2.png" alt="3.png"/>
+                    <img className="w-full h-full object-cover rounded-lg" src="/img_2.png" alt="3.png" />
                 </h3>
             </div>
         </Carousel>

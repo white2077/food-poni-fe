@@ -94,7 +94,7 @@ const ProductRows = ({ title, hasMenu, query, legacyBehavior }: ProductRowProps)
             <div className="flex justify-between items-end">
                 <div className="font-bold text-xl">{title}</div>
                 {legacyBehavior && (
-                    <Link href="/red-more-row" className='flex justify-start '>
+                    <Link href="/hot-sale" className='flex justify-start '>
                         <div className="flex items-end text-end h-full text-orange-400 hover:text-orange-500 cursor-pointer">
                             Xem thêm
                         </div>

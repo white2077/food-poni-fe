@@ -148,10 +148,10 @@ const ProductDetails = ({ product }: ProductDetailPageProps) => {
                 product.id && product.productDetails && product.productDetails.length > 0 ? (
                     <div className='grid gap-4'>
                         <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[2fr_3fr_2fr] gap-4'>
-                            <div className="sticky top-5">
+                            <div className="lg:sticky top-5">
                                 <ProductGallery images={images ?? []} />
                             </div>
-                            <div className='grid gap-4'>
+                            <div className='grid gap-4 lg:order-1 order-2'>
                                 <Card size='small'>
                                     <h2 className='text-xl'>{product.name + (productDetailName ? ' - ' + productDetailName : '')}</h2>
                                     <div className="my-2 flex flex-wrap items-center">
@@ -159,14 +159,14 @@ const ProductDetails = ({ product }: ProductDetailPageProps) => {
                                             <span className="m-1 border-b-2 text-lg">{(productDetailSelected?.rate ? productDetailSelected.rate.toFixed(1) : 0) + ""}</span>
                                             <Rate allowHalf disabled value={productDetailSelected?.rate} className="text-xs mr-[8px]" />
                                         </span>
-                                        <span className="border-r-2 py-1 px-2 hidden md:inline">
+                                        <span className="border-r-2 py-1 px-1 hidden md:inline">
                                             <span className="text-lg m-1 border-b-2">{productDetailSelected?.rateCount}</span> Đánh giá
                                         </span>
-                                        <span className="border-r-2 py-1 px-2">
+                                        <span className="border-r-2 py-1 px-1">
                                             <span className="text-lg m-1 border-b-2">{productDetailSelected?.sales}</span> Lượt bán
                                         </span>
-                                        <span className="flex items-center px-2">
-                                            <Tym /> <span className=" ml-1">69 Lượt thích</span>
+                                        <span className="flex items-center px-1">
+                                            <Tym /> <span className=" ml-1">9999 Lượt thích</span>
                                         </span>
                                     </div>
                                     <h3 className='text-2xl font-semibold'>
@@ -196,7 +196,7 @@ const ProductDetails = ({ product }: ProductDetailPageProps) => {
                                 <RelatedProducts title="Sản phẩm liên quan" query={getProductsCardPage({ page: 0, pageSize: 20, status: true })} />
                                 <ReadMore content={description} />
                             </div>
-                            <div className="sticky top-5">
+                            <div className="lg:sticky top-5 lg:order-2 order-1">
                                 <ProductCart
                                     id={id!}
                                     price={price!}
