@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {Button, Dropdown, Image, Input, MenuProps, Modal, Radio, Space} from "antd";
+import React, { useEffect, useState } from "react";
+import { Button, Dropdown, Image, Input, MenuProps, Modal, Radio, Space } from "antd";
 import {
     DeleteOutlined,
     ExclamationCircleFilled,
@@ -9,19 +9,19 @@ import {
     PictureOutlined,
     SafetyCertificateOutlined
 } from "@ant-design/icons";
-import {CurrentUser} from "../stores/user.reducer";
-import {useSelector} from "react-redux";
-import {RootState} from "../stores";
-import {server} from "../utils/server";
-import {api} from "../utils/axios-config";
-import {UserAPIResponse} from "../models/user/UserAPIResponse";
+import { CurrentUser } from "../stores/user.reducer";
+import { useSelector } from "react-redux";
+import { RootState } from "../stores";
+import { server } from "../utils/server";
+import { api } from "../utils/axios-config";
+import { UserAPIResponse } from "../models/user/UserAPIResponse";
 import SelectedItemLabel from "./select-label";
 import ChangePassword from "./change-password";
 import Loading from "./loading-product";
 import ComboboxDate from "./combobox-date";
 import ChangeAvatar from "./change-avatar";
 
-const {confirm} = Modal;
+const { confirm } = Modal;
 
 export const PersonalInformation = () => {
 
@@ -60,7 +60,7 @@ export const PersonalInformation = () => {
     const showDeleteConfirm = () => {
         confirm({
             title: 'Bạn có chắc muốn xoá ảnh đại diện ?',
-            icon: <ExclamationCircleFilled/>,
+            icon: <ExclamationCircleFilled />,
             content: 'Hình ảnh đại diện sẽ quay về mặc định của FoodPoni',
             okText: 'Yes',
             okType: 'danger',
@@ -79,7 +79,7 @@ export const PersonalInformation = () => {
             key: '1',
             label: (
                 <button onClick={() => setOpen(true)}>
-                    <PictureOutlined/> Xem ảnh đại diện
+                    <PictureOutlined /> Xem ảnh đại diện
                 </button>
             ),
         },
@@ -87,7 +87,7 @@ export const PersonalInformation = () => {
             key: '2',
             label: (
                 <button onClick={() => setOpenUpdate(true)}>
-                    <EyeOutlined/> Cập nhật ảnh đại diện
+                    <EyeOutlined /> Cập nhật ảnh đại diện
                 </button>
             ),
         },
@@ -95,7 +95,7 @@ export const PersonalInformation = () => {
             key: '3',
             label: (
                 <button onClick={showDeleteConfirm}>
-                    <DeleteOutlined/> Xóa ảnh đại diện hiện tại
+                    <DeleteOutlined /> Xóa ảnh đại diện hiện tại
                 </button>
 
             ),
@@ -108,16 +108,16 @@ export const PersonalInformation = () => {
                 <div className="w-[600px] mx-auto">
                     <div className="flex items-center">
                         <button onClick={handleAddAddressClick}
-                                className="text-xl font-sans text-gray-400 hover:text-gray-500">Thông tin cá nhân
+                            className="text-xl font-sans text-gray-400 hover:text-gray-500">Thông tin cá nhân
                         </button>
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18" fill="none">
                             <path fillRule="evenodd" clipRule="evenodd"
-                                  d="M5.91107 3.41107C6.23651 3.08563 6.76414 3.08563 7.08958 3.41107L12.0896 8.41107C12.415 8.73651 12.415 9.26415 12.0896 9.58958L7.08958 14.5896C6.76414 14.915 6.23651 14.915 5.91107 14.5896C5.58563 14.2641 5.58563 13.7365 5.91107 13.4111L10.3218 9.00033L5.91107 4.58958C5.58563 4.26414 5.58563 3.73651 5.91107 3.41107Z"
-                                  fill="#f36f24"></path>
+                                d="M5.91107 3.41107C6.23651 3.08563 6.76414 3.08563 7.08958 3.41107L12.0896 8.41107C12.415 8.73651 12.415 9.26415 12.0896 9.58958L7.08958 14.5896C6.76414 14.915 6.23651 14.915 5.91107 14.5896C5.58563 14.2641 5.58563 13.7365 5.91107 13.4111L10.3218 9.00033L5.91107 4.58958C5.58563 4.26414 5.58563 3.73651 5.91107 3.41107Z"
+                                fill="#f36f24"></path>
                         </svg>
-                        <SelectedItemLabel label={"Đổi mật khẩu"}/>
+                        <SelectedItemLabel label={"Đổi mật khẩu"} />
                     </div>
-                    <ChangePassword/>
+                    <ChangePassword />
                 </div>
             ) : (
                 <div>
@@ -130,7 +130,7 @@ export const PersonalInformation = () => {
                         height={500}
                         footer={null}
                     >
-                        <ChangeAvatar/>
+                        <ChangeAvatar />
                     </Modal>
                     <Modal
                         title="Xem ảnh đại diện"
@@ -142,11 +142,13 @@ export const PersonalInformation = () => {
                         height={500}
                         footer={null}
                     >
-                        <img src={server + user.avatar} className="rounded-lg object-cover"/>
+                        <img src={server + user.avatar} className="rounded-lg object-cover" />
                     </Modal>
-                    <SelectedItemLabel label={"Thông tin cá nhân"}/>
+                    <SelectedItemLabel label={"Thông tin cá nhân"} />
                     {isLoading ? (
-                        <Loading/>
+                        <Loading loading={isLoading}>
+                            <div>Loading...</div>
+                        </Loading>
                     ) : (
                         <div className="bg-white p-3 rounded-lg grid lg:grid-cols-5 grid-cols-1 gap-4">
                             <div className="col-span-3">
@@ -154,10 +156,10 @@ export const PersonalInformation = () => {
                                 <div className="grid lg:grid-cols-4">
                                     <div className="col-span-1">
                                         <div className="flex flex-col items-center mr-5 gap-5 relative">
-                                            <Dropdown menu={{items}} placement="bottom" arrow>
+                                            <Dropdown menu={{ items }} placement="bottom" arrow>
                                                 <button
                                                     className="absolute z-50 bg-gray-400 w-5 h-5 flex justify-center items-center rounded-full bottom-2 right-2">
-                                                    <img className="w-3 h-3" src="/pen.png"/></button>
+                                                    <img className="w-3 h-3" src="/pen.png" /></button>
                                             </Dropdown>
                                             <Image
                                                 preview={false}
@@ -181,7 +183,7 @@ export const PersonalInformation = () => {
                                             Ngày sinh
                                         </div>
                                     </div>
-                                    <ComboboxDate user={user}/>
+                                    <ComboboxDate user={user} />
                                 </div>
                                 <div className="grid lg:grid-cols-4 mt-8">
                                     <div className="col-span-1 w-[100%]">
@@ -219,7 +221,7 @@ export const PersonalInformation = () => {
                                             <div className="p-4 grid gap-3">
                                                 <div className="flex items-center gap-2 justify-between w-[100%]">
                                                     <div className="flex items-center gap-2 w-[100%]">
-                                                        <MailOutlined/>
+                                                        <MailOutlined />
                                                         <div className="text-lg text-gray-600 ml-2 ">
                                                             <div className="text-[15px]">Địa chỉ email</div>
                                                             <div className="text-[15px] w-full">{user.email}</div>
@@ -234,7 +236,7 @@ export const PersonalInformation = () => {
                                             <div className="p-4 grid gap-3">
                                                 <div className="flex items-center gap-2 justify-between w-[100%]">
                                                     <div className="flex items-center gap-2 w-[100%]">
-                                                        <LockOutlined/>
+                                                        <LockOutlined />
                                                         <div className="text-lg text-gray-600 ml-2 ">
                                                             <div className="text-[15px]">Đổi mật khẩu</div>
                                                         </div>
@@ -245,7 +247,7 @@ export const PersonalInformation = () => {
                                             <div className="p-4 grid gap-3">
                                                 <div className="flex items-center gap-2 justify-between w-[100%]">
                                                     <div className="flex items-center gap-2 w-[100%]">
-                                                        <SafetyCertificateOutlined/>
+                                                        <SafetyCertificateOutlined />
                                                         <div className="text-lg text-gray-600 ml-2 ">
                                                             <div className="text-[15px]">Bảo mật</div>
                                                         </div>
@@ -256,7 +258,7 @@ export const PersonalInformation = () => {
                                             <div className="p-4 grid gap-3">
                                                 <div className="flex items-center gap-2 justify-between w-[100%]">
                                                     <div className="flex items-center gap-2 w-[100%]">
-                                                        <DeleteOutlined/>
+                                                        <DeleteOutlined />
                                                         <div className="text-lg text-gray-600 ml-2  w-full">
                                                             <div className="text-[15px] w-full ">Yêu cầu xóa tài khoản
                                                             </div>

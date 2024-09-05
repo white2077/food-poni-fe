@@ -1,25 +1,27 @@
-import {NextRouter, useRouter} from "next/router";
-import {DefaultLayout} from "../_layout";
-import React, {useEffect, useState} from "react";
-import {Button, Card, notification, Radio, Rate, Result} from "antd";
+import { NextRouter, useRouter } from "next/router";
+import { DefaultLayout } from "../_layout";
+import React, { useEffect, useState } from "react";
+import { Button, Card, notification, Radio, Rate, Result } from "antd";
 import ProductGallery from "../../components/product-gallery";
 import ProductCart from "../../components/product-cart";
-import {AxiosResponse} from "axios";
+import { AxiosResponse } from "axios";
 import ProductComment from "../../components/product-comment";
-import {AddressAPIResponse} from "../../models/address/AddressAPIResponse";
-import {useSelector} from "react-redux";
-import {RootState} from "../../stores";
-import {ParsedUrlQuery} from "querystring";
-import {api} from "../../utils/axios-config";
-import {server} from "../../utils/server";
-import {ProductAPIResponse} from "../../models/product/ProductAPIResponse";
-import {ProductDetailAPIResponse} from "../../models/product_detail/ProductDetailAPIResponse";
-import {RateAPIResponse} from "../../models/rate/RateAPIResponse";
-import {Page} from "../../models/Page";
+import { AddressAPIResponse } from "../../models/address/AddressAPIResponse";
+import { useSelector } from "react-redux";
+import { RootState } from "../../stores";
+import { ParsedUrlQuery } from "querystring";
+import { api } from "../../utils/axios-config";
+import { server } from "../../utils/server";
+import { ProductAPIResponse } from "../../models/product/ProductAPIResponse";
+import { ProductDetailAPIResponse } from "../../models/product_detail/ProductDetailAPIResponse";
+import { RateAPIResponse } from "../../models/rate/RateAPIResponse";
+import { Page } from "../../models/Page";
 import ReadMore from "../../components/read-more";
-import {getProductById, getProductsCardPage} from "../../queries/product.query";
+import { getProductById, getProductsCardPage } from "../../queries/product.query";
 import RelatedProducts from "../../components/related-products";
-import {getProductDetailsByProductId} from "../../queries/product-detail.query";
+import { getProductDetailsByProductId } from "../../queries/product-detail.query";
+import Loading from "../../components/loading-product";
+import Tym from "../../components/tym";
 
 export interface IProduct {
     id: string;
@@ -48,7 +50,7 @@ export interface IRetailer {
 }
 
 export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
-    const {pid} = context.params;
+    const { pid } = context.params;
 
     if (typeof pid !== 'string') {
         throw new Error('invalid pid');
@@ -80,7 +82,7 @@ export async function getServerSideProps(context: { params: ParsedUrlQuery }) {
             }))
         };
 
-        return {props: {product: productMapped}}
+        return { props: { product: productMapped } }
     } catch (e) {
         throw e;
     }
@@ -90,7 +92,7 @@ interface ProductDetailPageProps {
     product: IProduct
 }
 
-const ProductDetails = ({product}: ProductDetailPageProps) => {
+const ProductDetails = ({ product }: ProductDetailPageProps) => {
 
     const router: NextRouter = useRouter();
 
@@ -120,8 +122,8 @@ const ProductDetails = ({product}: ProductDetailPageProps) => {
                     description: res.message
                 });
             }).finally(() => {
-            setLoadingRate(false);
-        })
+                setLoadingRate(false);
+            })
     }
 
     const [productDetailSelected, setProductDetailSelected] = useState<IProductDetail>();
@@ -147,24 +149,25 @@ const ProductDetails = ({product}: ProductDetailPageProps) => {
                     <div className='grid gap-4'>
                         <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[2fr_3fr_2fr] gap-4'>
                             <div className="sticky top-5">
-                                <ProductGallery images={images ?? []}/>
+                                <ProductGallery images={images ?? []} />
                             </div>
                             <div className='grid gap-4'>
                                 <Card size='small'>
                                     <h2 className='text-xl'>{product.name + (productDetailName ? ' - ' + productDetailName : '')}</h2>
-                                    <div className="my-2">
-                                <span className="border-r-2 py-1 pr-2">
-                                    <span className="m-1 border-b-2 text-lg">{(productDetailSelected?.rate ? productDetailSelected.rate.toFixed(1) : 0) + ""}</span>
-                                    <span>
-                                    </span>
-                                    <Rate allowHalf disabled value={productDetailSelected?.rate} className="text-xs mr-[8px]"/>
-                                </span>
-                                        <span className="border-r-2 py-1 px-4 hidden md:inline">
-                                    <span className="text-lg m-1 border-b-2">{productDetailSelected?.rateCount}</span> Đánh giá
-                                </span>
-                                        <span className="border-r-2 py-1 px-4">
-                                    <span className="text-lg m-1 border-b-2">{productDetailSelected?.sales}</span> Lượt bán
-                                </span>
+                                    <div className="my-2 flex flex-wrap items-center">
+                                        <span className="border-r-2 py-1 pr-2 flex items-center">
+                                            <span className="m-1 border-b-2 text-lg">{(productDetailSelected?.rate ? productDetailSelected.rate.toFixed(1) : 0) + ""}</span>
+                                            <Rate allowHalf disabled value={productDetailSelected?.rate} className="text-xs mr-[8px]" />
+                                        </span>
+                                        <span className="border-r-2 py-1 px-2 hidden md:inline">
+                                            <span className="text-lg m-1 border-b-2">{productDetailSelected?.rateCount}</span> Đánh giá
+                                        </span>
+                                        <span className="border-r-2 py-1 px-2">
+                                            <span className="text-lg m-1 border-b-2">{productDetailSelected?.sales}</span> Lượt bán
+                                        </span>
+                                        <span className="flex items-center px-2">
+                                            <Tym /> <span className=" ml-1">69 Lượt thích</span>
+                                        </span>
                                     </div>
                                     <h3 className='text-2xl font-semibold'>
                                         {price}
@@ -182,14 +185,16 @@ const ProductDetails = ({product}: ProductDetailPageProps) => {
                                         </Radio.Group>
                                     )}
                                 </Card>
-                                <Card size='small' title='Thông tin vận chuyển' loading={Object.keys(currentShippingAddress).length === 0} hidden={currentShippingAddress.id === ""}>
-                                    <div>{currentShippingAddress.address}</div>
+                                <Card size='small' title='Thông tin vận chuyển' hidden={currentShippingAddress.id === ""}>
+                                    <Loading loading={Object.keys(currentShippingAddress).length === 0}>
+                                        {currentShippingAddress.address}
+                                    </Loading>
                                 </Card>
                                 <Card size='small' title='Mô tả ngắn'>
-                                    <div className="text-black" dangerouslySetInnerHTML={{__html: product.shortDescription || ''}}></div>
+                                    <div className="text-black" dangerouslySetInnerHTML={{ __html: product.shortDescription || '' }}></div>
                                 </Card>
-                                <RelatedProducts title="Sản phẩm liên quan" query={getProductsCardPage({page: 0, pageSize: 20, status: true})}/>
-                                <ReadMore content={description}/>
+                                <RelatedProducts title="Sản phẩm liên quan" query={getProductsCardPage({ page: 0, pageSize: 20, status: true })} />
+                                <ReadMore content={description} />
                             </div>
                             <div className="sticky top-5">
                                 <ProductCart
@@ -202,7 +207,7 @@ const ProductDetails = ({product}: ProductDetailPageProps) => {
                                 />
                             </div>
                         </div>
-                        <ProductComment data={rates} productDetailSelected={productDetailSelected ?? {} as IProductDetail} isLoading={isLoadingRate}/>
+                        <ProductComment data={rates} productDetailSelected={productDetailSelected ?? {} as IProductDetail} isLoading={isLoadingRate} />
                     </div>
                 ) : (
                     <Result

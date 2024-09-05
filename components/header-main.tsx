@@ -197,7 +197,7 @@ export default function HeaderMain() {
                     </div>
                 </Link>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4">
+            <div className="grid grid-cols-1 grid-cols-[2fr_1fr] items-center gap-4">
                 <div className="order-3 md:order-2 mt-4 md:mt-0">
                     <SearchKeyword />
                 </div>

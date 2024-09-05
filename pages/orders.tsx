@@ -1,18 +1,18 @@
-import {DefaultLayout} from "./_layout";
-import {GetProp, Pagination, PaginationProps, Segmented, UploadProps} from "antd";
-import React, {useState} from "react";
+import { DefaultLayout } from "./_layout";
+import { GetProp, Pagination, PaginationProps, Segmented, UploadProps } from "antd";
+import React, { useState } from "react";
 import OrderCard from "../components/order-card";
-import {Page} from "../models/Page";
-import {getCookie} from "cookies-next";
-import {REFRESH_TOKEN} from "../utils/server";
-import {OrderAPIResponse} from "../models/order/OrderAPIResponse";
-import {getOrdersPage} from "../queries/order.query";
-import {AxiosError} from "axios";
-import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
+import { Page } from "../models/Page";
+import { getCookie } from "cookies-next";
+import { REFRESH_TOKEN } from "../utils/server";
+import { OrderAPIResponse } from "../models/order/OrderAPIResponse";
+import { getOrdersPage } from "../queries/order.query";
+import { AxiosError } from "axios";
+import { ErrorAPIResponse } from "../models/ErrorAPIResponse";
 import Loading from "../components/loading-product";
 import EmptyNotice from "../components/empty-notice";
-import {NextRequest} from "next/server";
-import {QueryParams} from "../queries/type";
+import { NextRequest } from "next/server";
+import { QueryParams } from "../queries/type";
 
 enum OrderStatus {
     PENDING,
@@ -31,15 +31,15 @@ const getBase64 = (file: FileType): Promise<string> =>
         reader.onerror = (error) => reject(error);
     });
 
-export async function getServerSideProps({req}: { req: NextRequest }) {
+export async function getServerSideProps({ req }: { req: NextRequest }) {
     try {
         const data = await getOrdersPage({
-            refreshToken: getCookie(REFRESH_TOKEN, {req}),
+            refreshToken: getCookie(REFRESH_TOKEN, { req }),
             page: 0,
             pageSize: 10,
             sort: ["createdDate,desc"]
         });
-        return {props: {ePage: data}}
+        return { props: { ePage: data } }
     } catch (e) {
         throw e;
     }
@@ -49,7 +49,7 @@ interface OrderPageProps {
     ePage: Page<OrderAPIResponse[]>,
 }
 
-const Orders = ({ePage}: OrderPageProps) => {
+const Orders = ({ ePage }: OrderPageProps) => {
 
     const [orderPage, setOrderPage] = useState<Page<OrderAPIResponse[]>>(ePage);
 
@@ -62,16 +62,16 @@ const Orders = ({ePage}: OrderPageProps) => {
     const onShowSizeChange: PaginationProps['onShowSizeChange'] = (current, pageSize) => {
         console.log(current, pageSize);
         setCurrent(current);
-        queryPage({page: current - 1, pageSize});
+        queryPage({ page: current - 1, pageSize });
     };
 
-    const queryPage = ({page, pageSize}: QueryParams): void => {
+    const queryPage = ({ page, pageSize }: QueryParams): void => {
         setLoading(true);
         getOrdersPage({
-                refreshToken: getCookie(REFRESH_TOKEN),
-                page: page ?? orderPage.number,
-                pageSize: pageSize ?? orderPage.size
-            }
+            refreshToken: getCookie(REFRESH_TOKEN),
+            page: page ?? orderPage.number,
+            pageSize: pageSize ?? orderPage.size
+        }
         ).then((res: Page<OrderAPIResponse[]>) => setOrderPage(res))
             .catch((res: AxiosError<ErrorAPIResponse>) => {
                 console.log(res.message);
@@ -122,18 +122,20 @@ const Orders = ({ePage}: OrderPageProps) => {
                         />
                     </div>
                     {
-                        isLoading ? <Loading/> : (
+                        isLoading ? <Loading loading={isLoading}>
+                            <div>Loading...</div>
+                        </Loading> : (
                             <div>
                                 {
                                     filteredOrders.length === 0 ? (
 
-                                        <EmptyNotice w="42" h="32" src="/no-oder.png" message="Chưa có oder nào"/>
+                                        <EmptyNotice w="42" h="32" src="/no-oder.png" message="Chưa có oder nào" />
                                     ) : (
                                         <div
                                             className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
                                             {filteredOrders.map((order: OrderAPIResponse) => (
                                                 <div key={order.id}>
-                                                    <OrderCard order={order}/>
+                                                    <OrderCard order={order} />
                                                 </div>
                                             ))}
                                         </div>

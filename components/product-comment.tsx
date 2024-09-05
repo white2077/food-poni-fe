@@ -14,22 +14,21 @@ interface ExpandedComments {
     [key: number]: boolean;
 }
 
-const getReviewText = (rate: number) => {
-    const reviewTexts = [
-        'Rất không hài lòng',
-        'Không hài lòng',
-        'Bình thường',
-        'Hài lòng',
-        'Cực kì hài lòng'
-    ];
-    return reviewTexts[rate - 1] || '';
-};
+const REVIEW_TEXTS = [
+    'Rất không hài lòng',
+    'Không hài lòng',
+    'Bình thường',
+    'Hài lòng',
+    'Cực kì hài lòng'
+];
 
-const ProductComment = ({ data, productDetailSelected, isLoading }: {
+const getReviewText = (rate: number) => REVIEW_TEXTS[rate - 1] || '';
+
+const ProductComment: React.FC<{
     data: RateAPIResponse[],
     productDetailSelected: IProductDetail,
     isLoading: boolean
-}) => {
+}> = ({ data, productDetailSelected, isLoading }) => {
     const [selectedRating, setSelectedRating] = useState<number | null>(null);
     const [isButtonClicked, setIsButtonClicked] = useState(false);
     const [expandedComments, setExpandedComments] = useState<ExpandedComments>({});
@@ -45,10 +44,7 @@ const ProductComment = ({ data, productDetailSelected, isLoading }: {
     };
 
     const toggleExpand = (index: number) => {
-        setExpandedComments(prev => ({
-            ...prev,
-            [index]: !prev[index]
-        }));
+        setExpandedComments(prev => ({ ...prev, [index]: !prev[index] }));
     };
 
     const filteredData = selectedRating !== null ? data.filter(item => item.rate === selectedRating) : data;
@@ -57,16 +53,16 @@ const ProductComment = ({ data, productDetailSelected, isLoading }: {
         <Card size='small'>
             <h2 className="text-xl font-medium">Khách hàng đánh giá</h2>
             <h3 className="my-2 text-base font-medium">Tổng quan</h3>
-            <div className="flex gap-2 text-4xl items-center">
+            <div className="flex flex-wrap gap-2 text-4xl items-center">
                 <div>{productDetailSelected?.rate?.toFixed(1) || 0}</div>
                 <Rate style={{ fontSize: '30px' }} allowHalf disabled value={productDetailSelected?.rate} />
             </div>
             <div className="my-2 text-gray-400">({productDetailSelected.rateCount} đánh giá)</div>
             {[5, 4, 3, 2, 1].map(rating => (
-                <div key={rating} className="flex gap-1 text-gray-400">
+                <div key={rating} className="flex flex-wrap gap-1 text-gray-400">
                     <Rate disabled value={rating} />
                     <Progress
-                        style={{ maxWidth: '13%' }}
+                        style={{ maxWidth: '100%', width: '13%' }}
                         percent={(data.filter(item => item.rate === rating).length / data.length) * 100}
                         showInfo={false}
                     />
@@ -76,7 +72,7 @@ const ProductComment = ({ data, productDetailSelected, isLoading }: {
 
             <hr className="my-6" />
             <h3 className="my-2 text-base font-medium">Lọc theo</h3>
-            <div className="flex gap-4 items-center text-gray-500">
+            <div className="flex flex-wrap gap-4 items-center text-gray-500">
                 <Button style={{ borderRadius: '100px' }}>Mới nhất</Button>
                 <Button style={{ borderRadius: '100px' }}>Đã mua hàng</Button>
                 {[1, 2, 3, 4, 5].map(rating => (
@@ -114,8 +110,8 @@ const ProductComment = ({ data, productDetailSelected, isLoading }: {
                 dataSource={filteredData}
                 renderItem={(item, index) => (
                     <List.Item key={index}>
-                        <div className="grid grid-cols-10 gap-4">
-                            <div className="col-span-2">
+                        <div className="grid grid-cols-1 md:grid-cols-10 gap-4">
+                            <div className="col-span-1 md:col-span-2">
                                 <div className="flex gap-2">
                                     <Avatar src={server + item.avatar} className="w-10 h-10" />
                                     <div>
@@ -141,15 +137,15 @@ const ProductComment = ({ data, productDetailSelected, isLoading }: {
                                     <div>10 lượt cảm ơn</div>
                                 </div>
                             </div>
-                            <div className="col-span-8">
-                                <div className="font-medium text-base gap-2 flex">
+                            <div className="col-span-1 md:col-span-8">
+                                <div className="font-medium text-base gap-2 flex flex-wrap">
                                     <Rate allowHalf disabled value={item.rate} />
                                     {getReviewText(item.rate)}
                                 </div>
                                 <div className="text-green-500 gap-1 flex">
                                     <CheckCircleFilled />Đã nhận hàng
                                 </div>
-                                <div className="flex gap-2">
+                                <div className="flex flex-wrap gap-2">
                                     <div className={`text-sm font-normal my-3 ${expandedComments[index] ? 'w-auto' : 'max-w-24 truncate'}`}>
                                         {item.message}
                                     </div>
@@ -165,8 +161,8 @@ const ProductComment = ({ data, productDetailSelected, isLoading }: {
                                         </div>
                                     ))}
                                 </div>
-                                <div className="flex text-sm text-gray-400 justify-between">
-                                    <div className="flex gap-3">
+                                <div className="flex flex-wrap text-sm text-gray-400 justify-between">
+                                    <div className="flex flex-wrap gap-3">
                                         <div className="flex gap-1 items-center">
                                             <Start />
                                             <span>5</span>

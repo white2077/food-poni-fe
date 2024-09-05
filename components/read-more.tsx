@@ -12,22 +12,16 @@ const ReadMore: React.FC<ReadMoreProps> = ({ content }) => {
     const contentRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (contentRef.current && contentRef.current.scrollHeight > 500) {
+        if ((contentRef.current?.scrollHeight ?? 0) > 500) {
             setShowButton(true);
         }
     }, [content]);
 
     useEffect(() => {
-        if (expanded && contentRef.current) {
-            setHeight(`${contentRef.current.scrollHeight}px`);
-        } else {
-            setHeight('500px');
-        }
+        setHeight(expanded && contentRef.current ? `${contentRef.current.scrollHeight}px` : '500px');
     }, [expanded]);
 
-    const toggleDescription = () => {
-        setExpanded(!expanded);
-    };
+    const toggleDescription = () => setExpanded(prev => !prev);
 
     return (
         <Card size="small" title="Mô tả">
@@ -41,7 +35,7 @@ const ReadMore: React.FC<ReadMoreProps> = ({ content }) => {
                 {showButton && (
                     <button
                         onClick={toggleDescription}
-                        className="absolute inset-x-0 bottom-0 w-full text-sm text-gray-600 hover:text-orange-500 bg-gradient-to-t from-white to-transparent h-24"
+                        className={`absolute inset-x-0 bottom-0 w-full text-sm text-gray-600 hover:text-orange-500 ${expanded ? '' : 'bg-gradient-to-t from-white to-transparent'} h-24`}
                     >
                         <div className="flex items-end justify-center h-full">
                             {expanded ? 'Ẩn bớt' : 'Xem thêm'}

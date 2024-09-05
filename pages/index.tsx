@@ -33,7 +33,7 @@ export default function HomePage({ ePage }: HomePageProps) {
             src={server + '/upload/vertical-banner.png'} alt={""} />
     ]
     const MyCustomTitle: ReactNode = <div className="flex items-center">
-        <img src="/sale.png" alt="Title" className="w-auto h-8 mr-2 mt-2" />
+        <img src="/sale.png" alt="Title" className="w-auto h-8" />
     </div>;
     return (
         <SidebarLayout sidebarContents={sidebarContents}>
