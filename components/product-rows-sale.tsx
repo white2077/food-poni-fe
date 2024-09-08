@@ -81,14 +81,16 @@ const ProductRowsSale = ({ hasMenu, query }: ProductRowProps) => {
                     )}
                 </div>
             </div>
-            <div className="w-full flex justify-center mt-2 sm:mt-4">
-                <Button 
-                    className="!text-orange-500 text-sm sm:text-base px-3 sm:px-4 py-1 sm:py-2" 
-                    onClick={() => setShowAll(!showAll)}
-                >
-                    {showAll ? 'Ẩn bớt' : 'Xem thêm'}
-                </Button>
-            </div>
+            {productCards.length > 8 && (
+                <div className="w-full flex justify-center mt-2 sm:mt-4">
+                    <Button
+                        className="!text-orange-500 text-sm sm:text-base px-3 sm:px-4 py-1 sm:py-2"
+                        onClick={() => setShowAll(!showAll)}
+                    >
+                        {showAll ? 'Ẩn bớt' : 'Xem thêm'}
+                    </Button>
+                </div>
+            )}
         </>
     );
 }

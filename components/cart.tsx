@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from "react";
-import {Avatar, Badge, Button, Divider, Drawer, List} from 'antd';
-import {CloseOutlined, ShoppingCartOutlined} from "@ant-design/icons";
-import {useDispatch, useSelector} from "react-redux";
-import {deleteAllItem, deleteItem, ICart, ICartItem, setQuantity} from "../stores/cart.reducer";
-import {RootState} from "../stores";
-import {NextRouter, useRouter} from "next/router";
-import {CurrentUser} from "../stores/user.reducer";
-import QuantityInput from "./quantityInput";
+import React, { useEffect, useState } from "react";
+import { Avatar, Badge, Button, Divider, Drawer, List } from 'antd';
+import { CloseOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteAllItem, deleteItem, ICart, ICartItem, setQuantity } from "../stores/cart.reducer";
+import { RootState } from "../stores";
+import { NextRouter, useRouter } from "next/router";
+import { CurrentUser } from "../stores/user.reducer";
+import QuantityInput from "./quantity-Input";
 import EmptyNotice from "./empty-notice";
 
 const Cart = () => {
@@ -44,7 +44,7 @@ const Cart = () => {
     };
 
     const onChangeQuantity = (id: string, retailerId: string, value: number): void => {
-        const payload: { id: string, retailerId: string, value: number } = {id, retailerId, value};
+        const payload: { id: string, retailerId: string, value: number } = { id, retailerId, value };
         dispatch(setQuantity(payload));
     };
 
@@ -74,7 +74,7 @@ const Cart = () => {
         <div>
             <a onClick={showDrawer}>
                 <Badge count={totalCartItems}>
-                    <Avatar shape="square" icon={<ShoppingCartOutlined/>} size='large'/>
+                    <Avatar shape="square" icon={<ShoppingCartOutlined />} size='large' />
                 </Badge>
             </a>
             <Drawer title="Giỏ hàng" onClose={onClose} open={open}>
@@ -93,7 +93,7 @@ const Cart = () => {
                                             <List.Item.Meta
                                                 avatar={
                                                     <div className="relative inline-block flex items-center">
-                                                        <Avatar className="rounded-lg w-20 h-20" src={item.thumbnail}/>
+                                                        <Avatar className="rounded-lg w-20 h-20" src={item.thumbnail} />
                                                         <div
                                                             className="absolute top-[-5px] w-6 h-6 right-[-5px] bg-gray-300 rounded-[100px] flex p-0 justify-center">
                                                             <CloseOutlined
@@ -113,11 +113,11 @@ const Cart = () => {
                                                 title={<span>{item.name}</span>}
                                                 description={
                                                     <span>
-                                                    <span style={{marginRight: "10px"}}>
-                                                        {item.price}
-                                                        <sup>₫</sup>
+                                                        <span style={{ marginRight: "10px" }}>
+                                                            {item.price}
+                                                            <sup>₫</sup>
+                                                        </span>
                                                     </span>
-                                                </span>
                                                 }
                                             />
                                             <div className="mb-auto">
@@ -125,12 +125,12 @@ const Cart = () => {
                                                     {item.price * item.quantity}
                                                     <sup>₫</sup>
                                                 </div>
-                                                <QuantityInput item={item} onChangeQuantity={onChangeQuantity}/>
+                                                <QuantityInput item={item} onChangeQuantity={onChangeQuantity} />
                                             </div>
                                         </List.Item>
                                     )}
                                 />
-                                <Divider/>
+                                <Divider />
                             </div>
                         ) : null
                     ))
@@ -144,9 +144,9 @@ const Cart = () => {
                                 <sup>₫</sup>
                             </div>
                         </div>
-                        <Divider/>
+                        <Divider />
                         <Button className="my-5s mt-2" type='primary' danger block disabled={pending} loading={pending}
-                                onClick={goToCheckout}>
+                            onClick={goToCheckout}>
                             Thanh toán ngay
                         </Button>
                     </div>

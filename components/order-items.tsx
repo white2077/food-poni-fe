@@ -1,7 +1,7 @@
-import {Card, Checkbox, Col, Divider, Input, Popconfirm, Row} from "antd";
-import {DeleteOutlined, RightOutlined} from "@ant-design/icons";
+import { Card, Checkbox, Col, Divider, Input, Popconfirm, Row } from "antd";
+import { DeleteOutlined, RightOutlined } from "@ant-design/icons";
 import React from "react";
-import {useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
     deleteItem,
     deleteSelectedSoldItems,
@@ -13,10 +13,10 @@ import {
     setSelectedICart,
     setSelectedICartItem
 } from "../stores/cart.reducer";
-import {RootState} from "../stores";
-import QuantityInput from "./quantityInput";
+import { RootState } from "../stores";
+import QuantityInput from "./quantity-Input";
 
-const {TextArea} = Input;
+const { TextArea } = Input;
 
 const OrderItems = () => {
 
@@ -25,12 +25,12 @@ const OrderItems = () => {
     const carts: ICart[] = useSelector((state: RootState) => state.cart.carts);
 
     const onChangeQuantity = (id: string, retailerId: string, value: number): void => {
-        const payload: { id: string, retailerId: string, value: number } = {id, retailerId, value};
+        const payload: { id: string, retailerId: string, value: number } = { id, retailerId, value };
         dispatch(setQuantity(payload));
     };
 
     const onChangeNote = (itemId: string, retailerId: string, note: string): void => {
-        dispatch(setNote({id: itemId, retailerId, note}));
+        dispatch(setNote({ id: itemId, retailerId, note }));
     };
 
     const handleSetSelectedICartItem = (id: string): void => {
@@ -69,7 +69,7 @@ const OrderItems = () => {
                             okText="Đồng ý"
                             cancelText="Hủy"
                         >
-                            <DeleteOutlined className="cursor-pointer "/>
+                            <DeleteOutlined className="cursor-pointer " />
                         </Popconfirm>
                     </Col>
                 </Row>
@@ -80,23 +80,23 @@ const OrderItems = () => {
                         <div key={cart.id} className="p-2 bg-white border-[1px] rounded-lg mt-4">
                             <Row>
                                 <Checkbox onClick={() => handleSetSelectedICart(cart.id)}
-                                          checked={cart.isSelectedICart}></Checkbox>
+                                    checked={cart.isSelectedICart}></Checkbox>
                                 <div className="font-bold text-xl mx-2">{cart.name}</div>
-                                <RightOutlined/>
+                                <RightOutlined />
 
                             </Row>
-                            <Divider/>
+                            <Divider />
                             {cart.cartItems.map((item: ICartItem, index: number) => (
                                 <Row key={index} className="my-[16px] items-center">
                                     <Col flex='2%'>
                                         <Checkbox onClick={() => handleSetSelectedICartItem(item.id)}
-                                                  checked={item.isSelectedICartItem}></Checkbox>
+                                            checked={item.isSelectedICartItem}></Checkbox>
                                     </Col>
                                     <Col flex='40%'>
                                         <div className="flex items-center">
                                             <div>
                                                 <img src={item.thumbnail} className="w-[100px] rounded-lg ml-2"
-                                                     alt="Product"/>
+                                                    alt="Product" />
                                             </div>
                                             <div className="ml-[16px]">{item.name}</div>
                                         </div>
@@ -106,10 +106,10 @@ const OrderItems = () => {
                                         <sup>₫</sup>
                                     </Col>
                                     <Col flex='13%'>
-                                        <QuantityInput item={item} onChangeQuantity={onChangeQuantity}/>
+                                        <QuantityInput item={item} onChangeQuantity={onChangeQuantity} />
                                     </Col>
                                     <Col flex='14%'
-                                         className="font-bold text-red-500">
+                                        className="font-bold text-red-500">
                                         {item.price * item.quantity}
                                         <sup>₫</sup>
                                     </Col>
@@ -124,10 +124,10 @@ const OrderItems = () => {
                                     </Col>
                                     <Col flex='3%' className="text-center">
                                         <DeleteOutlined id={`delete-icon-${item.id}`}
-                                                        onClick={() => dispatch(deleteItem({
-                                                            id: item.id,
-                                                            retailerId: item.retailer.id ?? ''
-                                                        }))}/>
+                                            onClick={() => dispatch(deleteItem({
+                                                id: item.id,
+                                                retailerId: item.retailer.id ?? ''
+                                            }))} />
                                     </Col>
                                 </Row>
                             ))}
