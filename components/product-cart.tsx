@@ -68,6 +68,8 @@ const ProductCart = ({ id, price, thumbnail, name, retailer, status }: {
         //             }
         //         })
         //             .then(function (res: AxiosResponse<CartCreationRequestDTO>) {
+        //                 const payload: ICartItem = {id, price, thumbnail, name, quantity, retailer} as ICartItem;
+        //                 dispatch(addItem(payload));
         //                 notification.open({
         //                     type: 'success',
         //                     message: 'Giỏ hàng',
