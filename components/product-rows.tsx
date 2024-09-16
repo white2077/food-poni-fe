@@ -14,6 +14,7 @@ export interface IProductCard {
     index: number,
     id: string;
     name: string;
+    slug: string;
     thumbnail: string;
     minPrice: number;
     maxPrice: number;

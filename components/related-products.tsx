@@ -9,11 +9,11 @@ import ProductCardRelated from "./related-products-card";
 import Loading from "./loading-product";
 import { Carousel } from "antd";
 
-
 export interface IProductCard {
     index: number,
     id: string;
     name: string;
+    slug: string;
     thumbnail: string;
     minPrice: number;
     maxPrice: number;

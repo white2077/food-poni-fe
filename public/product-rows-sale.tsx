@@ -1,22 +1,19 @@
 import React, {useState} from 'react';
-import ProductCard from "./product-card";
 import {useSelector} from "react-redux";
 import {RootState} from "../stores";
 import {Page} from "../models/Page";
 import {CurrentUser} from "../stores/user.reducer";
-import MenuMain from "./menu-main";
 import {ProductAPIResponse} from "../models/product/ProductAPIResponse";
-import {Button, Carousel} from "antd";
-
-import {CustomArrowProps} from "@ant-design/react-slick";
-import Loading from "./loading-product";
-import Link from "next/link";
-import ProductRowLoading from "./product-row-skeleton";
+import {Button} from "antd";
+import MenuMain from "../components/menu-main";
+import ProductRowLoading from "../components/product-row-skeleton";
+import ProductCard from "../components/product-card";
 
 export interface IProductCard {
     index: number,
     id: string;
     name: string;
+    slug: string;
     thumbnail: string;
     minPrice: number;
     maxPrice: number;

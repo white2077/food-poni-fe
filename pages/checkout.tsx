@@ -123,6 +123,7 @@ const Checkout = ({ePage}: CheckoutPageProps) => {
         }
         setPending(true);
         const requests = carts.map((values: any) => {
+            console.log(values);
             const orderItems: OrderItemRequestDTO[] = values.cartItems.filter((item: ICartItem) => item.isSelectedICartItem).map((item: ICartItem) => {
                 return {
                     quantity: item.quantity,
@@ -131,17 +132,16 @@ const Checkout = ({ePage}: CheckoutPageProps) => {
                 };
             });
             const note: string = values.note;
-
             if (orderItems.length == 0) {
                 return;
             }
-
             if (orderItems && shippingAddress && payment && refreshToken) {
                 const order: OrderCreationRequestDTO = {
                     orderItems,
                     shippingAddress: shippingAddress,
                     note,
-                    payment: payment
+                    payment: payment,
+                    retailerId: orderItems[0].productDetail.retailer.id ?? "retailer"
                 } as OrderCreationRequestDTO;
 
                 return apiWithToken(refreshToken).post("/orders", order, {
@@ -263,7 +263,7 @@ const Checkout = ({ePage}: CheckoutPageProps) => {
                             <Radio.Group onChange={onChange} value={payment.method}>
                                 <Space direction="vertical">
                                     <Radio value="CASH">
-                                        <div className="flex items-center"><img src="/TienMat.png" className="w-9 h-9 mr-2"/><p>Thanh toán tiền mặt</p></div>
+                                        <div className="flex items-center"><img src="/tien-mat.png" className="w-9 h-9 mr-2"/><p>Thanh toán tiền mặt</p></div>
                                     </Radio>
                                     <Radio value="VNPAY">
                                         <div className="flex items-center"><img src="/VNP.png" className="w-9 h-9 mr-2"/>

@@ -15,8 +15,6 @@ const ProductCategory = ({categoryList}: { categoryList: ProductCategoryAPIRespo
 
     const router: NextRouter = useRouter();
 
-    const dispatch = useDispatch();
-
     let items: ICategory[] = [];
 
     const [categories, setCategories] = useState<ICategory[]>([]);
@@ -34,7 +32,7 @@ const ProductCategory = ({categoryList}: { categoryList: ProductCategoryAPIRespo
 
     const convertCategory = (category: ProductCategoryAPIResponse, tab: string): void => {
         items.push({
-            key: category.id ?? "",
+            key: category.slug ?? "",
             label: <span className="flex items-center"><span dangerouslySetInnerHTML={{__html: tab}}></span>
                 <img src={server + category.thumbnail} className="w-4 h-4 mr-2"></img> <span className={`${category.parentProductCategory === null ? "font-bold uppercase" : ""}`}>{category.name}</span></span>
         });
