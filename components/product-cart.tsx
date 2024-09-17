@@ -42,49 +42,51 @@ const ProductCart = ({ id, price, thumbnail, name, retailer, status }: {
     const refreshToken = getCookie(REFRESH_TOKEN);
 
     const addToCart = (): void => {
-        // if (currentUser.id) {
-        //     const payload: ICartItem = {id, price, thumbnail, name, quantity, retailer} as ICartItem;
-        //     dispatch(addItem(payload));
-        // } else {
-        //     router.push("/login");
-        // }
-
         if (currentUser.id) {
-            const cartPayload: CartCreationRequestDTO = {
-                user: {
-                    id: currentUser.id
-                },
-                retailer: {
-                    id: retailer.id
-                },
-                quantity,
-                productDetail: { id },
-                checked: true
-            };
-            if (refreshToken) {
-                apiWithToken(refreshToken).post("/carts", cartPayload, {
-                    headers: {
-                        Authorization: 'Bearer ' + accessToken,
-                    }
-                })
-                    .then(function (res: AxiosResponse<CartCreationRequestDTO>) {
-                        notification.open({
-                            type: 'success',
-                            message: 'Giỏ hàng',
-                            description: "Thêm sản phẩm vào giỏ hàng thành công!",
-                        });
-                    })
-                    .catch(function (res: AxiosError<ErrorAPIResponse>) {
-                        notification.open({
-                            type: 'error',
-                            message: 'Giỏ hàng',
-                            description: res.message,
-                        });
-                    });
-            }
+            const payload: ICartItem = {id, price, thumbnail, name, quantity, retailer} as ICartItem;
+            dispatch(addItem(payload));
         } else {
             router.push("/login");
         }
+
+        // if (currentUser.id) {
+        //     const cartPayload: CartCreationRequestDTO = {
+        //         user: {
+        //             id: currentUser.id
+        //         },
+        //         retailer: {
+        //             id: retailer.id
+        //         },
+        //         quantity,
+        //         productDetail: { id },
+        //         checked: true
+        //     };
+        //     if (refreshToken) {
+        //         apiWithToken(refreshToken).post("/carts", cartPayload, {
+        //             headers: {
+        //                 Authorization: 'Bearer ' + accessToken,
+        //             }
+        //         })
+        //             .then(function (res: AxiosResponse<CartCreationRequestDTO>) {
+        //                 const payload: ICartItem = {id, price, thumbnail, name, quantity, retailer} as ICartItem;
+        //                 dispatch(addItem(payload));
+        //                 notification.open({
+        //                     type: 'success',
+        //                     message: 'Giỏ hàng',
+        //                     description: "Thêm sản phẩm vào giỏ hàng thành công!",
+        //                 });
+        //             })
+        //             .catch(function (res: AxiosError<ErrorAPIResponse>) {
+        //                 notification.open({
+        //                     type: 'error',
+        //                     message: 'Giỏ hàng',
+        //                     description: res.message,
+        //                 });
+        //             });
+        //     }
+        // } else {
+        //     router.push("/login");
+        // }
     };
 
     const getCheckout = (): void => {

@@ -10,6 +10,8 @@ export interface OrderCreationRequestDTO {
 
     payment: PaymentInfo;
 
+    retailerId: string;
+
 }
 
 export interface ShippingAddress {

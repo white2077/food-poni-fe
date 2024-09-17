@@ -16,6 +16,7 @@ export const getProductsCardPageByRetailer = (rid: string, queryParams: QueryPar
                         index,
                         id: product.id,
                         name: product.name,
+                        slug: product.slug,
                         thumbnail: product.thumbnail,
                         minPrice: product.minPrice,
                         maxPrice: product.maxPrice,

@@ -13,7 +13,7 @@ export const config = {
     matcher: [
         '/account-information',
         '/checkout',
-        '/order/[oid]',
+        '/don-hang/[oid]',
         '/orders',
     ],
 }

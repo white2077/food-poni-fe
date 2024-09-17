@@ -32,7 +32,7 @@ const OrderCard = ({ order }: { order: OrderAPIResponse }) => {
                 <Row gutter={[16, 16]} className="!overflow-y-scroll min-h-[8.3rem] max-h-[8.3rem] scrollbar-rounded">
                     {order?.orderItems?.map((item: OrderItemAPIResponse) => (
                         <Col span={24} key={item.id}>
-                            <Link href={`/order/${order.id}`} legacyBehavior>
+                            <Link href={`/don-hang/${order.id}`} legacyBehavior>
                                 <div className="overflow-hidden rounded-lg p-2 hover:bg-gray-100 hover:border-orange-300 border-2 font-sans">
                                     <Row gutter={[16, 16]}>
                                         <Col span={5} className="flex justify-center items-center">
@@ -98,7 +98,7 @@ const OrderCard = ({ order }: { order: OrderAPIResponse }) => {
                 </div>
                 <div className="flex justify-end mt-4">
                     <div className="flex gap-2">
-                        <Link href={`/order/${order.id}`} legacyBehavior>
+                        <Link href={`/don-hang/${order.id}`} legacyBehavior>
                             <Button style={{ backgroundColor: '#F36F24', color: 'white' }}>Chi tiết</Button>
                         </Link>
                         <Button style={{ backgroundColor: '#F36F24', color: 'white' }}>Đặt lại</Button>
