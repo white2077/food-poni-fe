@@ -72,7 +72,7 @@ const Cart = () => {
 
     return (
         <div>
-            <a onClick={showDrawer}>
+            <a onClick={showDrawer} className="cursor-pointer">
                 <Badge count={totalCartItems}>
                     <Avatar shape="square" icon={<ShoppingCartOutlined />} size='large' />
                 </Badge>

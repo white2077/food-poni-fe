@@ -216,7 +216,7 @@ export default function HeaderMain() {
                                                 src={server + currentUser.avatar} />
                                             : <Avatar icon={<UserOutlined />} size='large' />}
                                     </div>
-                                    <div className="text-gray-500 text-[15px] hidden md:block">Tài khoản</div>
+                                    <div className="text-gray-500 text-[15px] hidden md:block">{currentUser.username}</div>
                                 </a>
                             </Dropdown>
                         </>

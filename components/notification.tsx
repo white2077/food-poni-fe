@@ -51,7 +51,7 @@ const Notification = () => {
 
     return (
         <>
-            <Dropdown dropdownRender={() => (
+            <Dropdown className="cursor-pointer" dropdownRender={() => (
                 <div className="w-[500px] shadow border rounded-lg bg-white">
                     <div
                         className="flex items-center justify-between gap-2.5 text-sm text-gray-900 font-semibold px-5 py-2.5">Thông
@@ -88,7 +88,7 @@ const Notification = () => {
 
                                                                      className="flex grow gap-2.5">
                                                                     <div className="relative shrink-0 mt-0.5">
-                                                                        <img alt="" className="rounded-full size-8"
+                                                                        <img alt="" className="rounded-full size-10"
                                                                              src={server + notification.fromUser.avatar}/>
                                                                         <div
                                                                             className="bg-[#17c653] rounded-full size-1.5 badge badge-circle color-white absolute top-7 end-0.5 ring-1 ring-white transform -translate-y-1/2"/>
