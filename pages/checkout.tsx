@@ -265,7 +265,7 @@ const Checkout = ({ ePage }: CheckoutPageProps) => {
                             <Radio.Group onChange={onChange} value={payment.method}>
                                 <Space direction="vertical">
                                     <Radio value="CASH">
-                                        <div className="flex items-center"><img src="/TienMat.png" className="w-9 h-9 mr-2" /><p>Thanh toán tiền mặt</p></div>
+                                        <div className="flex items-center"><img src="/tien-mat.png" className="w-9 h-9 mr-2" /><p>Thanh toán tiền mặt</p></div>
                                     </Radio>
                                     <Radio value="VNPAY">
                                         <div className="flex items-center"><img src="/VNP.png" className="w-9 h-9 mr-2" />
