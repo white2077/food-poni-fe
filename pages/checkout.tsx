@@ -1,4 +1,4 @@
-import {DefaultLayout} from "./_layout";
+import { DefaultLayout } from "./_layout";
 import {
     Button,
     Card,
@@ -15,36 +15,36 @@ import {
     Row,
     Space
 } from "antd";
-import {useDispatch, useSelector} from "react-redux";
-import {deleteSelectedSoldItems, ICart, ICartItem} from "../stores/cart.reducer";
-import React, {useEffect, useState} from "react";
-import {NextRouter, useRouter} from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteSelectedSoldItems, ICart, ICartItem } from "../stores/cart.reducer";
+import React, { useEffect, useState, useMemo } from "react";
+import { NextRouter, useRouter } from "next/router";
 import OrderItems from "../components/order-items";
-import {RootState} from "../stores";
-import {AddressAPIResponse} from "../models/address/AddressAPIResponse";
-import {OrderCreationRequestDTO, PaymentInfo, ShippingAddress} from "../models/order/OrderRequest";
-import {CurrentUser} from "../stores/user.reducer";
-import {OrderItemRequestDTO} from "../models/order_item/OrderItemRequest";
-import {accessToken, apiWithToken} from "../utils/axios-config";
-import {REFRESH_TOKEN} from "../utils/server";
-import {getCookie} from "cookies-next";
-import {Page} from "../models/Page";
+import { RootState } from "../stores";
+import { AddressAPIResponse } from "../models/address/AddressAPIResponse";
+import { OrderCreationRequestDTO, PaymentInfo, ShippingAddress } from "../models/order/OrderRequest";
+import { CurrentUser } from "../stores/user.reducer";
+import { OrderItemRequestDTO } from "../models/order_item/OrderItemRequest";
+import { accessToken, apiWithToken } from "../utils/axios-config";
+import { REFRESH_TOKEN } from "../utils/server";
+import { getCookie } from "cookies-next";
+import { Page } from "../models/Page";
 import AddressCheckoutAdd from "../components/address-checkout-add";
 import AddressCheckoutUpdate from "../components/address-checkout-update";
-import {NextRequest} from "next/server";
-import {getAddressesPage} from "../queries/address.query";
+import { NextRequest } from "next/server";
+import { getAddressesPage } from "../queries/address.query";
 import CardHome from "../components/card-home";
 
-const {TextArea} = Input;
+const { TextArea } = Input;
 
-export async function getServerSideProps({req}: { req: NextRequest }) {
+export async function getServerSideProps({ req }: { req: NextRequest }) {
     try {
         const data = await getAddressesPage({
-            refreshToken: getCookie(REFRESH_TOKEN, {req}),
+            refreshToken: getCookie(REFRESH_TOKEN, { req }),
             page: 0,
             pageSize: 10
         });
-        return {props: {ePage: data}}
+        return { props: { ePage: data } }
     } catch (e) {
         throw e;
     }
@@ -54,7 +54,7 @@ interface CheckoutPageProps {
     ePage: Page<AddressAPIResponse[]>
 }
 
-const Checkout = ({ePage}: CheckoutPageProps) => {
+const Checkout = ({ ePage }: CheckoutPageProps) => {
 
     const router: NextRouter = useRouter();
 
@@ -85,15 +85,17 @@ const Checkout = ({ePage}: CheckoutPageProps) => {
 
     const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
 
-    const totalAmount: number = carts.reduce((totalCart: number, cart: ICart) => {
-        const cartTotal: number = cart.cartItems.reduce((total: number, item: ICartItem) => {
-            if (item.isSelectedICartItem) {
-                return total + item.price;
-            }
-            return total;
+    const totalAmount: number = useMemo(() => {
+        return carts.reduce((totalCart: number, cart: ICart) => {
+            const cartTotal: number = cart.cartItems.reduce((total: number, item: ICartItem) => {
+                if (item.isSelectedICartItem) {
+                    return total + item.price * item.quantity;
+                }
+                return total;
+            }, 0);
+            return totalCart + cartTotal;
         }, 0);
-        return totalCart + cartTotal;
-    }, 0);
+    }, [carts]);
 
     useEffect(() => {
         setShippingAddress({
@@ -178,7 +180,7 @@ const Checkout = ({ePage}: CheckoutPageProps) => {
     };
 
     const onChange = (e: RadioChangeEvent): void => {
-        setPayment(prevPaymentInfo => ({...prevPaymentInfo, method: e.target.value}));
+        setPayment(prevPaymentInfo => ({ ...prevPaymentInfo, method: e.target.value }));
     };
 
     const handleAddAddressClick = (): void => {
@@ -187,21 +189,21 @@ const Checkout = ({ePage}: CheckoutPageProps) => {
 
     return (
         <DefaultLayout>
-            <div style={{color: "black", textAlign: "left"}}>
+            <div style={{ color: "black", textAlign: "left" }}>
                 <h1 className="text-2xl mb-2">GIỎ HÀNG</h1>
                 <Row gutter={16}>
                     <Col flex='auto'>
                         <OrderItems></OrderItems>
                     </Col>
                     <Col flex='400px'>
-                        <Card style={{marginBottom: "16px"}}>
+                        <Card style={{ marginBottom: "16px" }}>
                             <div>
                                 <div className="flex justify-between items-center">
                                     <div className="text-[17px] text-gray-400">Giao tới</div>
                                     <Button id="button-change-address" type="link"
-                                            onClick={() => {
-                                                setModal2Open(true);
-                                            }}>Thay đổi</Button>
+                                        onClick={() => {
+                                            setModal2Open(true);
+                                        }}>Thay đổi</Button>
                                 </div>
                                 <Modal
                                     title="Địa chỉ của bạn"
@@ -213,11 +215,11 @@ const Checkout = ({ePage}: CheckoutPageProps) => {
                                 >
                                     <Button
                                         onClick={handleAddAddressClick}>{showAddAddress ? "Quay lại" : "Thêm địa chỉ"}</Button>
-                                    {showAddAddress && <AddressCheckoutAdd/>}
+                                    {showAddAddress && <AddressCheckoutAdd />}
                                     {!showAddAddress && (
                                         <Radio.Group className="w-full"
-                                                     defaultValue={ePage.content.find(item => item.id === currentUser.addressId)}
-                                                     onChange={(e: RadioChangeEvent) => setShippingAddress(e.target.value)}>
+                                            defaultValue={ePage.content.find(item => item.id === currentUser.addressId)}
+                                            onChange={(e: RadioChangeEvent) => setShippingAddress(e.target.value)}>
                                             <List
                                                 dataSource={ePage.content}
                                                 renderItem={(item: AddressAPIResponse, index: number) => (
@@ -229,11 +231,11 @@ const Checkout = ({ePage}: CheckoutPageProps) => {
                                                             key: item.id,
                                                             label: <Radio id={`radio-${item.id}`} value={item}>
                                                                 <div><span
-                                                                    style={{fontWeight: 'bold'}}>{item.fullName}</span> | {item.phoneNumber}
+                                                                    style={{ fontWeight: 'bold' }}>{item.fullName}</span> | {item.phoneNumber}
                                                                 </div>
                                                                 <div>{item.address}</div>
                                                             </Radio>,
-                                                            children: <AddressCheckoutUpdate address={item}/>
+                                                            children: <AddressCheckoutUpdate address={item} />
                                                         }]}
                                                     />
                                                 )}
@@ -246,27 +248,27 @@ const Checkout = ({ePage}: CheckoutPageProps) => {
                                 {shippingAddress && (
                                     <>
                                         <div><span
-                                            style={{fontWeight: 'bold'}}>{shippingAddress.fullName}</span> | {shippingAddress.phoneNumber}
+                                            style={{ fontWeight: 'bold' }}>{shippingAddress.fullName}</span> | {shippingAddress.phoneNumber}
                                         </div>
-                                        <div><CardHome content="Nhà"/>{shippingAddress.address}</div>
+                                        <div><CardHome content="Nhà" />{shippingAddress.address}</div>
                                     </>)
                                 }
                                 {!shippingAddress && (
-                                    <div style={{color: 'red'}}>Vui lòng chọn thông tin vận chuyển</div>
+                                    <div style={{ color: 'red' }}>Vui lòng chọn thông tin vận chuyển</div>
                                 )}
                             </div>
                         </Card>
-                        <Card style={{marginBottom: "16px"}}>
+                        <Card style={{ marginBottom: "16px" }}>
                             <div>
                                 Thông tin thanh toán
                             </div>
                             <Radio.Group onChange={onChange} value={payment.method}>
                                 <Space direction="vertical">
                                     <Radio value="CASH">
-                                        <div className="flex items-center"><img src="/tien-mat.png" className="w-9 h-9 mr-2"/><p>Thanh toán tiền mặt</p></div>
+                                        <div className="flex items-center"><img src="/TienMat.png" className="w-9 h-9 mr-2" /><p>Thanh toán tiền mặt</p></div>
                                     </Radio>
                                     <Radio value="VNPAY">
-                                        <div className="flex items-center"><img src="/VNP.png" className="w-9 h-9 mr-2"/>
+                                        <div className="flex items-center"><img src="/VNP.png" className="w-9 h-9 mr-2" />
                                             <div>
                                                 <p>VNPAY</p>
                                                 <div className="text-gray-400">Quét Mã QR từ ứng dụng ngân hàng</div>
@@ -276,10 +278,10 @@ const Checkout = ({ePage}: CheckoutPageProps) => {
                                 </Space>
                             </Radio.Group>
                         </Card>
-                        <Card style={{marginBottom: "16px"}}>
+                        <Card style={{ marginBottom: "16px" }}>
                             <div className="flex justify-between">
                                 <div className="text-gray-500">Tạm tính</div>
-                                <span style={{float: 'right'}}>
+                                <span style={{ float: 'right' }}>
                                     {totalAmount}
                                     <sup>₫</sup>
                                 </span>
@@ -291,7 +293,7 @@ const Checkout = ({ePage}: CheckoutPageProps) => {
                                     <sup>₫</sup>
                                 </span>
                             </div>
-                            <Divider/>
+                            <Divider />
                             <div className="flex justify-between">
                                 <div className="text-gray-500">Tổng tiền</div>
                                 <div className="grid">
@@ -306,17 +308,17 @@ const Checkout = ({ePage}: CheckoutPageProps) => {
                         <Form
                             name="normal_login"
                             className="login-form"
-                            initialValues={{remember: true}}
+                            initialValues={{ remember: true }}
                             onFinish={addMultipleOrders}
                         >
                             <Form.Item
                                 name="note"
                             >
-                                <TextArea placeholder="Ghi chú" allowClear/>
+                                <TextArea placeholder="Ghi chú" allowClear />
                             </Form.Item>
                             <Form.Item>
                                 <Button type="primary" htmlType="submit" danger block disabled={pending || carts.length == 0}
-                                        loading={pending}>
+                                    loading={pending}>
                                     Thanh toán
                                 </Button>
 

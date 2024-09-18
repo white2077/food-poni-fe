@@ -30,9 +30,10 @@ interface ProductRowProps {
     hasMenu?: boolean;
     query: Promise<Page<IProductCard[]>>;
     legacyBehavior?: boolean;
+    hasBorder?: boolean; // New prop for controlling border
 }
 
-const ProductRows = ({ title, hasMenu, query, legacyBehavior }: ProductRowProps) => {
+const ProductRows = ({ title, hasMenu, query, legacyBehavior, hasBorder = true }: ProductRowProps) => {
     const [isLoading, setLoading] = useState<boolean>(false);
     const [productCards, setProductCards] = useState<IProductCard[]>([]);
 
@@ -90,7 +91,7 @@ const ProductRows = ({ title, hasMenu, query, legacyBehavior }: ProductRowProps)
     };
 
     return (
-        <div className="p-4 bg-white rounded-lg">
+        <div className={`p-4 bg-white rounded-lg ${hasBorder ? 'border-2 border-orange-400' : ''}`}>
             {hasMenu && <MenuMain filterProducts={filterProducts} />}
             <div className="flex justify-between items-end">
                 <div className="font-bold text-xl">{title}</div>

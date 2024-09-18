@@ -7,6 +7,7 @@ import { CurrentUser } from "../stores/user.reducer";
 import MenuMain from "./menu-main";
 import { Button } from "antd";
 import ProductRowLoading from "./product-row-skeleton";
+import Loading from './loading-product';
 
 export interface IProductCard {
     index: number,
@@ -70,7 +71,11 @@ const ProductRowsSale = ({ hasMenu, query }: ProductRowProps) => {
                 {hasMenu && <MenuMain filterProducts={filterProducts} />}
                 <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4 mt-2'>
                     {isLoading ? (
-                        <ProductRowLoading count={8} />
+                        <div className="col-span-full flex justify-center">
+                            <Loading loading={true}>
+                                <div>Loading...</div>
+                            </Loading>
+                        </div>
                     ) : (
                         productsToShow.length !== 0 ? (
                             productsToShow.map((productCard) => (

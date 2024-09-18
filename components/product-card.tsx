@@ -131,11 +131,11 @@ const ProductCard = ({ product }: { product: IProductCard }) => {
                                     <div>Đã bán: {product.sales}</div>
                                 </div>
                             </Space>
-                            <Divider className="my-[12px]" />
-                            <div className="text-[14px] font-sans">
-                                <HistoryOutlined /> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"}
-                                <span className="text-orange-500">{product.retailer}</span>
-                            </div>
+                                <Divider className="my-[12px]" />
+                                <div className="text-[14px] font-sans">
+                                    <HistoryOutlined /> {time !== "" ? `Khoảng ${time} phút` : "Thời gian không xác định"}
+                                    <span className="text-orange-500">{product.retailer}</span>
+                                </div>
                         </Card>
                     </Link>
                 ) : (

@@ -36,8 +36,7 @@ export async function getServerSideProps({ req }: { req: NextRequest }) {
         const data = await getOrdersPage({
             refreshToken: getCookie(REFRESH_TOKEN, { req }),
             page: 0,
-            pageSize: 10,
-            sort: ["createdDate,desc"]
+            pageSize: 10
         });
         return { props: { ePage: data } }
     } catch (e) {

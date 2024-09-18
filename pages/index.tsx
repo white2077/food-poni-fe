@@ -48,21 +48,25 @@ export default function HomePage({ ePage }: HomePageProps) {
                     <SearchPosition />
                 </div>
                 <ProductRows
+                    hasBorder={true}
                     hasMenu={true}
                     query={getProductsCardPage({ page: 0, pageSize: 10, status: true, sort: ["sales,desc"] })}
                 />
                 <ProductRows
+                    hasBorder={false}
                     title={MyCustomTitle}
                     hasMenu={false}
                     query={getProductsCardPage({ page: 0, pageSize: 10, status: true })}
                     legacyBehavior={true}
                 />
                 <ProductRows
+                    hasBorder={false}
                     title="Món ngon - Giá sốc"
                     hasMenu={false}
                     query={getProductsCardPage({ page: 0, pageSize: 10, status: true })}
                 />
                 <ProductRows
+                    hasBorder={false}
                     title="Có thể bạn thấy ngon"
                     hasMenu={false}
                     query={getProductsCardPage({ page: 0, pageSize: 20, status: false })}

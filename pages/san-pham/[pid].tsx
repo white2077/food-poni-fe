@@ -97,6 +97,7 @@ const ProductDetails = ({ product }: ProductDetailPageProps) => {
     const router: NextRouter = useRouter();
 
     const currentShippingAddress: AddressAPIResponse = useSelector((state: RootState) => state.address.shippingAddress);
+    const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const [isLoadingRate, setLoadingRate] = useState<boolean>(false);
 
@@ -141,6 +142,8 @@ const ProductDetails = ({ product }: ProductDetailPageProps) => {
         description,
         status
     } = productDetailSelected || {} as IProductDetail;
+
+    const isOwnProduct = currentUser && product.retailer && currentUser.id === product.retailer.id;
 
     return (
         <DefaultLayout>
@@ -197,14 +200,20 @@ const ProductDetails = ({ product }: ProductDetailPageProps) => {
                                 <ReadMore content={description} />
                             </div>
                             <div className="lg:sticky top-5 lg:order-2 order-1">
-                                <ProductCart
-                                    id={id!}
-                                    price={price!}
-                                    thumbnail={images && images.length > 0 ? server + images[0] : ""}
-                                    name={product.name + (productDetailName ? ' - ' + productDetailName : '')}
-                                    retailer={product.retailer!}
-                                    status={status!}
-                                />
+                                {!isOwnProduct ? (
+                                    <ProductCart
+                                        id={id!}
+                                        price={price!}
+                                        thumbnail={images && images.length > 0 ? server + images[0] : ""}
+                                        name={product.name + (productDetailName ? ' - ' + productDetailName : '')}
+                                        retailer={product.retailer!}
+                                        status={status!}
+                                    />
+                                ) : (
+                                    <Card size='small'>
+                                        <p>Bạn không thể mua sản phẩm của chính mình.</p>
+                                    </Card>
+                                )}
                             </div>
                         </div>
                         <ProductComment data={rates} productDetailSelected={productDetailSelected ?? {} as IProductDetail} isLoading={isLoadingRate} />
