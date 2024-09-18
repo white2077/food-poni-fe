@@ -17,7 +17,7 @@ import {
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteSelectedSoldItems, ICart, ICartItem } from "../stores/cart.reducer";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { NextRouter, useRouter } from "next/router";
 import OrderItems from "../components/order-items";
 import { RootState } from "../stores";
@@ -85,15 +85,17 @@ const Checkout = ({ ePage }: CheckoutPageProps) => {
 
     const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
 
-    const totalAmount: number = carts.reduce((totalCart: number, cart: ICart) => {
-        const cartTotal: number = cart.cartItems.reduce((total: number, item: ICartItem) => {
-            if (item.isSelectedICartItem) {
-                return total + item.price;
-            }
-            return total;
+    const totalAmount: number = useMemo(() => {
+        return carts.reduce((totalCart: number, cart: ICart) => {
+            const cartTotal: number = cart.cartItems.reduce((total: number, item: ICartItem) => {
+                if (item.isSelectedICartItem) {
+                    return total + item.price * item.quantity;
+                }
+                return total;
+            }, 0);
+            return totalCart + cartTotal;
         }, 0);
-        return totalCart + cartTotal;
-    }, 0);
+    }, [carts]);
 
     useEffect(() => {
         setShippingAddress({
@@ -263,7 +265,7 @@ const Checkout = ({ ePage }: CheckoutPageProps) => {
                             <Radio.Group onChange={onChange} value={payment.method}>
                                 <Space direction="vertical">
                                     <Radio value="CASH">
-                                        <div className="flex items-center"><img src="/TienMat.png" className="w-9 h-9 mr-2"/><p>Thanh toán tiền mặt</p></div>
+                                        <div className="flex items-center"><img src="/TienMat.png" className="w-9 h-9 mr-2" /><p>Thanh toán tiền mặt</p></div>
                                     </Radio>
                                     <Radio value="VNPAY">
                                         <div className="flex items-center"><img src="/VNP.png" className="w-9 h-9 mr-2" />
