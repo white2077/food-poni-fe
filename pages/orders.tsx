@@ -144,17 +144,18 @@ const Orders = ({ ePage }: OrderPageProps) => {
                     }
                 </div>
             </div>
-            <Pagination
-                align="center"
-                showSizeChanger
-                defaultCurrent={1}
-                onChange={onShowSizeChange}
-                current={current}
-                total={ePage.totalElements}
-            />
+            {filteredOrders.length > 0 && (
+                <Pagination
+                    align="center"
+                    showSizeChanger
+                    defaultCurrent={1}
+                    onChange={onShowSizeChange}
+                    current={current}
+                    total={ePage.totalElements}
+                />
+            )}
         </DefaultLayout>
     );
-
 };
 
 export default Orders;
