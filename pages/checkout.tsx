@@ -34,6 +34,7 @@ import AddressCheckoutUpdate from "../components/address-checkout-update";
 import { NextRequest } from "next/server";
 import { getAddressesPage } from "../queries/address.query";
 import CardHome from "../components/card-home";
+import axios, { AxiosError } from "axios";
 
 const { TextArea } = Input;
 
@@ -105,7 +106,7 @@ const Checkout = ({ ePage }: CheckoutPageProps) => {
         });
     }, [currentShippingAddress]);
 
-    const addMultipleOrders = (): void => {
+    const addMultipleOrders = async (): Promise<void> => {
         let check = false;
         carts.forEach((cart: ICart) => {
             cart.cartItems.forEach((item: ICartItem) => {
@@ -124,59 +125,78 @@ const Checkout = ({ ePage }: CheckoutPageProps) => {
             return;
         }
         setPending(true);
-        const requests = carts.map((values: any) => {
-            console.log(values);
-            const orderItems: OrderItemRequestDTO[] = values.cartItems.filter((item: ICartItem) => item.isSelectedICartItem).map((item: ICartItem) => {
-                return {
-                    quantity: item.quantity,
-                    productDetail: item,
-                    note: item.note
-                };
-            });
-            const note: string = values.note;
-            if (orderItems.length == 0) {
-                return;
-            }
-            if (orderItems && shippingAddress && payment && refreshToken) {
-                const order: OrderCreationRequestDTO = {
-                    orderItems,
-                    shippingAddress: shippingAddress,
-                    note,
-                    payment: payment,
-                    retailerId: orderItems[0].productDetail.retailer.id ?? "retailer"
-                } as OrderCreationRequestDTO;
 
-                return apiWithToken(refreshToken).post("/orders", order, {
-                    headers: {
-                        Authorization: 'Bearer ' + accessToken,
+        try {
+            if (payment.method === "VNPAY") {
+                const response = await apiWithToken(refreshToken).get("/vn-pay", {
+                    params: {
+                        amount: totalAmount,
+                        bankCode: "NCB",
                     }
                 });
-            } else {
-                return Promise.reject(new Error("Some information is missing for this order."));
+                window.location.href = response.data;
+                return;
             }
-        });
 
-        Promise.all(requests)
-            .then(function () {
-                dispatch(deleteSelectedSoldItems());
-                notification.open({
-                    type: 'success',
-                    message: 'Đơn hàng',
-                    description: 'Bạn vừa tạo đơn hàng thành công!',
+            const requests = carts.map((values: any) => {
+                console.log(values);
+                const orderItems: OrderItemRequestDTO[] = values.cartItems.filter((item: ICartItem) => item.isSelectedICartItem).map((item: ICartItem) => {
+                    return {
+                        quantity: item.quantity,
+                        productDetail: item,
+                        note: item.note
+                    };
                 });
-                // Redirect to home page or any other appropriate action
-                router.push('/').then(() => {
-                    setPending(false);
-                });
-            })
-            .catch(function (error) {
+                const note: string = values.note;
+                if (orderItems.length == 0) {
+                    return;
+                }
+                if (orderItems && shippingAddress && payment && refreshToken) {
+                    const order: OrderCreationRequestDTO = {
+                        orderItems,
+                        shippingAddress: shippingAddress,
+                        note,
+                        payment: payment,
+                        retailerId: orderItems[0].productDetail.retailer.id ?? "retailer"
+                    } as OrderCreationRequestDTO;
+
+                    return apiWithToken(refreshToken).post("/orders", order, {
+                        headers: {
+                            Authorization: 'Bearer ' + accessToken,
+                        }
+                    });
+                } else {
+                    return Promise.reject(new Error("Some information is missing for this order."));
+                }
+            });
+
+            await Promise.all(requests);
+            dispatch(deleteSelectedSoldItems());
+            notification.open({
+                type: 'success',
+                message: 'Đơn hàng',
+                description: 'Bạn vừa tạo đơn hàng thành công!',
+            });
+            router.push('/').then(() => {
+                setPending(false);
+            });
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                const axiosError = error as AxiosError;
                 notification.open({
                     type: 'error',
                     message: 'Đơn hàng',
-                    description: error.message
+                    description: axiosError.message
                 });
-                setPending(false);
-            });
+            } else {
+                notification.open({
+                    type: 'error',
+                    message: 'Đơn hàng',
+                    description: 'Đã xảy ra lỗi không xác định'
+                });
+            }
+            setPending(false);
+        }
     };
 
     const onChange = (e: RadioChangeEvent): void => {
