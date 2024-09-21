@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { server } from "../../utils/server";
 import { useState } from "react";
 import ProductCard from "../../components/product-card";
+import ProductCategoryFilter from "../../components/product-category-filter";
 
 const { Text, Title } = Typography;
 
@@ -49,9 +50,7 @@ export default function ProductsCategory({ productsPage, categoriesPage, categor
     }
 
     const sidebarContents = [
-        <ProductCategory key={0} categoryList={categoriesPage.content} />,
-        <img key={1} className='rounded-md w-full mt-4'
-            src={server + '/upload/vertical-banner.png'} alt="Promotional banner" />
+        <ProductCategoryFilter key={0} categoryList={categoriesPage.content} />,
     ];
 
     const handlePageChange = (page: number) => {
