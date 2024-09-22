@@ -84,6 +84,7 @@ const Cart = () => {
                     carts.map((cart: ICart) => (
                         cart.cartItems.length > 0 ? (
                             <div key={cart.id}>
+                                <div className="text-xl nunito"><span className="text-orange-500 mr-2">Quán:</span>{cart.name}</div>
                                 <List
                                     className="demo-loadmore-list"
                                     itemLayout="horizontal"
