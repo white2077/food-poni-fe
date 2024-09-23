@@ -1,5 +1,5 @@
 import { DefaultLayout } from "./_layout";
-import { GetProp, Pagination, PaginationProps, Segmented, UploadProps } from "antd";
+import { Pagination, PaginationProps, Segmented, UploadProps } from "antd";
 import React, { useState } from "react";
 import OrderCard from "../components/order-card";
 import { Page } from "../models/Page";
@@ -21,7 +21,7 @@ enum OrderStatus {
     COMPLETED,
 }
 
-type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+type FileType = Parameters<NonNullable<UploadProps['beforeUpload']>>[0];
 
 const getBase64 = (file: FileType): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -49,17 +49,12 @@ interface OrderPageProps {
 }
 
 const Orders = ({ ePage }: OrderPageProps) => {
-
     const [orderPage, setOrderPage] = useState<Page<OrderAPIResponse[]>>(ePage);
-
     const [isLoading, setLoading] = useState<boolean>(false);
-
     const [selectedStatus, setSelectedStatus] = useState<string>('');
-
     const [current, setCurrent] = useState<number>(1);
 
     const onShowSizeChange: PaginationProps['onShowSizeChange'] = (current, pageSize) => {
-        console.log(current, pageSize);
         setCurrent(current);
         queryPage({ page: current - 1, pageSize });
     };
@@ -70,17 +65,13 @@ const Orders = ({ ePage }: OrderPageProps) => {
             refreshToken: getCookie(REFRESH_TOKEN),
             page: page ?? orderPage.number,
             pageSize: pageSize ?? orderPage.size
-        }
-        ).then((res: Page<OrderAPIResponse[]>) => setOrderPage(res))
-            .catch((res: AxiosError<ErrorAPIResponse>) => {
-                console.log(res.message);
-            })
-            .finally((() => setLoading(false)));
+        })
+            .then((res: Page<OrderAPIResponse[]>) => setOrderPage(res))
+            .catch((res: AxiosError<ErrorAPIResponse>) => console.log(res.message))
+            .finally(() => setLoading(false));
     }
 
-    const handleChange = (value: string) => {
-        setSelectedStatus(value);
-    };
+    const handleChange = (value: string) => setSelectedStatus(value);
 
     const getStatusText = (status: OrderStatus) => {
         switch (status) {
@@ -120,31 +111,29 @@ const Orders = ({ ePage }: OrderPageProps) => {
                             onChange={handleChange}
                         />
                     </div>
-                    {
-                        isLoading ? <Loading loading={isLoading}>
+                    {isLoading ? (
+                        <Loading loading={isLoading}>
                             <div>Loading...</div>
-                        </Loading> : (
-                            <div>
-                                {
-                                    filteredOrders.length === 0 ? (
-                                        <EmptyNotice w="42" h="32" src="/no-order.png" message="Chưa có đơn hàng" />
-                                    ) : (
-                                        <div
-                                            className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
-                                            {filteredOrders.map((order: OrderAPIResponse) => (
-                                                <div key={order.id}>
-                                                    <OrderCard order={order} />
-                                                </div>
-                                            ))}
+                        </Loading>
+                    ) : (
+                        <div>
+                            {filteredOrders.length === 0 ? (
+                                <EmptyNotice w="42" h="32" src="/no-order.png" message="Chưa có đơn hàng" />
+                            ) : (
+                                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
+                                    {filteredOrders.map((order: OrderAPIResponse) => (
+                                        <div key={order.id}>
+                                            <OrderCard order={order} />
                                         </div>
-                                    )
-                                }
-                            </div>
-                        )
-                    }
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
             <Pagination
+                className={filteredOrders.length === 0 ? 'hidden' : ''}
                 align="center"
                 showSizeChanger
                 defaultCurrent={1}
@@ -154,7 +143,6 @@ const Orders = ({ ePage }: OrderPageProps) => {
             />
         </DefaultLayout>
     );
-
 };
 
 export default Orders;
