@@ -30,7 +30,7 @@ export type DistanceResponse = {
     status: string;
 }
 
-const ProductCard = ({product}: { product: Product }) => {
+export function ProductCard ({product}: { product: Product }) {
     const currentUser = useSelector((state: RootState) => state.user.currentUser);
     const shippingAddress = useSelector((state: RootState) => state.address.shippingAddress);
     const selectedAddress = useSelector((state: RootState) => state.searchPosition.searchPosition);
@@ -181,5 +181,3 @@ const ProductCard = ({product}: { product: Product }) => {
         </div>
     );
 }
-
-export default ProductCard;

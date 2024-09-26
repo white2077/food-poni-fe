@@ -1,8 +1,7 @@
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {REFRESH_TOKEN, server} from "./server";
-import {AuthAPIResponse} from "../models/auth/AuthAPIResponse";
-import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
 import Cookies from "js-cookie";
+import {AuthResponse, Error} from "@/type/types.ts";
 
 export let accessToken: string | null;
 
@@ -22,7 +21,7 @@ export const apiWithToken = () => {
     }, (error: AxiosError) => {
         if (error.response && error.response.status === 401) {
             return api.post("/auth/refresh-token", {refreshToken: Cookies.get(REFRESH_TOKEN)})
-                .then((res: AxiosResponse<AuthAPIResponse>) => {
+                .then((res: AxiosResponse<AuthResponse>) => {
                     accessToken = res.data.accessToken;
                     if (error.config) {
                         error.config.headers.Authorization = `Bearer ${accessToken}`;
@@ -31,7 +30,7 @@ export const apiWithToken = () => {
                     }
                     return Promise.reject(error);
                 })
-                .catch((res: AxiosError<ErrorAPIResponse>) => {
+                .catch((res: AxiosError<Error>) => {
                     if (res.status && res.status === 401) {
                         Cookies.remove(REFRESH_TOKEN);
                         window.location.href = "/login";

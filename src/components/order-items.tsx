@@ -14,7 +14,7 @@ import {
     setSelectedICartItem
 } from "../stores/cart.reducer";
 import { RootState } from "../stores";
-import QuantityInput from "./quantity-Input";
+import QuantityInput from "./molecules/quantityInput.tsx";
 
 const { TextArea } = Input;
 

@@ -38,6 +38,12 @@ export type CurrentUser = {
     readonly email: string | null | undefined;
 }
 
+export type Error = {
+    readonly message: string;
+    readonly code: number;
+    readonly details: string[];
+}
+
 export type FileUpload = {
     readonly id: string;
     readonly name: string;

@@ -1,23 +1,14 @@
-import {QueryParams} from "./type";
-import {Page} from "../models/Page";
-import {accessToken, apiWithToken} from "../utils/axios-config";
-import generateQueryString from "./common";
+import generateQueryString, {QueryParams} from "./common";
 import {AxiosResponse} from "axios";
-import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
-import {CartAPIResponse} from "../models/cart/CartAPIResponse";
+import {Cart, Page} from "@/type/types.ts";
+import {accessToken, apiWithToken} from "@/utils/axiosConfig.ts";
 
-export const getCartsPage = (queryParams: QueryParams): Promise<Page<CartAPIResponse[]>> => {
-    if (queryParams.refreshToken) {
-        return apiWithToken(queryParams.refreshToken)
-            .get(generateQueryString("/carts", queryParams), {
-                headers: {
-                    Authorization: "Bearer " + accessToken
-                }
-            })
-            .then((res: AxiosResponse<Page<CartAPIResponse[]>>) => res.data)
-            .catch((res: AxiosResponse<ErrorAPIResponse>) => {
-                throw res;
-            });
-    }
-    return Promise.reject();
+export const getCartsPage = (queryParams: QueryParams): Promise<Page<Cart[]>> => {
+    return apiWithToken()
+        .get(generateQueryString("/carts", queryParams), {
+            headers: {
+                Authorization: "Bearer " + accessToken
+            }
+        })
+        .then((res: AxiosResponse<Page<Cart[]>>) => res.data);
 }
