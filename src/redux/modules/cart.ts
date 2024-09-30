@@ -1,6 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {Cart, Page} from "@/type/types.ts";
-import {call, fork, put, select, take} from "redux-saga/effects";
+import {call, fork, put, race, select, take} from "redux-saga/effects";
 import {notification} from "antd";
 import {QueryParams} from "@/utils/api/common.ts";
 import {deleteCart, getCartsPage, updateCartQuantity} from "@/utils/api/cart.ts";
@@ -103,7 +103,25 @@ const cartListSlide = createSlice({
                 isLoading: false
             }
         }),
-        updateQuantityRequest: (state, {payload}: { payload: string }) => ({
+        updateDecreaseQuantityRequest: (state, {payload}: { payload: string }) => ({
+            ...state,
+            data: {
+                ...state.data,
+                page: {
+                    ...state.data.page,
+                    content: state.data.page.content.map(cart => {
+                        if (cart.id === payload) {
+                            return {
+                                ...cart,
+                                isUpdateLoading: true
+                            }
+                        }
+                        return cart
+                    })
+                }
+            }
+        }),
+        updateIncreaseQuantityRequest: (state, {payload}: { payload: string }) => ({
             ...state,
             data: {
                 ...state.data,
@@ -220,7 +238,8 @@ export const {
     fetchCartRequest,
     fetchCartSuccess,
     fetchCartFailure,
-    updateQuantityRequest,
+    updateDecreaseQuantityRequest,
+    updateIncreaseQuantityRequest,
     updateQuantitySuccess,
     updateQuantityFailure,
     deleteCartRequest,
@@ -255,20 +274,33 @@ function* handleFetchCart() {
 
 function* handleUpdateQuantityCart() {
     while (true) {
-        const {payload}: ReturnType<typeof updateQuantityRequest> = yield take(updateQuantityRequest.type);
+        const {updateDecreaseQuantity, updateIncreaseQuantity}: {
+            updateDecreaseQuantity: ReturnType<typeof updateDecreaseQuantityRequest>,
+            updateIncreaseQuantity: ReturnType<typeof updateIncreaseQuantityRequest>
+        } = yield race({
+            updateDecreaseQuantity: take(updateDecreaseQuantityRequest.type),
+            updateIncreaseQuantity: take(updateIncreaseQuantityRequest.type)
+        })
         try {
-            const {quantity}: {
-                quantity: number
-            } = yield select((state: RootState) => state.cart.data.page.content.find(cart => cart.id === payload) as Cart);
-            yield call(updateCartQuantity, {id: payload, quantity: quantity + 1});
-            yield put(updateQuantitySuccess({id: payload, quantity: quantity + 1}));
+            const updateAction = updateDecreaseQuantity || updateIncreaseQuantity;
+
+            const {quantity} = yield select((state: RootState) => state.cart.data.page.content.find(cart => cart.id === updateAction.payload) as Cart);
+
+            yield call(updateCartQuantity, {
+                id: updateAction.payload,
+                quantity: updateAction === updateDecreaseQuantity ? quantity - 1 : quantity + 1
+            });
+            yield put(updateQuantitySuccess({
+                id: updateAction.payload,
+                quantity: updateAction === updateDecreaseQuantity ? quantity - 1 : quantity + 1
+            }));
         } catch (e) {
             notification.open({
                 message: "Error",
                 description: e.message,
                 type: "error",
             });
-            yield put(updateQuantityFailure(payload));
+            yield put(updateQuantityFailure(updateDecreaseQuantity ? updateDecreaseQuantity.payload : updateIncreaseQuantity.payload));
         }
     }
 }

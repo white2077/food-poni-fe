@@ -2,6 +2,7 @@ import {lazy} from 'react'
 import {Navigate, Route, Routes} from 'react-router-dom'
 import {AuthPage} from "@/app/modules/auth";
 import {ErrorsPage} from "@/app/modules/errors/ErrorsPage.tsx";
+import CheckoutWrapper from "@/components/templates/checkoutWrapper.tsx";
 import HomeWrapper from "@/components/templates/homeWrapper.tsx";
 import SuspensedView from "@/components/atoms/suspensedView.tsx";
 
@@ -17,6 +18,14 @@ const PublicRoute = () => {
             element={
                 <SuspensedView>
                     <ProductPage />
+                </SuspensedView>
+            }
+        />
+        <Route
+            path='checkout'
+            element={
+                <SuspensedView>
+                    <CheckoutWrapper />
                 </SuspensedView>
             }
         />

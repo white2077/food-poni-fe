@@ -3,13 +3,13 @@ import {useDispatch, useSelector} from 'react-redux';
 import {LogoutOutlined, QuestionCircleOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
 import {useEffect} from "react";
 import {RootState} from "@/redux/store.ts";
-import {Link, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import Cookies from "js-cookie";
 import {REFRESH_TOKEN, server} from "@/utils/server.ts";
 import {clearCurrentUser} from "@/redux/modules/auth.ts";
 import SearchKeyword from "@/components/searchKeyword.tsx";
 import MenuMobile from "@/components/menu-mobile.tsx";
-import Cart from "@/components/cart.tsx";
+import Cart from "@/components/organisms/cart.tsx";
 
 // let sock: WebSocket | null = null;
 export default function HeaderMain() {

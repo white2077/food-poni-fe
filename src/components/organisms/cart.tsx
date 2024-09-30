@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {Avatar, Badge, Button, Divider, Drawer, List} from 'antd';
 import {CloseOutlined, ShoppingCartOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
-import EmptyNotice from "./empty-notice";
+import EmptyNotice from "../empty-notice.tsx";
 import {useNavigate} from "react-router-dom";
 import {RootState} from "@/redux/store.ts";
 import {QuantityInput} from "@/components/molecules/quantityInput.tsx";
