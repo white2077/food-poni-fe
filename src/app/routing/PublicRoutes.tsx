@@ -6,6 +6,7 @@ import {WithChildren} from '@/_metronic/helpers'
 import {AuthPage} from "@/app/modules/auth";
 import {ErrorsPage} from "@/app/modules/errors/ErrorsPage.tsx";
 import HomeWrapper from "@/components/templates/HomeWrapper.tsx";
+import CheckoutWrapper from "@/components/templates/CheckoutWrapper.tsx";
 
 const PublicRoute = () => {
   const ProductPage = lazy(() => import('@/components/pages/ProductPage'))
@@ -19,6 +20,14 @@ const PublicRoute = () => {
             element={
                 <SuspensedView>
                     <ProductPage />
+                </SuspensedView>
+            }
+        />
+        <Route
+            path='checkout'
+            element={
+                <SuspensedView>
+                    <CheckoutWrapper />
                 </SuspensedView>
             }
         />

@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {Avatar, Badge, Button, Divider, Drawer, List} from 'antd';
 import {CloseOutlined, ShoppingCartOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
-import EmptyNotice from "./empty-notice";
+import EmptyNotice from "../empty-notice.tsx";
 import {useNavigate} from "react-router-dom";
 import {RootState} from "@/redux/store.ts";
 import {QuantityInput} from "@/components/molecules/quantityInput.tsx";
@@ -38,13 +38,12 @@ const Cart = () => {
 
     const goToCheckout = () => {
         setPending(true);
-        if (currentUser.id) {
+        // if (currentUser.id) {
             navigate("/checkout");
-        } else {
-            // dispatch(deleteAllItem({}));
-            navigate("/login");
-            setPending(false);
-        }
+        // } else {
+        //     navigate("/login");
+        //     setPending(false);
+        // }
     }
 
     useEffect(() => {

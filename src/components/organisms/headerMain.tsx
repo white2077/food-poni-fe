@@ -9,7 +9,7 @@ import {REFRESH_TOKEN, server} from "@/utils/server.ts";
 import {clearCurrentUser} from "@/redux/modules/auth.ts";
 import SearchKeyword from "@/components/searchKeyword.tsx";
 import MenuMobile from "@/components/menu-mobile.tsx";
-import Cart from "@/components/cart.tsx";
+import Cart from "@/components/organisms/cart.tsx";
 
 // let sock: WebSocket | null = null;
 export default function HeaderMain() {

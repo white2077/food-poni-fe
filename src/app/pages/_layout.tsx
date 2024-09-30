@@ -168,14 +168,15 @@ export const SidebarLayoutFilter = ({children, sidebarContents}: SidebarLayoutPr
         </div>
     );
 };
-export const DefaultLayout = () => {
+export const DefaultLayout = ({children}: {children: ReactNode}) => {
     return (
         <div>
             <HeaderBar/>
-            {/*<HeaderMain/>*/}
+            <HeaderMain/>
             <div className='bg-[#F5F5FA]'>
                 <div className='px-2 max-w-screen-xl mx-auto py-4'>
-                    <Outlet/>
+                    {/*<Outlet/>*/}
+                    {children}
                 </div>
             </div>
             <div className='text-center'>
