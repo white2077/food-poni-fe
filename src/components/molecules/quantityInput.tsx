@@ -1,36 +1,28 @@
-import {Button} from 'antd';
+import {Button, Input} from 'antd';
 import {MinusOutlined, PlusOutlined} from '@ant-design/icons';
 import {useDispatch} from "react-redux";
 import {Cart} from "@/type/types.ts";
-import {decreaseQuantity, increaseQuantity} from "@/redux/modules/cart.ts";
+import {updateQuantityRequest} from "@/redux/modules/cart.ts";
 
-export function QuantityInput({item}: {item: Cart}) {
+type Props = {
+    readonly item: Cart;
+}
+
+export function QuantityInput({item}: Props) {
     const dispatch = useDispatch();
-    // let {item, onChangeQuantity} = this.props;
-    // const handleDecrease = () => {
-    //     const newQuantity = item.quantity > 1 ? item.quantity - 1 : item.quantity;
-    //     onChangeQuantity(item.id, item.retailer?.id ?? '', newQuantity);
-    // };
-    //
-    // const handleIncrease = () => {
-    //     const newQuantity = item.quantity + 1;
-    //     onChangeQuantity(item.id, item.retailer?.id ?? '', newQuantity);
-    // };
 
     return (
         <div className="flex items-center border-[1px] w-24 justify-between rounded-lg">
-            <Button type="text" icon={<MinusOutlined/>} onClick={() => dispatch(decreaseQuantity({id: item.id}))}/>
-            <input
-                className="w-6 text-center"
+            <Button type="text" icon={<MinusOutlined/>} loading={item.isUpdateLoading}
+                    onClick={() => dispatch(updateQuantityRequest(item.id))}/>
+            <Input
+                className="w-8 p-1 text-center"
                 defaultValue={1}
                 value={item.quantity}
-                // onChange={(e) => {
-                //     const value = parseInt(e.target.value);
-                //     const newQuantity = !isNaN(value) && value >= 1 ? value : item.quantity;
-                //     // onChangeQuantity(item.id, item.retailer?.id ?? '', newQuantity);
-                // }}
+                disabled={item.isUpdateLoading}
             />
-            <Button type="text" icon={<PlusOutlined/>} onClick={() => dispatch(increaseQuantity({id: item.id}))}/>
+            <Button type="text" icon={<PlusOutlined/>} loading={item.isUpdateLoading}
+                    onClick={() => dispatch(updateQuantityRequest(item.id))}/>
         </div>
     );
 }

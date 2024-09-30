@@ -21,11 +21,12 @@ export type AuthRequest = {
 export type Cart = {
     readonly id: string;
     readonly user: User;
-    readonly retailer: User;
     readonly quantity: number;
     readonly productName: string;
     readonly productDetail: ProductDetail;
     readonly checked: boolean;
+    readonly isUpdateLoading: boolean;
+    readonly isDeleteLoading: boolean;
 }
 
 export type CurrentUser = {
@@ -111,7 +112,6 @@ export type Product = {
     readonly shortDescription: string;
     readonly thumbnail: string;
     readonly status: boolean;
-    readonly user: User;
     readonly sales: number;
     readonly rate: number;
     readonly rateCount: number;
@@ -155,7 +155,6 @@ export interface User {
     readonly username: string;
     readonly role: string;
     readonly status: boolean;
-    readonly address: Address;
 }
 
 export type UserRemember = {

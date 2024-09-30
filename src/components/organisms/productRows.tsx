@@ -6,7 +6,7 @@ import {Action} from "redux";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/redux/store.ts";
 import {ProductLoading} from "@/components/atoms/productLoading.tsx";
-import ProductCard from "@/components/molecules/productCard.tsx";
+import {ProductCard} from "@/components/molecules/productCard.tsx";
 
 interface ProductFilterRowProps {
     title?: string | ReactNode;

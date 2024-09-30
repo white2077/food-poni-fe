@@ -7,7 +7,6 @@ import {Link} from "react-router-dom";
 import {Product} from "@/type/types.ts";
 import {server} from "@/utils/server.ts";
 
-
 export type ElementDistance = {
     readonly distance: {
         readonly text: string;
@@ -30,7 +29,7 @@ export type DistanceResponse = {
     status: string;
 }
 
-export function ProductCard ({product}: { product: Product }) {
+export function ProductCard({product}: { product: Product }) {
     const currentUser = useSelector((state: RootState) => state.user.currentUser);
     const shippingAddress = useSelector((state: RootState) => state.address.shippingAddress);
     const selectedAddress = useSelector((state: RootState) => state.searchPosition.searchPosition);

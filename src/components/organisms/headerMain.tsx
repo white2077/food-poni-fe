@@ -9,6 +9,7 @@ import {REFRESH_TOKEN, server} from "@/utils/server.ts";
 import {clearCurrentUser} from "@/redux/modules/auth.ts";
 import SearchKeyword from "@/components/searchKeyword.tsx";
 import MenuMobile from "@/components/menu-mobile.tsx";
+import Cart from "@/components/cart.tsx";
 
 // let sock: WebSocket | null = null;
 export default function HeaderMain() {
@@ -185,9 +186,9 @@ export default function HeaderMain() {
                     <SearchKeyword/>
                 </div>
                 <div className='flex items-center justify-end gap-4 order-2 md:order-3'>
-                    {currentUser.id ? (
+                    {!currentUser.id ? (
                             <>
-                                {/*<Cart />*/}
+                                <Cart />
                                 {/*<Notification />*/}
                                 <Dropdown menu={{items}} placement='bottomRight' trigger={['click']}
                                           className="hover:bg-gray-200 rounded-lg p-1.5 cursor-pointer h-[100%] ">

@@ -1,9 +1,10 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {Cart, Page} from "@/type/types.ts";
-import {call, fork, put, take} from "redux-saga/effects";
+import {call, fork, put, select, take} from "redux-saga/effects";
 import {notification} from "antd";
 import {QueryParams} from "@/utils/api/common.ts";
-import {getCartsPage} from "@/utils/api/cart.ts";
+import {deleteCart, getCartsPage, updateCartQuantity} from "@/utils/api/cart.ts";
+import {RootState} from "@/redux/store.ts";
 
 export type CartState = {
     readonly data: {
@@ -15,7 +16,52 @@ export type CartState = {
 const initialState: CartState = {
     data: {
         page: {
-            content: [],
+            content: [
+                {
+                    id: "123",
+                    user: {
+                        id: "123",
+                        avatar: "123",
+                        email: "123",
+                        birthday: "123",
+                        gender: true,
+                        username: "123",
+                        role: "123",
+                        status: true
+                    },
+                    quantity: 1,
+                    productName: "123",
+                    productDetail: {
+                        id: "123",
+                        name: "123",
+                        price: 1,
+                        description: "123",
+                        status: true,
+                        images: ["123"],
+                        rate: 1,
+                        sales: 1,
+                        rateCount: 1,
+                        product: {
+                            id: "123",
+                            name: "123",
+                            slug: "123",
+                            shortDescription: "123",
+                            thumbnail: "123",
+                            status: true,
+                            sales: 1,
+                            rate: 1,
+                            rateCount: 1,
+                            minPrice: 1,
+                            maxPrice: 1,
+                            createdDate: new Date(),
+                            updatedDate: new Date()
+                        }
+                    },
+                    checked: true,
+                    isUpdateLoading: false,
+                    isDeleteLoading: false
+                }
+            ],
             totalElements: 0,
             totalPages: 0,
             size: 0,
@@ -25,7 +71,7 @@ const initialState: CartState = {
             numberOfElements: 0,
             empty: true,
         },
-        isLoading: true
+        isLoading: false
     }
 }
 
@@ -35,7 +81,7 @@ const cartListSlide = createSlice({
     name: SLICE_NAME,
     initialState,
     reducers: {
-        fetchCartRequest: (state, payload: { payload: string | undefined }) => ({
+        fetchCartRequest: (state, {payload}: { payload: string | undefined }) => ({
             ...state,
             data: {
                 ...state.data,
@@ -57,116 +103,115 @@ const cartListSlide = createSlice({
                 isLoading: false
             }
         }),
-        decreaseQuantity: (state, action: { payload: { id: string } }) => {
-            const {id} = action.payload;
-            return {
-                ...state,
-                data: {
-                    ...state.data,
-                    page: {
-                        ...state.data.page,
-                        content: state.data.page.content.map(cart => {
-                            if (cart.id === id) {
-                                return {
-                                    ...cart,
-                                    quantity: cart.quantity - 1
-                                }
+        updateQuantityRequest: (state, {payload}: { payload: string }) => ({
+            ...state,
+            data: {
+                ...state.data,
+                page: {
+                    ...state.data.page,
+                    content: state.data.page.content.map(cart => {
+                        if (cart.id === payload) {
+                            return {
+                                ...cart,
+                                isUpdateLoading: true
                             }
-                            return cart
-                        })
-                    }
+                        }
+                        return cart
+                    })
                 }
             }
-        },
-        increaseQuantity: (state, action: { payload: { id: string } }) => {
-            const {id} = action.payload;
-            return {
-                ...state,
-                data: {
-                    ...state.data,
-                    page: {
-                        ...state.data.page,
-                        content: state.data.page.content.map(cart => {
-                            if (cart.id === id) {
-                                return {
-                                    ...cart,
-                                    quantity: cart.quantity + 1
-                                }
+        }),
+        updateQuantitySuccess: (state, {payload}: { payload: { id: string, quantity: number } }) => ({
+            ...state,
+            data: {
+                ...state.data,
+                page: {
+                    ...state.data.page,
+                    content: state.data.page.content.map(cart => {
+                        if (cart.id === payload.id) {
+                            return {
+                                ...cart,
+                                quantity: payload.quantity,
+                                isUpdateLoading: true
                             }
-                            return cart
-                        })
-                    }
+                        }
+                        return cart
+                    })
                 }
             }
-        }
-        // addItem: (state, action: { payload: CartItem }) => {
-        //     action.payload.isSelectedICartItem = true;
-        //     const {id, quantity, retailer} = action.payload;
-        //     const cart = state.carts.find(cart => cart.id === retailer.id);
-        //     if (cart) {
-        //         const itemInCart = cart.cartItems.find(
-        //             (item) => item.id === id
-        //         );
-        //         if (itemInCart) itemInCart.quantity = quantity;
-        //         else cart.cartItems.push(action.payload);
-        //     } else {
-        //         state.carts.push({
-        //             id: retailer.id ?? "",
-        //             name: retailer.username ?? "",
-        //             cartItems: [action.payload],
-        //             isSelectedICart: true
-        //         })
-        //     }
-        // },
-        // deleteItem: (state, action: { payload: { id: string, retailerId: string } }): void => {
-        //     const {id, retailerId} = action.payload;
-        //     const cartIndex = state.carts.findIndex(cart => cart.id === retailerId);
-        //     if (cartIndex !== -1) {
-        //         const cart = state.carts[cartIndex];
-        //         cart.cartItems = cart.cartItems.filter(item => item.id !== id);
-        //         if (cart.cartItems.length === 0) {
-        //             state.carts.splice(cartIndex, 1);
-        //         }
-        //     }
-        // },
-        // deleteSelectedSoldItems: (state): void => {
-        //     state.carts.forEach(cart => {
-        //         cart.cartItems = cart.cartItems.filter(item => !item.isSelectedICartItem);
-        //     });
-        // },
-        // deleteAllItem: (state, action) => {
-        //     state.carts = [];
-        // },
-        // setQuantity: (state, action: { payload: { id: string, retailerId: string, value: number } }): void => {
-        //     const {id, retailerId, value} = action.payload;
-        //     const cart = state.carts.find(cart => cart.id === retailerId);
-        //     if (cart) cart.cartItems = cart.cartItems.map(item => item.id === id ? {...item, quantity: value} : item);
-        // },
-        // setNote: (state, action: { payload: { id: string, retailerId: string, note: string } }): void => {
-        //     const {id, retailerId, note} = action.payload;
-        //     const cart = state.carts.find(cart => cart.id === retailerId);
-        //     if (cart) cart.cartItems = cart.cartItems.map(item => item.id === id ? {...item, note: note || ""} : item);
-        // },
-        // setSelectedICartItem: (state, action: { payload: string }): void => {
-        //     state.carts.forEach(cart => {
-        //         const cartItem = cart.cartItems.find(item => item.id === action.payload);
-        //         if (cartItem) cartItem.isSelectedICartItem = !cartItem.isSelectedICartItem;
-        //     })
-        // },
-        // setSelectedICart: (state, action: { payload: string }): void => {
-        //     const cart = state.carts.find(cart => cart.id === action.payload);
-        //     if (cart) {
-        //         cart.isSelectedICart = !cart.isSelectedICart;
-        //         cart.cartItems.forEach(item => item.isSelectedICartItem = cart.isSelectedICart);
-        //     }
-        // },
-        // setSelectedAll: (state): void => {
-        //     state.selectedAll = !state.selectedAll;
-        //     state.carts.forEach(cart => {
-        //         cart.isSelectedICart = state.selectedAll;
-        //         cart.cartItems.forEach(item => item.isSelectedICartItem = state.selectedAll);
-        //     });
-        // }
+        }),
+        updateQuantityFailure: (state, {payload}: { payload: string }) => ({
+            ...state,
+            data: {
+                ...state.data,
+                page: {
+                    ...state.data.page,
+                    content: state.data.page.content.map(cart => {
+                        if (cart.id === payload) {
+                            return {
+                                ...cart,
+                                isUpdateLoading: true
+                            }
+                        }
+                        return cart
+                    })
+                }
+            }
+        }),
+        deleteCartRequest: (state, {payload}: { payload: string }) => ({
+            ...state,
+            data: {
+                ...state.data,
+                page: {
+                    ...state.data.page,
+                    content: state.data.page.content.map(cart => {
+                        if (cart.id === payload) {
+                            return {
+                                ...cart,
+                                isDeleteLoading: true
+                            }
+                        }
+                        return cart
+                    })
+                }
+            }
+        }),
+        deleteCartSuccess: (state, {payload}: { payload: string }) => ({
+            ...state,
+            data: {
+                ...state.data,
+                page: {
+                    ...state.data.page,
+                    content: state.data.page.content.map(cart => {
+                        if (cart.id === payload) {
+                            return {
+                                ...cart,
+                                isDeleteLoading: false
+                            }
+                        }
+                        return cart
+                    })
+                }
+            }
+        }),
+        deleteCartFailure: (state, {payload}: { payload: string }) => ({
+            ...state,
+            data: {
+                ...state.data,
+                page: {
+                    ...state.data.page,
+                    content: state.data.page.content.map(cart => {
+                        if (cart.id === payload) {
+                            return {
+                                ...cart,
+                                isDeleteLoading: false
+                            }
+                        }
+                        return cart
+                    })
+                }
+            }
+        })
     }
 });
 export default cartListSlide.reducer;
@@ -175,8 +220,12 @@ export const {
     fetchCartRequest,
     fetchCartSuccess,
     fetchCartFailure,
-    decreaseQuantity,
-    increaseQuantity
+    updateQuantityRequest,
+    updateQuantitySuccess,
+    updateQuantityFailure,
+    deleteCartRequest,
+    deleteCartSuccess,
+    deleteCartFailure,
 } = cartListSlide.actions;
 
 function* handleFetchCart() {
@@ -204,4 +253,41 @@ function* handleFetchCart() {
     }
 }
 
-export const cartSagas = [fork(handleFetchCart),];
+function* handleUpdateQuantityCart() {
+    while (true) {
+        const {payload}: ReturnType<typeof updateQuantityRequest> = yield take(updateQuantityRequest.type);
+        try {
+            const {quantity}: {
+                quantity: number
+            } = yield select((state: RootState) => state.cart.data.page.content.find(cart => cart.id === payload) as Cart);
+            yield call(updateCartQuantity, {id: payload, quantity: quantity + 1});
+            yield put(updateQuantitySuccess({id: payload, quantity: quantity + 1}));
+        } catch (e) {
+            notification.open({
+                message: "Error",
+                description: e.message,
+                type: "error",
+            });
+            yield put(updateQuantityFailure(payload));
+        }
+    }
+}
+
+function* handleDeleteCart() {
+    while (true) {
+        const {payload}: ReturnType<typeof deleteCartRequest> = yield take(deleteCartRequest.type);
+        try {
+            yield call(deleteCart, payload);
+            yield put(deleteCartSuccess(payload));
+        } catch (e) {
+            notification.open({
+                message: "Error",
+                description: e.message,
+                type: "error",
+            });
+            yield put(deleteCartFailure(payload));
+        }
+    }
+}
+
+export const cartSagas = [fork(handleFetchCart), fork(handleUpdateQuantityCart), fork(handleDeleteCart)];
