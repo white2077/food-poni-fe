@@ -135,7 +135,6 @@ function* handleLogin() {
             const res: AuthResponse = yield call(login, user);
 
             yield put(loginSuccess());
-            console.log(jwtDecode(res.refreshToken));
             yield put(updateCurrentUser(jwtDecode(res.refreshToken) as CurrentUser));
 
             Cookies.set(REFRESH_TOKEN, res.refreshToken, {expires: 7});
