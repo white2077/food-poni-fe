@@ -6,7 +6,13 @@ import Cookies from "js-cookie";
 import {clientId, redirectUri, responseType, scopes} from "@/utils/oauth2.ts";
 import {useNavigate} from "react-router-dom";
 import {RootState} from "@/redux/store.ts";
-import {loginActionRequest, rememberMeSuccess} from "@/redux/modules/auth.ts";
+import {
+    loginRequest,
+    rememberMeRequest,
+    updatePassword,
+    updateRememberMe,
+    updateUsername
+} from "@/redux/modules/auth.ts";
 import {UserRemember} from "@/type/types.ts";
 
 export type FieldLoginType = {
@@ -22,7 +28,6 @@ export function Login() {
 
     const [isLoading, setIsLoading] = useState(true);
 
-
     const [isLoadingGoogle, setLoadingGoogle] = useState(false);
 
     const {rememberMe, isPending} = useSelector((state: RootState) => state.auth.login);
@@ -32,7 +37,9 @@ export function Login() {
         const rememberMeCookie = Cookies.get(REMEMBER_ME);
         if (rememberMeCookie) {
             const userRemember = JSON.parse(atob(rememberMeCookie)) as UserRemember;
-            dispatch(rememberMeSuccess(userRemember));
+            dispatch(updateUsername(userRemember.username));
+            dispatch(updatePassword(userRemember.password));
+            dispatch(updateRememberMe(userRemember));
         }
         setIsLoading(false);
     }, []);
@@ -112,7 +119,7 @@ export function Login() {
                         name="normal_login"
                         className="login-form"
                         initialValues={{remember: true}}
-                        onFinish={(values) => dispatch(loginActionRequest(values as FieldLoginType))}
+                        onFinish={() => dispatch(loginRequest())}
                     >
                         <div className="flex flex-col gap-1 font-medium">Email hoặc username</div>
                         <Form.Item
@@ -120,7 +127,8 @@ export function Login() {
                             rules={[{required: true, message: 'Vui lòng nhập username hoặc email của bạn!'}]}
                             initialValue={rememberMe.username}
                         >
-                            <Input className="!py-2 font-medium" placeholder="Email hoặc username"/>
+                            <Input className="!py-2 font-medium" placeholder="Email hoặc username"
+                                   onChange={(e) => dispatch(updateUsername(e.target.value))}/>
                         </Form.Item>
                         <div className="flex font-medium  justify-between">Mật khẩu
                             <a className="login-form-forgot" href="">
@@ -131,11 +139,13 @@ export function Login() {
                             rules={[{required: true, message: 'Vui lòng nhập mật khẩu của bạn!'}]}
                             initialValue={rememberMe.password}
                         >
-                            <Input.Password className="!py-2 font-medium" placeholder="Mật khẩu"/>
+                            <Input.Password className="!py-2 font-medium" placeholder="Mật khẩu"
+                                            onChange={(e) => dispatch(updatePassword(e.target.value))}/>
                         </Form.Item>
                         <Form.Item>
                             <Form.Item name="remember" valuePropName="checked" noStyle>
-                                <Checkbox>Lưu thông tin đăng nhập</Checkbox>
+                                <Checkbox onChange={(e) => dispatch(rememberMeRequest(e.target.checked))}>Lưu thông tin
+                                    đăng nhập</Checkbox>
                             </Form.Item>
                         </Form.Item>
                         <Form.Item>

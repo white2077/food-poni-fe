@@ -38,12 +38,12 @@ const Cart = () => {
 
     const goToCheckout = () => {
         setPending(true);
-        // if (currentUser.id) {
+        if (currentUser.id) {
             navigate("/checkout");
-        // } else {
-        //     navigate("/login");
-        //     setPending(false);
-        // }
+        } else {
+            navigate("/auth/login");
+            setPending(false);
+        }
     }
 
     useEffect(() => {

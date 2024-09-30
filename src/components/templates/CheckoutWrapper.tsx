@@ -2,11 +2,12 @@ import {Button, Card, Col, Divider, Form, Input, Modal, Radio, RadioChangeEvent,
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {RootState} from "@/redux/store.ts";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {PaymentInfo, ShippingAddress} from "@/type/types.ts";
 import OrderItems from "@/components/order-items.tsx";
 import {DefaultLayout} from "@/app/pages/_layout.tsx";
 import CardHome from "@/components/card-home.tsx";
+import {fetchCartRequest} from "@/redux/modules/cart.ts";
 
 const {TextArea} = Input;
 
@@ -50,6 +51,10 @@ export default function CheckoutWrapper() {
     //         return totalCart + cartTotal;
     //     }, 0);
     // }, [carts]);
+
+    useEffect(() => {
+        dispatch(fetchCartRequest());
+    }, []);
 
     // useEffect(() => {
     //     setShippingAddress({
@@ -275,7 +280,7 @@ export default function CheckoutWrapper() {
                             </Form.Item>
                             <Form.Item>
                                 <Button type="primary" htmlType="submit" danger block
-                                        // disabled={pending || carts.length == 0}
+                                    // disabled={pending || carts.length == 0}
                                         loading={pending}>
                                     Thanh toán
                                 </Button>

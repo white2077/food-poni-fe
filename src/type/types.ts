@@ -14,7 +14,7 @@ export type AuthResponse = {
 
 export type AuthRequest = {
     readonly username: string | null;
-    readonly email: string | null;
+    readonly email?: string | null;
     readonly password: string;
 }
 
