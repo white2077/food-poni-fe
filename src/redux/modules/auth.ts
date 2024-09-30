@@ -127,7 +127,6 @@ function* handleLogin() {
         yield take(loginRequest.type);
         try {
             const payload: FieldLoginType = yield select((state: RootState) => state.auth.login);
-            console.log(payload)
             const user: AuthRequest = {
                 username: payload.username,
                 password: payload.password
