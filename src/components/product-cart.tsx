@@ -1,122 +1,42 @@
-import { Button, Card, Flex, notification } from "antd";
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addItem, deleteAllItem, ICart, ICartItem } from "../stores/cart.reducer";
-import { NextRouter, useRouter } from "next/router";
-import { RootState } from "../stores";
-import { CurrentUser } from "../stores/user.reducer";
-import { IRetailer } from "../pages/san-pham/[pid]";
-import { REFRESH_TOKEN, server } from "../utils/server";
-import Link from "next/link";
+import {Button, Card, Flex} from "antd";
+import {useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
 import Banner from "./slide-banner";
 import CustomInput from "./custom-input ";
-import { CartCreationRequestDTO } from "../models/cart/CartRequest";
-import { getCookie } from "cookies-next";
-import { accessToken, apiWithToken } from "../utils/axiosConfig.ts";
-import { AxiosError, AxiosResponse } from "axios";
-import { ErrorAPIResponse } from "../models/ErrorAPIResponse";
+import {Link, useNavigate} from "react-router-dom";
+import {RootState} from "@/redux/store.ts";
+import {server} from "@/utils/server.ts";
 
-const ProductCart = ({ id, price, thumbnail, name, retailer, status }: {
+const ProductCart = ({ id, price, thumbnail, name, status }: {
     id: string,
     price: number,
     thumbnail: string,
     name: string,
-    retailer: IRetailer,
     status: boolean
 }) => {
 
-    const router: NextRouter = useRouter();
+    const router = useNavigate();
 
     const dispatch = useDispatch();
 
-    const currentUser: CurrentUser = useSelector((state: RootState) => state.user.currentUser);
-
     const [quantity, setQuantity] = useState<number>(1);
 
-    const carts: ICart[] = useSelector((state: RootState) => state.cart.carts);
-
-    const isExisted: boolean = carts.some(item => item.cartItems.some(cartItem => cartItem.id === id));
-
-    const [pending, setPending] = useState<boolean>(false);
-
-    const refreshToken = getCookie(REFRESH_TOKEN);
-
-    const addToCart = (): void => {
-        if (currentUser.id) {
-            const payload: ICartItem = {id, price, thumbnail, name, quantity, retailer} as ICartItem;
-            dispatch(addItem(payload));
-        } else {
-            router.push("/login");
-        }
-
-        // if (currentUser.id) {
-        //     const cartPayload: CartCreationRequestDTO = {
-        //         user: {
-        //             id: currentUser.id
-        //         },
-        //         retailer: {
-        //             id: retailer.id
-        //         },
-        //         quantity,
-        //         productDetail: { id },
-        //         checked: true
-        //     };
-        //     if (refreshToken) {
-        //         apiWithToken(refreshToken).post("/carts", cartPayload, {
-        //             headers: {
-        //                 Authorization: 'Bearer ' + accessToken,
-        //             }
-        //         })
-        //             .then(function (res: AxiosResponse<CartCreationRequestDTO>) {
-        //                 const payload: ICartItem = {id, price, thumbnail, name, quantity, retailer} as ICartItem;
-        //                 dispatch(addItem(payload));
-        //                 notification.open({
-        //                     type: 'success',
-        //                     message: 'Giỏ hàng',
-        //                     description: "Thêm sản phẩm vào giỏ hàng thành công!",
-        //                 });
-        //             })
-        //             .catch(function (res: AxiosError<ErrorAPIResponse>) {
-        //                 notification.open({
-        //                     type: 'error',
-        //                     message: 'Giỏ hàng',
-        //                     description: res.message,
-        //                 });
-        //             });
-        //     }
-        // } else {
-        //     router.push("/login");
-        // }
-    };
-
-    const getCheckout = (): void => {
-        setPending(true);
-        if (currentUser.id) {
-            addToCart();
-            router.push("/checkout").then(() => {
-                setPending(false);
-            });
-        } else {
-            dispatch(deleteAllItem({}));
-            router.push("/login");
-            setPending(false);
-        }
-    };
+    const {page, isLoading} = useSelector((state: RootState) => state.cart.data);
 
     return (
         <div className="lg:sticky top-5">
             <Card className='text-left text-black h-fit' size='small'>
                 <div className="flex justify-between">
                     <div className="flex">
-                        <Link href={`/cua-hang/${retailer.id}`}>
+                        <Link to={`/cua-hang/${id}`}>
                             <a>
                                 <img className="w-12 h-12 rounded-[100%] overflow-hidden object-cover"
-                                    src={server + retailer.avatar}
+                                    src={server + id}
                                     alt={""} />
                             </a>
                         </Link>
                         <div>
-                            <span className="mx-2 font-semibold">{retailer.username}</span>
+                            <span className="mx-2 font-semibold">{id}</span>
                             <div className="ml-2 font-semibold flex gap-2">
                                 <div>
                                     <span className="flex items-center gap-1">4.9
@@ -152,7 +72,7 @@ const ProductCart = ({ id, price, thumbnail, name, retailer, status }: {
                             defaultValue={1}
                             value={quantity}
                             onChange={(value: number | null) => setQuantity(value ?? 1)}
-                            disabled={isExisted}
+                            disabled={false}
                         />
                     </div>
                     <div>
@@ -168,12 +88,12 @@ const ProductCart = ({ id, price, thumbnail, name, retailer, status }: {
                 {
                     status ? (
                         <Flex vertical gap='small' className="w-full">
-                            <Button type='primary' danger block disabled={pending} loading={pending}
-                                onClick={getCheckout}>
+                            <Button type='primary' danger block
+                                onClick={() => {}}>
                                 Mua ngay
                             </Button>
-                            <Button block onClick={addToCart}
-                                disabled={isExisted}>{isExisted ? 'Sản phẩm đã có trong giỏ hàng' : 'Thêm vào giỏ hàng'}</Button>
+                            {/*<Button block onClick={() => {}}*/}
+                            {/*    disabled={false}>{ ? 'Sản phẩm đã có trong giỏ hàng' : 'Thêm vào giỏ hàng'}</Button>*/}
                         </Flex>
                     ) : (
                         <Flex vertical gap='small' className="w-full">

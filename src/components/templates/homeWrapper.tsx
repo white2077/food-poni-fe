@@ -4,7 +4,7 @@ import {server} from "@/utils/server.ts";
 import CarouselBanner from "@/components/carousel-banner.tsx";
 import SearchPosition from "@/components/searchPosition.tsx";
 import {SidebarLayout} from "@/app/pages/_layout.tsx";
-import {fetchProductByCustomerRequest} from "@/redux/modules/product.ts";
+import {fetchProductsByCustomerRequest} from "@/redux/modules/product.ts";
 import {ProductRows} from "@/components/organisms/productRows.tsx";
 import {ProductRowsFilter} from "@/components/organisms/productRowsFilter.tsx";
 
@@ -29,7 +29,7 @@ export default function HomeWrapper() {
                     <SearchPosition/>
                 </div>
                 <ProductRowsFilter
-                    action={fetchProductByCustomerRequest("updatedDate,desc")}
+                    action={fetchProductsByCustomerRequest("updatedDate,desc")}
                 />
                 <ProductRows
                     hasBorder={false}
@@ -38,18 +38,18 @@ export default function HomeWrapper() {
                             <img src="/sale.png" alt="Title" className="w-auto h-8"/>
                         </div>
                     }
-                    action={fetchProductByCustomerRequest()}
+                    action={fetchProductsByCustomerRequest()}
                     legacyBehavior={true}
                 />
                 <ProductRows
                     hasBorder={false}
                     title="Món ngon - Giá sốc"
-                    action={fetchProductByCustomerRequest()}
+                    action={fetchProductsByCustomerRequest()}
                 />
                 <ProductRows
                     hasBorder={false}
                     title="Có thể bạn thấy ngon"
-                    action={fetchProductByCustomerRequest()}
+                    action={fetchProductsByCustomerRequest()}
                 />
             </div>
         </SidebarLayout>

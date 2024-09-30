@@ -1,9 +1,8 @@
 import {AxiosResponse} from "axios";
-import {AuthAPIResponse} from "@/models/auth/AuthAPIResponse.ts";
-import {AuthRequest} from "@/type/types.ts";
+import {AuthRequest, AuthResponse} from "@/type/types.ts";
 import {api} from "@/utils/axiosConfig.ts";
 
-export const login = (user: AuthRequest): Promise<AuthAPIResponse> => {
+export const login = (user: AuthRequest): Promise<AuthResponse> => {
     return api.post("/auth/login", user)
-        .then((res: AxiosResponse<AuthAPIResponse>) => res.data);
+        .then((res: AxiosResponse<AuthResponse>) => res.data);
 };

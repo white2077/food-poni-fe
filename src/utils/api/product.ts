@@ -18,7 +18,7 @@ export const getProductsPageByCategory = (cid: string, queryParams: QueryParams)
         .then((res: AxiosResponse<Page<Product[]>>) => res.data);
 }
 
-export const getProductById = (pid: string): Promise<Product> => {
+export const getProductByIdOrSlug = (pid: string): Promise<Product> => {
     return api.get(`/products/${pid}`)
         .then((res: AxiosResponse<Product>) => res.data);
 }

@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import {useState} from "react";
 
-interface ChatbotProps {
+type Props = {
     showChatbot: boolean;
     toggleChatbot: () => void;
 }
 
-const Chatbot: React.FC<ChatbotProps> = ({ showChatbot, toggleChatbot }) => {
+export default function ChatBot({showChatbot, toggleChatbot}: Props) {
     const [isGifColored, setIsGifColored] = useState(false);
     const [chatbotImage, setChatbotImage] = useState("/chat-sleep.gif");
 
@@ -17,14 +17,12 @@ const Chatbot: React.FC<ChatbotProps> = ({ showChatbot, toggleChatbot }) => {
 
     return (
         <>
-            <div className={`fixed bottom-0 right-5 z-30 transition-opacity duration-300 ${showChatbot ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+            <div
+                className={`fixed bottom-0 right-5 z-30 transition-opacity duration-300 ${showChatbot ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
                 <iframe
                     src="https://docsbot.ai/iframe/QtQHengqIsNpGqyaJjnT/RmsS1cW33KOGKBgQcBvr"
                     width="350"
                     height="600"
-                    frameBorder="0"
-                    allowTransparency={false}
-                    scrolling="no"
                 />
             </div>
 
@@ -40,11 +38,10 @@ const Chatbot: React.FC<ChatbotProps> = ({ showChatbot, toggleChatbot }) => {
                             className={`w-20 h-20 ${isGifColored ? '' : 'filter grayscale'}`}
                         />
                     </div>
-                    <div className="font-bold absolute bottom-8 right-0 text-xl">chat<span className="text-orange-500">bot</span></div>
+                    <div className="font-bold absolute bottom-8 right-0 text-xl">chat<span
+                        className="text-orange-500">bot</span></div>
                 </div>
             </span>
         </>
     );
-};
-
-export default Chatbot;
+}

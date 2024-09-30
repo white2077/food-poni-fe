@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Card } from 'antd';
+import {useEffect, useRef, useState} from 'react';
+import {Card} from 'antd';
 
-interface ReadMoreProps {
-    content?: string;
+type Props = {
+    readonly content?: string;
 }
 
-const ReadMore: React.FC<ReadMoreProps> = ({ content }) => {
+export default function ReadMore({content}: Props) {
     const [expanded, setExpanded] = useState(false);
     const [height, setHeight] = useState('300px');
     const [showButton, setShowButton] = useState(false);
@@ -29,8 +29,8 @@ const ReadMore: React.FC<ReadMoreProps> = ({ content }) => {
                 <div
                     ref={contentRef}
                     className="text-black overflow-hidden transition-all text-sm sm:text-base"
-                    dangerouslySetInnerHTML={{ __html: content || '' }}
-                    style={{ maxHeight: height }}
+                    dangerouslySetInnerHTML={{__html: content || ''}}
+                    style={{maxHeight: height}}
                 />
                 {showButton && (
                     <button
@@ -45,6 +45,4 @@ const ReadMore: React.FC<ReadMoreProps> = ({ content }) => {
             </div>
         </Card>
     );
-};
-
-export default ReadMore;
+}

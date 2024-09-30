@@ -1,6 +1,5 @@
 import {createRoot} from 'react-dom/client'
 import axios from 'axios'
-import {AppRoutes} from './app/routing/AppRoutes'
 import {AuthProvider, setupAxios} from './app/modules/auth'
 import {Provider} from "react-redux";
 import store from "@/redux/store.ts";
@@ -9,6 +8,7 @@ import './_metronic/assets/keenicons/outline/style.css'
 import './_metronic/assets/keenicons/solid/style.css'
 import '../styles/globals.scss'
 import {ConfigProvider} from "antd";
+import {AppRoutes} from "@/app/routing/appRoutes.tsx";
 
 setupAxios(axios)
 

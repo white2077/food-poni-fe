@@ -32,37 +32,20 @@ const Cart = () => {
         return total;
     };
 
-    const onClose = (): void => {
-        setOpen(false);
-    };
-
-    const goToCheckout = () => {
-        setPending(true);
-        if (currentUser.id) {
-            navigate("/checkout");
-        } else {
-            // dispatch(deleteAllItem({}));
-            navigate("/login");
-            setPending(false);
-        }
-    }
-
     useEffect(() => {
         const calculatedTotalPrice = calculateTotalPrice();
         setTotalPrice(calculatedTotalPrice);
+        dispatch(fetchCartRequest("createdDate,asc"))
     }, []);
 
     return (
         <div>
-            <a onClick={() => {
-                setOpen(true);
-                dispatch(fetchCartRequest("createdDate,asc"));
-            }} className="cursor-pointer">
+            <a onClick={() => setOpen(true)} className="cursor-pointer">
                 <Badge count={page.totalElements}>
                     <Avatar shape="square" icon={<ShoppingCartOutlined/>} size='large'/>
                 </Badge>
             </a>
-            <Drawer title="Giỏ hàng" onClose={onClose} open={open}>
+            <Drawer title="Giỏ hàng" onClose={() => setOpen(false)} open={open}>
                 {page.content.length === 0 ? (
                     <EmptyNotice w="60" h="60" src="/no-product.png" message="Giỏ hàng trống"/>
                 ) : (
@@ -125,7 +108,15 @@ const Cart = () => {
                         </div>
                         <Divider/>
                         <Button className="my-5s mt-2" type='primary' danger block disabled={pending} loading={pending}
-                                onClick={goToCheckout}>
+                                onClick={() => {
+                                    setPending(true);
+                                    if (currentUser.id) {
+                                        navigate("/checkout");
+                                    } else {
+                                        navigate("/login");
+                                        setPending(false);
+                                    }
+                                }}>
                             Thanh toán ngay
                         </Button>
                     </div>

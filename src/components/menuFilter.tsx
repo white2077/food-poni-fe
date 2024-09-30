@@ -1,7 +1,7 @@
 import {CrownOutlined, DollarOutlined, EnvironmentOutlined, StarOutlined, TagOutlined} from '@ant-design/icons';
 import {Menu} from 'antd';
 import {useDispatch} from "react-redux";
-import {fetchProductByCustomerRequest} from "@/redux/modules/product.ts";
+import {fetchProductsByCustomerRequest} from "@/redux/modules/product.ts";
 
 export default function MenuFilter() {
 
@@ -24,7 +24,7 @@ export default function MenuFilter() {
                       default:
                           return;
                   }
-                  dispatch(fetchProductByCustomerRequest(sortOption));
+                  dispatch(fetchProductsByCustomerRequest(sortOption));
               }}
               defaultSelectedKeys={["bestsellers"]}
               mode='horizontal'

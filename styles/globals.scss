@@ -5,6 +5,12 @@
 @tailwind components;
 @tailwind utilities;
 @tailwind variants;
+
+:root {
+    --tw-color-primary: #F36F24;
+}
+
+
 .nunito {
     font-family: "Nunito", sans-serif;
     font-weight: 1000;

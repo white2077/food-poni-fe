@@ -1,14 +1,12 @@
-import {FC, lazy, Suspense} from 'react'
+import {lazy} from 'react'
 import {Navigate, Route, Routes} from 'react-router-dom'
-import TopBarProgress from 'react-topbar-progress-indicator'
-import {getCSSVariableValue} from '@/_metronic/assets/ts/_utils'
-import {WithChildren} from '@/_metronic/helpers'
 import {AuthPage} from "@/app/modules/auth";
 import {ErrorsPage} from "@/app/modules/errors/ErrorsPage.tsx";
-import HomeWrapper from "@/components/templates/HomeWrapper.tsx";
+import HomeWrapper from "@/components/templates/homeWrapper.tsx";
+import SuspensedView from "@/components/atoms/suspensedView.tsx";
 
 const PublicRoute = () => {
-  const ProductPage = lazy(() => import('@/components/pages/ProductPage'))
+  const ProductPage = lazy(() => import('@/components/pages/productPage.tsx'))
 
   return (
     <Routes>
@@ -26,18 +24,6 @@ const PublicRoute = () => {
         <Route path='*' element={<Navigate to='/'/>}/>
     </Routes>
   )
-}
-
-const SuspensedView: FC<WithChildren> = ({children}) => {
-  const baseColor = getCSSVariableValue('--bs-primary')
-  TopBarProgress.config({
-    barColors: {
-      '0': baseColor,
-    },
-    barThickness: 1,
-    shadowBlur: 5,
-  })
-  return <Suspense fallback={<TopBarProgress />}>{children}</Suspense>
 }
 
 export {PublicRoute}

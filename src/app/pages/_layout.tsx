@@ -4,8 +4,8 @@ import {ReactNode} from "react";
 
 import {Outlet} from "react-router-dom";
 import HeaderBar from "@/components/header-bar.tsx";
-import {Footer} from "@/_metronic/layout/components/footer/Footer.tsx";
 import HeaderMain from "@/components/organisms/headerMain.tsx";
+import Footer from "@/components/organisms/footer.tsx";
 
 interface SidebarLayoutProps {
     children: ReactNode,
@@ -172,7 +172,7 @@ export const DefaultLayout = () => {
     return (
         <div>
             <HeaderBar/>
-            {/*<HeaderMain/>*/}
+            <HeaderMain/>
             <div className='bg-[#F5F5FA]'>
                 <div className='px-2 max-w-screen-xl mx-auto py-4'>
                     <Outlet/>

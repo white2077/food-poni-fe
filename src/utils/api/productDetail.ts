@@ -1,13 +1,8 @@
-import {api} from "../utils/axios-config";
-import {AxiosError, AxiosResponse} from "axios";
-import {ErrorAPIResponse} from "../models/ErrorAPIResponse";
-import {Page} from "../models/Page";
-import {ProductDetailAPIResponse} from "../models/product_detail/ProductDetailAPIResponse";
+import {AxiosResponse} from "axios";
+import {Page, ProductDetail} from "@/type/types.ts";
+import {api} from "@/utils/axiosConfig.ts";
 
-export const getProductDetailsByProductId = (pid: string): Promise<Page<ProductDetailAPIResponse[]>> => {
+export const getProductDetailsByProductId = (pid: string): Promise<Page<ProductDetail[]>> => {
     return api.get(`/product-details/products/${pid}`)
-        .then((res: AxiosResponse<Page<ProductDetailAPIResponse[]>>) => res.data)
-        .catch((res: AxiosError<ErrorAPIResponse>) => {
-            throw res;
-        });
+        .then((res: AxiosResponse<Page<ProductDetail[]>>) => res.data)
 }

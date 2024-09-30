@@ -1,10 +1,10 @@
 import {FC} from 'react'
 import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom'
-import {PrivateRoutes} from './PrivateRoutes'
-import {App} from '../App'
+import {PrivateRoutes} from './privateRoutes.tsx'
 import {useSelector} from "react-redux";
 import {RootState} from "@/redux/store.ts";
-import {PublicRoute} from "@/app/routing/PublicRoutes.tsx";
+import {App} from "@/app/App.tsx";
+import {PublicRoute} from "@/app/routing/publicRoutes.tsx";
 
 /**
  * Base URL of the website.

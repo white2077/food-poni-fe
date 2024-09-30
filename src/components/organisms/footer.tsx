@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import CatBackground from "./pet";
-import Link from "next/link";
-import Chatbot from "./chat-bot";
+import {useState} from "react";
+import {Link} from "react-router-dom";
+import CatBackground from "@/components/pet.tsx";
+import ChatBot from "@/components/organisms/chatBot.tsx";
 
-const Footer = () => {
+export default function Footer() {
     const [showChatbot, setShowChatbot] = useState(false);
 
     const toggleChatbot = () => {
@@ -11,42 +11,42 @@ const Footer = () => {
     };
     return (
         <div className="bg-[#f5f5fa]">
-            <CatBackground />
+            <CatBackground/>
             <footer>
                 <div className="container">
                     <div className="content">
                         <div className="col">
                             <div className="in-col">
-                                <Link href="/">
+                                <Link to="/">
                                     <div
                                         className="font-['Impact','fantasy'] text-4xl text-orange-500 cursor-pointer hover:text-orange-500">FoodPoni
                                     </div>
                                 </Link>
                             </div>
                             <div className="in-col">
-                                hi, we are always open for cooperation and suggestions, <br />
+                                hi, we are always open for cooperation and suggestions, <br/>
                                 contact us in one of the ways below:
                             </div>
                             <div className="flex">
                                 <div className="col-info">
                                     <div className="in-col">
-                                        PHONE NUMBER <br />
+                                        PHONE NUMBER <br/>
                                         <span>+1 (800) 060-07-30</span>
                                     </div>
                                     <div className="in-col">
-                                        OUR LOCATION <br />
-                                        <span>715 Fake Street, New York<br />
+                                        OUR LOCATION <br/>
+                                        <span>715 Fake Street, New York<br/>
                                             10021 USA</span>
                                     </div>
                                 </div>
                                 <div className="col-info">
                                     <div className="in-col">
-                                        EMAIL ADDRESS <br />
+                                        EMAIL ADDRESS <br/>
                                         <span>us@example.com</span>
                                     </div>
 
                                     <div className="in-col">
-                                        WORKING HOURS <br />
+                                        WORKING HOURS <br/>
                                         <span>Mon-sat 10:00pm - 7:00pm</span>
                                     </div>
                                 </div>
@@ -79,25 +79,25 @@ const Footer = () => {
                         <div className="col">
                             <div className="in-col">newsletter</div>
                             <div className="in-col">
-                                enter your email address below to subscribe to our newsletter<br />
+                                enter your email address below to subscribe to our newsletter<br/>
                                 and keep up to date with discounts and special offers.
                             </div>
                             <div className="email rounded-lg">
                                 <input className="border border-gray-300 rounded-lg p-2" type="email"
-                                    placeholder="user@example.com" />
+                                       placeholder="user@example.com"/>
                                 <button className="bg-orange-500 text-white px-4 py-2 !rounded-lg">Subscribe</button>
                             </div>
                             <div className="in-col">follow us on social networks:</div>
                             <div className="social">
                                 <a href="https://www.facebook.com/profile.php?id=100085580808149" target="_blank">
-                                    <img src="https://i.postimg.cc/44pPB9wk/facebook.png" alt="" />
+                                    <img src="https://i.postimg.cc/44pPB9wk/facebook.png" alt=""/>
                                 </a>
-                                <img src="https://i.postimg.cc/L8Q3nB4f/twitter.png" alt="" />
-                                <img src="https://i.postimg.cc/TYG9S3Hy/instagram.png" alt="" />
+                                <img src="https://i.postimg.cc/L8Q3nB4f/twitter.png" alt=""/>
+                                <img src="https://i.postimg.cc/TYG9S3Hy/instagram.png" alt=""/>
                                 <a href="https://www.youtube.com/watch?v=STzK1XrpoBs" target="_blank">
-                                    <img src="https://i.postimg.cc/kGCxkTwr/youtube.png" alt="" />
+                                    <img src="https://i.postimg.cc/kGCxkTwr/youtube.png" alt=""/>
                                 </a>
-                                <img src="https://i.postimg.cc/CKZHDBd2/telegram.png" alt="" />
+                                <img src="https://i.postimg.cc/CKZHDBd2/telegram.png" alt=""/>
                             </div>
                         </div>
                     </div>
@@ -108,19 +108,17 @@ const Footer = () => {
                         <div className="foot-text">
                             <div className="in-col">powered by <span>tech</span> - designed by <span>hema</span></div>
                             <div className="pay">
-                                <img src="https://i.postimg.cc/PrtWyFPY/visa-logo-png-2013.png" alt="" />
-                                <img src="https://i.postimg.cc/R0j1TSHZ/mastercard-PNG23.png" alt="" />
-                                <img src="https://i.postimg.cc/sggJj0zs/paypal-logo-png-2119.png" alt="" />
-                                <img src="https://i.postimg.cc/hjdsFzBm/American-Express-logo-PNG14.png" alt="" />
+                                <img src="https://i.postimg.cc/PrtWyFPY/visa-logo-png-2013.png" alt=""/>
+                                <img src="https://i.postimg.cc/R0j1TSHZ/mastercard-PNG23.png" alt=""/>
+                                <img src="https://i.postimg.cc/sggJj0zs/paypal-logo-png-2119.png" alt=""/>
+                                <img src="https://i.postimg.cc/hjdsFzBm/American-Express-logo-PNG14.png" alt=""/>
 
                             </div>
                         </div>
                     </div>
                 </div>
             </footer>
-            <Chatbot showChatbot={showChatbot} toggleChatbot={toggleChatbot} />
+            <ChatBot showChatbot={showChatbot} toggleChatbot={toggleChatbot}/>
         </div>
     );
-};
-
-export default Footer;
+}
