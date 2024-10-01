@@ -1,78 +1,57 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {Cart, Page} from "@/type/types.ts";
+import {Page} from "@/type/types.ts";
 import {call, fork, put, race, select, take} from "redux-saga/effects";
 import {notification} from "antd";
 import {QueryParams} from "@/utils/api/common.ts";
-import {deleteCart, getCartsPage, updateCartQuantity} from "@/utils/api/cart.ts";
+import {createCart, deleteCart, getCartsPage, updateCartQuantity} from "@/utils/api/cart.ts";
 import {RootState} from "@/redux/store.ts";
 
 export type CartState = {
-    readonly data: {
-        readonly page: Page<Cart[]>,
-        readonly isLoading: boolean
-    },
+    readonly page: Page<{
+        readonly quantity: number;
+        readonly productName: string;
+        readonly productDetail: {
+            readonly id: string;
+            readonly name: string;
+            readonly price: number;
+            readonly images: string[];
+        }
+        readonly checked: boolean;
+    }[]>,
+    readonly isFetchLoading: boolean,
+    readonly isUpdateLoading: boolean,
+    readonly isDeleteLoading: boolean,
+    readonly isCreateLoading: boolean,
 }
 
 const initialState: CartState = {
-    data: {
-        page: {
-            content: [
-                {
-                    id: "123",
-                    user: {
-                        id: "123",
-                        avatar: "123",
-                        email: "123",
-                        birthday: "123",
-                        gender: true,
-                        username: "123",
-                        role: "123",
-                        status: true
-                    },
-                    quantity: 1,
-                    productName: "123",
-                    productDetail: {
-                        id: "123",
-                        name: "123",
-                        price: 1,
-                        description: "123",
-                        status: true,
-                        images: ["123"],
-                        rate: 1,
-                        sales: 1,
-                        rateCount: 1,
-                        product: {
-                            id: "123",
-                            name: "123",
-                            slug: "123",
-                            shortDescription: "123",
-                            thumbnail: "123",
-                            status: true,
-                            sales: 1,
-                            rate: 1,
-                            rateCount: 1,
-                            minPrice: 1,
-                            maxPrice: 1,
-                            createdDate: new Date(),
-                            updatedDate: new Date()
-                        }
-                    },
-                    checked: true,
-                    isUpdateLoading: false,
-                    isDeleteLoading: false
-                }
-            ],
-            totalElements: 0,
-            totalPages: 0,
-            size: 0,
-            number: 0,
-            first: true,
-            last: true,
-            numberOfElements: 0,
-            empty: true,
-        },
-        isLoading: false
-    }
+    page: {
+        content: [
+            {
+                quantity: 1,
+                productName: "",
+                productDetail: {
+                    id: "",
+                    name: "",
+                    price: 1,
+                    images: [""],
+                },
+                checked: true
+            }
+        ],
+        totalElements: 0,
+        totalPages: 0,
+        size: 0,
+        number: 0,
+        first: true,
+        last: true,
+        numberOfElements: 0,
+        empty: true,
+    },
+    isFetchLoading: false,
+    isUpdateLoading: false,
+    isDeleteLoading: false,
+    isCreateLoading: false
 }
 
 const SLICE_NAME = 'cart';
@@ -83,152 +62,111 @@ const cartListSlide = createSlice({
     reducers: {
         fetchCartRequest: (state, {payload}: { payload: string | undefined }) => ({
             ...state,
-            data: {
-                ...state.data,
-                isLoading: true
-            }
+            isFetchLoading: true
         }),
-        fetchCartSuccess: (state, {payload}: { payload: Page<Cart[]> }) => ({
+        fetchCartSuccess: (state, {payload}: {
+            payload: Page<{
+                readonly quantity: number;
+                readonly productName: string;
+                readonly productDetail: {
+                    readonly id: string;
+                    readonly name: string;
+                    readonly price: number;
+                    readonly images: string[];
+                }
+                readonly checked: boolean;
+            }[]>
+        }) => ({
             ...state,
-            data: {
-                ...state.data,
-                page: payload,
-                isLoading: false
-            }
+            page: payload,
+            isFetchLoading: false
         }),
         fetchCartFailure: (state) => ({
             ...state,
-            data: {
-                ...state.data,
-                isLoading: false
+            isFetchLoading: false
+        }),
+        createCartRequest: (state, {payload}: {
+            payload: {
+                quantity: number,
+                productDetail: string,
+                productName: string,
+                productDetailName: string,
+                price: number,
+                thumbnail: string
             }
+        }) => ({
+            ...state,
+            isCreateLoading: true
+        }),
+        createCartSuccess: (state, {payload}: {
+            payload: {
+                readonly quantity: number;
+                readonly productName: string;
+                readonly productDetail: {
+                    readonly id: string;
+                    readonly name: string;
+                    readonly price: number;
+                    readonly images: string[];
+                }
+                readonly checked: boolean;
+            }
+        }) => ({
+            ...state,
+            page: {
+                ...state.page,
+                content: [payload, ...state.page.content],
+                totalElements: state.page.totalElements + 1
+            },
+            isCreateLoading: false
+        }),
+        createCartFailure: (state) => ({
+            ...state,
+            isCreateLoading: false
         }),
         updateDecreaseQuantityRequest: (state, {payload}: { payload: string }) => ({
             ...state,
-            data: {
-                ...state.data,
-                page: {
-                    ...state.data.page,
-                    content: state.data.page.content.map(cart => {
-                        if (cart.id === payload) {
-                            return {
-                                ...cart,
-                                isUpdateLoading: true
-                            }
-                        }
-                        return cart
-                    })
-                }
-            }
+            isUpdateLoading: true
         }),
         updateIncreaseQuantityRequest: (state, {payload}: { payload: string }) => ({
             ...state,
-            data: {
-                ...state.data,
-                page: {
-                    ...state.data.page,
-                    content: state.data.page.content.map(cart => {
-                        if (cart.id === payload) {
-                            return {
-                                ...cart,
-                                isUpdateLoading: true
-                            }
-                        }
-                        return cart
-                    })
-                }
-            }
+            isUpdateLoading: true
         }),
-        updateQuantitySuccess: (state, {payload}: { payload: { id: string, quantity: number } }) => ({
+        updateQuantitySuccess: (state, {payload}: { payload: { pdid: string, quantity: number } }) => ({
             ...state,
-            data: {
-                ...state.data,
-                page: {
-                    ...state.data.page,
-                    content: state.data.page.content.map(cart => {
-                        if (cart.id === payload.id) {
-                            return {
-                                ...cart,
-                                quantity: payload.quantity,
-                                isUpdateLoading: true
-                            }
+            page: {
+                ...state.page,
+                content: state.page.content.map(cart => {
+                    if (cart.productDetail.id === payload.pdid) {
+                        return {
+                            ...cart,
+                            quantity: payload.quantity
                         }
-                        return cart
-                    })
-                }
-            }
+                    }
+                    return cart
+                })
+            },
+            isUpdateLoading: false
         }),
         updateQuantityFailure: (state, {payload}: { payload: string }) => ({
             ...state,
-            data: {
-                ...state.data,
-                page: {
-                    ...state.data.page,
-                    content: state.data.page.content.map(cart => {
-                        if (cart.id === payload) {
-                            return {
-                                ...cart,
-                                isUpdateLoading: true
-                            }
-                        }
-                        return cart
-                    })
-                }
-            }
+            isUpdateLoading: false
         }),
         deleteCartRequest: (state, {payload}: { payload: string }) => ({
             ...state,
-            data: {
-                ...state.data,
-                page: {
-                    ...state.data.page,
-                    content: state.data.page.content.map(cart => {
-                        if (cart.id === payload) {
-                            return {
-                                ...cart,
-                                isDeleteLoading: true
-                            }
-                        }
-                        return cart
-                    })
-                }
-            }
+            isDeleteLoading: true
         }),
         deleteCartSuccess: (state, {payload}: { payload: string }) => ({
             ...state,
-            data: {
-                ...state.data,
-                page: {
-                    ...state.data.page,
-                    content: state.data.page.content.map(cart => {
-                        if (cart.id === payload) {
-                            return {
-                                ...cart,
-                                isDeleteLoading: false
-                            }
-                        }
-                        return cart
-                    })
-                }
-            }
+            page: {
+                ...state.page,
+                content: state.page.content.filter(cart => cart.productDetail.id !== payload),
+                totalElements: state.page.totalElements - 1
+            },
+            isDeleteLoading: false
         }),
         deleteCartFailure: (state, {payload}: { payload: string }) => ({
             ...state,
-            data: {
-                ...state.data,
-                page: {
-                    ...state.data.page,
-                    content: state.data.page.content.map(cart => {
-                        if (cart.id === payload) {
-                            return {
-                                ...cart,
-                                isDeleteLoading: false
-                            }
-                        }
-                        return cart
-                    })
-                }
-            }
+            isDeleteLoading: false
         })
     }
 });
@@ -238,6 +176,9 @@ export const {
     fetchCartRequest,
     fetchCartSuccess,
     fetchCartFailure,
+    createCartRequest,
+    createCartSuccess,
+    createCartFailure,
     updateDecreaseQuantityRequest,
     updateIncreaseQuantityRequest,
     updateQuantitySuccess,
@@ -258,7 +199,17 @@ function* handleFetchCart() {
             };
 
             queryParams.sort = payload;
-            const page: Page<Cart[]> = yield call(getCartsPage, queryParams);
+            const page: Page<{
+                readonly quantity: number;
+                readonly productName: string;
+                readonly productDetail: {
+                    readonly id: string;
+                    readonly name: string;
+                    readonly price: number;
+                    readonly images: string[];
+                }
+                readonly checked: boolean;
+            }[]> = yield call(getCartsPage, queryParams);
             yield put(fetchCartSuccess(page));
         } catch (e) {
             notification.open({
@@ -268,6 +219,45 @@ function* handleFetchCart() {
             });
 
             yield put(fetchCartFailure());
+        }
+    }
+}
+
+function* handleCreateCart() {
+    while (true) {
+        const {payload}: ReturnType<typeof createCartRequest> = yield take(createCartRequest.type);
+        try {
+            yield call(createCart, {quantity: payload.quantity, productDetail: payload.productDetail});
+            const cart: {
+                readonly quantity: number;
+                readonly productName: string;
+                readonly productDetail: {
+                    readonly id: string;
+                    readonly name: string;
+                    readonly price: number;
+                    readonly images: string[];
+                }
+                readonly checked: boolean;
+            } = {
+                quantity: 1,
+                productName: payload.productName,
+                productDetail: {
+                    id: payload.productDetail,
+                    name: payload.productDetailName,
+                    price: payload.price,
+                    images: [payload.thumbnail],
+                },
+                checked: true
+            }
+            yield put(createCartSuccess(cart));
+        } catch (e) {
+            notification.open({
+                message: "Error",
+                description: e.message,
+                type: "error",
+            });
+
+            yield put(createCartFailure());
         }
     }
 }
@@ -284,14 +274,14 @@ function* handleUpdateQuantityCart() {
         try {
             const updateAction = updateDecreaseQuantity || updateIncreaseQuantity;
 
-            const {quantity} = yield select((state: RootState) => state.cart.data.page.content.find(cart => cart.id === updateAction.payload) as Cart);
+            const {quantity} = yield select((state: RootState) => state.cart.page.content.find(cart => cart.productDetail.id === updateAction.payload));
 
             yield call(updateCartQuantity, {
-                id: updateAction.payload,
+                pdid: updateAction.payload,
                 quantity: updateAction === updateDecreaseQuantity ? quantity - 1 : quantity + 1
             });
             yield put(updateQuantitySuccess({
-                id: updateAction.payload,
+                pdid: updateAction.payload,
                 quantity: updateAction === updateDecreaseQuantity ? quantity - 1 : quantity + 1
             }));
         } catch (e) {
@@ -322,4 +312,4 @@ function* handleDeleteCart() {
     }
 }
 
-export const cartSagas = [fork(handleFetchCart), fork(handleUpdateQuantityCart), fork(handleDeleteCart)];
+export const cartSagas = [fork(handleFetchCart), fork(handleCreateCart), fork(handleUpdateQuantityCart), fork(handleDeleteCart)];

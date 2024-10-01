@@ -13,18 +13,27 @@ export const getCartsPage = (queryParams: QueryParams): Promise<Page<Cart[]>> =>
         .then((res: AxiosResponse<Page<Cart[]>>) => res.data);
 }
 
-export const updateCartQuantity = ({id, quantity}: { id: string, quantity: number }): void => {
+export const createCart = ({quantity, productDetail}: { quantity: number, productDetail: string }): void => {
     apiWithToken()
-        .patch("/carts/update-quantity", {id, quantity}, {
+        .post("/carts", {quantity, productDetail}, {
             headers: {
                 Authorization: "Bearer " + accessToken
             }
         });
 }
 
-export const deleteCart = (id: string): void => {
+export const updateCartQuantity = ({pdid, quantity}: { pdid: string, quantity: number }): void => {
     apiWithToken()
-        .delete(`/carts/${id}`, {
+        .patch("/carts/update-quantity", {pdid, quantity}, {
+            headers: {
+                Authorization: "Bearer " + accessToken
+            }
+        });
+}
+
+export const deleteCart = (pdid: string): void => {
+    apiWithToken()
+        .delete(`/carts/${pdid}`, {
             headers: {
                 Authorization: "Bearer " + accessToken
             }

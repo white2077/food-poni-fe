@@ -98,7 +98,8 @@ export default function ProductWrapper() {
                             id={productDetailSelected.id}
                             price={productDetailSelected.price}
                             thumbnail={productDetailSelected.images && productDetailSelected.images.length > 0 ? server + productDetailSelected.images[0] : ""}
-                            name={product.name + " - " + productDetailSelected.name}
+                            productName={product.name}
+                            productDetailName={productDetailSelected.name}
                             status={productDetailSelected.status}
                         />
                 </div>

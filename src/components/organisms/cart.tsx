@@ -7,6 +7,7 @@ import {useNavigate} from "react-router-dom";
 import {RootState} from "@/redux/store.ts";
 import {QuantityInput} from "@/components/molecules/quantityInput.tsx";
 import {deleteCartRequest, fetchCartRequest} from "@/redux/modules/cart.ts";
+import {server} from "@/utils/server.ts";
 
 const Cart = () => {
 
@@ -18,7 +19,7 @@ const Cart = () => {
 
     const [open, setOpen] = useState<boolean>(false);
 
-    const {page, isLoading} = useSelector((state: RootState) => state.cart.data);
+    const {page, isFetchLoading} = useSelector((state: RootState) => state.cart);
 
     const [pending, setPending] = useState<boolean>(false);
 
@@ -35,7 +36,7 @@ const Cart = () => {
     useEffect(() => {
         const calculatedTotalPrice = calculateTotalPrice();
         setTotalPrice(calculatedTotalPrice);
-        dispatch(fetchCartRequest("createdDate,asc"))
+        dispatch(fetchCartRequest("createdDate,desc"))
     }, []);
 
     return (
@@ -54,22 +55,21 @@ const Cart = () => {
                             className="demo-loadmore-list"
                             itemLayout="horizontal"
                             dataSource={page.content}
-                            loading={isLoading}
+                            loading={isFetchLoading}
                             renderItem={(item) => (
                                 <List.Item>
                                     <List.Item.Meta
                                         avatar={
                                             <div className="relative inline-block flex items-center">
                                                 <Avatar className="rounded-lg w-20 h-20"
-                                                        src={item.productDetail.images[0]}/>
+                                                        src={server + item.productDetail.images[0]}/>
                                                 <div
                                                     className="absolute top-[-5px] w-6 h-6 right-[-5px] bg-gray-300 rounded-[100px] flex p-0 justify-center">
                                                     <CloseOutlined
                                                         className="p-0"
-                                                        id={`delete-icon-${item.id}`}
+                                                        id={`delete-icon-${item.productDetail.id}`}
                                                         key="list-loadmore-edit"
-                                                        disabled={item.isDeleteLoading}
-                                                        onClick={() => dispatch(deleteCartRequest(item.id))}
+                                                        onClick={() => dispatch(deleteCartRequest(item.productDetail.id))}
                                                     />
                                                 </div>
                                             </div>
@@ -113,7 +113,7 @@ const Cart = () => {
                                     if (currentUser.id) {
                                         navigate("/checkout");
                                     } else {
-                                        navigate("/login");
+                                        navigate("/auth/login");
                                         setPending(false);
                                     }
                                 }}>

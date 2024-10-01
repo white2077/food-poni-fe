@@ -25,8 +25,6 @@ export type Cart = {
     readonly productName: string;
     readonly productDetail: ProductDetail;
     readonly checked: boolean;
-    readonly isUpdateLoading: boolean;
-    readonly isDeleteLoading: boolean;
 }
 
 export type CurrentUser = {

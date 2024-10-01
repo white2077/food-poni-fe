@@ -2,7 +2,6 @@ import {Card, Checkbox, Col, Input, Popconfirm, Row} from "antd";
 import {DeleteOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/redux/store.ts";
-import {Cart} from "@/type/types.ts";
 import {QuantityInput} from "@/components/molecules/quantityInput.tsx";
 import {deleteCartRequest} from "@/redux/modules/cart.ts";
 import {server} from "@/utils/server.ts";
@@ -13,7 +12,7 @@ const OrderItems = () => {
 
     const dispatch = useDispatch();
 
-    const carts = useSelector((state: RootState) => state.cart.data);
+    const {page} = useSelector((state: RootState) => state.cart);
 
     const handleSetSelectedICartItem = (id: string): void => {
         // dispatch(setSelectedICartItem(id));
@@ -57,12 +56,22 @@ const OrderItems = () => {
                 </Row>
             </div>
             {
-                carts.page.content.length > 0 ? (
-                    carts.page.content.map((cart: Cart) => (
-                        <div key={cart.id} className="p-2 bg-white border-[1px] rounded-lg mt-4">
+                page.content.length > 0 ? (
+                    page.content.map((cart: {
+                        readonly quantity: number;
+                        readonly productName: string;
+                        readonly productDetail: {
+                            readonly id: string;
+                            readonly name: string;
+                            readonly price: number;
+                            readonly images: string[];
+                        }
+                        readonly checked: boolean;
+                    }) => (
+                        <div key={cart.productDetail.id} className="p-2 bg-white border-[1px] rounded-lg mt-4">
                             <Row className="my-[16px] items-center">
                                 <Col flex='2%'>
-                                    <Checkbox onClick={() => handleSetSelectedICartItem(cart.id)}
+                                    <Checkbox onClick={() => handleSetSelectedICartItem(cart.productDetail.id)}
                                               checked={cart.checked}></Checkbox>
                                 </Col>
                                 <Col flex='40%'>
@@ -96,8 +105,8 @@ const OrderItems = () => {
                                     />
                                 </Col>
                                 <Col flex='3%' className="text-center">
-                                    <DeleteOutlined id={`delete-icon-${cart.id}`}
-                                                    onClick={() => dispatch(deleteCartRequest(cart.id))}
+                                    <DeleteOutlined id={`delete-icon-${cart.productDetail.id}`}
+                                                    onClick={() => dispatch(deleteCartRequest(cart.productDetail.id))}
                                     />
                                 </Col>
                             </Row>
