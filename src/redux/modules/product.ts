@@ -83,7 +83,7 @@ export const {
     updateProductDetailSelected
 } = productSlide.actions;
 
-export const fetchProductAction = createAction<string>({SLICE_NAME} + '/fetchProductRequest');
+export const fetchProductAction = createAction<string>(`${SLICE_NAME}/fetchProductRequest`);
 
 function* handleFetchProducts() {
     while (true) {

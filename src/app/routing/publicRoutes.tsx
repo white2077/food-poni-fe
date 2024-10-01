@@ -8,6 +8,7 @@ import SuspensedView from "@/components/atoms/suspensedView.tsx";
 
 const PublicRoute = () => {
   const ProductPage = lazy(() => import('@/components/pages/productPage.tsx'))
+  const OrderPage = lazy(() => import('@/components/pages/orderPage.tsx'))
 
   return (
     <Routes>
@@ -26,6 +27,14 @@ const PublicRoute = () => {
             element={
                 <SuspensedView>
                     <CheckoutWrapper />
+                </SuspensedView>
+            }
+        />
+        <Route
+            path='don-hang/*'
+            element={
+                <SuspensedView>
+                    <OrderPage />
                 </SuspensedView>
             }
         />
