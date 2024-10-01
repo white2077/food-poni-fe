@@ -5,7 +5,6 @@ import {RootState} from "@/redux/store.ts";
 import {useEffect, useState} from "react";
 import {PaymentInfo, ShippingAddress} from "@/type/types.ts";
 import OrderItems from "@/components/order-items.tsx";
-import {DefaultLayout} from "@/app/pages/_layout.tsx";
 import CardHome from "@/components/card-home.tsx";
 import {fetchCartRequest} from "@/redux/modules/cart.ts";
 
@@ -22,8 +21,6 @@ export default function CheckoutWrapper() {
     const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const currentShippingAddress = useSelector((state: RootState) => state.address.shippingAddress);
-
-    const [pending, setPending] = useState<boolean>(false);
 
     const [payment, setPayment] = useState<PaymentInfo>({
         method: "CASH",
@@ -147,151 +144,148 @@ export default function CheckoutWrapper() {
     };
 
     return (
-        <DefaultLayout>
-            <div style={{color: "black", textAlign: "left"}}>
-                <h1 className="text-2xl mb-2">GIỎ HÀNG</h1>
-                <Row gutter={16}>
-                    <Col flex='auto'>
-                        <OrderItems></OrderItems>
-                    </Col>
-                    <Col flex='400px'>
-                        <Card style={{marginBottom: "16px"}}>
-                            <div>
-                                <div className="flex justify-between items-center">
-                                    <div className="text-[17px] text-gray-400">Giao tới</div>
-                                    <Button id="button-change-address" type="link"
-                                            onClick={() => {
-                                                setModal2Open(true);
-                                            }}>Thay đổi</Button>
-                                </div>
-                                <Modal
-                                    title="Địa chỉ của bạn"
-                                    centered
-                                    open={modal2Open}
-                                    onOk={() => setModal2Open(false)}
-                                    onCancel={() => setModal2Open(false)}
-                                    footer={null}
-                                >
-                                    <Button
-                                        onClick={handleAddAddressClick}>{showAddAddress ? "Quay lại" : "Thêm địa chỉ"}</Button>
-                                    {/*{showAddAddress && <AddressCheckoutAdd />}*/}
-                                    {/*{!showAddAddress && (*/}
-                                    {/*    <Radio.Group className="w-full"*/}
-                                    {/*        defaultValue={ePage.content.find(item => item.id === currentUser.addressId)}*/}
-                                    {/*        onChange={(e: RadioChangeEvent) => setShippingAddress(e.target.value)}>*/}
-                                    {/*        <List*/}
-                                    {/*            dataSource={ePage.content}*/}
-                                    {/*            renderItem={(item: AddressAPIResponse, index: number) => (*/}
-                                    {/*                <Collapse*/}
-                                    {/*                    className="my-[16px]"*/}
-                                    {/*                    expandIconPosition={"end"}*/}
-                                    {/*                    collapsible={"icon"}*/}
-                                    {/*                    items={[{*/}
-                                    {/*                        key: item.id,*/}
-                                    {/*                        label: <Radio id={`radio-${item.id}`} value={item}>*/}
-                                    {/*                            <div><span*/}
-                                    {/*                                style={{ fontWeight: 'bold' }}>{item.fullName}</span> | {item.phoneNumber}*/}
-                                    {/*                            </div>*/}
-                                    {/*                            <div>{item.address}</div>*/}
-                                    {/*                        </Radio>,*/}
-                                    {/*                        children: <AddressCheckoutUpdate address={item} />*/}
-                                    {/*                    }]}*/}
-                                    {/*                />*/}
-                                    {/*            )}*/}
-                                    {/*        />*/}
-                                    {/*    </Radio.Group>*/}
-                                    {/*)}*/}
-                                </Modal>
+        <div style={{color: "black", textAlign: "left"}}>
+            <h1 className="text-2xl mb-2">GIỎ HÀNG</h1>
+            <Row gutter={16}>
+                <Col flex='auto'>
+                    <OrderItems></OrderItems>
+                </Col>
+                <Col flex='400px'>
+                    <Card style={{marginBottom: "16px"}}>
+                        <div>
+                            <div className="flex justify-between items-center">
+                                <div className="text-[17px] text-gray-400">Giao tới</div>
+                                <Button id="button-change-address" type="link"
+                                        onClick={() => {
+                                            setModal2Open(true);
+                                        }}>Thay đổi</Button>
                             </div>
-                            <div>
-                                {shippingAddress && (
-                                    <>
-                                        <div><span
-                                            style={{fontWeight: 'bold'}}>{shippingAddress.fullName}</span> | {shippingAddress.phoneNumber}
+                            <Modal
+                                title="Địa chỉ của bạn"
+                                centered
+                                open={modal2Open}
+                                onOk={() => setModal2Open(false)}
+                                onCancel={() => setModal2Open(false)}
+                                footer={null}
+                            >
+                                <Button
+                                    onClick={handleAddAddressClick}>{showAddAddress ? "Quay lại" : "Thêm địa chỉ"}</Button>
+                                {/*{showAddAddress && <AddressCheckoutAdd />}*/}
+                                {/*{!showAddAddress && (*/}
+                                {/*    <Radio.Group className="w-full"*/}
+                                {/*        defaultValue={ePage.content.find(item => item.id === currentUser.addressId)}*/}
+                                {/*        onChange={(e: RadioChangeEvent) => setShippingAddress(e.target.value)}>*/}
+                                {/*        <List*/}
+                                {/*            dataSource={ePage.content}*/}
+                                {/*            renderItem={(item: AddressAPIResponse, index: number) => (*/}
+                                {/*                <Collapse*/}
+                                {/*                    className="my-[16px]"*/}
+                                {/*                    expandIconPosition={"end"}*/}
+                                {/*                    collapsible={"icon"}*/}
+                                {/*                    items={[{*/}
+                                {/*                        key: item.id,*/}
+                                {/*                        label: <Radio id={`radio-${item.id}`} value={item}>*/}
+                                {/*                            <div><span*/}
+                                {/*                                style={{ fontWeight: 'bold' }}>{item.fullName}</span> | {item.phoneNumber}*/}
+                                {/*                            </div>*/}
+                                {/*                            <div>{item.address}</div>*/}
+                                {/*                        </Radio>,*/}
+                                {/*                        children: <AddressCheckoutUpdate address={item} />*/}
+                                {/*                    }]}*/}
+                                {/*                />*/}
+                                {/*            )}*/}
+                                {/*        />*/}
+                                {/*    </Radio.Group>*/}
+                                {/*)}*/}
+                            </Modal>
+                        </div>
+                        <div>
+                            {shippingAddress && (
+                                <>
+                                    <div><span
+                                        style={{fontWeight: 'bold'}}>{shippingAddress.fullName}</span> | {shippingAddress.phoneNumber}
+                                    </div>
+                                    <div><CardHome content="Nhà"/>{shippingAddress.address}</div>
+                                </>)
+                            }
+                            {!shippingAddress && (
+                                <div style={{color: 'red'}}>Vui lòng chọn thông tin vận chuyển</div>
+                            )}
+                        </div>
+                    </Card>
+                    <Card style={{marginBottom: "16px"}}>
+                        <div>
+                            Thông tin thanh toán
+                        </div>
+                        <Radio.Group onChange={onChange} value={payment.method}>
+                            <Space direction="vertical">
+                                <Radio value="CASH">
+                                    <div className="flex items-center"><img src="/tien-mat.png"
+                                                                            className="w-9 h-9 mr-2"/><p>Thanh toán
+                                        tiền mặt</p></div>
+                                </Radio>
+                                <Radio value="VNPAY">
+                                    <div className="flex items-center"><img src="/VNP.png"
+                                                                            className="w-9 h-9 mr-2"/>
+                                        <div>
+                                            <p>VNPAY</p>
+                                            <div className="text-gray-400">Quét Mã QR từ ứng dụng ngân hàng</div>
                                         </div>
-                                        <div><CardHome content="Nhà"/>{shippingAddress.address}</div>
-                                    </>)
-                                }
-                                {!shippingAddress && (
-                                    <div style={{color: 'red'}}>Vui lòng chọn thông tin vận chuyển</div>
-                                )}
-                            </div>
-                        </Card>
-                        <Card style={{marginBottom: "16px"}}>
-                            <div>
-                                Thông tin thanh toán
-                            </div>
-                            <Radio.Group onChange={onChange} value={payment.method}>
-                                <Space direction="vertical">
-                                    <Radio value="CASH">
-                                        <div className="flex items-center"><img src="/tien-mat.png"
-                                                                                className="w-9 h-9 mr-2"/><p>Thanh toán
-                                            tiền mặt</p></div>
-                                    </Radio>
-                                    <Radio value="VNPAY">
-                                        <div className="flex items-center"><img src="/VNP.png"
-                                                                                className="w-9 h-9 mr-2"/>
-                                            <div>
-                                                <p>VNPAY</p>
-                                                <div className="text-gray-400">Quét Mã QR từ ứng dụng ngân hàng</div>
-                                            </div>
-                                        </div>
-                                    </Radio>
-                                </Space>
-                            </Radio.Group>
-                        </Card>
-                        <Card style={{marginBottom: "16px"}}>
-                            <div className="flex justify-between">
-                                <div className="text-gray-500">Tạm tính</div>
-                                <span style={{float: 'right'}}>
+                                    </div>
+                                </Radio>
+                            </Space>
+                        </Radio.Group>
+                    </Card>
+                    <Card style={{marginBottom: "16px"}}>
+                        <div className="flex justify-between">
+                            <div className="text-gray-500">Tạm tính</div>
+                            <span style={{float: 'right'}}>
                                     {/*{totalAmount}*/}0
                                     <sup>₫</sup>
                                 </span>
-                            </div>
-                            <div className="flex justify-between">
-                                <div className="text-gray-500">Giảm giá</div>
-                                <span className="float-right">
+                        </div>
+                        <div className="flex justify-between">
+                            <div className="text-gray-500">Giảm giá</div>
+                            <span className="float-right">
                                     0
                                     <sup>₫</sup>
                                 </span>
-                            </div>
-                            <Divider/>
-                            <div className="flex justify-between">
-                                <div className="text-gray-500">Tổng tiền</div>
-                                <div className="grid">
-                                    <div className="text-2xl text-red-500 text-right float-right">
-                                        {/*{totalAmount}*/}0
-                                        <sup>₫</sup>
-                                    </div>
-                                    <div className="right-0 text-gray-400">(Đã bao gồm VAT nếu có)</div>
+                        </div>
+                        <Divider/>
+                        <div className="flex justify-between">
+                            <div className="text-gray-500">Tổng tiền</div>
+                            <div className="grid">
+                                <div className="text-2xl text-red-500 text-right float-right">
+                                    {/*{totalAmount}*/}0
+                                    <sup>₫</sup>
                                 </div>
+                                <div className="right-0 text-gray-400">(Đã bao gồm VAT nếu có)</div>
                             </div>
-                        </Card>
-                        <Form
-                            name="normal_login"
-                            className="login-form"
-                            initialValues={{remember: true}}
-                            onFinish={addMultipleOrders}
+                        </div>
+                    </Card>
+                    <Form
+                        name="normal_login"
+                        className="login-form"
+                        initialValues={{remember: true}}
+                        onFinish={addMultipleOrders}
+                    >
+                        <Form.Item
+                            name="note"
                         >
-                            <Form.Item
-                                name="note"
-                            >
-                                <TextArea placeholder="Ghi chú" allowClear/>
-                            </Form.Item>
-                            <Form.Item>
-                                <Button type="primary" htmlType="submit" danger block
-                                    // disabled={pending || carts.length == 0}
-                                        loading={pending}>
-                                    Thanh toán
-                                </Button>
+                            <TextArea placeholder="Ghi chú" allowClear/>
+                        </Form.Item>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit" danger block
+                                    disabled={carts.page.content.length == 0}>
+                                Thanh toán
+                            </Button>
 
-                            </Form.Item>
-                        </Form>
+                        </Form.Item>
+                    </Form>
 
-                    </Col>
-                </Row>
-            </div>
-        </DefaultLayout>
+                </Col>
+            </Row>
+        </div>
     );
 
 }
