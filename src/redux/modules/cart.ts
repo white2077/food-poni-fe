@@ -411,7 +411,7 @@ function* handleUpdateAllCheckedCart() {
         yield take(updateAllCheckedRequest.type);
         try {
             yield call(updateCartAllChecked);
-            const isAnyChecked: boolean = yield select((state: RootState) => state.cart.page.content.some(cart => cart.checked));
+            const isAnyChecked: boolean = yield select((state: RootState) => state.cart.page.content.every(cart => cart.checked));
             yield put(updateAllCheckedSuccess({checked: isAnyChecked}));
         } catch (e) {
             notification.open({
