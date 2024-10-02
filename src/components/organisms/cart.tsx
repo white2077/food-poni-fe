@@ -1,12 +1,12 @@
 import {useEffect, useState} from "react";
-import {Avatar, Badge, Button, Divider, Drawer, List} from 'antd';
-import {CloseOutlined, ShoppingCartOutlined} from "@ant-design/icons";
+import {Avatar, Badge, Button, Divider, Drawer, List, Popconfirm} from 'antd';
+import {CloseOutlined, DeleteOutlined, ShoppingCartOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
 import EmptyNotice from "../empty-notice.tsx";
 import {useNavigate} from "react-router-dom";
 import {RootState} from "@/redux/store.ts";
 import {QuantityInput} from "@/components/molecules/quantityInput.tsx";
-import {deleteCartRequest, fetchCartRequest} from "@/redux/modules/cart.ts";
+import {deleteAllCartRequest, deleteCartRequest, fetchCartRequest} from "@/redux/modules/cart.ts";
 import {server} from "@/utils/server.ts";
 
 const Cart = () => {
@@ -61,12 +61,18 @@ const Cart = () => {
                                                         src={server + item.productDetail.images[0]}/>
                                                 <div
                                                     className="absolute top-[-5px] w-6 h-6 right-[-5px] bg-gray-300 rounded-[100px] flex p-0 justify-center">
-                                                    <CloseOutlined
-                                                        className="p-0"
-                                                        id={`delete-icon-${item.productDetail.id}`}
-                                                        key="list-loadmore-edit"
-                                                        onClick={() => dispatch(deleteCartRequest(item.productDetail.id))}
-                                                    />
+                                                    <Popconfirm
+                                                        title="Bạn có chắc chắn muốn xóa không?"
+                                                        onConfirm={() => dispatch(deleteCartRequest(item.productDetail.id))}
+                                                        okText="Đồng ý"
+                                                        cancelText="Hủy"
+                                                    >
+                                                        <CloseOutlined
+                                                            className="p-0"
+                                                            id={`delete-icon-${item.productDetail.id}`}
+                                                            key="list-loadmore-edit"
+                                                        />
+                                                    </Popconfirm>
                                                 </div>
                                             </div>
                                         }

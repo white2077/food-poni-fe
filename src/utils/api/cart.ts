@@ -31,9 +31,18 @@ export const updateCartQuantity = ({pdid, quantity}: { pdid: string, quantity: n
         });
 }
 
-export const updateCartStatus = ({pdid, checked}: { pdid: string, checked: boolean }): void => {
+export const updateCartChecked = ({pdid, checked}: { pdid: string, checked: boolean }): void => {
     apiWithToken()
-        .patch("/carts/update-status", {pdid, checked}, {
+        .patch("/carts/update-checked", {pdid, checked}, {
+            headers: {
+                Authorization: "Bearer " + accessToken
+            }
+        });
+}
+
+export const updateCartAllChecked = (): void => {
+    apiWithToken()
+        .patch("/carts/update-all-checked", {}, {
             headers: {
                 Authorization: "Bearer " + accessToken
             }
@@ -43,6 +52,15 @@ export const updateCartStatus = ({pdid, checked}: { pdid: string, checked: boole
 export const deleteCart = (pdid: string): void => {
     apiWithToken()
         .delete(`/carts/${pdid}`, {
+            headers: {
+                Authorization: "Bearer " + accessToken
+            }
+        });
+}
+
+export const deleteAllCart = (): void => {
+    apiWithToken()
+        .delete("/carts/delete-all", {
             headers: {
                 Authorization: "Bearer " + accessToken
             }

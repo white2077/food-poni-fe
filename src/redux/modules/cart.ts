@@ -3,7 +3,14 @@ import {Page} from "@/type/types.ts";
 import {call, fork, put, race, select, take} from "redux-saga/effects";
 import {notification} from "antd";
 import {QueryParams} from "@/utils/api/common.ts";
-import {createCart, deleteCart, getCartsPage, updateCartQuantity, updateCartStatus} from "@/utils/api/cart.ts";
+import {
+    createCart,
+    deleteAllCart,
+    deleteCart,
+    getCartsPage, updateCartAllChecked,
+    updateCartChecked,
+    updateCartQuantity
+} from "@/utils/api/cart.ts";
 import {RootState} from "@/redux/store.ts";
 
 export type CartState = {
@@ -22,6 +29,7 @@ export type CartState = {
     readonly isUpdateLoading: boolean,
     readonly isDeleteLoading: boolean,
     readonly isCreateLoading: boolean,
+    readonly isAllChecked: boolean
 }
 
 const initialState: CartState = {
@@ -51,7 +59,8 @@ const initialState: CartState = {
     isFetchLoading: false,
     isUpdateLoading: false,
     isDeleteLoading: false,
-    isCreateLoading: false
+    isCreateLoading: false,
+    isAllChecked: false
 }
 
 const SLICE_NAME = 'cart';
@@ -76,11 +85,15 @@ const cartListSlide = createSlice({
                 }
                 readonly checked: boolean;
             }[]>
-        }) => ({
-            ...state,
-            page: payload,
-            isFetchLoading: false
-        }),
+        }) => {
+            const isAnyChecked = payload.content.every(cart => cart.checked);
+            return {
+                ...state,
+                page: payload,
+                isFetchLoading: false,
+                isAllChecked: isAnyChecked
+            };
+        },
         fetchCartFailure: (state) => ({
             ...state,
             isFetchLoading: false
@@ -100,15 +113,15 @@ const cartListSlide = createSlice({
         }),
         createCartSuccess: (state, {payload}: {
             payload: {
-                readonly quantity: number;
-                readonly productName: string;
-                readonly productDetail: {
-                    readonly id: string;
-                    readonly name: string;
-                    readonly price: number;
-                    readonly images: string[];
+                quantity: number;
+                productName: string;
+                productDetail: {
+                    id: string;
+                    name: string;
+                    price: number;
+                    images: string[];
                 }
-                readonly checked: boolean;
+                checked: boolean;
             }
         }) => ({
             ...state,
@@ -155,23 +168,54 @@ const cartListSlide = createSlice({
             ...state,
             isUpdateLoading: true
         }),
-        updateCheckedSuccess: (state, {payload}: { payload: { pdid: string, checked: boolean } }) => ({
+        updateCheckedSuccess: (state, {payload}: { payload: { pdid: string, checked: boolean } }) => {
+            const updatedContent = state.page.content.map(cart => {
+                if (cart.productDetail.id === payload.pdid) {
+                    return {
+                        ...cart,
+                        checked: payload.checked
+                    };
+                }
+                return cart;
+            });
+            const isAnyChecked = updatedContent.every(cart => cart.checked);
+            return {
+                ...state,
+                page: {
+                    ...state.page,
+                    content: updatedContent
+                },
+                isUpdateLoading: false,
+                isAllChecked: isAnyChecked
+            };
+        },
+        updateCheckedFailure: (state) => ({
             ...state,
-            page: {
-                ...state.page,
-                content: state.page.content.map(cart => {
-                    if (cart.productDetail.id === payload.pdid) {
-                        return {
-                            ...cart,
-                            checked: !cart.checked
-                        }
-                    }
-                    return cart
-                })
-            },
             isUpdateLoading: false
         }),
-        updateCheckedFailure: (state) => ({
+        updateAllCheckedRequest: (state) => ({
+            ...state,
+            isUpdateLoading: true
+        }),
+        updateAllCheckedSuccess: (state, {payload}: { payload: { checked: boolean } }) => {
+            const updatedContent = state.page.content.map(cart => {
+                return {
+                    ...cart,
+                    checked: !payload.checked
+                };
+            });
+            const isAnyChecked = updatedContent.some(cart => cart.checked);
+            return {
+                ...state,
+                page: {
+                    ...state.page,
+                    content: updatedContent
+                },
+                isUpdateLoading: false,
+                isAllChecked: isAnyChecked
+            };
+        },
+        updateAllCheckedFailure: (state) => ({
             ...state,
             isUpdateLoading: false
         }),
@@ -189,6 +233,23 @@ const cartListSlide = createSlice({
             isDeleteLoading: false
         }),
         deleteCartFailure: (state, {payload}: { payload: string }) => ({
+            ...state,
+            isDeleteLoading: false
+        }),
+        deleteAllCartRequest: (state) => ({
+            ...state,
+            isDeleteLoading: true
+        }),
+        deleteAllCartSuccess: (state) => ({
+            ...state,
+            page: {
+                ...state.page,
+                content: [],
+                totalElements: 0
+            },
+            isDeleteLoading: false
+        }),
+        deleteAllCartFailure: (state) => ({
             ...state,
             isDeleteLoading: false
         })
@@ -210,9 +271,15 @@ export const {
     updateCheckedRequest,
     updateCheckedSuccess,
     updateCheckedFailure,
+    updateAllCheckedRequest,
+    updateAllCheckedSuccess,
+    updateAllCheckedFailure,
     deleteCartRequest,
     deleteCartSuccess,
     deleteCartFailure,
+    deleteAllCartRequest,
+    deleteAllCartSuccess,
+    deleteAllCartFailure
 } = cartListSlide.actions;
 
 function* handleFetchCart() {
@@ -326,7 +393,7 @@ function* handleUpdateCheckedCart() {
     while (true) {
         const {payload}: ReturnType<typeof updateCheckedRequest> = yield take(updateCheckedRequest.type);
         try {
-            yield call(updateCartStatus, {pdid: payload.pdid, checked: payload.checked});
+            yield call(updateCartChecked, {pdid: payload.pdid, checked: payload.checked});
             yield put(updateCheckedSuccess({pdid: payload.pdid, checked: payload.checked}));
         } catch (e) {
             notification.open({
@@ -335,6 +402,24 @@ function* handleUpdateCheckedCart() {
                 type: "error",
             });
             yield put(updateCheckedFailure());
+        }
+    }
+}
+
+function* handleUpdateAllCheckedCart() {
+    while (true) {
+        yield take(updateAllCheckedRequest.type);
+        try {
+            yield call(updateCartAllChecked);
+            const isAnyChecked: boolean = yield select((state: RootState) => state.cart.page.content.some(cart => cart.checked));
+            yield put(updateAllCheckedSuccess({checked: isAnyChecked}));
+        } catch (e) {
+            notification.open({
+                message: "Error",
+                description: e.message,
+                type: "error",
+            });
+            yield put(updateAllCheckedFailure());
         }
     }
 }
@@ -356,4 +441,29 @@ function* handleDeleteCart() {
     }
 }
 
-export const cartSagas = [fork(handleFetchCart), fork(handleCreateCart), fork(handleUpdateQuantityCart), fork(handleUpdateCheckedCart), fork(handleDeleteCart)];
+function* handleDeleteAllCart() {
+    while (true) {
+        yield take(deleteAllCartRequest.type);
+        try {
+            yield call(deleteAllCart);
+            yield put(deleteAllCartSuccess());
+        } catch (e) {
+            notification.open({
+                message: "Error",
+                description: e.message,
+                type: "error",
+            });
+            yield put(deleteAllCartFailure());
+        }
+    }
+}
+
+export const cartSagas = [
+    fork(handleFetchCart),
+    fork(handleCreateCart),
+    fork(handleUpdateQuantityCart),
+    fork(handleUpdateCheckedCart),
+    fork(handleUpdateAllCheckedCart),
+    fork(handleDeleteCart),
+    fork(handleDeleteAllCart)
+];

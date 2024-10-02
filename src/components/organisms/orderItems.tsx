@@ -3,7 +3,12 @@ import {DeleteOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/redux/store.ts";
 import {QuantityInput} from "@/components/molecules/quantityInput.tsx";
-import {deleteCartRequest, updateCheckedRequest} from "@/redux/modules/cart.ts";
+import {
+    deleteAllCartRequest,
+    deleteCartRequest,
+    updateAllCheckedRequest,
+    updateCheckedRequest
+} from "@/redux/modules/cart.ts";
 import {server} from "@/utils/server.ts";
 import {ProductLoading} from "@/components/atoms/productLoading.tsx";
 
@@ -13,14 +18,14 @@ export default function OrderItems() {
 
     const dispatch = useDispatch();
 
-    const {page, isFetchLoading} = useSelector((state: RootState) => state.cart);
+    const {page, isFetchLoading, isAllChecked} = useSelector((state: RootState) => state.cart);
 
     return (
         <div>
             <div className="p-2 bg-white border-[1px] rounded-lg ">
                 <Row>
                     <Col flex='2%'>
-                        <Checkbox></Checkbox>
+                        <Checkbox checked={isAllChecked} onClick={() => dispatch(updateAllCheckedRequest())}></Checkbox>
                     </Col>
                     <Col flex='40%'>Tất cả</Col>
                     <Col flex='10%'>Đơn giá</Col>
@@ -30,7 +35,7 @@ export default function OrderItems() {
                     <Col flex='3%' className="text-center">
                         <Popconfirm
                             title="Bạn có chắc chắn muốn xóa không?"
-                            onConfirm={() => {}}
+                            onConfirm={() => dispatch(deleteAllCartRequest())}
                             okText="Đồng ý"
                             cancelText="Hủy"
                         >
@@ -90,9 +95,14 @@ export default function OrderItems() {
                                         />
                                     </Col>
                                     <Col flex='3%' className="text-center">
-                                        <DeleteOutlined id={`delete-icon-${cart.productDetail.id}`}
-                                                        onClick={() => dispatch(deleteCartRequest(cart.productDetail.id))}
-                                        />
+                                        <Popconfirm
+                                            title="Bạn có chắc chắn muốn xóa không?"
+                                            onConfirm={() => dispatch(deleteCartRequest(cart.productDetail.id))}
+                                            okText="Đồng ý"
+                                            cancelText="Hủy"
+                                        >
+                                            <DeleteOutlined id={`delete-icon-${cart.productDetail.id}`}/>
+                                        </Popconfirm>
                                     </Col>
                                 </Row>
                             </div>
