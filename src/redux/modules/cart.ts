@@ -3,7 +3,7 @@ import {Page} from "@/type/types.ts";
 import {call, fork, put, race, select, take} from "redux-saga/effects";
 import {notification} from "antd";
 import {QueryParams} from "@/utils/api/common.ts";
-import {createCart, deleteCart, getCartsPage, updateCartQuantity} from "@/utils/api/cart.ts";
+import {createCart, deleteCart, getCartsPage, updateCartQuantity, updateCartStatus} from "@/utils/api/cart.ts";
 import {RootState} from "@/redux/store.ts";
 
 export type CartState = {
@@ -151,6 +151,30 @@ const cartListSlide = createSlice({
             ...state,
             isUpdateLoading: false
         }),
+        updateCheckedRequest: (state, {payload}: { payload: { pdid: string, checked: boolean } }) => ({
+            ...state,
+            isUpdateLoading: true
+        }),
+        updateCheckedSuccess: (state, {payload}: { payload: { pdid: string, checked: boolean } }) => ({
+            ...state,
+            page: {
+                ...state.page,
+                content: state.page.content.map(cart => {
+                    if (cart.productDetail.id === payload.pdid) {
+                        return {
+                            ...cart,
+                            checked: !cart.checked
+                        }
+                    }
+                    return cart
+                })
+            },
+            isUpdateLoading: false
+        }),
+        updateCheckedFailure: (state) => ({
+            ...state,
+            isUpdateLoading: false
+        }),
         deleteCartRequest: (state, {payload}: { payload: string }) => ({
             ...state,
             isDeleteLoading: true
@@ -183,6 +207,9 @@ export const {
     updateIncreaseQuantityRequest,
     updateQuantitySuccess,
     updateQuantityFailure,
+    updateCheckedRequest,
+    updateCheckedSuccess,
+    updateCheckedFailure,
     deleteCartRequest,
     deleteCartSuccess,
     deleteCartFailure,
@@ -295,6 +322,23 @@ function* handleUpdateQuantityCart() {
     }
 }
 
+function* handleUpdateCheckedCart() {
+    while (true) {
+        const {payload}: ReturnType<typeof updateCheckedRequest> = yield take(updateCheckedRequest.type);
+        try {
+            yield call(updateCartStatus, {pdid: payload.pdid, checked: payload.checked});
+            yield put(updateCheckedSuccess({pdid: payload.pdid, checked: payload.checked}));
+        } catch (e) {
+            notification.open({
+                message: "Error",
+                description: e.message,
+                type: "error",
+            });
+            yield put(updateCheckedFailure());
+        }
+    }
+}
+
 function* handleDeleteCart() {
     while (true) {
         const {payload}: ReturnType<typeof deleteCartRequest> = yield take(deleteCartRequest.type);
@@ -312,4 +356,4 @@ function* handleDeleteCart() {
     }
 }
 
-export const cartSagas = [fork(handleFetchCart), fork(handleCreateCart), fork(handleUpdateQuantityCart), fork(handleDeleteCart)];
+export const cartSagas = [fork(handleFetchCart), fork(handleCreateCart), fork(handleUpdateQuantityCart), fork(handleUpdateCheckedCart), fork(handleDeleteCart)];

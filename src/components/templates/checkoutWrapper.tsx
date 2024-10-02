@@ -16,7 +16,7 @@ export default function CheckoutWrapper() {
 
     const dispatch = useDispatch();
 
-    const carts = useSelector((state: RootState) => state.cart.data);
+    const carts = useSelector((state: RootState) => state.cart.page);
 
     const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
@@ -276,7 +276,7 @@ export default function CheckoutWrapper() {
                         </Form.Item>
                         <Form.Item>
                             <Button type="primary" htmlType="submit" danger block
-                                    disabled={carts.page.content.length == 0}>
+                                    disabled={carts.content.length == 0}>
                                 Thanh toán
                             </Button>
 

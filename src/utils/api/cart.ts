@@ -31,6 +31,15 @@ export const updateCartQuantity = ({pdid, quantity}: { pdid: string, quantity: n
         });
 }
 
+export const updateCartStatus = ({pdid, checked}: { pdid: string, checked: boolean }): void => {
+    apiWithToken()
+        .patch("/carts/update-status", {pdid, checked}, {
+            headers: {
+                Authorization: "Bearer " + accessToken
+            }
+        });
+}
+
 export const deleteCart = (pdid: string): void => {
     apiWithToken()
         .delete(`/carts/${pdid}`, {
