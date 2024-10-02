@@ -15,24 +15,12 @@ export default function OrderItems() {
 
     const {page, isFetchLoading} = useSelector((state: RootState) => state.cart);
 
-    // const handleSetSelectedICartItem = (id: string): void => {
-    //     // dispatch(setSelectedICartItem(id));
-    // }
-
-    const handleSetSelectedAll = (): void => {
-        // dispatch(setSelectedAll());
-    }
-
-    // const handleDeleteSelectedAll = (): void => {
-    //     // dispatch(deleteSelectedSoldItems());
-    // };
-
     return (
         <div>
             <div className="p-2 bg-white border-[1px] rounded-lg ">
                 <Row>
                     <Col flex='2%'>
-                        <Checkbox onClick={handleSetSelectedAll}></Checkbox>
+                        <Checkbox></Checkbox>
                     </Col>
                     <Col flex='40%'>Tất cả</Col>
                     <Col flex='10%'>Đơn giá</Col>

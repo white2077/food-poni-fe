@@ -23,21 +23,17 @@ const Cart = () => {
 
     const [pending, setPending] = useState<boolean>(false);
 
-    const [totalPrice, setTotalPrice] = useState<number>(0);
+    useEffect(() => {
+        dispatch(fetchCartRequest("createdDate,desc"))
+    }, []);
 
-    const calculateTotalPrice = (): number => {
+    const totalAmount = (): number => {
         let total = 0;
         page.content.forEach((item) => {
             total += item.productDetail.price * item.quantity;
         });
         return total;
     };
-
-    useEffect(() => {
-        const calculatedTotalPrice = calculateTotalPrice();
-        setTotalPrice(calculatedTotalPrice);
-        dispatch(fetchCartRequest("createdDate,desc"))
-    }, []);
 
     return (
         <div>
@@ -102,7 +98,7 @@ const Cart = () => {
                         <div className="mt-3 flex justify-between">
                             <div>Tổng tiền</div>
                             <div>
-                                {totalPrice}
+                                {totalAmount()}
                                 <sup>₫</sup>
                             </div>
                         </div>
@@ -110,12 +106,12 @@ const Cart = () => {
                         <Button className="my-5s mt-2" type='primary' danger block disabled={pending} loading={pending}
                                 onClick={() => {
                                     setPending(true);
-                                    if (currentUser.id) {
+                                    // if (currentUser.id) {
                                         navigate("/checkout");
-                                    } else {
-                                        navigate("/auth/login");
-                                        setPending(false);
-                                    }
+                                    // } else {
+                                    //     navigate("/auth/login");
+                                    //     setPending(false);
+                                    // }
                                 }}>
                             Thanh toán ngay
                         </Button>

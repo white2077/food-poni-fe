@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom";
 import {RootState} from "@/redux/store.ts";
 import {useEffect, useState} from "react";
 import {PaymentInfo, ShippingAddress} from "@/type/types.ts";
-import OrderItems from "@/components/order-items.tsx";
+import OrderItems from "@/components/organisms/orderItems.tsx";
 import CardHome from "@/components/card-home.tsx";
 import {fetchCartRequest} from "@/redux/modules/cart.ts";
 
@@ -37,17 +37,13 @@ export default function CheckoutWrapper() {
 
     const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
 
-    // const totalAmount: number = useMemo(() => {
-    //     return carts.reduce((totalCart: number, cart: ICart) => {
-    //         const cartTotal: number = cart.cartItems.reduce((total: number, item: ICartItem) => {
-    //             if (item.isSelectedICartItem) {
-    //                 return total + item.price * item.quantity;
-    //             }
-    //             return total;
-    //         }, 0);
-    //         return totalCart + cartTotal;
-    //     }, 0);
-    // }, [carts]);
+    const totalAmount = (): number => {
+        let total = 0;
+        carts.content.forEach((item) => {
+            total += item.productDetail.price * item.quantity;
+        });
+        return total;
+    };
 
     useEffect(() => {
         dispatch(fetchCartRequest());
@@ -240,7 +236,7 @@ export default function CheckoutWrapper() {
                         <div className="flex justify-between">
                             <div className="text-gray-500">Tạm tính</div>
                             <span style={{float: 'right'}}>
-                                    {/*{totalAmount}*/}0
+                                    {totalAmount()}
                                     <sup>₫</sup>
                                 </span>
                         </div>
@@ -256,7 +252,7 @@ export default function CheckoutWrapper() {
                             <div className="text-gray-500">Tổng tiền</div>
                             <div className="grid">
                                 <div className="text-2xl text-red-500 text-right float-right">
-                                    {/*{totalAmount}*/}0
+                                    {totalAmount()}
                                     <sup>₫</sup>
                                 </div>
                                 <div className="right-0 text-gray-400">(Đã bao gồm VAT nếu có)</div>
@@ -279,7 +275,6 @@ export default function CheckoutWrapper() {
                                     disabled={carts.content.length == 0}>
                                 Thanh toán
                             </Button>
-
                         </Form.Item>
                     </Form>
 
