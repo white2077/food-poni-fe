@@ -38,11 +38,11 @@ export default function CheckoutWrapper() {
     const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
 
     const totalAmount = (): number => {
-        let total = 0;
-        carts.content.forEach((item) => {
-            total += item.productDetail.price * item.quantity;
-        });
-        return total;
+        return carts.content
+            .filter(item => item.checked)
+            .reduce((total, item) => {
+                return total + item.productDetail.price * item.quantity;
+            }, 0);
     };
 
     useEffect(() => {
