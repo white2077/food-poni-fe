@@ -37,7 +37,6 @@ const orderSlice = createSlice({
     reducers: {
         fetchOrdersRequest: (state, action: PayloadAction<QueryParams>) => ({
             ...state,
-
             isFetchLoading: true
         }),
         fetchOrdersSuccess: (state, { payload }: { payload: Page<Order[]> }) => ({
@@ -81,9 +80,11 @@ function* handleFetchOrders() {
         const { payload }: ReturnType<typeof fetchOrdersRequest> = yield take(fetchOrdersRequest.type);
         try {
             const queryParams: QueryParams = {
-                pageSize: payload.pageSize || 10,
+                pageSize: 10,
                 page: payload.page || 0,
+                sort: payload.sort
             };
+
             const page: Page<Order[]> = yield call(getOrdersPage, queryParams);
             yield put(fetchOrdersSuccess(page));
         } catch (e) {
@@ -96,7 +97,6 @@ function* handleFetchOrders() {
         }
     }
 }
-
 function* handleFetchOrder() {
     while (true) {
         const { payload }: ReturnType<typeof fetchOrderRequest> = yield take(fetchOrderRequest.type);

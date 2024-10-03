@@ -1,5 +1,5 @@
-import { Badge, Button, Card, Col, Image, Row, Typography } from "antd";
-import { EnvironmentOutlined, FieldTimeOutlined, FormOutlined } from "@ant-design/icons";
+import { Badge, Card, Col, Image, Row, Typography } from "antd";
+import { EnvironmentOutlined, FormOutlined } from "@ant-design/icons";
 import { format } from "date-fns";
 import { Order } from "@/type/types";
 import { server } from "@/utils/server";
@@ -21,15 +21,24 @@ const statusColors: Record<string, string> = {
     PENDING: "orange",
     APPROVED: "blue",
     CANCELLED: "red",
-    REJECTED: "purple",
+    REJECTED: "red",
     COMPLETED: "green"
 };
 
-const OrderCard = ({ order }: { order: Order }) => {
+const OrderCard = ({ order, index }: { order: Order; index: number }) => {
     return (
         <Link to={`/don-hang/${order.id}`}>
             <Badge.Ribbon text={statusText[order.status]} color={statusColors[order.status]} className="font-sans">
-                <Card className="font-sans min-h-60 !border-orange-200" hoverable={true} title={`Đơn hàng #${order.id?.substring(0, 7)}`}>
+                <Card
+                    className="font-sans min-h-60 !border-orange-200"
+                    hoverable={true}
+                    title={
+                        <div className="flex gap-2 items-center">
+                            <span>{`${index}. Đơn hàng #${order.id?.substring(0, 7).toUpperCase()}`}</span>
+                            <span className="text-primary font-bold">/</span>
+                            <span>{format(new Date((order.createdDate) ?? ""), "dd-MM-yyyy")}</span>
+                        </div>
+                    }>
                     <Row gutter={[16, 16]} className="!overflow-y-scroll min-h-[8.3rem] max-h-[8.3rem] scrollbar-rounded">
                         {order?.orderItems?.map((item) => (
                             <Col span={24} key={item.id}>
@@ -66,8 +75,8 @@ const OrderCard = ({ order }: { order: Order }) => {
                                                 <div>{order.shippingAddress?.address}</div>
                                             </div>
                                             <div className="flex gap-2 font-sans">
-                                                <FieldTimeOutlined />
-                                                <div>{format(new Date(order.createdDate ?? ""), "yyyy-MM-dd HH:mm:ss")}</div>
+
+
                                             </div>
                                             {order.status === "COMPLETED" && Object.keys(item.rate ?? {}).length === 0 ? (
                                                 <div className="flex gap-2 font-sans">
@@ -92,16 +101,10 @@ const OrderCard = ({ order }: { order: Order }) => {
                     <div className="flex justify-end mt-4 text-xl gap-2 font-sans">
                         <div className="text-gray-400">Tổng tiền:</div>
                         <div className="nunito text-green-600">
-                            {order.totalAmount}
-                            <sup>₫</sup>
+                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalAmount)}
                         </div>
                     </div>
-                    <div className="flex justify-end mt-4">
-                        <div className="flex gap-2">
 
-                            <Button style={{ backgroundColor: '#F36F24', color: 'white' }}>Đặt lại</Button>
-                        </div>
-                    </div>
                 </Card>
 
             </Badge.Ribbon>
