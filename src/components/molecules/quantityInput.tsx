@@ -1,7 +1,11 @@
 import {Button, Input} from 'antd';
 import {MinusOutlined, PlusOutlined} from '@ant-design/icons';
 import {useDispatch, useSelector} from "react-redux";
-import {updateDecreaseQuantityRequest, updateIncreaseQuantityRequest} from "@/redux/modules/cart.ts";
+import {
+    updateDecreaseQuantityRequest,
+    updateIncreaseQuantityRequest,
+    updateQuantityRequest
+} from "@/redux/modules/cart.ts";
 import {RootState} from "@/redux/store.ts";
 
 type Props = {
@@ -29,18 +33,24 @@ export function QuantityInput({item}: Props) {
                     icon={<MinusOutlined/>}
                     loading={isUpdateLoading}
                     disabled={item.quantity <= 1}
-                    onClick={() => dispatch(updateDecreaseQuantityRequest(item.productDetail.id))}/>
+                    onClick={() => dispatch(updateDecreaseQuantityRequest({pdid: item.productDetail.id}))}/>
             <Input
                 className="w-8 p-1 text-center"
+                min={1}
                 defaultValue={1}
                 value={item.quantity}
-                min={1}
-                disabled={isUpdateLoading}
+                onChange={(e) => {
+                    const inputValue = parseInt(e.target.value);
+                    if (!isNaN(inputValue) && inputValue >= 1) {
+                        dispatch(updateQuantityRequest({pdid: item.productDetail.id, quantity: inputValue}));
+                    }
+                }}
+                disabled={false}
             />
             <Button type="text"
                     icon={<PlusOutlined/>}
                     loading={isUpdateLoading}
-                    onClick={() => dispatch(updateIncreaseQuantityRequest(item.productDetail.id))}/>
+                    onClick={() => dispatch(updateIncreaseQuantityRequest({pdid: item.productDetail.id}))}/>
         </div>
     );
 }
