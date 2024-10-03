@@ -13,8 +13,8 @@ export const getCartsPage = (queryParams: QueryParams): Promise<Page<Cart[]>> =>
         .then((res: AxiosResponse<Page<Cart[]>>) => res.data);
 }
 
-export const createCart = ({quantity, productDetail}: { quantity: number, productDetail: string }): void => {
-    apiWithToken()
+export const createCart = ({quantity, productDetail}: { quantity: number, productDetail: string }): Promise<void> => {
+    return apiWithToken()
         .post("/carts", {quantity, productDetail}, {
             headers: {
                 Authorization: "Bearer " + accessToken
@@ -22,8 +22,8 @@ export const createCart = ({quantity, productDetail}: { quantity: number, produc
         });
 }
 
-export const updateCartQuantity = ({pdid, quantity}: { pdid: string, quantity: number }): void => {
-    apiWithToken()
+export const updateCartQuantity = ({pdid, quantity}: { pdid: string, quantity: number }): Promise<void> => {
+    return apiWithToken()
         .patch("/carts/update-quantity", {pdid, quantity}, {
             headers: {
                 Authorization: "Bearer " + accessToken
@@ -31,8 +31,8 @@ export const updateCartQuantity = ({pdid, quantity}: { pdid: string, quantity: n
         });
 }
 
-export const updateCartChecked = ({pdid, checked}: { pdid: string, checked: boolean }): void => {
-    apiWithToken()
+export const updateCartChecked = ({pdid, checked}: { pdid: string, checked: boolean }): Promise<void> => {
+    return apiWithToken()
         .patch("/carts/update-checked", {pdid, checked}, {
             headers: {
                 Authorization: "Bearer " + accessToken
@@ -40,8 +40,8 @@ export const updateCartChecked = ({pdid, checked}: { pdid: string, checked: bool
         });
 }
 
-export const updateCartAllChecked = (): void => {
-    apiWithToken()
+export const updateCartAllChecked = (): Promise<void> => {
+    return apiWithToken()
         .patch("/carts/update-all-checked", {}, {
             headers: {
                 Authorization: "Bearer " + accessToken
@@ -49,8 +49,8 @@ export const updateCartAllChecked = (): void => {
         });
 }
 
-export const deleteCart = (pdid: string): void => {
-    apiWithToken()
+export const deleteCart = (pdid: string): Promise<void> => {
+    return apiWithToken()
         .delete(`/carts/${pdid}`, {
             headers: {
                 Authorization: "Bearer " + accessToken
@@ -58,8 +58,8 @@ export const deleteCart = (pdid: string): void => {
         });
 }
 
-export const deleteAllCart = (): void => {
-    apiWithToken()
+export const deleteAllCart = (): Promise<void> => {
+    return apiWithToken()
         .delete("/carts/delete-all", {
             headers: {
                 Authorization: "Bearer " + accessToken
