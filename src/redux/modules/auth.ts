@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {AuthRequest, AuthResponse, CurrentUser, UserRemember} from "@/type/types.ts";
+import {AuthRequest, AuthResponse, UserRemember} from "@/type/types.ts";
 import {call, fork, put, select, take} from "redux-saga/effects";
 import {notification} from "antd";
 import {FieldLoginType} from "@/app/modules/auth/components/login.tsx";
@@ -17,7 +17,14 @@ export type AuthState = {
         readonly rememberMe: UserRemember,
         readonly isPending: boolean,
     },
-    readonly currentUser: CurrentUser,
+    readonly currentUser: {
+        readonly role: string,
+        readonly id: string,
+        readonly avatar: string,
+        readonly email: string,
+        readonly addressId: string,
+        readonly username: string
+    } | null | undefined,
 }
 
 const initialState: AuthState = {
@@ -32,15 +39,7 @@ const initialState: AuthState = {
         },
         isPending: false,
     },
-    currentUser: {
-        id: "",
-        sub: "",
-        role: "",
-        avatar: "",
-        addressId: "",
-        username: "",
-        email: ""
-    }
+    currentUser: null,
 };
 
 const SLIDE_NAME = 'auth';
@@ -98,7 +97,16 @@ const cartSlide = createSlice({
                 rememberMe: action.payload
             }
         }),
-        updateCurrentUser: (state, action: { payload: CurrentUser }) => ({
+        updateCurrentUser: (state, action: {
+            payload: {
+                readonly role: string,
+                readonly id: string,
+                readonly avatar: string,
+                readonly email: string,
+                readonly addressId: string,
+                readonly username: string
+            }
+        }) => ({
             ...state,
             currentUser: action.payload
         }),
@@ -134,7 +142,14 @@ function* handleLogin() {
             const res: AuthResponse = yield call(login, user);
 
             yield put(loginSuccess());
-            yield put(updateCurrentUser(jwtDecode(res.refreshToken) as CurrentUser));
+            yield put(updateCurrentUser(jwtDecode(res.refreshToken) as {
+                readonly role: string,
+                readonly id: string,
+                readonly avatar: string,
+                readonly email: string,
+                readonly addressId: string,
+                readonly username: string
+            }));
 
             Cookies.set(REFRESH_TOKEN, res.refreshToken, {expires: 7});
             Cookies.remove(REMEMBER_ME);
