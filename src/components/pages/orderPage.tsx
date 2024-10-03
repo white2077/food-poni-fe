@@ -1,20 +1,22 @@
-import {Navigate, Route, Routes} from 'react-router-dom'
-import ProductWrapper from "@/components/templates/productWrapper.tsx";
-import {DefaultLayout} from "@/app/pages/_layout.tsx";
+import { Navigate, Route, Routes } from 'react-router-dom'
+import { DefaultLayout } from "@/app/pages/_layout.tsx";
 import OrderWrapper from "@/components/templates/orderWrapper.tsx";
+import OrderDetail from '../templates/orderDetailWrapper';
+
+
 
 export default function orderPage() {
     return <Routes>
-        <Route element={<DefaultLayout/>}>
+        <Route element={<DefaultLayout />}>
             <Route
                 path='/'
-                element={<OrderWrapper/>}
+                element={<OrderWrapper />}
             />
             <Route
-                path=':id'
-                element={<ProductWrapper/>}
+                path=':orderId'
+                element={<OrderDetail />}
             />
         </Route>
-        <Route path="*" element={<Navigate to='/'/>}/>
+        <Route path="*" element={<Navigate to='/' />} />
     </Routes>
 }
