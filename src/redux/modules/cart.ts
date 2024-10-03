@@ -333,8 +333,8 @@ function* handleCreateCart() {
                 }
                 readonly checked: boolean;
             } = {
-                quantity: 1,
-                productName: payload.productName,
+                quantity: payload.quantity,
+                productName: payload.productName + " - " + payload.productDetailName,
                 productDetail: {
                     id: payload.productDetail,
                     name: payload.productDetailName,

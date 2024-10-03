@@ -97,7 +97,7 @@ export default function Footer() {
                                 <a href="https://www.youtube.com/watch?v=STzK1XrpoBs" target="_blank">
                                     <img src="https://i.postimg.cc/kGCxkTwr/youtube.png" alt=""/>
                                 </a>
-                                <img src="https://i.postimg.cc/CKZHDBd2/telegram.png" alt=""/>
+                                {/*<img src="https://i.postimg.cc/CKZHDBd2/telegram.png" alt=""/>*/}
                             </div>
                         </div>
                     </div>

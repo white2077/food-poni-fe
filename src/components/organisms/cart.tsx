@@ -58,7 +58,7 @@ const Cart = () => {
                                         avatar={
                                             <div className="relative inline-block flex items-center">
                                                 <Avatar className="rounded-lg w-20 h-20"
-                                                        src={server + item.productDetail.images[0]}/>
+                                                        src={item.productDetail.images[0].includes("http") ? item.productDetail.images[0] : server + item.productDetail.images[0]}/>
                                                 <div
                                                     className="absolute top-[-5px] w-6 h-6 right-[-5px] bg-gray-300 rounded-[100px] flex p-0 justify-center">
                                                     <Popconfirm
@@ -76,7 +76,7 @@ const Cart = () => {
                                                 </div>
                                             </div>
                                         }
-                                        title={<span>{item.productDetail.name}</span>}
+                                        title={<span>{item.productName}</span>}
                                         description={
                                             <span>
                                                     <span style={{marginRight: "10px"}}>

@@ -8,7 +8,7 @@ import {Card, Radio, Rate} from "antd";
 import Tym from "@/components/atoms/tym.tsx";
 import ReadMore from "@/components/atoms/readMore.tsx";
 import {ProductLoading} from "@/components/atoms/productLoading.tsx";
-import ProductCart from "@/components/product-cart.tsx";
+import ProductCart from "@/components/organisms/productCart.tsx";
 import {server} from "@/utils/server.ts";
 
 export default function ProductWrapper() {
