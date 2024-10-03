@@ -388,24 +388,24 @@ function* handleUpdateQuantityCart() {
                 const {quantity} = yield select((state: RootState) => state.cart.page.content.find(cart => cart.productDetail.id === updateDecreaseQuantity.payload.pdid));
                 yield call(updateCartQuantity, {
                     pdid: updateDecreaseQuantity.payload.pdid,
-                    quantity: quantity
+                    quantity: quantity - 1
                 });
 
                 yield put(updateQuantitySuccess({
                     pdid: updateDecreaseQuantity.payload.pdid,
-                    quantity: quantity
+                    quantity: quantity - 1
                 }));
             }
             if (updateIncreaseQuantity) {
                 const {quantity} = yield select((state: RootState) => state.cart.page.content.find(cart => cart.productDetail.id === updateIncreaseQuantity.payload.pdid));
                 yield call(updateCartQuantity, {
                     pdid: updateIncreaseQuantity.payload.pdid,
-                    quantity: quantity
+                    quantity: quantity + 1
                 });
 
                 yield put(updateQuantitySuccess({
                     pdid: updateIncreaseQuantity.payload.pdid,
-                    quantity: quantity
+                    quantity: quantity + 1
                 }));
             }
             if (updateQuantity) {
