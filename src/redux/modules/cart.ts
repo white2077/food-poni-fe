@@ -1,17 +1,19 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {Page} from "@/type/types.ts";
-import {call, fork, put, race, select, take} from "redux-saga/effects";
+import {call, cancel, delay, fork, put, race, select, take} from "redux-saga/effects";
 import {notification} from "antd";
 import {QueryParams} from "@/utils/api/common.ts";
 import {
     createCart,
     deleteAllCart,
     deleteCart,
-    getCartsPage, updateCartAllChecked,
+    getCartsPage,
+    updateCartAllChecked,
     updateCartChecked,
     updateCartQuantity
 } from "@/utils/api/cart.ts";
 import {RootState} from "@/redux/store.ts";
+import {Task} from "redux-saga";
 
 export type CartState = {
     readonly page: Page<{
@@ -136,11 +138,15 @@ const cartListSlide = createSlice({
             ...state,
             isCreateLoading: false
         }),
-        updateDecreaseQuantityRequest: (state, {payload}: { payload: string }) => ({
+        updateDecreaseQuantityRequest: (state, {payload}: { payload: { pdid: string } }) => ({
             ...state,
             isUpdateLoading: true
         }),
-        updateIncreaseQuantityRequest: (state, {payload}: { payload: string }) => ({
+        updateIncreaseQuantityRequest: (state, {payload}: { payload: { pdid: string } }) => ({
+            ...state,
+            isUpdateLoading: true
+        }),
+        updateQuantityRequest: (state, {payload}: { payload: { pdid: string, quantity: number } }) => ({
             ...state,
             isUpdateLoading: true
         }),
@@ -160,7 +166,7 @@ const cartListSlide = createSlice({
             },
             isUpdateLoading: false
         }),
-        updateQuantityFailure: (state, {payload}: { payload: string }) => ({
+        updateQuantityFailure: (state) => ({
             ...state,
             isUpdateLoading: false
         }),
@@ -266,6 +272,7 @@ export const {
     createCartFailure,
     updateDecreaseQuantityRequest,
     updateIncreaseQuantityRequest,
+    updateQuantityRequest,
     updateQuantitySuccess,
     updateQuantityFailure,
     updateCheckedRequest,
@@ -356,35 +363,69 @@ function* handleCreateCart() {
     }
 }
 
+function* handleDelay(pdid: string, quantity: number) {
+    yield delay(500);
+    yield call(updateCartQuantity, {
+        pdid: pdid,
+        quantity: quantity
+    });
+}
+
 function* handleUpdateQuantityCart() {
+    let task: Task | null = null;
     while (true) {
-        const {updateDecreaseQuantity, updateIncreaseQuantity}: {
+        const {updateDecreaseQuantity, updateIncreaseQuantity, updateQuantity}: {
             updateDecreaseQuantity: ReturnType<typeof updateDecreaseQuantityRequest>,
-            updateIncreaseQuantity: ReturnType<typeof updateIncreaseQuantityRequest>
+            updateIncreaseQuantity: ReturnType<typeof updateIncreaseQuantityRequest>,
+            updateQuantity: ReturnType<typeof updateQuantityRequest>
         } = yield race({
             updateDecreaseQuantity: take(updateDecreaseQuantityRequest.type),
-            updateIncreaseQuantity: take(updateIncreaseQuantityRequest.type)
-        })
+            updateIncreaseQuantity: take(updateIncreaseQuantityRequest.type),
+            updateQuantity: take(updateQuantityRequest.type)
+        });
         try {
-            const updateAction = updateDecreaseQuantity || updateIncreaseQuantity;
+            if (updateDecreaseQuantity) {
+                const {quantity} = yield select((state: RootState) => state.cart.page.content.find(cart => cart.productDetail.id === updateDecreaseQuantity.payload.pdid));
+                yield call(updateCartQuantity, {
+                    pdid: updateDecreaseQuantity.payload.pdid,
+                    quantity: quantity - 1
+                });
 
-            const {quantity} = yield select((state: RootState) => state.cart.page.content.find(cart => cart.productDetail.id === updateAction.payload));
+                yield put(updateQuantitySuccess({
+                    pdid: updateDecreaseQuantity.payload.pdid,
+                    quantity: quantity - 1
+                }));
+            }
+            if (updateIncreaseQuantity) {
+                const {quantity} = yield select((state: RootState) => state.cart.page.content.find(cart => cart.productDetail.id === updateIncreaseQuantity.payload.pdid));
+                yield call(updateCartQuantity, {
+                    pdid: updateIncreaseQuantity.payload.pdid,
+                    quantity: quantity + 1
+                });
 
-            yield call(updateCartQuantity, {
-                pdid: updateAction.payload,
-                quantity: updateAction === updateDecreaseQuantity ? quantity - 1 : quantity + 1
-            });
-            yield put(updateQuantitySuccess({
-                pdid: updateAction.payload,
-                quantity: updateAction === updateDecreaseQuantity ? quantity - 1 : quantity + 1
-            }));
+                yield put(updateQuantitySuccess({
+                    pdid: updateIncreaseQuantity.payload.pdid,
+                    quantity: quantity + 1
+                }));
+            }
+            if (updateQuantity) {
+                if (task) {
+                    yield cancel(task);
+                    task = null;
+                }
+                task = yield fork(handleDelay, updateQuantity.payload.pdid, updateQuantity.payload.quantity);
+                yield put(updateQuantitySuccess({
+                    pdid: updateQuantity.payload.pdid,
+                    quantity: updateQuantity.payload.quantity
+                }));
+            }
         } catch (e) {
             notification.open({
                 message: "Error",
                 description: e.message,
                 type: "error",
             });
-            yield put(updateQuantityFailure(updateDecreaseQuantity ? updateDecreaseQuantity.payload : updateIncreaseQuantity.payload));
+            yield put(updateQuantityFailure());
         }
     }
 }
