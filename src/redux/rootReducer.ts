@@ -2,6 +2,7 @@ import {combineReducers} from "@reduxjs/toolkit";
 import userReducer from "@/redux/modules/user.ts";
 import cartReducer from "@/redux/modules/cart.ts";
 import productReducer from "@/redux/modules/product.ts";
+import productCategoryReducer from "@/redux/modules/productCategory.ts";
 import addressReducer from "@/redux/modules/address.ts";
 import rateReducer from "@/redux/modules/rate.ts";
 import orderReducer from "@/redux/modules/order.ts";
@@ -20,6 +21,7 @@ export const rootReducer = combineReducers({
     mainMenu: mainMenuReducer,
     notification: notificationReducer,
     product: productReducer,
+    productCategory: productCategoryReducer,
     rate: rateReducer,
     searchPosition: searchPositionReducer,
     user: userReducer,

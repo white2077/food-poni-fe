@@ -1,9 +1,7 @@
 import {AxiosResponse} from "axios";
-import {QueryParams} from "./type";
-import generateQueryString from "./common";
-import {ProductCategory} from "@/type/types.ts";
-import {Page} from "@/models/Page.ts";
+import {Page, ProductCategory} from "@/type/types.ts";
 import {api} from "@/utils/axiosConfig.ts";
+import generateQueryString, {QueryParams} from "@/utils/api/common.ts";
 
 export const getProductCategoriesPage = (queryParams: QueryParams): Promise<Page<ProductCategory[]>> => {
     return api.get(generateQueryString("/product-categories", queryParams))

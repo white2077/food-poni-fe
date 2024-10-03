@@ -125,10 +125,8 @@ export type ProductCategory = {
     readonly slug: string;
     readonly description: string;
     readonly thumbnail: string;
-    readonly default: boolean;
-    readonly productCategories: ProductCategory[];
-    readonly parentProductCategory: ProductCategory | null;
-
+    readonly level: number;
+    parentProductCategory: ProductCategory | null;
 }
 
 export type ProductDetail = {
