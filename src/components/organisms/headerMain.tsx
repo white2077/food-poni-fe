@@ -1,87 +1,18 @@
-import {Avatar, Button, Dropdown, MenuProps} from 'antd';
-import {useDispatch, useSelector} from 'react-redux';
-import {LogoutOutlined, QuestionCircleOutlined, ShoppingOutlined, UserOutlined} from '@ant-design/icons';
+import {useSelector} from 'react-redux';
 import {useEffect} from "react";
 import {RootState} from "@/redux/store.ts";
-import {useNavigate} from "react-router-dom";
-import Cookies from "js-cookie";
-import {REFRESH_TOKEN, server} from "@/utils/server.ts";
-import {clearCurrentUser} from "@/redux/modules/auth.ts";
 import SearchKeyword from "@/components/searchKeyword.tsx";
 import MenuMobile from "@/components/menu-mobile.tsx";
-import Cart from "@/components/organisms/cart.tsx";
+import {UserDropdown} from "@/components/molecules/userDropdown.tsx";
 
 // let sock: WebSocket | null = null;
 export default function HeaderMain() {
-    const navigate = useNavigate();
-
-    const dispatch = useDispatch();
+    // const navigate = useNavigate();
+    //
+    // const dispatch = useDispatch();
 
     const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
-    const items: MenuProps['items'] = [
-        {
-            key: '1',
-            label: (
-                <span id='account-information' onClick={() => handleItemClick('/account-information')}
-                      className="flex w-full h-full">
-                    <span style={{marginRight: '5px'}}>
-                        <UserOutlined/>
-                    </span>
-                    <div className="w-full">Thông tin tài khoản</div>
-                </span>
-            ),
-        },
-        {
-            key: '2',
-            label: (
-                <span id='your-orders' onClick={() => handleItemClick('/orders')} className="flex w-full h-full">
-                    <span style={{marginRight: '5px'}}>
-                        <ShoppingOutlined/>
-                    </span>
-                    <div className="w-full">Đơn hàng của bạn</div>
-                </span>
-            ),
-        },
-        {
-            key: '3',
-            label: (
-                <span id='aaa' onClick={() => handleItemClick('/')} className="flex w-full h-full">
-                    <span style={{marginRight: '5px'}}>
-                        <QuestionCircleOutlined/>
-                    </span>
-                    <div className="w-full">Trung tâm hỗ trợ</div>
-                </span>
-            ),
-        },
-        {
-            key: '4',
-            label: (
-                <span id='logout' onClick={() => handleItemClick('/login')} className="flex w-full h-full">
-                    <span style={{marginRight: '5px'}}>
-                        <LogoutOutlined/>
-                    </span>
-                    <div className="w-full">Đăng xuất</div>
-                </span>
-            ),
-        },
-    ];
-
-    const handleItemClick = (path: string): void => {
-        if (currentUser.id) {
-            if (path === '/login') {
-                Cookies.remove(REFRESH_TOKEN);
-                dispatch(clearCurrentUser());
-                setTimeout(() => {
-                    window.location.href = path;
-                }, 0);
-            }
-            navigate(path);
-        } else {
-            Cookies.remove(REFRESH_TOKEN);
-            navigate('/login');
-        }
-    };
 
     // const getShippingAddress = (): void => {
     //     const addressId: string = currentUser.addressId ?? "";
@@ -185,35 +116,7 @@ export default function HeaderMain() {
                 <div className="order-3 md:order-2 mt-4 md:mt-0">
                     <SearchKeyword/>
                 </div>
-                <div className='flex items-center justify-end gap-4 order-2 md:order-3'>
-                    {!currentUser.id ? (
-                            <>
-                                <Cart />
-                                {/*<Notification />*/}
-                                <Dropdown menu={{items}} placement='bottomRight' trigger={['click']}
-                                          className="hover:bg-gray-200 rounded-lg p-1.5 cursor-pointer h-[100%] ">
-                                    <a className="gap-1 flex items-center">
-                                        <div>
-                                            {currentUser.avatar
-                                                ? <Avatar
-                                                    className="w-8 h-8 rounded-[100%] border-orange-400 border-2"
-                                                    src={server + currentUser.avatar}/>
-                                                : <Avatar icon={<UserOutlined/>} size='large'/>}
-                                        </div>
-                                        <div
-                                            className="text-gray-500 text-[15px] hidden md:block">{currentUser.username}</div>
-                                    </a>
-                                </Dropdown>
-                            </>
-                        )
-                        : (
-                            <Button type='primary' onClick={() => navigate('/auth/login')} icon={<UserOutlined/>}
-                                    size='large'>
-                                <span className="hidden md:inline">Đăng nhập</span>
-                            </Button>
-                        )
-                    }
-                </div>
+                <UserDropdown/>
             </div>
         </div>
     );
