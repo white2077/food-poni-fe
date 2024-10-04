@@ -26,11 +26,13 @@ export type CartState = {
             readonly images: string[];
         }
         readonly checked: boolean;
+        readonly isUpdateLoading: boolean;
+        readonly isDeleteLoading: boolean;
     }[]>,
     readonly isFetchLoading: boolean,
-    readonly isUpdateLoading: boolean,
-    readonly isDeleteLoading: boolean,
     readonly isCreateLoading: boolean,
+    readonly isUpdateAllLoading: boolean,
+    readonly isDeleteAllLoading: boolean,
     readonly isAllChecked: boolean
 }
 
@@ -46,7 +48,9 @@ const initialState: CartState = {
                     price: 1,
                     images: [""],
                 },
-                checked: true
+                checked: true,
+                isUpdateLoading: false,
+                isDeleteLoading: false
             }
         ],
         totalElements: 0,
@@ -59,9 +63,9 @@ const initialState: CartState = {
         empty: true,
     },
     isFetchLoading: false,
-    isUpdateLoading: false,
-    isDeleteLoading: false,
     isCreateLoading: false,
+    isUpdateAllLoading: false,
+    isDeleteAllLoading: false,
     isAllChecked: false
 }
 
@@ -86,6 +90,8 @@ const cartListSlide = createSlice({
                     readonly images: string[];
                 }
                 readonly checked: boolean;
+                readonly isUpdateLoading: boolean;
+                readonly isDeleteLoading: boolean;
             }[]>
         }) => {
             const isAnyChecked = payload.content.every(cart => cart.checked);
@@ -124,6 +130,8 @@ const cartListSlide = createSlice({
                     images: string[];
                 }
                 checked: boolean;
+                isUpdateLoading: boolean;
+                isDeleteLoading: boolean;
             }
         }) => ({
             ...state,
@@ -140,15 +148,48 @@ const cartListSlide = createSlice({
         }),
         updateDecreaseQuantityRequest: (state, {payload}: { payload: { pdid: string } }) => ({
             ...state,
-            isUpdateLoading: true
+            page: {
+                ...state.page,
+                content: state.page.content.map(cart => {
+                    if (cart.productDetail.id === payload.pdid) {
+                        return {
+                            ...cart,
+                            isUpdateLoading: true
+                        }
+                    }
+                    return cart
+                })
+            }
         }),
         updateIncreaseQuantityRequest: (state, {payload}: { payload: { pdid: string } }) => ({
             ...state,
-            isUpdateLoading: true
+            page: {
+                ...state.page,
+                content: state.page.content.map(cart => {
+                    if (cart.productDetail.id === payload.pdid) {
+                        return {
+                            ...cart,
+                            isUpdateLoading: true
+                        }
+                    }
+                    return cart
+                })
+            }
         }),
         updateQuantityRequest: (state, {payload}: { payload: { pdid: string, quantity: number } }) => ({
             ...state,
-            isUpdateLoading: true
+            page: {
+                ...state.page,
+                content: state.page.content.map(cart => {
+                    if (cart.productDetail.id === payload.pdid) {
+                        return {
+                            ...cart,
+                            isUpdateLoading: true
+                        }
+                    }
+                    return cart
+                })
+            }
         }),
         updateQuantitySuccess: (state, {payload}: { payload: { pdid: string, quantity: number } }) => ({
             ...state,
@@ -158,28 +199,51 @@ const cartListSlide = createSlice({
                     if (cart.productDetail.id === payload.pdid) {
                         return {
                             ...cart,
-                            quantity: payload.quantity
+                            quantity: payload.quantity,
+                            isUpdateLoading: false
                         }
                     }
                     return cart
                 })
-            },
-            isUpdateLoading: false
+            }
         }),
-        updateQuantityFailure: (state) => ({
+        updateQuantityFailure: (state, {payload}: { payload: string }) => ({
             ...state,
-            isUpdateLoading: false
+            page: {
+                ...state.page,
+                content: state.page.content.map(cart => {
+                    if (cart.productDetail.id === payload) {
+                        return {
+                            ...cart,
+                            isUpdateLoading: false
+                        }
+                    }
+                    return cart
+                })
+            }
         }),
         updateCheckedRequest: (state, {payload}: { payload: { pdid: string, checked: boolean } }) => ({
             ...state,
-            isUpdateLoading: true
+            page: {
+                ...state.page,
+                content: state.page.content.map(cart => {
+                    if (cart.productDetail.id === payload.pdid) {
+                        return {
+                            ...cart,
+                            isUpdateLoading: true
+                        }
+                    }
+                    return cart
+                })
+            }
         }),
         updateCheckedSuccess: (state, {payload}: { payload: { pdid: string, checked: boolean } }) => {
             const updatedContent = state.page.content.map(cart => {
                 if (cart.productDetail.id === payload.pdid) {
                     return {
                         ...cart,
-                        checked: payload.checked
+                        checked: payload.checked,
+                        isUpdateLoading: false
                     };
                 }
                 return cart;
@@ -191,17 +255,24 @@ const cartListSlide = createSlice({
                     ...state.page,
                     content: updatedContent
                 },
-                isUpdateLoading: false,
                 isAllChecked: isAnyChecked
             };
         },
         updateCheckedFailure: (state) => ({
             ...state,
-            isUpdateLoading: false
+            page: {
+                ...state.page,
+                content: state.page.content.map(cart => {
+                    return {
+                        ...cart,
+                        isUpdateLoading: false
+                    }
+                })
+            }
         }),
         updateAllCheckedRequest: (state) => ({
             ...state,
-            isUpdateLoading: true
+            isUpdateAllLoading: true
         }),
         updateAllCheckedSuccess: (state, {payload}: { payload: { checked: boolean } }) => {
             const updatedContent = state.page.content.map(cart => {
@@ -217,34 +288,63 @@ const cartListSlide = createSlice({
                     ...state.page,
                     content: updatedContent
                 },
-                isUpdateLoading: false,
+                isUpdateAllLoading: false,
                 isAllChecked: isAnyChecked
             };
         },
         updateAllCheckedFailure: (state) => ({
             ...state,
-            isUpdateLoading: false
+            isUpdateAllLoading: false
         }),
         deleteCartRequest: (state, {payload}: { payload: string }) => ({
             ...state,
-            isDeleteLoading: true
+            page: {
+                ...state.page,
+                content: state.page.content.map(cart => {
+                    if (cart.productDetail.id === payload) {
+                        return {
+                            ...cart,
+                            isDeleteLoading: true
+                        }
+                    }
+                    return cart
+                })
+            }
         }),
         deleteCartSuccess: (state, {payload}: { payload: string }) => ({
             ...state,
             page: {
                 ...state.page,
-                content: state.page.content.filter(cart => cart.productDetail.id !== payload),
+                content: state.page.content.map(cart => {
+                    if (cart.productDetail.id === payload) {
+                        return {
+                            ...cart,
+                            isDeleteLoading: false
+                        };
+                    }
+                    return cart;
+                }).filter(cart => cart.productDetail.id !== payload),
                 totalElements: state.page.totalElements - 1
-            },
-            isDeleteLoading: false
+            }
         }),
         deleteCartFailure: (state, {payload}: { payload: string }) => ({
             ...state,
-            isDeleteLoading: false
+            page: {
+                ...state.page,
+                content: state.page.content.map(cart => {
+                    if (cart.productDetail.id === payload) {
+                        return {
+                            ...cart,
+                            isDeleteLoading: false
+                        }
+                    }
+                    return cart
+                })
+            }
         }),
         deleteAllCartRequest: (state) => ({
             ...state,
-            isDeleteLoading: true
+            isDeleteAllLoading: true
         }),
         deleteAllCartSuccess: (state) => ({
             ...state,
@@ -253,11 +353,11 @@ const cartListSlide = createSlice({
                 content: [],
                 totalElements: 0
             },
-            isDeleteLoading: false
+            isDeleteAllLoading: false
         }),
         deleteAllCartFailure: (state) => ({
             ...state,
-            isDeleteLoading: false
+            isDeleteAllLoading: false
         })
     }
 });
@@ -310,6 +410,8 @@ function* handleFetchCart() {
                     readonly images: string[];
                 }
                 readonly checked: boolean;
+                readonly isUpdateLoading: boolean;
+                readonly isDeleteLoading: boolean;
             }[]> = yield call(getCartsPage, queryParams);
             yield put(fetchCartSuccess(page));
         } catch (e) {
@@ -339,6 +441,8 @@ function* handleCreateCart() {
                     readonly images: string[];
                 }
                 readonly checked: boolean;
+                readonly isUpdateLoading: boolean;
+                readonly isDeleteLoading: boolean;
             } = {
                 quantity: payload.quantity,
                 productName: payload.productName + " - " + payload.productDetailName,
@@ -348,7 +452,9 @@ function* handleCreateCart() {
                     price: payload.price,
                     images: [payload.thumbnail],
                 },
-                checked: true
+                checked: true,
+                isUpdateLoading: false,
+                isDeleteLoading: false
             }
             yield put(createCartSuccess(cart));
         } catch (e) {
@@ -425,7 +531,15 @@ function* handleUpdateQuantityCart() {
                 description: e.message,
                 type: "error",
             });
-            yield put(updateQuantityFailure());
+            if (updateDecreaseQuantity) {
+                yield put(updateQuantityFailure(updateDecreaseQuantity.payload.pdid));
+            }
+            if (updateIncreaseQuantity) {
+                yield put(updateQuantityFailure(updateIncreaseQuantity.payload.pdid));
+            }
+            if (updateQuantity) {
+                yield put(updateQuantityFailure(updateQuantity.payload.pdid));
+            }
         }
     }
 }

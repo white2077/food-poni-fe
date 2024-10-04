@@ -18,7 +18,7 @@ export default function OrderItems() {
 
     const dispatch = useDispatch();
 
-    const {page, isFetchLoading, isAllChecked} = useSelector((state: RootState) => state.cart);
+    const {page, isFetchLoading, isAllChecked, isDeleteAllLoading} = useSelector((state: RootState) => state.cart);
 
     return (
         <div>
@@ -38,6 +38,7 @@ export default function OrderItems() {
                             onConfirm={() => dispatch(deleteAllCartRequest())}
                             okText="Đồng ý"
                             cancelText="Hủy"
+                            okButtonProps={{ loading: isDeleteAllLoading }}
                         >
                             <DeleteOutlined className="cursor-pointer " />
                         </Popconfirm>
@@ -57,6 +58,8 @@ export default function OrderItems() {
                                 images: string[];
                             }
                             checked: boolean;
+                            isUpdateLoading: boolean;
+                            isDeleteLoading: boolean;
                         }) => (
                             <div key={cart.productDetail.id} className="p-2 bg-white border-[1px] rounded-lg mt-4">
                                 <Row className="my-[16px] items-center">
@@ -100,6 +103,7 @@ export default function OrderItems() {
                                             onConfirm={() => dispatch(deleteCartRequest(cart.productDetail.id))}
                                             okText="Đồng ý"
                                             cancelText="Hủy"
+                                            okButtonProps={{ loading: cart.isDeleteLoading }}
                                         >
                                             <DeleteOutlined id={`delete-icon-${cart.productDetail.id}`}/>
                                         </Popconfirm>

@@ -66,6 +66,7 @@ const Cart = () => {
                                                         onConfirm={() => dispatch(deleteCartRequest(item.productDetail.id))}
                                                         okText="Đồng ý"
                                                         cancelText="Hủy"
+                                                        okButtonProps={{loading: item.isDeleteLoading}}
                                                     >
                                                         <CloseOutlined
                                                             className="p-0"
