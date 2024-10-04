@@ -119,7 +119,7 @@ export function Login() {
                         name="normal_login"
                         className="login-form"
                         initialValues={{remember: true}}
-                        onFinish={() => dispatch(loginRequest())}
+                        onFinish={() => dispatch(loginRequest({navigate}))}
                     >
                         <div className="flex flex-col gap-1 font-medium">Email hoặc username</div>
                         <Form.Item

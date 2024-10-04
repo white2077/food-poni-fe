@@ -10,6 +10,10 @@
     --tw-color-primary: #F36F24;
 }
 
+*:focus-visible {
+    outline: none;
+}
+
 
 .nunito {
     font-family: "Nunito", sans-serif;

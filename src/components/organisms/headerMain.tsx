@@ -1,36 +1,19 @@
-import {useSelector} from 'react-redux';
-import {useEffect} from "react";
-import {RootState} from "@/redux/store.ts";
 import SearchKeyword from "@/components/searchKeyword.tsx";
 import MenuMobile from "@/components/menu-mobile.tsx";
 import {UserDropdown} from "@/components/molecules/userDropdown.tsx";
+import {useSelector} from "react-redux";
+import {RootState} from "@/redux/store.ts";
+import Cart from "@/components/organisms/cart.tsx";
+import {UserOutlined} from "@ant-design/icons";
+import {Button} from "antd";
+import {useNavigate} from "react-router-dom";
 
 // let sock: WebSocket | null = null;
 export default function HeaderMain() {
-    // const navigate = useNavigate();
-    //
-    // const dispatch = useDispatch();
 
-    const currentUser = useSelector((state: RootState) => state.user.currentUser);
+    const {currentUser} = useSelector((state: RootState) => state.auth);
 
-
-    // const getShippingAddress = (): void => {
-    //     const addressId: string = currentUser.addressId ?? "";
-    //
-    //     if (addressId !== "" && Cookies.get(REFRESH_TOKEN)) {
-    //         getAddressById(addressId, { refreshToken: Cookies.get(REFRESH_TOKEN) })
-    //             .then(res => {
-    //                 dispatch(setCurrentShippingAddress(res));
-    //             })
-    //             .catch(res => {
-    //                 console.log("Shipping address message: ", res.message);
-    //             });
-    //     }
-    // };
-
-    useEffect(() => {
-        // getShippingAddress();
-    }, [currentUser]);
+    const navigate = useNavigate();
 
     // useEffect(() => {
     //     const refreshToken = Cookies.get(REFRESH_TOKEN);
@@ -60,12 +43,12 @@ export default function HeaderMain() {
     //             const client = new Client({
     //                 webSocketFactory: () => sock,
     //                 onConnect: () => {
-    //                     client.subscribe('/topic/global-notifications', (message: IMessage) => {
+    //                     client.subscribe("/topic/global-notifications", (message: IMessage) => {
     //                         const notificationResponse: NotificationAPIResponse = JSON.parse(message.body);
     //                         dispatch(addNotification(notificationResponse));
     //                         notification.open({
     //                             type: "success",
-    //                             placement: 'bottomRight',
+    //                             placement: "bottomRight",
     //                             message: notificationResponse.fromUser.address.fullName,
     //                             description: notificationResponse.message,
     //                             btn: (
@@ -75,12 +58,12 @@ export default function HeaderMain() {
     //                             )
     //                         });
     //                     });
-    //                     client.subscribe('/user/topic/client-notifications', (message) => {
+    //                     client.subscribe("/user/topic/client-notifications", (message) => {
     //                         const notificationResponse: NotificationAPIResponse = JSON.parse(message.body);
     //                         dispatch(addNotification(notificationResponse));
     //                         notification.open({
     //                             type: "success",
-    //                             placement: 'bottomRight',
+    //                             placement: "bottomRight",
     //                             message: notificationResponse.fromUser.address.fullName,
     //                             description: notificationResponse.message,
     //                             btn: (
@@ -106,17 +89,37 @@ export default function HeaderMain() {
                 <MenuMobile/>
 
                 <div onClick={() => window.location.href = "/"}
-                    className="flex items-center gap-1 nunito text-3xl md:text-4xl text-orange-400 cursor-pointer hover:text-orange-500">
+                     className="flex items-center gap-1 nunito text-3xl md:text-4xl text-orange-400 cursor-pointer hover:text-orange-500">
                     <img src="/logo-02.png" className="w-10 h-10 md:w-14 md:h-14" alt="FoodPoni Logo"/>
                     <div className="md:block">FoodPoni</div>
                 </div>
 
+                <Button className="block sm:hidden" type="primary" onClick={() => navigate("/auth/login")} icon={<UserOutlined/>}
+                        size="large">
+                    <span className=" md:inline">Đăng nhập</span>
+                </Button>
+
             </div>
             <div className="grid grid-cols-1 grid-cols-[2fr_1fr] items-center gap-4">
-                <div className="order-3 md:order-2 mt-4 md:mt-0">
+                <div className="order-1 md:order-2 mt-4 md:mt-0">
                     <SearchKeyword/>
                 </div>
-                <UserDropdown/>
+                <div className="order-2 hidden md:block">
+                    {
+                        currentUser ? (
+                            <div className="flex items-center justify-end gap-4 order-2 md:order-3">
+                                <Cart/>
+                                {/*<Notification />*/}
+                                <UserDropdown/>
+                            </div>
+                        ) : (
+                            <Button type="primary" onClick={() => navigate("/auth/login")} icon={<UserOutlined/>}
+                                    size="large">
+                                <span className="">Đăng nhập</span>
+                            </Button>
+                        )
+                    }
+                </div>
             </div>
         </div>
     );

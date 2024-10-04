@@ -1,12 +1,12 @@
 import {useEffect, useState} from "react";
 import {Avatar, Badge, Button, Divider, Drawer, List, Popconfirm} from 'antd';
-import {CloseOutlined, DeleteOutlined, ShoppingCartOutlined} from "@ant-design/icons";
+import {CloseOutlined, ShoppingCartOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
 import EmptyNotice from "../empty-notice.tsx";
 import {useNavigate} from "react-router-dom";
 import {RootState} from "@/redux/store.ts";
 import {QuantityInput} from "@/components/molecules/quantityInput.tsx";
-import {deleteAllCartRequest, deleteCartRequest, fetchCartRequest} from "@/redux/modules/cart.ts";
+import {deleteCartRequest, fetchCartRequest} from "@/redux/modules/cart.ts";
 import {server} from "@/utils/server.ts";
 
 const Cart = () => {
@@ -14,8 +14,6 @@ const Cart = () => {
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
-
-    const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
     const [open, setOpen] = useState<boolean>(false);
 
@@ -25,7 +23,7 @@ const Cart = () => {
 
     useEffect(() => {
         dispatch(fetchCartRequest("createdDate,desc"))
-    }, []);
+    }, [dispatch]);
 
     const totalAmount = (): number => {
         let total = 0;
@@ -39,7 +37,7 @@ const Cart = () => {
         <div>
             <a onClick={() => setOpen(true)} className="cursor-pointer">
                 <Badge count={page.totalElements}>
-                    <Avatar shape="square" icon={<ShoppingCartOutlined/>} size='large'/>
+                    <Avatar className="p-2" shape="square" icon={<ShoppingCartOutlined/>} size='large'/>
                 </Badge>
             </a>
             <Drawer title="Giỏ hàng" onClose={() => setOpen(false)} open={open}>
@@ -114,7 +112,7 @@ const Cart = () => {
                                 onClick={() => {
                                     setPending(true);
                                     // if (currentUser.id) {
-                                        navigate("/checkout");
+                                    navigate("/checkout");
                                     // } else {
                                     //     navigate("/auth/login");
                                     //     setPending(false);

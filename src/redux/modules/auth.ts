@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 import {REFRESH_TOKEN, REMEMBER_ME} from "@/utils/server.ts";
 import {login} from "@/utils/api/auth.ts";
 import {RootState} from "@/redux/store.ts";
+import {NavigateFunction} from "react-router-dom";
 
 export type AuthState = {
     readonly login: {
@@ -48,7 +49,7 @@ const cartSlide = createSlice({
     name: SLIDE_NAME,
     initialState,
     reducers: {
-        loginRequest: (state) => ({
+        loginRequest: (state, action: { payload: { navigate: NavigateFunction } }) => ({
             ...state,
             login: {
                 ...state.login,
@@ -132,12 +133,12 @@ export default cartSlide.reducer;
 
 function* handleLogin() {
     while (true) {
-        yield take(loginRequest.type);
+       const {payload}: ReturnType<typeof loginRequest> = yield take(loginRequest.type);
         try {
-            const payload: FieldLoginType = yield select((state: RootState) => state.auth.login);
+            const {username, password, remember}: FieldLoginType = yield select((state: RootState) => state.auth.login);
             const user: AuthRequest = {
-                username: payload.username,
-                password: payload.password
+                username,
+                password,
             };
             const res: AuthResponse = yield call(login, user);
 
@@ -154,7 +155,7 @@ function* handleLogin() {
             Cookies.set(REFRESH_TOKEN, res.refreshToken, {expires: 7});
             Cookies.remove(REMEMBER_ME);
 
-            if (payload.remember) {
+            if (remember) {
                 const userRemember: UserRemember = {
                     username: user.username ? user.username! : user.email!,
                     password: user.password,
@@ -163,6 +164,8 @@ function* handleLogin() {
                 yield put(updateRememberMe(userRemember));
                 Cookies.set(REMEMBER_ME, btoa(JSON.stringify(userRemember)), {expires: 7});
             } else Cookies.remove(REMEMBER_ME);
+
+            payload.navigate("/");
         } catch (e) {
             notification.open({
                 type: 'error',
