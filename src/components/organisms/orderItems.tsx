@@ -25,7 +25,7 @@ export default function OrderItems() {
             <div className="p-2 bg-white border-[1px] rounded-lg ">
                 <Row>
                     <Col flex='2%'>
-                        <Checkbox checked={isAllChecked} onClick={() => dispatch(updateAllCheckedRequest())}></Checkbox>
+                        <Checkbox disabled={page.content.length === 0} checked={page.content.length !== 0 ? isAllChecked : false} onClick={() => dispatch(updateAllCheckedRequest())}></Checkbox>
                     </Col>
                     <Col flex='40%'>Tất cả</Col>
                     <Col flex='10%'>Đơn giá</Col>
