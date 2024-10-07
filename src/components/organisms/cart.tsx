@@ -9,7 +9,7 @@ import {QuantityInput} from "@/components/molecules/quantityInput.tsx";
 import {deleteCartRequest, fetchCartRequest} from "@/redux/modules/cart.ts";
 import {server} from "@/utils/server.ts";
 
-const Cart = () => {
+export default function Cart() {
 
     const navigate = useNavigate();
 
@@ -125,6 +125,4 @@ const Cart = () => {
             </Drawer>
         </div>
     );
-};
-
-export default Cart;
+}

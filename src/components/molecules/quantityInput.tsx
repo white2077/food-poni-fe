@@ -27,16 +27,11 @@ type Props = {
 export function QuantityInput({item}: Props) {
     const dispatch = useDispatch();
 
-    const {isUpdateLoading} = useSelector((state: RootState) => {
-        const cartItem = state.cart.page.content.find(cart => cart.productDetail.id === item.productDetail.id);
-        return { isUpdateLoading: cartItem ? cartItem.isUpdateLoading : false };
-    });
-
     return (
         <div className="flex items-center border-[1px] w-24 justify-between rounded-lg">
             <Button type="text"
                     icon={<MinusOutlined/>}
-                    loading={isUpdateLoading}
+                    loading={item.isUpdateLoading}
                     disabled={item.quantity <= 1}
                     onClick={() => dispatch(updateDecreaseQuantityRequest({pdid: item.productDetail.id}))}/>
             <Input
@@ -54,7 +49,7 @@ export function QuantityInput({item}: Props) {
             />
             <Button type="text"
                     icon={<PlusOutlined/>}
-                    loading={isUpdateLoading}
+                    loading={item.isUpdateLoading}
                     onClick={() => dispatch(updateIncreaseQuantityRequest({pdid: item.productDetail.id}))}/>
         </div>
     );

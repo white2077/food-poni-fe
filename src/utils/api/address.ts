@@ -23,13 +23,15 @@ export const getAddressById = (aid: string, queryParams: QueryParams): Promise<A
         .then((res: AxiosResponse<Address>) => res.data);
 }
 
-export const createAddress = ({fullName, phoneNumber, address}: {
+export const createAddress = ({fullName, phoneNumber, address, lon, lat}: {
     fullName: string,
     phoneNumber: string,
-    address: string
+    address: string,
+    lon: number,
+    lat: number
 }): Promise<void> => {
     return apiWithToken()
-        .post("/addresses", {fullName, phoneNumber, address}, {
+        .post("/addresses", {fullName, phoneNumber, address, lon, lat}, {
             headers: {
                 Authorization: "Bearer " + accessToken
             }

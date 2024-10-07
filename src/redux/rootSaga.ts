@@ -5,6 +5,7 @@ import {productSagas} from "@/redux/modules/product.ts";
 import {cartSagas} from "@/redux/modules/cart.ts";
 import {productCategorySagas} from "@/redux/modules/productCategory.ts";
 import {orderSagas} from './modules/order';
+import {shippingAddressSagas} from "@/redux/modules/address.ts";
 
 export default function* rootSaga() {
     yield all([
@@ -13,6 +14,7 @@ export default function* rootSaga() {
         ...notificationSagas,
         ...productSagas,
         ...productCategorySagas,
-        ...orderSagas
+        ...orderSagas,
+        ...shippingAddressSagas
     ])
 }

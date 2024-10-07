@@ -1,3 +1,5 @@
+import {SearchResult} from "@/redux/modules/searchPosition.ts";
+
 export interface Address {
     readonly id: string;
     readonly fullName: string;
@@ -174,5 +176,5 @@ export interface Rate {
 export interface ShippingAddress {
     readonly fullName: string;
     readonly phoneNumber: string;
-    readonly address: string;
+    readonly address: SearchResult;
 }
