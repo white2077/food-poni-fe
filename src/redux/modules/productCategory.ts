@@ -36,6 +36,7 @@ const productCategorySlide = createSlice({
         }),
         fetchProductCategoriesSuccess: (state, {payload}: { payload: Page<ProductCategory[]> }) => {
             state.page = payload;
+            state.isFetchLoading = false;
         },
         fetchProductCategoriesFailure: (state) => ({
             ...state,

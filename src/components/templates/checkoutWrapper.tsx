@@ -1,11 +1,10 @@
-import {Button, Card, Col, Divider, Form, Input, Modal, Radio, RadioChangeEvent, Row, Space} from "antd";
+import {Button, Card, Col, Divider, Form, Input, Radio, RadioChangeEvent, Row, Space} from "antd";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {RootState} from "@/redux/store.ts";
 import {useEffect, useState} from "react";
 import {PaymentInfo} from "@/type/types.ts";
 import OrderItems from "@/components/organisms/orderItems.tsx";
-import CardHome from "@/components/card-home.tsx";
 import {fetchCartRequest} from "@/redux/modules/cart.ts";
 import ShippingAddress from "@/components/organisms/shippingAddress.tsx";
 

@@ -1,17 +1,20 @@
 import {createAction, createSlice} from "@reduxjs/toolkit";
 import {CurrentUser, Page, Product, ProductDetail} from "@/type/types.ts";
 import {call, fork, take, race, select, put} from "redux-saga/effects";
-import {getProductByIdOrSlug, getProductsPage, getProductsPageByRetailer} from "@/utils/api/product.ts";
+import {
+    getProductByIdOrSlug,
+    getProductsPage,
+    getProductsPageByCategory,
+    getProductsPageByRetailer
+} from "@/utils/api/product.ts";
 import {RootState} from "@/redux/store.ts";
 import {notification} from "antd";
 import {QueryParams} from "@/utils/api/common.ts";
 import {getProductDetailsByProductId} from "@/utils/api/productDetail.ts";
 
 export type ProductState = {
-    readonly data: {
-        readonly page: Page<Product[]>,
-        readonly isLoading: boolean
-    },
+    readonly page: Page<Product[]>,
+    readonly isLoading: boolean,
     readonly productSelected: {
         readonly product: Product | null | undefined,
         readonly productDetails: ProductDetail[]
@@ -20,20 +23,19 @@ export type ProductState = {
 }
 
 const initialState: ProductState = {
-    data: {
-        page: {
-            content: [],
-            totalElements: 0,
-            totalPages: 0,
-            size: 0,
-            number: 0,
-            first: true,
-            last: true,
-            numberOfElements: 0,
-            empty: true,
-        },
-        isLoading: true
+    page: {
+        content: [],
+        totalElements: 0,
+        totalPages: 0,
+        size: 0,
+        number: 0,
+        first: true,
+        last: true,
+        numberOfElements: 0,
+        empty: true,
     },
+    isLoading: true,
+
     productSelected: {
         product: null,
         productDetails: [],
@@ -48,17 +50,20 @@ const productSlide = createSlice({
     initialState,
     reducers: {
         fetchProductsByCustomerRequest: (state, payload: { payload: string | undefined }) => {
-            state.data.isLoading = true;
+            state.isLoading = true;
         },
         fetchProductsByRetailerRequest: (state) => {
-            state.data.isLoading = true;
+            state.isLoading = true;
+        },
+        fetchProductsByProductCategoryRequest: (state, payload: { payload: string }) => {
+            state.isLoading = true;
         },
         fetchProductsSuccess: (state, {payload}: { payload: Page<Product[]> }) => {
-            state.data.page = payload;
-            state.data.isLoading = false;
+            state.page = payload;
+            state.isLoading = false;
         },
         fetchProductsFailure: (state) => {
-            state.data.isLoading = false;
+            state.isLoading = false;
         },
         fetchProductSuccess: (state, {payload}: { payload: Product }) => {
             state.productSelected.product = payload;
@@ -76,6 +81,7 @@ export default productSlide.reducer;
 export const {
     fetchProductsByCustomerRequest,
     fetchProductsByRetailerRequest,
+    fetchProductsByProductCategoryRequest,
     fetchProductsSuccess,
     fetchProductsFailure,
     fetchProductSuccess,
@@ -87,12 +93,14 @@ export const fetchProductAction = createAction<string>(`${SLICE_NAME}/fetchProdu
 
 function* handleFetchProducts() {
     while (true) {
-        const {fetchProductByCustomer, fetchProductByRetailer}: {
+        const {fetchProductByCustomer, fetchProductByRetailer, fetchProductsByProductCategory}: {
             fetchProductByCustomer: ReturnType<typeof fetchProductsByCustomerRequest>,
-            fetchProductByRetailer: ReturnType<typeof fetchProductsByRetailerRequest>
+            fetchProductByRetailer: ReturnType<typeof fetchProductsByRetailerRequest>,
+            fetchProductsByProductCategory: ReturnType<typeof fetchProductsByProductCategoryRequest>
         } = yield race({
             fetchProductByCustomer: take(fetchProductsByCustomerRequest.type),
-            fetchProductByRetailer: take(fetchProductsByRetailerRequest.type)
+            fetchProductByRetailer: take(fetchProductsByRetailerRequest.type),
+            fetchProductsByProductCategory: take(fetchProductsByProductCategoryRequest.type)
         });
         try {
             const queryParams: QueryParams = {
@@ -112,6 +120,12 @@ function* handleFetchProducts() {
                 const page: Page<Product[]> = yield call(getProductsPageByRetailer, currentUser.id, queryParams);
                 yield put(fetchProductsSuccess(page));
             }
+
+            if (fetchProductsByProductCategory) {
+                const page: Page<Product[]> = yield call(getProductsPageByCategory, fetchProductsByProductCategory.payload, queryParams);
+                yield put(fetchProductsSuccess(page));
+            }
+
         } catch (e) {
             notification.open({
                 message: "Error",

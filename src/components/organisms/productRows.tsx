@@ -19,11 +19,11 @@ interface ProductFilterRowProps {
 export function ProductRows({children, title, action, legacyBehavior, hasBorder = true}: ProductFilterRowProps) {
 
     const dispatch = useDispatch();
-    const data = useSelector((state: RootState) => state.product.data);
+    const data = useSelector((state: RootState) => state.product);
 
     useEffect(() => {
         dispatch(action);
-    }, []);
+    }, [dispatch]);
 
     const productGroups = [];
     for (let i = 0; i < data.page.content.length; i += 4) {

@@ -1,6 +1,5 @@
-import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {SearchResult} from "@/redux/modules/searchPosition.ts";
 import axios, {AxiosResponse} from "axios";
 import {AutoComplete, Button, Form, Input} from "antd";
@@ -8,8 +7,6 @@ import {RootState} from "@/redux/store.ts";
 import {createAddressRequest} from "@/redux/modules/address.ts";
 
 export default function ShippingAddressInfo() {
-
-    const navigate = useNavigate();
 
     const dispatch = useDispatch();
 

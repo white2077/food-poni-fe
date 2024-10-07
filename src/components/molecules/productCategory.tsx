@@ -1,5 +1,4 @@
-import type {MenuProps} from 'antd';
-import {Menu} from 'antd';
+import {Menu, Skeleton} from 'antd';
 import {useNavigate} from "react-router-dom";
 import {RootState} from "@/redux/store.ts";
 import {useDispatch, useSelector} from "react-redux";
@@ -13,37 +12,37 @@ export default function ProductCategory() {
 
     const dispatch = useDispatch();
 
-    const {page} = useSelector((state: RootState) => state.productCategory);
+    const {page, isFetchLoading} = useSelector((state: RootState) => state.productCategory);
 
     useEffect(() => {
         dispatch(fetchProductCategoriesRequest());
     }, [dispatch]);
 
-    const onClick: MenuProps['onClick'] = (e): void => {
-        navigate(`/danh-muc/${e.key}`);
-    };
+    // const onClick: MenuProps['onClick'] = (e): void => {
+    //     navigate(`/danh-muc/${e.keyPath}`);
+    // };
 
     return (
         <div className="bg-white rounded-lg">
             <div className="p-4">Danh mục</div>
-            <Menu
-                onClick={onClick}
-                className="rounded-lg !border-none"
-                defaultSelectedKeys={['all']}
-                mode='inline'
-                items={page.content.map((it, index) => {
-                    return {
-                        key: index,
-                        label: <span className="flex items-center">
+            {isFetchLoading ? (<Skeleton className="px-4 py-2"/>) : (
+                <Menu
+                    className="rounded-lg !border-none"
+                    defaultSelectedKeys={['all']}
+                    mode='inline'
+                    items={page.content.map((it, index) => {
+                        return {
+                            key: index,
+                            label: <span className="flex items-center" onClick={() => navigate(`/danh-muc/${it.slug}`)}>
                             <img src={server + it.thumbnail} className="w-4 h-4 mr-2"/>
                             <span className={`${it.parentProductCategory === null ? "font-bold uppercase" : ""}`}>
                                 {it.name}
                             </span>
                         </span>
-                    }
-
-                })}
-            />
+                        }
+                    })}
+                />
+            )}
         </div>
     );
 }
