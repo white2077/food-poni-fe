@@ -1,9 +1,11 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {Address, Page} from "@/type/types.ts";
-import {call, fork, put, take} from "redux-saga/effects";
+import {call, fork, put, select, take} from "redux-saga/effects";
 import {notification} from "antd";
 import {QueryParams} from "@/utils/api/common.ts";
 import {createAddress, getAddressesPage} from "@/utils/api/address.ts";
+import {updateShippingAddressAction} from "@/redux/modules/order.ts";
+import {RootState} from "@/redux/store.ts";
 
 export type AddressState = {
     readonly page: Page<{
@@ -129,6 +131,10 @@ function* handleFetchAddress() {
             const page: Page<Address[]> = yield call(getAddressesPage, queryParams);
 
             yield put(fetchAddressesSuccess(page));
+            const {currentUser} = yield select((state: RootState) => state.auth);
+            if (currentUser) {
+                yield put(updateShippingAddressAction(currentUser.addressId));
+            }
         } catch (e) {
             notification.open({
                 message: "Error",

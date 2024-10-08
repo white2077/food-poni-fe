@@ -51,8 +51,8 @@ export const OrderItemList: React.FC<OrderItemListProps> = ({ orderItems, userna
                                                     style={{
                                                         border: '1px solid rgb(243, 111, 36)',
                                                         color: 'rgb(243, 111, 36)',
-                                                        pointerEvents: status.includes("COMPLETED") ? 'auto' : 'none',
-                                                        opacity: status.includes("COMPLETED") ? 1 : 0.3
+                                                        pointerEvents: status === "COMPLETED" ? 'auto' : 'none',
+                                                        opacity: status === "COMPLETED" ? 1 : 0.3
                                                     }}
                                                     onClick={() => {
                                                         if (Object.keys(item.rate).length === 0) {

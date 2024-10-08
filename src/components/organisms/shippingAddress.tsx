@@ -4,6 +4,8 @@ import ShippingAddressInfo from "@/components/organisms/shippingAddressInfo.tsx"
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/redux/store.ts";
 import {fetchAddressesRequest} from "@/redux/modules/address.ts";
+import CardHome from "@/components/atoms/cardHome.tsx";
+import {updateShippingAddressAction} from "@/redux/modules/order.ts";
 
 export default function ShippingAddress() {
 
@@ -17,9 +19,14 @@ export default function ShippingAddress() {
 
     const {currentUser} = useSelector((state: RootState) => state.auth);
 
+    const {form} = useSelector((state: RootState) => state.order);
+
     useEffect(() => {
         dispatch(fetchAddressesRequest());
-    }, []);
+        if (currentUser) {
+            dispatch(updateShippingAddressAction(currentUser.addressId));
+        }
+    }, [dispatch]);
 
     return (
         <Card style={{marginBottom: "16px"}}>
@@ -45,8 +52,7 @@ export default function ShippingAddress() {
                     {!showAddAddress && (
                         <Radio.Group className="w-full"
                                      defaultValue={currentUser?.addressId}
-                                     onChange={(e) => {
-                                     }}>
+                                     onChange={(e) => dispatch(updateShippingAddressAction(e.target.value))}>
                             <List
                                 dataSource={page.content}
                                 renderItem={(item) => (
@@ -71,19 +77,19 @@ export default function ShippingAddress() {
                     )}
                 </Modal>
             </div>
-            {/*<div>*/}
-            {/*    {currentUser?.addressId !== "" && (*/}
-            {/*        <>*/}
-            {/*            <div><span*/}
-            {/*                style={{fontWeight: 'bold'}}>{shippingAddress.fullName}</span> | {shippingAddress.phoneNumber}*/}
-            {/*            </div>*/}
-            {/*            <div><CardHome content="Nhà"/>{shippingAddress.address}</div>*/}
-            {/*        </>)*/}
-            {/*    }*/}
-            {/*    {!shippingAddress && (*/}
-            {/*        <div style={{color: 'red'}}>Vui lòng chọn thông tin vận chuyển</div>*/}
-            {/*    )}*/}
-            {/*</div>*/}
+            <div>
+                {form && (
+                    <>
+                        <div><span
+                            style={{fontWeight: 'bold'}}>{form.shippingAddress.fullName}</span> | {form.shippingAddress.phoneNumber}
+                        </div>
+                        <div><CardHome content="Nhà"/>{form.shippingAddress.address}</div>
+                    </>)
+                }
+                {/*{!shippingAddress && (*/}
+                {/*    <div style={{color: 'red'}}>Vui lòng chọn thông tin vận chuyển</div>*/}
+                {/*)}*/}
+            </div>
         </Card>
     )
 }

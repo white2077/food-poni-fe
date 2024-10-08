@@ -1,15 +1,37 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { call, fork, take, put } from "redux-saga/effects";
-import { notification } from "antd";
-import { Order, Page } from "@/type/types";
-import { getOrdersPage, getOrderById } from "@/utils/api/order";
-import { QueryParams } from "@/utils/api/common";
+import {createAction, createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {call, fork, put, select, take} from "redux-saga/effects";
+import {notification} from "antd";
+import {Order, Page} from "@/type/types";
+import {createOrder, getOrderById, getOrdersPage} from "@/utils/api/order";
+import {QueryParams} from "@/utils/api/common";
+import {RootState} from "@/redux/store.ts";
+import {createCartFailure, deleteAllCartRequest} from "@/redux/modules/cart.ts";
 
-export interface OrderState {
+export type OrderState = {
     readonly page: Page<Order[]>;
     readonly selectedOrder: Order | null;
+    readonly form: {
+        readonly orderItems: {
+            readonly quantity: number;
+            readonly productDetail: {
+                readonly id: string;
+            };
+        }[],
+        readonly shippingAddress: {
+            readonly fullName: string;
+            readonly phoneNumber: string;
+            readonly address: string;
+            readonly lon: number;
+            readonly lat: number;
+        },
+        readonly payment: {
+            readonly method: string;
+            readonly status: string;
+        }
+    };
     readonly isFetchLoading: boolean;
     readonly isLoadingSelectedOrder: boolean;
+    readonly isCreateLoading: boolean;
 }
 
 const initialState: OrderState = {
@@ -25,8 +47,23 @@ const initialState: OrderState = {
         empty: true,
     },
     selectedOrder: null,
+    form: {
+        orderItems: [],
+        shippingAddress: {
+            fullName: "",
+            phoneNumber: "",
+            address: "",
+            lon: 0,
+            lat: 0
+        },
+        payment: {
+            method: "CASH",
+            status: "PAYING"
+        }
+    },
     isFetchLoading: false,
-    isLoadingSelectedOrder: false
+    isLoadingSelectedOrder: false,
+    isCreateLoading: false
 };
 
 const SLICE_NAME = 'order';
@@ -39,7 +76,7 @@ const orderSlice = createSlice({
             ...state,
             isFetchLoading: true
         }),
-        fetchOrdersSuccess: (state, { payload }: { payload: Page<Order[]> }) => ({
+        fetchOrdersSuccess: (state, {payload}: { payload: Page<Order[]> }) => ({
             ...state,
             page: payload,
             isFetchLoading: false
@@ -52,7 +89,7 @@ const orderSlice = createSlice({
             ...state,
             isLoadingSelectedOrder: true
         }),
-        fetchOrderSuccess: (state, { payload }: { payload: Order }) => ({
+        fetchOrderSuccess: (state, {payload}: { payload: Order }) => ({
             ...state,
             selectedOrder: payload,
             isLoadingSelectedOrder: false
@@ -61,6 +98,59 @@ const orderSlice = createSlice({
             ...state,
             isLoadingSelectedOrder: false
         }),
+        createOrderRequest: (state) => ({
+            ...state,
+            isCreateLoading: true
+        }),
+        createOrderSuccess: (state) => ({
+            ...state,
+            isCreateLoading: false
+        }),
+        createOrderFailure: (state) => ({
+            ...state,
+            isCreateLoading: false
+        }),
+        updateOrderItemsSuccess: (state, {payload}: {
+            payload: {
+                readonly quantity: number;
+                readonly productDetail: {
+                    readonly id: string;
+                };
+            }[]
+        }) => ({
+            ...state,
+            form: {
+                ...state.form,
+                orderItems: payload
+            }
+        }),
+        updateShippingAddressSuccess: (state, {payload}: {
+            payload: {
+                readonly fullName: string;
+                readonly phoneNumber: string;
+                readonly address: string;
+                readonly lon: number;
+                readonly lat: number;
+            }
+        }) => ({
+            ...state,
+            form: {
+                ...state.form,
+                shippingAddress: payload
+            }
+        }),
+        updatePaymentSuccess: (state, {payload}: {
+            payload: {
+                readonly method: string;
+                readonly status: string;
+            }
+        }) => ({
+            ...state,
+            form: {
+                ...state.form,
+                payment: payload
+            }
+        })
     }
 });
 
@@ -71,13 +161,22 @@ export const {
     fetchOrderRequest,
     fetchOrderSuccess,
     fetchOrderFailure,
+    createOrderRequest,
+    createOrderSuccess,
+    createOrderFailure,
+    updateOrderItemsSuccess,
+    updateShippingAddressSuccess,
+    updatePaymentSuccess
 } = orderSlice.actions;
 
 export default orderSlice.reducer;
 
+export const updateOrderItemsAction = createAction<void>(`${SLICE_NAME}/updateOrderItemsRequest`);
+export const updateShippingAddressAction = createAction<string>(`${SLICE_NAME}/updateShippingAddressRequest`);
+
 function* handleFetchOrders() {
     while (true) {
-        const { payload }: ReturnType<typeof fetchOrdersRequest> = yield take(fetchOrdersRequest.type);
+        const {payload}: ReturnType<typeof fetchOrdersRequest> = yield take(fetchOrdersRequest.type);
         try {
             const queryParams: QueryParams = {
                 pageSize: 10,
@@ -97,9 +196,10 @@ function* handleFetchOrders() {
         }
     }
 }
+
 function* handleFetchOrder() {
     while (true) {
-        const { payload }: ReturnType<typeof fetchOrderRequest> = yield take(fetchOrderRequest.type);
+        const {payload}: ReturnType<typeof fetchOrderRequest> = yield take(fetchOrderRequest.type);
         try {
             const order: Order = yield call(getOrderById, payload, {});
             yield put(fetchOrderSuccess(order));
@@ -114,7 +214,87 @@ function* handleFetchOrder() {
     }
 }
 
+function* handleCreateOrder() {
+    while (true) {
+        yield take(createOrderRequest.type);
+        try {
+            const {orderItems, shippingAddress, payment}: {
+                readonly orderItems: {
+                    readonly quantity: number;
+                    readonly productDetail: {
+                        readonly id: string;
+                    };
+                }[],
+                readonly shippingAddress: {
+                    readonly fullName: string;
+                    readonly phoneNumber: string;
+                    readonly address: string;
+                    readonly lon: number;
+                    readonly lat: number;
+                },
+                readonly payment: {
+                    readonly method: string;
+                    readonly status: string;
+                }
+            } = yield select((state: RootState) => state.order.form);
+            yield call(createOrder, {orderItems, shippingAddress, payment});
+            yield put(createOrderSuccess());
+            yield put(deleteAllCartRequest());
+        } catch (e) {
+            notification.open({
+                message: "Error",
+                description: e.message,
+                type: "error",
+            });
+
+            yield put(createOrderFailure());
+        }
+    }
+}
+
+function* handleUpdateOrderItems() {
+    while (true) {
+        yield take(updateOrderItemsAction.type);
+        const carts: {
+            readonly quantity: number;
+            readonly productName: string;
+            readonly productDetail: {
+                readonly id: string;
+                readonly name: string;
+                readonly price: number;
+                readonly images: string[];
+            }
+            readonly checked: boolean;
+            readonly isUpdateLoading: boolean;
+            readonly isDeleteLoading: boolean;
+        }[] = yield select((state: RootState) => state.cart.page.content);
+        const selectedCarts = carts.filter((it) => it.checked);
+        yield put(updateOrderItemsSuccess(selectedCarts));
+    }
+}
+
+function* handleUpdateShippingAddress() {
+    while (true) {
+        const {payload}: ReturnType<typeof updateShippingAddressAction> = yield take(updateShippingAddressAction.type);
+        const addresses: {
+            readonly id: string;
+            readonly fullName: string;
+            readonly phoneNumber: string;
+            readonly address: string;
+            readonly lon: number;
+            readonly lat: number;
+        }[] = yield select((state: RootState) => state.address.page.content);
+        const address = addresses.find((it) => it.id === payload);
+        if (address) {
+            yield put(updateShippingAddressSuccess(address));
+        }
+    }
+}
+
 export const orderSagas = [
     fork(handleFetchOrders),
-    fork(handleFetchOrder)
+    fork(handleFetchOrder),
+    fork(handleCreateOrder),
+    fork(handleUpdateOrderItems),
+    fork(handleUpdateShippingAddress)
 ];
