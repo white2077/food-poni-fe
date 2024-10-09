@@ -14,6 +14,7 @@ import {
 } from "@/utils/api/cart.ts";
 import {RootState} from "@/redux/store.ts";
 import {Task} from "redux-saga";
+import {updateOrderItemsAction} from "@/redux/modules/order.ts";
 
 export type CartState = {
     readonly page: Page<{
@@ -414,6 +415,7 @@ function* handleFetchCart() {
                 readonly isDeleteLoading: boolean;
             }[]> = yield call(getCartsPage, queryParams);
             yield put(fetchCartSuccess(page));
+            yield put(updateOrderItemsAction());
         } catch (e) {
             notification.open({
                 message: "Error",
@@ -525,6 +527,7 @@ function* handleUpdateQuantityCart() {
                     quantity: updateQuantity.payload.quantity
                 }));
             }
+            yield put(updateOrderItemsAction());
         } catch (e) {
             notification.open({
                 message: "Error",
@@ -550,6 +553,7 @@ function* handleUpdateCheckedCart() {
         try {
             yield call(updateCartChecked, {pdid: payload.pdid, checked: payload.checked});
             yield put(updateCheckedSuccess({pdid: payload.pdid, checked: payload.checked}));
+            yield put(updateOrderItemsAction());
         } catch (e) {
             notification.open({
                 message: "Error",
@@ -568,6 +572,7 @@ function* handleUpdateAllCheckedCart() {
             yield call(updateCartAllChecked);
             const isAnyChecked: boolean = yield select((state: RootState) => state.cart.page.content.every(cart => cart.checked));
             yield put(updateAllCheckedSuccess({checked: isAnyChecked}));
+            yield put(updateOrderItemsAction());
         } catch (e) {
             notification.open({
                 message: "Error",
@@ -585,6 +590,7 @@ function* handleDeleteCart() {
         try {
             yield call(deleteCart, payload);
             yield put(deleteCartSuccess(payload));
+            yield put(updateOrderItemsAction());
         } catch (e) {
             notification.open({
                 message: "Error",
@@ -602,6 +608,7 @@ function* handleDeleteAllCart() {
         try {
             yield call(deleteAllCart);
             yield put(deleteAllCartSuccess());
+            yield put(updateOrderItemsAction());
         } catch (e) {
             notification.open({
                 message: "Error",

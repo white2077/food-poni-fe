@@ -27,34 +27,32 @@ export default function OrderWrapper() {
     }
 
     return (
-        <div>
-            <Card title={<Title level={3}>Danh sách đơn hàng</Title>}>
-                <List
-                    grid={{ gutter: 16, column: 2, xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 }}
-                    dataSource={page.content}
-                    renderItem={(order: Order, index: number) => (
-                        <List.Item>
-                            <OrderCard
-                                order={order}
-                                index={(currentPage - 1) * PAGE_SIZE + index + 1}
-                            />
-                        </List.Item>
-                    )}
-                    pagination={{
-                        total: page.totalElements,
-                        pageSize: PAGE_SIZE,
-                        current: currentPage,
-                        onChange: (page: number, pageSize?: number) => {
-                            setCurrentPage(page);
-                            dispatch(fetchOrdersRequest({ page: page - 1, sort: 'createdDate,desc', pageSize: pageSize || PAGE_SIZE }));
-                        },
-                        showSizeChanger: false,
-                        showQuickJumper: true,
-                        showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} đơn hàng`,
-                        style: { display: 'flex', justifyContent: 'center' }
-                    }}
-                />
-            </Card>
-        </div>
+        <Card title={<Title level={3}>Danh sách đơn hàng</Title>}>
+            <List
+                grid={{ gutter: 16, column: 2, xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 }}
+                dataSource={page.content}
+                renderItem={(order: Order, index: number) => (
+                    <List.Item>
+                        <OrderCard
+                            order={order}
+                            index={(currentPage - 1) * PAGE_SIZE + index + 1}
+                        />
+                    </List.Item>
+                )}
+                pagination={{
+                    total: page.totalElements,
+                    pageSize: PAGE_SIZE,
+                    current: currentPage,
+                    onChange: (page: number, pageSize?: number) => {
+                        setCurrentPage(page);
+                        dispatch(fetchOrdersRequest({ page: page - 1, sort: 'createdDate,desc', pageSize: pageSize || PAGE_SIZE }));
+                    },
+                    showSizeChanger: false,
+                    showQuickJumper: true,
+                    showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} đơn hàng`,
+                    style: { display: 'flex', justifyContent: 'center' }
+                }}
+            />
+        </Card>
     );
 }

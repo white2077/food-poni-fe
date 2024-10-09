@@ -1,51 +1,79 @@
-import {createSlice} from "@reduxjs/toolkit";
-import {RateAPIResponse} from "../models/rate/RateAPIResponse";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { call, put, take, fork } from "redux-saga/effects"; // Added 'take' and 'fork' imports
+import { notification } from "antd";
+import { Rate, Page } from "@/type/types";
+import { getRatesByProductId } from "@/utils/api/rate";
+import { QueryParams } from "@/utils/api/common";
 
-export interface IRateState {
-    rates: RateAPIResponse;
-    showModalAddRate: boolean,
-    selectOrderItemRate: string,
-    showModalFileUpload: boolean,
-    showModalRate: boolean,
+export interface RateState {
+    readonly page: Page<Rate[]>;
+    readonly isFetchLoading: boolean;
 }
 
-const initialState: IRateState = {
-    rates: {} as RateAPIResponse,
-    showModalAddRate: false,
-    selectOrderItemRate: "",
-    showModalFileUpload: false,
-    showModalRate: false,
-}
+const initialState: RateState = {
+    page: {
+        content: [],
+        totalElements: 0,
+        totalPages: 0,
+        size: 0,
+        number: 0,
+        first: true,
+        last: true,
+        numberOfElements: 0,
+        empty: true,
+    },
+    isFetchLoading: false,
+};
 
 const SLICE_NAME = 'rate';
 
-const rateSlide = createSlice({
+const rateSlice = createSlice({
     name: SLICE_NAME,
     initialState,
     reducers: {
-        setRate: (state, {payload}: { payload: RateAPIResponse }) => ({
+        fetchRatesByProductRequest: (state, action: PayloadAction<{ productId: string; queryParams: QueryParams }>) => ({
             ...state,
-            rates: payload
+            isFetchLoading: true,
         }),
-        setShowModalAddRate: (state, {payload}: { payload: boolean }) => ({
+        fetchRatesByProductSuccess: (state, action: PayloadAction<Page<Rate[]>>) => ({
             ...state,
-            showModalAddRate: payload
+            page: action.payload,
+            isFetchLoading: false,
         }),
-        setShowModalFileUpload: (state, {payload}: { payload: boolean }) => ({
+        fetchRatesByProductFailure: (state) => ({
             ...state,
-            showModalFileUpload: payload
+            isFetchLoading: false,
         }),
-        setSelectedOrderItemRate: (state, {payload}: { payload: string }) => ({
-            ...state,
-            selectOrderItemRate: payload
-        }),
-        setShowModalRate: (state, {payload}: { payload: boolean }) => ({
-            ...state,
-            showModalRate: payload
-        })
-    }
+    },
 });
-export const {setRate, setShowModalAddRate
-    , setShowModalFileUpload, setSelectedOrderItemRate
-    , setShowModalRate  } = rateSlide.actions;
-export default rateSlide.reducer;
+
+export const {
+    fetchRatesByProductRequest,
+    fetchRatesByProductSuccess,
+    fetchRatesByProductFailure,
+} = rateSlice.actions;
+
+export default rateSlice.reducer;
+
+function* handleFetchRatesByProduct() {
+    while (true) {
+        const action: ReturnType<typeof fetchRatesByProductRequest> = yield take(fetchRatesByProductRequest.type);
+        try {
+            const { productId, queryParams } = action.payload;
+            const page: Page<Rate[]> = yield call(getRatesByProductId, productId, queryParams);
+            yield put(fetchRatesByProductSuccess(page));
+        } catch (e) {
+            notification.open({
+                message: "Error",
+                description: e.message,
+                type: "error",
+            });
+
+            yield put(fetchRatesByProductFailure());
+        }
+    }
+}
+
+export const rateSagas = [
+    fork(handleFetchRatesByProduct)
+];

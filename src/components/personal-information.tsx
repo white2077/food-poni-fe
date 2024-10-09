@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { Button, Dropdown, Image, Input, MenuProps, Modal, Radio, Space } from "antd";
+import {Button, Dropdown, Image, Input, MenuProps, Modal, Radio, Space} from "antd";
 import {
     DeleteOutlined,
     ExclamationCircleFilled,
@@ -9,17 +8,15 @@ import {
     PictureOutlined,
     SafetyCertificateOutlined
 } from "@ant-design/icons";
-import { CurrentUser } from "../stores/user.reducer";
-import { useSelector } from "react-redux";
-import { RootState } from "../stores";
-import { server } from "../utils/server";
-import { api } from "../utils/axiosConfig.ts";
-import { UserAPIResponse } from "../models/user/UserAPIResponse";
+import {useSelector} from "react-redux";
+import {server} from "../utils/server";
+import {api} from "../utils/axiosConfig.ts";
 import SelectedItemLabel from "./select-label";
-import ChangePassword from "./change-password";
-import Loading from "./productLoading.tsx";
 import ComboboxDate from "./combobox-date";
-import ChangeAvatar from "./change-avatar";
+import {CurrentUser} from "@/redux/modules/user.ts";
+import {RootState} from "@/redux/store.ts";
+import {useEffect, useState} from "react";
+import {ProductLoading} from "@/components/atoms/productLoading.tsx";
 
 const { confirm } = Modal;
 
@@ -33,7 +30,14 @@ export const PersonalInformation = () => {
 
     const [open, setOpen] = useState(false);
 
-    const [user, setUser] = useState<UserAPIResponse>({} as UserAPIResponse);
+    const [user, setUser] = useState({
+        id: "",
+        name: "",
+        email: "",
+        phone: "",
+        address:"",
+        avatar: "",
+    });
 
     const [isLoading, setLoading] = useState<boolean>(false);
 
@@ -117,7 +121,7 @@ export const PersonalInformation = () => {
                         </svg>
                         <SelectedItemLabel label={"Đổi mật khẩu"} />
                     </div>
-                    <ChangePassword />
+                    {/*<ChangePassword />*/}
                 </div>
             ) : (
                 <div>
@@ -130,7 +134,7 @@ export const PersonalInformation = () => {
                         height={500}
                         footer={null}
                     >
-                        <ChangeAvatar />
+                        {/*<ChangeAvatar />*/}
                     </Modal>
                     <Modal
                         title="Xem ảnh đại diện"
@@ -146,9 +150,7 @@ export const PersonalInformation = () => {
                     </Modal>
                     <SelectedItemLabel label={"Thông tin cá nhân"} />
                     {isLoading ? (
-                        <Loading loading={isLoading}>
-                            <div>Loading...</div>
-                        </Loading>
+                        <ProductLoading/>
                     ) : (
                         <div className="bg-white p-3 rounded-lg grid lg:grid-cols-5 grid-cols-1 gap-4">
                             <div className="col-span-3">
@@ -166,14 +168,14 @@ export const PersonalInformation = () => {
                                                 width={110}
                                                 height={110}
                                                 className="z-30 object-center rounded-full shadow-lg border-4 border-orange-200 overflow-hidden object-cover "
-                                                src={server + user.avatar}
+                                                src={server + user}
                                             />
                                         </div>
                                     </div>
                                     <div className="col-span-3 w-[100%] flex items-center">
                                         <div className="px-4 sm:grid sm:grid-cols-[1fr,2fr] sm:gap-4 sm:px-0 ">
                                             <dt className="text-[15px] flex items-center font-sans">Họ & Tên</dt>
-                                            <Input value={user.username}></Input>
+                                            <Input value={user.name}></Input>
                                         </div>
                                     </div>
                                 </div>
@@ -195,10 +197,10 @@ export const PersonalInformation = () => {
                                         <Radio.Group defaultValue={true}>
                                             <Space direction="vertical">
                                                 <div className="flex gap-2">
-                                                    <Radio value={user.gender === true ? true : false}>
+                                                    <Radio value={true}>
                                                         <p>Nam</p>
                                                     </Radio>
-                                                    <Radio value={user.gender === false ? true : false}>
+                                                    <Radio value={false}>
                                                         <p>Nữ</p>
                                                     </Radio>
                                                 </div>

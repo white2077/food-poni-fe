@@ -21,7 +21,9 @@ const AppRoutes: FC = () => {
                 <Route element={<App/>}>
                     <Route path='*' element={<PublicRoute/>}/>
                     {currentUser && (
-                        <Route path='management/*' element={<PrivateRoutes/>}/>
+                        <>
+                            <Route path='management/*' element={<PrivateRoutes/>}/>
+                        </>
                     )}
                 </Route>
             </Routes>

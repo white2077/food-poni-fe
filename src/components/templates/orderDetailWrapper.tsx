@@ -6,7 +6,8 @@ import { RootState } from "@/redux/store";
 import { fetchOrderRequest } from "@/redux/modules/order";
 import { Button, Card, Divider, } from "antd";
 import { OrderHeader } from "../molecules/orderHeaderOrder";
-
+import { createCartRequest } from "@/redux/modules/cart";
+import { useNavigate } from "react-router-dom";
 import HeadTable from "../table-head";
 import { OrderItemList } from "../molecules/orderItemList";
 import { OrderSummary } from "../atoms/orderSummaryProps";
@@ -17,14 +18,27 @@ import { OrderInfoCard } from "../molecules/orderInfoCard";
 export default function OrderDetail() {
     const { orderId } = useParams<{ orderId: string }>();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const { selectedOrder: order, isLoadingSelectedOrder } = useSelector((state: RootState) => state.order);
-
+    const cartItems = useSelector((state: RootState) => state.cart.page.content);
     useEffect(() => {
         if (orderId) {
             dispatch(fetchOrderRequest(orderId));
         }
     }, [orderId, dispatch]);
+
+    const handleBuyAgain = (item: any) => {
+        dispatch(createCartRequest({
+            quantity: item.quantity,
+            productDetail: item.productDetail.id,
+            productName: item.productDetail.product.name,
+            productDetailName: item.productDetail.name,
+            price: item.price,
+            thumbnail: item.productDetail.product.thumbnail
+        }));
+        navigate("/checkout");
+    };
 
     if (isLoadingSelectedOrder) {
         return <ProductLoading />;
@@ -48,6 +62,8 @@ export default function OrderDetail() {
                         username={order.user.username}
                         createdDate={order.createdDate}
                         status={order.status}
+                        onBuyAgain={handleBuyAgain}
+                        cartItems={cartItems}
                     />
                     <Divider />
                     <OrderSummary totalAmount={order.totalAmount} shippingFee={order.shippingFee} />

@@ -24,7 +24,7 @@ export default function ProductCategory() {
 
     return (
         <div className="bg-white rounded-lg">
-            <div className="p-4">Danh mục</div>
+            <div className="px-4 pt-4 pb-2">Danh mục</div>
             {isFetchLoading ? (<Skeleton className="px-4 py-2"/>) : (
                 <Menu
                     className="rounded-lg !border-none"

@@ -17,19 +17,7 @@ export function UserDropdown() {
             key: "1",
             label: (
                 <span id="account-information" onClick={(): void => {
-                    // if (currentUser.id) {
-                    //     if (path === "/login") {
-                    //         Cookies.remove(REFRESH_TOKEN);
-                    //         dispatch(clearCurrentUser());
-                    //         setTimeout(() => {
-                    //             window.location.href = path;
-                    //         }, 0);
-                    //     }
-                    //     navigate(path);
-                    // } else {
-                    //     Cookies.remove(REFRESH_TOKEN);
-                    //     navigate("/login");
-                    // }
+                    navigate("/management/thong-tin-tai-khoan");
                 }}
                       className="flex w-full h-full">
                     <span style={{marginRight: "5px"}}>

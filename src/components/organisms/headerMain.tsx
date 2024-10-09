@@ -104,7 +104,7 @@ export default function HeaderMain() {
                 <div className="order-1 md:order-2 mt-4 md:mt-0">
                     <SearchKeyword/>
                 </div>
-                <div className="order-2 hidden md:block">
+                <div className="order-2 hidden md:block text-end">
                     {
                         currentUser ? (
                             <div className="flex items-center justify-end gap-4 order-2 md:order-3">
