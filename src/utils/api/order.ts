@@ -45,11 +45,11 @@ export const createOrder = ({orderItems, shippingAddress, payment}: {
         method: string;
         status: string;
     }
-}): Promise<Order> => {
+}): Promise<string> => {
     return apiWithToken()
         .post("/orders", {orderItems, shippingAddress, payment}, {
             headers: {
                 Authorization: "Bearer " + accessToken
             }
-        });
+        }).then((res: AxiosResponse<string>) => res.data);
 }

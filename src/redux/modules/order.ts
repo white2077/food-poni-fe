@@ -5,7 +5,9 @@ import {Order, Page} from "@/type/types";
 import {createOrder, getOrderById, getOrdersPage} from "@/utils/api/order";
 import {QueryParams} from "@/utils/api/common";
 import {RootState} from "@/redux/store.ts";
-import {createCartFailure, deleteAllCartRequest} from "@/redux/modules/cart.ts";
+import {deleteAllCartRequest} from "@/redux/modules/cart.ts";
+import {NavigateFunction} from "react-router-dom";
+import {loginRequest} from "@/redux/modules/auth.ts";
 
 export type OrderState = {
     readonly page: Page<Order[]>;
@@ -98,7 +100,7 @@ const orderSlice = createSlice({
             ...state,
             isLoadingSelectedOrder: false
         }),
-        createOrderRequest: (state) => ({
+        createOrderRequest: (state, {payload}: { payload: { navigate: NavigateFunction } }) => ({
             ...state,
             isCreateLoading: true
         }),
@@ -216,7 +218,7 @@ function* handleFetchOrder() {
 
 function* handleCreateOrder() {
     while (true) {
-        yield take(createOrderRequest.type);
+        const {payload}: ReturnType<typeof createOrderRequest> = yield take(createOrderRequest.type);
         try {
             const {orderItems, shippingAddress, payment}: {
                 readonly orderItems: {
@@ -237,9 +239,16 @@ function* handleCreateOrder() {
                     readonly status: string;
                 }
             } = yield select((state: RootState) => state.order.form);
-            yield call(createOrder, {orderItems, shippingAddress, payment});
+            const response: string = yield call(createOrder, {orderItems, shippingAddress, payment});
             yield put(createOrderSuccess());
             yield put(deleteAllCartRequest());
+
+            payload.navigate("/don-hang/" + response);
+            notification.open({
+                message: "Đơn hàng",
+                description: "Bạn vừa đặt hàng.",
+                type: "success",
+            });
         } catch (e) {
             notification.open({
                 message: "Error",

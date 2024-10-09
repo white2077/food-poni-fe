@@ -1,12 +1,11 @@
 import {Button, Input} from 'antd';
 import {MinusOutlined, PlusOutlined} from '@ant-design/icons';
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {
     updateDecreaseQuantityRequest,
     updateIncreaseQuantityRequest,
     updateQuantityRequest
 } from "@/redux/modules/cart.ts";
-import {RootState} from "@/redux/store.ts";
 
 type Props = {
     readonly item: {
@@ -25,6 +24,7 @@ type Props = {
 }
 
 export function QuantityInput({item}: Props) {
+
     const dispatch = useDispatch();
 
     return (
@@ -53,4 +53,5 @@ export function QuantityInput({item}: Props) {
                     onClick={() => dispatch(updateIncreaseQuantityRequest({pdid: item.productDetail.id}))}/>
         </div>
     );
+
 }
