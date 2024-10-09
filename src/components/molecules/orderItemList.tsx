@@ -29,6 +29,7 @@ export const OrderItemList: React.FC<OrderItemListProps> = ({ orderItems, userna
                                     <div className="col-span-5">
                                         <div className="font-sans text-[17px] text-gray-600">
                                             <div className="flex gap-2">
+<<<<<<< HEAD
                                                 <div className="flex items-center">
                                                     <Image
                                                         preview={false}
@@ -87,6 +88,39 @@ export const OrderItemList: React.FC<OrderItemListProps> = ({ orderItems, userna
                                                         </Button>
                                                     </div>
                                                 </div>
+=======
+                                                <Button
+                                                    style={{
+                                                        border: '1px solid rgb(243, 111, 36)',
+                                                        color: 'rgb(243, 111, 36)',
+                                                        pointerEvents: status === "COMPLETED" ? 'auto' : 'none',
+                                                        opacity: status === "COMPLETED" ? 1 : 0.3
+                                                    }}
+                                                    onClick={() => {
+                                                        if (Object.keys(item.rate).length === 0) {
+                                                            // Handle rating logic here
+                                                        }
+                                                    }}
+                                                >
+                                                    Đánh giá
+                                                </Button>
+                                                <Button
+                                                    style={{
+                                                        border: '1px solid rgb(243, 111, 36)',
+                                                        color: 'rgb(243, 111, 36)'
+                                                    }}
+                                                >
+                                                    Xem đánh giá
+                                                </Button>
+                                                <Button
+                                                    style={{
+                                                        border: '1px solid rgb(243, 111, 36)',
+                                                        color: 'rgb(243, 111, 36)'
+                                                    }}
+                                                >
+                                                    Mua lại
+                                                </Button>
+>>>>>>> f65ae546933e3c84c444e6b33ca0dfc52b09167a
                                             </div>
                                         </div>
                                     </div>
