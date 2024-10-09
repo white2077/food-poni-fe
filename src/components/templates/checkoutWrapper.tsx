@@ -19,8 +19,6 @@ export default function CheckoutWrapper() {
 
     const carts = useSelector((state: RootState) => state.cart.page);
 
-    const currentUser = useSelector((state: RootState) => state.user.currentUser);
-
     const {isCreateLoading} = useSelector((state: RootState) => state.order);
 
     const totalAmount = (): number => {
