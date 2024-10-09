@@ -1,4 +1,4 @@
-import {Button, Card, Col, Divider, Form, Input, Radio, RadioChangeEvent, Row, Space} from "antd";
+import {Button, Card, Col, Divider, Form, Input, Row} from "antd";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {RootState} from "@/redux/store.ts";
@@ -6,7 +6,8 @@ import {useEffect} from "react";
 import OrderItems from "@/components/organisms/orderItems.tsx";
 import {fetchCartRequest} from "@/redux/modules/cart.ts";
 import ShippingAddress from "@/components/organisms/shippingAddress.tsx";
-import {createOrderRequest, updatePaymentSuccess} from "@/redux/modules/order.ts";
+import {createOrderRequest} from "@/redux/modules/order.ts";
+import PaymentInfo from "@/components/organisms/paymentInfo.tsx";
 
 const {TextArea} = Input;
 
@@ -20,7 +21,7 @@ export default function CheckoutWrapper() {
 
     const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
-    const {form, isCreateLoading} = useSelector((state: RootState) => state.order);
+    const {isCreateLoading} = useSelector((state: RootState) => state.order);
 
     const totalAmount = (): number => {
         return carts.content
@@ -43,33 +44,7 @@ export default function CheckoutWrapper() {
                 </Col>
                 <Col flex='400px'>
                     <ShippingAddress/>
-                    <Card style={{marginBottom: "16px"}}>
-                        <div>
-                            Thông tin thanh toán
-                        </div>
-                        <Radio.Group
-                            onChange={(e: RadioChangeEvent): void => {
-                                dispatch(updatePaymentSuccess(e.target.value));
-                            }}
-                            defaultValue={form.payment.method}>
-                            <Space direction="vertical">
-                                <Radio value="CASH">
-                                    <div className="flex items-center"><img src="/tien-mat.png"
-                                                                            className="w-9 h-9 mr-2"/><p>Thanh toán
-                                        tiền mặt</p></div>
-                                </Radio>
-                                <Radio value="VNPAY">
-                                    <div className="flex items-center"><img src="/VNP.png"
-                                                                            className="w-9 h-9 mr-2"/>
-                                        <div>
-                                            <p>VNPAY</p>
-                                            <div className="text-gray-400">Quét Mã QR từ ứng dụng ngân hàng</div>
-                                        </div>
-                                    </div>
-                                </Radio>
-                            </Space>
-                        </Radio.Group>
-                    </Card>
+                    <PaymentInfo/>
                     <Card style={{marginBottom: "16px"}}>
                         <div className="flex justify-between">
                             <div className="text-gray-500">Tạm tính</div>
