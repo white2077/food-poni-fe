@@ -590,6 +590,10 @@ function* handleDeleteCart() {
         try {
             yield call(deleteCart, payload);
             yield put(deleteCartSuccess(payload));
+
+            const isAnyChecked: boolean = yield select((state: RootState) => state.cart.page.content.every(cart => cart.checked));
+            yield put(updateAllCheckedSuccess({checked: !isAnyChecked}));
+
             yield put(updateOrderItemsAction());
         } catch (e) {
             notification.open({
