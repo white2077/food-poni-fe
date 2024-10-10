@@ -1,5 +1,4 @@
-import {combineReducers} from "@reduxjs/toolkit";
-import userReducer from "@/redux/modules/user.ts";
+import { combineReducers } from "@reduxjs/toolkit";
 import cartReducer from "@/redux/modules/cart.ts";
 import productReducer from "@/redux/modules/product.ts";
 import productCategoryReducer from "@/redux/modules/productCategory.ts";
@@ -13,16 +12,15 @@ import authReducer from "@/redux/modules/auth.ts";
 import addressReducer from "@/redux/modules/address.ts";
 
 export const rootReducer = combineReducers({
-    address: addressReducer,
-    auth: authReducer,
-    cart: cartReducer,
-    fileUpload: fileUploadsReducer,
-    order: orderReducer,
-    mainMenu: mainMenuReducer,
-    notification: notificationReducer,
-    product: productReducer,
-    productCategory: productCategoryReducer,
-    rate: rateReducer,
-    searchPosition: searchPositionReducer,
-    user: userReducer,
+  address: addressReducer,
+  auth: authReducer,
+  cart: cartReducer,
+  fileUpload: fileUploadsReducer,
+  order: orderReducer,
+  mainMenu: mainMenuReducer,
+  notification: notificationReducer,
+  product: productReducer,
+  productCategory: productCategoryReducer,
+  rate: rateReducer,
+  searchPosition: searchPositionReducer,
 });

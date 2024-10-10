@@ -1,14 +1,12 @@
-import type {NextPage} from 'next'
+import type { NextPage } from "next";
 
 const About: NextPage = () => {
-
-    return (
-        <div>
-            About
-            {/*<a href="/">Home</a>*/}
-        </div>
-    );
-
+  return (
+    <div>
+      About
+      {/*<a href="/">Home</a>*/}
+    </div>
+  );
 };
 
 export default About;

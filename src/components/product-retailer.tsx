@@ -1,15 +1,13 @@
-import {Card} from "antd";
+import { Card } from "antd";
 import React from "react";
-import {IRetailer} from "../pages/san-pham/[pid]";
+import { IRetailer } from "../pages/san-pham/[pid]";
 
-const ProductRetailer = ({retailer}: { retailer: IRetailer }) => {
-
-    return (
-        <Card>
-            <div>Product retailer</div>
-        </Card>
-    );
-
+const ProductRetailer = ({ retailer }: { retailer: IRetailer }) => {
+  return (
+    <Card>
+      <div>Product retailer</div>
+    </Card>
+  );
 };
 
 export default ProductRetailer;

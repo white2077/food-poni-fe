@@ -1,79 +1,76 @@
 import { useEffect } from "react";
-import { ProductLoading } from "../atoms/productLoading";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { fetchOrderRequest } from "@/redux/modules/order";
-import { Button, Card, Divider, } from "antd";
+import { fetchOrderAction } from "@/redux/modules/order";
+import { Button, Card, Divider, List } from "antd";
 import { OrderHeader } from "../molecules/orderHeaderOrder";
-import { createCartRequest } from "@/redux/modules/cart";
-import { useNavigate } from "react-router-dom";
 import HeadTable from "../table-head";
-import { OrderItemList } from "../molecules/orderItemList";
 import { OrderSummary } from "../atoms/orderSummaryProps";
 import { LeftOutlined } from "@ant-design/icons";
 import { OrderInfoCard } from "../molecules/orderInfoCard";
-
+import { OrderItemPricing } from "../molecules/orderItemPricing";
+import { OrderItemDetail } from "../organisms/orderItemDetail";
 
 export default function OrderDetail() {
-    const { orderId } = useParams<{ orderId: string }>();
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+  const { orderId } = useParams<{ orderId: string }>();
+  const dispatch = useDispatch();
+  const { selectedOrder } = useSelector((state: RootState) => state.order);
 
-    const { selectedOrder: order, isLoadingSelectedOrder } = useSelector((state: RootState) => state.order);
-    const cartItems = useSelector((state: RootState) => state.cart.page.content);
-    useEffect(() => {
-        if (orderId) {
-            dispatch(fetchOrderRequest(orderId));
-        }
-    }, [orderId, dispatch]);
-
-    const handleBuyAgain = (item: any) => {
-        dispatch(createCartRequest({
-            quantity: item.quantity,
-            productDetail: item.productDetail.id,
-            productName: item.productDetail.product.name,
-            productDetailName: item.productDetail.name,
-            price: item.price,
-            thumbnail: item.productDetail.product.thumbnail
-        }));
-        navigate("/checkout");
-    };
-
-    if (isLoadingSelectedOrder) {
-        return <ProductLoading />;
+  useEffect(() => {
+    if (orderId) {
+      dispatch(fetchOrderAction({ orderId }));
     }
+  }, [orderId, dispatch]);
 
-    if (!order) {
-        return <div>Không tìm thấy đơn hàng hoặc có lỗi xảy ra. Vui lòng thử lại sau.</div>;
-    }
+  if (!selectedOrder) {
+    return null;
+  }
 
-    return (
-        <div className='container mx-auto px-4 py-8'>
-            <Card className="shadow-lg">
-                <OrderHeader orderId={order.id} status={order.status} />
-                <Divider />
-                <OrderInfoCard />
-                <div className="border rounded-lg p-4 mt-6">
-                    <HeadTable />
-                    <Divider />
-                    <OrderItemList
-                        orderItems={order.orderItems}
-                        username={order.user.username}
-                        createdDate={order.createdDate}
-                        status={order.status}
-                        onBuyAgain={handleBuyAgain}
-                        cartItems={cartItems}
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <Card className="shadow-lg">
+        <OrderHeader orderId={selectedOrder.id} status={selectedOrder.status} />
+        <Divider />
+        <OrderInfoCard />
+        <div className="border rounded-lg p-4 mt-6">
+          <HeadTable />
+          <Divider />
+          <List
+            dataSource={selectedOrder.orderItems}
+            renderItem={(it) => (
+              <List.Item className="flex justify-between items-center">
+                <div className="grid grid-cols-10 px-5 cursor-pointer w-full">
+                  <div className="col-span-5">
+                    <OrderItemDetail
+                      orderItem={it}
+                      orderStatus={selectedOrder.status}
                     />
-                    <Divider />
-                    <OrderSummary totalAmount={order.totalAmount} shippingFee={order.shippingFee} />
+                  </div>
+
+                  <div className="col-span-5">
+                    <OrderItemPricing price={it.price} quantity={it.quantity} />
+                  </div>
                 </div>
-            </Card>
-            <Link to="/don-hang" className="inline-block mt-6">
-                <Button type="link" icon={<LeftOutlined />} className="text-orange-600 hover:text-orange-400">
-                    Quay lại đơn hàng của tôi
-                </Button>
-            </Link>
+              </List.Item>
+            )}
+          />
+          <Divider />
+          <OrderSummary
+            totalAmount={selectedOrder.totalAmount}
+            shippingFee={selectedOrder.shippingFee}
+          />
         </div>
-    );
+      </Card>
+      <Link to="/quan-ly/don-hang" className="inline-block mt-6">
+        <Button
+          type="link"
+          icon={<LeftOutlined />}
+          className="text-orange-600 hover:text-orange-400"
+        >
+          Quay lại đơn hàng của tôi
+        </Button>
+      </Link>
+    </div>
+  );
 }

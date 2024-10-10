@@ -1,79 +1,90 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { call, put, take, fork } from "redux-saga/effects"; // Added 'take' and 'fork' imports
+
+import { call, put, takeLatest, fork } from "redux-saga/effects";
+
 import { notification } from "antd";
 import { Rate, Page } from "@/type/types";
 import { getRatesByProductId } from "@/utils/api/rate";
 import { QueryParams } from "@/utils/api/common";
 
-export interface RateState {
-    readonly page: Page<Rate[]>;
-    readonly isFetchLoading: boolean;
-}
-
-const initialState: RateState = {
-    page: {
-        content: [],
-        totalElements: 0,
-        totalPages: 0,
-        size: 0,
-        number: 0,
-        first: true,
-        last: true,
-        numberOfElements: 0,
-        empty: true,
-    },
-    isFetchLoading: false,
+export type RateState = {
+  readonly page: Page<Rate[]>;
+  readonly isFetchLoading: boolean;
 };
 
-const SLICE_NAME = 'rate';
+const initialState: RateState = {
+  page: {
+    content: [],
+    totalElements: 0,
+    totalPages: 0,
+    size: 0,
+    number: 0,
+    first: true,
+    last: true,
+    numberOfElements: 0,
+    empty: true,
+  },
+  isFetchLoading: false,
+};
 
 const rateSlice = createSlice({
-    name: SLICE_NAME,
-    initialState,
-    reducers: {
-        fetchRatesByProductRequest: (state, action: PayloadAction<{ productId: string; queryParams: QueryParams }>) => ({
-            ...state,
-            isFetchLoading: true,
-        }),
-        fetchRatesByProductSuccess: (state, action: PayloadAction<Page<Rate[]>>) => ({
-            ...state,
-            page: action.payload,
-            isFetchLoading: false,
-        }),
-        fetchRatesByProductFailure: (state) => ({
-            ...state,
-            isFetchLoading: false,
-        }),
-    },
+  name: "rate",
+  initialState,
+  reducers: {
+    fetchRatesByProductRequest: (
+      state,
+      action: PayloadAction<{ productId: string; queryParams: QueryParams }>,
+    ) => ({
+      ...state,
+      isFetchLoading: true,
+    }),
+    fetchRatesByProductSuccess: (
+      state,
+      action: PayloadAction<Page<Rate[]>>,
+    ) => ({
+      ...state,
+      page: action.payload,
+      isFetchLoading: false,
+    }),
+    fetchRatesByProductFailure: (state) => ({
+      ...state,
+      isFetchLoading: false,
+    }),
+  },
 });
 
 export const {
-    fetchRatesByProductRequest,
-    fetchRatesByProductSuccess,
-    fetchRatesByProductFailure,
+  fetchRatesByProductRequest,
+  fetchRatesByProductSuccess,
+  fetchRatesByProductFailure,
 } = rateSlice.actions;
 
 export default rateSlice.reducer;
 
-function* handleFetchRatesByProduct() {
-    while (true) {
-        const action: ReturnType<typeof fetchRatesByProductRequest> = yield take(fetchRatesByProductRequest.type);
-        try {
-            const { productId, queryParams } = action.payload;
-            const page: Page<Rate[]> = yield call(getRatesByProductId, productId, queryParams);
-            yield put(fetchRatesByProductSuccess(page));
-        } catch (e) {
-            notification.open({
-                message: "Error",
-                description: e.message,
-                type: "error",
-            });
+function* handleFetchRatesByProduct(
+  action: ReturnType<typeof fetchRatesByProductRequest>,
+) {
+  try {
+    const { productId, queryParams } = action.payload;
+    const page: Page<Rate[]> = yield call(
+      getRatesByProductId,
+      productId,
+      queryParams,
+    );
+    yield put(fetchRatesByProductSuccess(page));
+  } catch (e) {
+    notification.open({
+      message: "Error",
+      description: e.message,
+      type: "error",
+    });
 
-            yield put(fetchRatesByProductFailure());
-        }
-    }
+    yield put(fetchRatesByProductFailure());
+  }
 }
 
-export const rateSagas = [
-    fork(handleFetchRatesByProduct)
-];
+function* watchFetchRatesByProduct() {
+  yield takeLatest(fetchRatesByProductRequest.type, handleFetchRatesByProduct);
+}
+
+export const rateSagas = [fork(watchFetchRatesByProduct)];

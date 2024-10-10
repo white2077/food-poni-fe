@@ -1,74 +1,78 @@
-import {createSlice} from "@reduxjs/toolkit";
-import {Page, ProductCategory} from "@/type/types.ts";
-import {call, fork, put, take} from "redux-saga/effects";
-import {notification} from "antd";
-import {getProductCategoriesPage} from "@/utils/api/productCategory.ts";
+import { createSlice } from "@reduxjs/toolkit";
+import { Page, ProductCategory } from "@/type/types.ts";
+import { call, fork, put, take } from "redux-saga/effects";
+import { notification } from "antd";
+import { getProductCategoriesPage } from "@/utils/api/productCategory.ts";
 
 export type ProductCategoryState = {
-    readonly page: Page<ProductCategory[]>,
-    readonly isFetchLoading: boolean,
-}
+  readonly page: Page<ProductCategory[]>;
+  readonly isFetchLoading: boolean;
+};
 
 const initialState: ProductCategoryState = {
-    page: {
-        content: [],
-        totalElements: 0,
-        totalPages: 0,
-        size: 0,
-        number: 0,
-        first: true,
-        last: true,
-        numberOfElements: 0,
-        empty: true,
-    },
-    isFetchLoading: false,
-}
+  page: {
+    content: [],
+    totalElements: 0,
+    totalPages: 0,
+    size: 0,
+    number: 0,
+    first: true,
+    last: true,
+    numberOfElements: 0,
+    empty: true,
+  },
+  isFetchLoading: false,
+};
 
-const SLICE_NAME = 'productCategory';
+const SLICE_NAME = "productCategory";
 
 const productCategorySlide = createSlice({
-    name: SLICE_NAME,
-    initialState,
-    reducers: {
-        fetchProductCategoriesRequest: (state) => ({
-            ...state,
-            isFetchLoading: true
-        }),
-        fetchProductCategoriesSuccess: (state, {payload}: { payload: Page<ProductCategory[]> }) => {
-            state.page = payload;
-            state.isFetchLoading = false;
-        },
-        fetchProductCategoriesFailure: (state) => ({
-            ...state,
-            isFetchLoading: false
-        }),
-    }
+  name: SLICE_NAME,
+  initialState,
+  reducers: {
+    fetchProductCategoriesRequest: (state) => ({
+      ...state,
+      isFetchLoading: true,
+    }),
+    fetchProductCategoriesSuccess: (
+      state,
+      { payload }: { payload: Page<ProductCategory[]> },
+    ) => {
+      state.page = payload;
+      state.isFetchLoading = false;
+    },
+    fetchProductCategoriesFailure: (state) => ({
+      ...state,
+      isFetchLoading: false,
+    }),
+  },
 });
 export default productCategorySlide.reducer;
 
 export const {
-    fetchProductCategoriesRequest,
-    fetchProductCategoriesSuccess,
-    fetchProductCategoriesFailure,
+  fetchProductCategoriesRequest,
+  fetchProductCategoriesSuccess,
+  fetchProductCategoriesFailure,
 } = productCategorySlide.actions;
 
 function* handleFetchProductCategories() {
-    while (true) {
-       yield take(fetchProductCategoriesRequest.type);
-        try {
-            const page: Page<ProductCategory[]> = yield call(getProductCategoriesPage, {});
-            yield put(fetchProductCategoriesSuccess(page));
-        } catch (e) {
-            notification.open({
-                message: "Error",
-                description: e.message,
-                type: "error",
-            });
+  while (true) {
+    yield take(fetchProductCategoriesRequest.type);
+    try {
+      const page: Page<ProductCategory[]> = yield call(
+        getProductCategoriesPage,
+        {},
+      );
+      yield put(fetchProductCategoriesSuccess(page));
+    } catch (e) {
+      notification.open({
+        message: "Error",
+        description: e.message,
+        type: "error",
+      });
 
-            yield put(fetchProductCategoriesFailure());
-        }
+      yield put(fetchProductCategoriesFailure());
     }
+  }
 }
-export const productCategorySagas = [
-    fork(handleFetchProductCategories),
-];
+export const productCategorySagas = [fork(handleFetchProductCategories)];

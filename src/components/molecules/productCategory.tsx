@@ -1,48 +1,58 @@
-import {Menu, Skeleton} from 'antd';
-import {useNavigate} from "react-router-dom";
-import {RootState} from "@/redux/store.ts";
-import {useDispatch, useSelector} from "react-redux";
-import {server} from "@/utils/server.ts";
-import {useEffect} from "react";
-import {fetchProductCategoriesRequest} from "@/redux/modules/productCategory.ts";
+import { Menu, Skeleton } from "antd";
+import { useNavigate } from "react-router-dom";
+import { RootState } from "@/redux/store.ts";
+import { useDispatch, useSelector } from "react-redux";
+import { server } from "@/utils/server.ts";
+import { useEffect } from "react";
+import { fetchProductCategoriesRequest } from "@/redux/modules/productCategory.ts";
 
 export default function ProductCategory() {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-    const dispatch = useDispatch();
+  const { page, isFetchLoading } = useSelector(
+    (state: RootState) => state.productCategory,
+  );
 
-    const {page, isFetchLoading} = useSelector((state: RootState) => state.productCategory);
+  useEffect(() => {
+    dispatch(fetchProductCategoriesRequest());
+  }, [dispatch]);
 
-    useEffect(() => {
-        dispatch(fetchProductCategoriesRequest());
-    }, [dispatch]);
+  // const onClick: MenuProps['onClick'] = (e): void => {
+  //     navigate(`/danh-muc/${e.keyPath}`);
+  // };
 
-    // const onClick: MenuProps['onClick'] = (e): void => {
-    //     navigate(`/danh-muc/${e.keyPath}`);
-    // };
-
-    return (
-        <div className="bg-white rounded-lg">
-            <div className="px-4 pt-4 pb-2">Danh mục</div>
-            {isFetchLoading ? (<Skeleton className="px-4 py-2"/>) : (
-                <Menu
-                    className="rounded-lg !border-none"
-                    defaultSelectedKeys={['all']}
-                    mode='inline'
-                    items={page.content.map((it, index) => {
-                        return {
-                            key: index,
-                            label: <span className="flex items-center" onClick={() => navigate(`/danh-muc/${it.slug}`)}>
-                            <img src={server + it.thumbnail} className="w-4 h-4 mr-2"/>
-                            <span className={`${it.parentProductCategory === null ? "font-bold uppercase" : ""}`}>
-                                {it.name}
-                            </span>
-                        </span>
-                        }
-                    })}
-                />
-            )}
-        </div>
-    );
+  return (
+    <div className="bg-white rounded-lg">
+      <div className="px-4 pt-4 pb-2">Danh mục</div>
+      {isFetchLoading ? (
+        <Skeleton className="px-4 py-2" />
+      ) : (
+        <Menu
+          className="rounded-lg !border-none"
+          defaultSelectedKeys={["all"]}
+          mode="inline"
+          items={page.content.map((it, index) => {
+            return {
+              key: index,
+              label: (
+                <span
+                  className="flex items-center"
+                  onClick={() => navigate(`/danh-muc/${it.slug}`)}
+                >
+                  <img src={server + it.thumbnail} className="w-4 h-4 mr-2" />
+                  <span
+                    className={`${it.parentProductCategory === null ? "font-bold uppercase" : ""}`}
+                  >
+                    {it.name}
+                  </span>
+                </span>
+              ),
+            };
+          })}
+        />
+      )}
+    </div>
+  );
 }

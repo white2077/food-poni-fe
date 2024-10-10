@@ -1,30 +1,30 @@
-import {createSlice} from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 export interface SearchResult {
-    display_name: string | null;
-    lon: number;
-    lat: number;
+  display_name: string | null;
+  lon: number;
+  lat: number;
 }
 
 export interface ISearchPositionState {
-    searchPosition: SearchResult | null;
+  searchPosition: SearchResult | null;
 }
 
 const initialState: ISearchPositionState = {
-    searchPosition: null
-}
+  searchPosition: null,
+};
 
-const SLICE_NAME = 'searchPosition';
+const SLICE_NAME = "searchPosition";
 
 const searchPositionSlide = createSlice({
-    name: SLICE_NAME,
-    initialState,
-    reducers: {
-        setSelectedAddress: (state, {payload}: { payload: SearchResult }) => {
-            state.searchPosition = payload
-        },
-    }
+  name: SLICE_NAME,
+  initialState,
+  reducers: {
+    setSelectedAddress: (state, { payload }: { payload: SearchResult }) => {
+      state.searchPosition = payload;
+    },
+  },
 });
 
-export const {setSelectedAddress} = searchPositionSlide.actions;
+export const { setSelectedAddress } = searchPositionSlide.actions;
 export default searchPositionSlide.reducer;
