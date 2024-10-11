@@ -9,11 +9,13 @@ import { RootState } from "@/redux/store.ts";
 import {
   loginRequest,
   rememberMeRequest,
+  updateCurrentUser,
   updatePassword,
   updateRememberMe,
   updateUsername,
 } from "@/redux/modules/auth.ts";
 import { UserRemember } from "@/type/types.ts";
+import jwtDecode from "jwt-decode";
 
 export type FieldLoginType = {
   username: string;
@@ -44,7 +46,7 @@ export function Login() {
       dispatch(updateRememberMe(userRemember));
     }
     setIsLoading(false);
-  }, []);
+  }, [dispatch]);
 
   function handleGoogleLogin() {
     const h: number = 600;
@@ -68,6 +70,18 @@ export function Login() {
     const getMessage = (event: MessageEvent<string>) => {
       if (server.startsWith(event.origin)) {
         if (event.data) {
+          dispatch(
+            updateCurrentUser(
+              jwtDecode(event.data) as {
+                readonly role: string;
+                readonly id: string;
+                readonly avatar: string;
+                readonly email: string;
+                readonly addressId: string;
+                readonly username: string;
+              },
+            ),
+          );
           Cookies.set("refreshToken", event.data, { expires: 7 });
           navigate("/");
         }

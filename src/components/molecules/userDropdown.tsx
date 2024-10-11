@@ -94,7 +94,11 @@ export function UserDropdown() {
         {currentUser.avatar ? (
           <Avatar
             className="w-8 h-8 rounded-[100%] border-orange-400 border-2 p-0"
-            src={server + currentUser.avatar}
+            src={
+              currentUser.avatar.startsWith("http" || "https")
+                ? currentUser.avatar
+                : server + currentUser.avatar
+            }
           />
         ) : (
           <Avatar icon={<UserOutlined />} />

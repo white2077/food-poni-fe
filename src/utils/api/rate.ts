@@ -1,20 +1,13 @@
 import { AxiosResponse } from "axios";
 import generateQueryString, { QueryParams } from "./common";
-import { accessToken, apiWithToken } from "@/utils/axiosConfig";
+import { api } from "@/utils/axiosConfig";
 import { Page, Rate } from "@/type/types";
 
 export const getRatesByProductId = (
   productId: string,
   queryParams: QueryParams,
 ): Promise<Page<Rate[]>> => {
-  return apiWithToken()
-    .get(
-      generateQueryString(`/product-details/rate/${productId}`, queryParams),
-      {
-        headers: {
-          Authorization: "Bearer " + accessToken,
-        },
-      },
-    )
+  return api
+    .get(generateQueryString(`/product-details/rate/${productId}`, queryParams))
     .then((res: AxiosResponse<Page<Rate[]>>) => res.data);
 };
