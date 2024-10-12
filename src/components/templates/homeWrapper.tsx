@@ -16,7 +16,7 @@ export default function HomeWrapper() {
             "https://ik.imagekit.io/awwybhhmo/satellite_images/chinese/beyondmenu/hero/7.jpg?tr=w-3840,q-50",
           ]}
         />
-        <SearchPosition />
+        {/*<SearchPosition />*/}
       </div>
       <ProductRowsFilter
         action={fetchProductsByCustomerRequest({

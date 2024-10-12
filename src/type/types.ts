@@ -1,11 +1,11 @@
-export interface Address {
+export type Address = {
   readonly id: string;
   readonly fullName: string;
   readonly phoneNumber: string;
   readonly address: string;
   readonly lon: number;
   readonly lat: number;
-}
+};
 
 export type AuthResponse = {
   readonly accessToken: string | null;
@@ -144,7 +144,7 @@ export type ProductDetail = {
   readonly product: Product;
 };
 
-export interface User {
+export type User = {
   readonly id: string;
   readonly avatar: string;
   readonly email: string;
@@ -153,7 +153,7 @@ export interface User {
   readonly username: string;
   readonly role: string;
   readonly status: boolean;
-}
+};
 
 export type UserRemember = {
   readonly username: string;
@@ -161,7 +161,7 @@ export type UserRemember = {
   readonly avatar: string;
 };
 
-export interface Rate {
+export type Rate = {
   readonly rate: number;
   readonly message: string;
   readonly images: string[];
@@ -169,10 +169,16 @@ export interface Rate {
   readonly thumbnail: string;
   readonly username: string;
   readonly avatar: string;
-}
+};
 
-export interface ShippingAddress {
+export type SearchResult = {
+  readonly display_name: string | null;
+  readonly lon: number;
+  readonly lat: number;
+};
+
+export type ShippingAddress = {
   readonly fullName: string;
   readonly phoneNumber: string;
   readonly address: string;
-}
+};

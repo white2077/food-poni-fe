@@ -1,27 +1,43 @@
-import { Button, Card, Collapse, List, Modal, Radio } from "antd";
+import {
+  Badge,
+  Button,
+  Card,
+  Collapse,
+  List,
+  Modal,
+  Popconfirm,
+  Radio,
+} from "antd";
 import { useEffect, useState } from "react";
 import ShippingAddressInfo from "@/components/organisms/shippingAddressInfo.tsx";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store.ts";
-import { fetchAddressesRequest } from "@/redux/modules/address.ts";
+import {
+  deleteAddressAction,
+  fetchAddressesAction, updateShowAddForm,
+} from "@/redux/modules/address.ts";
 import CardHome from "@/components/atoms/cardHome.tsx";
 import { updateShippingAddressAction } from "@/redux/modules/order.ts";
+import { DeleteOutlined } from "@ant-design/icons";
 
 export default function ShippingAddress() {
   const dispatch = useDispatch();
-
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-
-  const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
-
   const { page } = useSelector((state: RootState) => state.address);
-
   const { currentUser } = useSelector((state: RootState) => state.auth);
-
   const { form } = useSelector((state: RootState) => state.order);
+  const { isShowAddForm } = useSelector((state: RootState) => state.address);
 
   useEffect(() => {
-    dispatch(fetchAddressesRequest());
+    dispatch(
+      fetchAddressesAction({
+        queryParams: {
+          page: 0,
+          pageSize: 10,
+          status: true,
+        },
+      }),
+    );
     if (currentUser) {
       dispatch(updateShippingAddressAction(currentUser.addressId));
     }
@@ -50,11 +66,11 @@ export default function ShippingAddress() {
           onCancel={() => setModalOpen(false)}
           footer={null}
         >
-          <Button onClick={() => setShowAddAddress(!showAddAddress)}>
-            {showAddAddress ? "Quay lại" : "Thêm địa chỉ"}
+          <Button onClick={() => dispatch(updateShowAddForm())}>
+            {isShowAddForm ? "Quay lại" : "Thêm địa chỉ"}
           </Button>
-          {showAddAddress && <ShippingAddressInfo />}
-          {!showAddAddress && (
+          {isShowAddForm && <ShippingAddressInfo />}
+          {!isShowAddForm && (
             <Radio.Group
               className="w-full"
               defaultValue={currentUser?.addressId}
@@ -73,15 +89,38 @@ export default function ShippingAddress() {
                       {
                         key: item.id,
                         label: (
-                          <Radio id={`radio-${item.id}`} value={item.id}>
-                            <div>
-                              <span style={{ fontWeight: "bold" }}>
-                                {item.fullName}
-                              </span>{" "}
-                              | {item.phoneNumber}
-                            </div>
-                            <div>{item.address}</div>
-                          </Radio>
+                          <div className="flex justify-between items-center">
+                            <Radio id={`radio-${item.id}`} value={item.id}>
+                              <div>
+                                <span className="font-bold">
+                                  {item.fullName}
+                                </span>{" "}
+                                | {item.phoneNumber}{" "}
+                                {currentUser?.addressId === item.id ? (
+                                  <Badge
+                                    color="blue"
+                                    count={"Địa chỉ mặc định"}
+                                  />
+                                ) : (
+                                  ""
+                                )}
+                              </div>
+                              <div>{item.address}</div>
+                            </Radio>
+                            <Popconfirm
+                              title="Bạn có chắc chắn muốn xóa không?"
+                              onConfirm={() =>
+                                dispatch(deleteAddressAction({ aid: item.id }))
+                              }
+                              okText="Đồng ý"
+                              cancelText="Hủy"
+                              okButtonProps={{ loading: item.isDeleteLoading }}
+                            >
+                              <DeleteOutlined
+                                hidden={currentUser?.addressId === item.id}
+                              />
+                            </Popconfirm>
+                          </div>
                         ),
                         // children: <AddressCheckoutUpdate address={item} />
                       },

@@ -3,10 +3,6 @@ import { AimOutlined } from "@ant-design/icons";
 import { AutoComplete, Button, Space } from "antd";
 import axios, { AxiosResponse } from "axios";
 import { useDispatch } from "react-redux";
-import {
-  SearchResult,
-  setSelectedAddress,
-} from "@/redux/modules/searchPosition.ts";
 
 const SearchPosition = () => {
   const dispatch = useDispatch();
