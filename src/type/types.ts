@@ -82,11 +82,17 @@ export type Notification = {
   readonly id: string;
   readonly toUser: User;
   readonly fromUser: User;
-  readonly type: string;
-  readonly message: string;
   readonly read: boolean;
+  readonly status: boolean;
+  readonly attributes: string;
+  readonly type: "ORDER";
   readonly createdDate: Date;
 };
+
+export type NotificationAttributes = {
+  readonly id: string;
+  readonly orderStatus: string | "REJECTED" | "APPROVED" | "COMPLETED";
+}
 
 export type Page<T> = {
   readonly content: T;

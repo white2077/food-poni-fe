@@ -143,7 +143,7 @@ export default cartSlide.reducer;
 function* handleLogin() {
   while (true) {
     const { payload }: ReturnType<typeof loginRequest> = yield take(
-      loginRequest.type,
+      loginRequest,
     );
     try {
       const { username, password, remember }: FieldLoginType = yield select(

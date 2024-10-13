@@ -3,10 +3,14 @@ import { Alert, AutoComplete, Button, Form, Input } from "antd";
 import {
   createAddressAction,
   startSearchAddressAction,
-  updateFormSuccess,
+  updateAddressAction,
+  updateFormEditingSuccess,
+  updateFormSavedSuccess,
 } from "@/redux/modules/address.ts";
 import { RootState } from "@/redux/store.ts";
-import { SearchResult } from "@/type/types.ts";
+import { Address, SearchResult } from "@/type/types.ts";
+import { useEffect } from "react";
+import {checkDirty} from "@/utils/common.ts";
 
 export type FormRule = {
   fullName: string;
@@ -16,32 +20,101 @@ export type FormRule = {
   lat: number;
 };
 
-export default function ShippingAddressInfo() {
+export default function ShippingAddressInfo({
+  address,
+}: {
+  address?: Address;
+}) {
   const dispatch = useDispatch();
-  const { isCreateLoading, addressesSearched, form } = useSelector(
-    (state: RootState) => state.address,
-  );
+  const { isUpdateLoading, addressesSearched, formEditing, formSaved } =
+    useSelector((state: RootState) => state.address);
+
+  useEffect(() => {
+    if (address) {
+      dispatch(
+        updateFormSavedSuccess({
+          fields: [
+            { field: "fullName", value: address.fullName },
+            { field: "phoneNumber", value: address.phoneNumber },
+            { field: "address", value: address.address },
+            { field: "lon", value: address.lon.toString() },
+            { field: "lat", value: address.lat.toString() },
+          ],
+        }),
+      );
+      dispatch(
+        updateFormEditingSuccess({
+          field: "fullName",
+          value: address.fullName,
+        }),
+      );
+      dispatch(
+        updateFormEditingSuccess({
+          field: "phoneNumber",
+          value: address.phoneNumber,
+        }),
+      );
+      dispatch(
+        updateFormEditingSuccess({ field: "address", value: address.address }),
+      );
+      dispatch(
+        updateFormEditingSuccess({
+          field: "lon",
+          value: address.lon.toString(),
+        }),
+      );
+      dispatch(
+        updateFormEditingSuccess({
+          field: "lat",
+          value: address.lat.toString(),
+        }),
+      );
+    }
+  }, [dispatch]);
+
+  if (address && !formSaved.fields) {
+    return null;
+  }
 
   return (
     <Form
-      name="normal_add_address"
+      name={
+        address && address.id
+          ? `update-address-form-${address.id}`
+          : "add-address-form"
+      }
       className="add-address-form my-[16px]"
-      onFinish={() => dispatch(createAddressAction())}
+      clearOnDestroy={true}
+      initialValues={{
+        fullName: address && address.fullName,
+        phoneNumber: address && address.phoneNumber,
+        address: address && address.address,
+        lon: address && address.lon.toString(),
+        lat: address && address.lat.toString(),
+      }}
+      onFinish={() =>
+        dispatch(
+          address
+            ? updateAddressAction({ id: address.id })
+            : createAddressAction(),
+        )
+      }
     >
-      {form.fields[0].errorMessage && (
+      {/*Full name*/}
+      {formEditing.fields[0].errorMessage && (
         <Alert
           className="py-1"
-          message={form.fields[0].errorMessage}
+          message={formEditing.fields[0].errorMessage}
           type="error"
           showIcon
         />
       )}
-      <Form.Item name="fullname">
+      <Form.Item name="fullName">
         <Input
           placeholder="Họ tên"
           onChange={(e) =>
             dispatch(
-              updateFormSuccess({
+              updateFormEditingSuccess({
                 type: "TYPING",
                 field: "fullName",
                 value: e.target.value,
@@ -50,10 +123,11 @@ export default function ShippingAddressInfo() {
           }
         />
       </Form.Item>
-      {form.fields[1].errorMessage && (
+      {/*Phone number*/}
+      {formEditing.fields[1].errorMessage && (
         <Alert
           className="py-1"
-          message={form.fields[1].errorMessage}
+          message={formEditing.fields[1].errorMessage}
           type="error"
           showIcon
         />
@@ -63,7 +137,7 @@ export default function ShippingAddressInfo() {
           placeholder="Số điện thoại"
           onChange={(e) =>
             dispatch(
-              updateFormSuccess({
+              updateFormEditingSuccess({
                 type: "TYPING",
                 field: "phoneNumber",
                 value: e.target.value,
@@ -72,18 +146,19 @@ export default function ShippingAddressInfo() {
           }
         />
       </Form.Item>
-      {form.fields[2].errorMessage && (
+      {/*Address*/}
+      {formEditing.fields[2].errorMessage && (
         <Alert
           className="py-1"
-          message={form.fields[2].errorMessage}
+          message={formEditing.fields[2].errorMessage}
           type="error"
           showIcon
         />
       )}
-      {form.fields[3].errorMessage && (
+      {formEditing.fields[3].errorMessage && (
         <Alert
           className="py-1"
-          message={form.fields[3].errorMessage}
+          message={formEditing.fields[3].errorMessage}
           type="error"
           showIcon
         />
@@ -101,21 +176,21 @@ export default function ShippingAddressInfo() {
           onSelect={(_: string, option: { data: SearchResult }): void => {
             if (option.data.display_name) {
               dispatch(
-                updateFormSuccess({
+                updateFormEditingSuccess({
                   type: "SELECT",
                   field: "address",
                   value: option.data.display_name,
                 }),
               );
               dispatch(
-                updateFormSuccess({
+                updateFormEditingSuccess({
                   type: "SELECT",
                   field: "lon",
                   value: option.data.lon + "",
                 }),
               );
               dispatch(
-                updateFormSuccess({
+                updateFormEditingSuccess({
                   type: "SELECT",
                   field: "lat",
                   value: option.data.lat + "",
@@ -126,7 +201,7 @@ export default function ShippingAddressInfo() {
           onSearch={(value: string): void => {
             dispatch(startSearchAddressAction({ value }));
             dispatch(
-              updateFormSuccess({
+              updateFormEditingSuccess({
                 type: "TYPING",
                 field: "address",
                 value: value,
@@ -142,11 +217,11 @@ export default function ShippingAddressInfo() {
           type="primary"
           htmlType="submit"
           className="add-address-form-button"
-          loading={isCreateLoading}
-          disabled={form.isDirty}
+          loading={isUpdateLoading}
+          disabled={formEditing.isDirty || checkDirty(formEditing.fields, formSaved.fields)}
           block
         >
-          Thêm địa chỉ
+          Lưu địa chỉ
         </Button>
       </Form.Item>
     </Form>

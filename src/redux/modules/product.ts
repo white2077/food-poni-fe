@@ -115,9 +115,9 @@ function* handleFetchProducts() {
         typeof fetchProductsByProductCategoryRequest
       >;
     } = yield race({
-      fetchProductByCustomer: take(fetchProductsByCustomerRequest.type),
+      fetchProductByCustomer: take(fetchProductsByCustomerRequest),
       fetchProductsByProductCategory: take(
-        fetchProductsByProductCategoryRequest.type,
+        fetchProductsByProductCategoryRequest,
       ),
     });
     try {
@@ -152,7 +152,7 @@ function* handleFetchProducts() {
 function* handleFetchProduct() {
   while (true) {
     const { payload }: ReturnType<typeof fetchProductAction> = yield take(
-      fetchProductAction.type,
+      fetchProductAction,
     );
     try {
       const product: Product = yield call(getProductByIdOrSlug, payload);

@@ -447,7 +447,7 @@ export const {
 function* handleFetchCart() {
   while (true) {
     const { payload }: ReturnType<typeof fetchCartRequest> = yield take(
-      fetchCartRequest.type,
+      fetchCartRequest,
     );
     try {
       const queryParams: QueryParams = {
@@ -489,7 +489,7 @@ function* handleFetchCart() {
 function* handleCreateCart() {
   while (true) {
     const { payload }: ReturnType<typeof createCartRequest> = yield take(
-      createCartRequest.type,
+      createCartRequest,
     );
     try {
       yield call(createCart, {
@@ -554,9 +554,9 @@ function* handleUpdateQuantityCart() {
       updateIncreaseQuantity: ReturnType<typeof updateIncreaseQuantityRequest>;
       updateQuantity: ReturnType<typeof updateQuantityRequest>;
     } = yield race({
-      updateDecreaseQuantity: take(updateDecreaseQuantityRequest.type),
-      updateIncreaseQuantity: take(updateIncreaseQuantityRequest.type),
-      updateQuantity: take(updateQuantityRequest.type),
+      updateDecreaseQuantity: take(updateDecreaseQuantityRequest),
+      updateIncreaseQuantity: take(updateIncreaseQuantityRequest),
+      updateQuantity: take(updateQuantityRequest),
     });
     try {
       if (updateDecreaseQuantity) {
@@ -637,7 +637,7 @@ function* handleUpdateQuantityCart() {
 function* handleUpdateCheckedCart() {
   while (true) {
     const { payload }: ReturnType<typeof updateCheckedRequest> = yield take(
-      updateCheckedRequest.type,
+      updateCheckedRequest,
     );
     try {
       yield call(updateCartChecked, {
@@ -661,7 +661,7 @@ function* handleUpdateCheckedCart() {
 
 function* handleUpdateAllCheckedCart() {
   while (true) {
-    yield take(updateAllCheckedRequest.type);
+    yield take(updateAllCheckedRequest);
     try {
       yield call(updateCartAllChecked);
       const isAnyChecked: boolean = yield select((state: RootState) =>
@@ -683,7 +683,7 @@ function* handleUpdateAllCheckedCart() {
 function* handleDeleteCart() {
   while (true) {
     const { payload }: ReturnType<typeof deleteCartRequest> = yield take(
-      deleteCartRequest.type,
+      deleteCartRequest,
     );
     try {
       yield call(deleteCart, payload);
@@ -708,7 +708,7 @@ function* handleDeleteCart() {
 
 function* handleDeleteAllCart() {
   while (true) {
-    yield take(deleteAllCartRequest.type);
+    yield take(deleteAllCartRequest);
     try {
       yield call(deleteAllCart);
       yield put(deleteAllCartSuccess());

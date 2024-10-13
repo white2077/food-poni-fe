@@ -84,7 +84,7 @@ function* handleFetchRatesByProduct(
 }
 
 function* watchFetchRatesByProduct() {
-  yield takeLatest(fetchRatesByProductRequest.type, handleFetchRatesByProduct);
+  yield takeLatest(fetchRatesByProductRequest, handleFetchRatesByProduct);
 }
 
 export const rateSagas = [fork(watchFetchRatesByProduct)];

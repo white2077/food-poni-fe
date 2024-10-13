@@ -173,7 +173,7 @@
 /*    -webkit-transition: var(--transition);*/
 /*    -o-transition: var(--transition);*/
 /*    transition: var(--transition);*/
-/*    z-index: 2;*/
+/*    z-index.d.ts: 2;*/
 /*}*/
 
 /*.bb8__head-container {*/
@@ -181,7 +181,7 @@
 /*    -webkit-transition: var(--transition);*/
 /*    -o-transition: var(--transition);*/
 /*    transition: var(--transition);*/
-/*    z-index: 2;*/
+/*    z-index.d.ts: 2;*/
 /*    -webkit-transform-origin: 1.25em 3.75em;*/
 /*    -ms-transform-origin: 1.25em 3.75em;*/
 /*    transform-origin: 1.25em 3.75em;*/
@@ -264,7 +264,7 @@
 /*    linear-gradient(var(--bb8-bg) 1.25em, transparent 1.25em);*/
 /*    border-radius: var(--radius) var(--radius) 0 0;*/
 /*    position: relative;*/
-/*    z-index: 1;*/
+/*    z-index.d.ts: 1;*/
 /*    -webkit-filter: drop-shadow(0 0.063em 0.125em gray);*/
 /*    filter: drop-shadow(0 0.063em 0.125em gray);*/
 /*}*/
@@ -285,7 +285,7 @@
 /*    0.563em 0.281em 0 -0.1em var(--bb8-bg), 0.563em 0.281em 0 -0.063em;*/
 /*    box-shadow: 0 0 0 0.089em lightgray, 0.563em 0.281em 0 -0.148em,*/
 /*    0.563em 0.281em 0 -0.1em var(--bb8-bg), 0.563em 0.281em 0 -0.063em;*/
-/*    z-index: 1;*/
+/*    z-index.d.ts: 1;*/
 /*    -webkit-transition: var(--transition);*/
 /*    -o-transition: var(--transition);*/
 /*    transition: var(--transition);*/
@@ -379,7 +379,7 @@
 /*    -webkit-transition: var(--transition);*/
 /*    -o-transition: var(--transition);*/
 /*    transition: var(--transition);*/
-/*    z-index: 1;*/
+/*    z-index.d.ts: 1;*/
 /*    -webkit-transform: rotate(45deg);*/
 /*    -ms-transform: rotate(45deg);*/
 /*    transform: rotate(45deg);*/
@@ -436,7 +436,7 @@
 /*    height: 2.625em;*/
 /*    position: absolute;*/
 /*    border-radius: 50%;*/
-/*    z-index: 0.1;*/
+/*    z-index.d.ts: 0.1;*/
 /*    overflow: hidden;*/
 /*    top: 50%;*/
 /*    left: 50%;*/
@@ -472,7 +472,7 @@
 /*    -webkit-transform: skew(-70deg);*/
 /*    -ms-transform: skew(-70deg);*/
 /*    transform: skew(-70deg);*/
-/*    z-index: 1;*/
+/*    z-index.d.ts: 1;*/
 /*}*/
 
 /*.bb8-toggle__scenery {*/
@@ -491,11 +491,11 @@
 /*    height: 30%;*/
 /*    bottom: 0;*/
 /*    background: #b18d71;*/
-/*    z-index: 1;*/
+/*    z-index.d.ts: 1;*/
 /*}*/
 
 /*.bb8-toggle__cloud {*/
-/*    z-index: 1;*/
+/*    z-index.d.ts: 1;*/
 /*    position: absolute;*/
 /*    border-radius: 50%;*/
 /*}*/

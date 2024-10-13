@@ -1,4 +1,4 @@
-import { formatCurrency } from "@/utils/currencyUtils";
+import { formatCurrency } from "@/utils/common.ts";
 
 type Props = {
   price: number;

@@ -411,7 +411,7 @@ class MenuComponent {
 
     let zindex = this.options.dropdown.zindex;
     const parentZindex = getHighestZindex(item); // update
-    // Apply a new z-index if dropdown's toggle element or it's parent has greater z-index // update
+    // Apply a new z-index.d.ts if dropdown's toggle element or it's parent has greater z-index.d.ts // update
     if (parentZindex !== null && parentZindex >= zindex) {
       zindex = parentZindex + 1;
     }

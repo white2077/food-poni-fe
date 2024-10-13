@@ -1,20 +1,12 @@
-import {
-  Badge,
-  Button,
-  Card,
-  Collapse,
-  List,
-  Modal,
-  Popconfirm,
-  Radio,
-} from "antd";
+import { Badge, Button, Card, Collapse, Modal, Popconfirm, Radio } from "antd";
 import { useEffect, useState } from "react";
 import ShippingAddressInfo from "@/components/organisms/shippingAddressInfo.tsx";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store.ts";
 import {
   deleteAddressAction,
-  fetchAddressesAction, updateShowAddForm,
+  fetchAddressesAction,
+  updateShowAddForm,
 } from "@/redux/modules/address.ts";
 import CardHome from "@/components/atoms/cardHome.tsx";
 import { updateShippingAddressAction } from "@/redux/modules/order.ts";
@@ -78,55 +70,50 @@ export default function ShippingAddress() {
                 dispatch(updateShippingAddressAction(e.target.value))
               }
             >
-              <List
-                dataSource={page.content}
-                renderItem={(item) => (
-                  <Collapse
-                    className="my-[16px]"
-                    expandIconPosition={"end"}
-                    collapsible={"icon"}
-                    items={[
-                      {
-                        key: item.id,
-                        label: (
-                          <div className="flex justify-between items-center">
-                            <Radio id={`radio-${item.id}`} value={item.id}>
-                              <div>
-                                <span className="font-bold">
-                                  {item.fullName}
-                                </span>{" "}
-                                | {item.phoneNumber}{" "}
-                                {currentUser?.addressId === item.id ? (
-                                  <Badge
-                                    color="blue"
-                                    count={"Địa chỉ mặc định"}
-                                  />
-                                ) : (
-                                  ""
-                                )}
-                              </div>
-                              <div>{item.address}</div>
-                            </Radio>
-                            <Popconfirm
-                              title="Bạn có chắc chắn muốn xóa không?"
-                              onConfirm={() =>
-                                dispatch(deleteAddressAction({ aid: item.id }))
-                              }
-                              okText="Đồng ý"
-                              cancelText="Hủy"
-                              okButtonProps={{ loading: item.isDeleteLoading }}
-                            >
-                              <DeleteOutlined
-                                hidden={currentUser?.addressId === item.id}
-                              />
-                            </Popconfirm>
-                          </div>
-                        ),
-                        // children: <AddressCheckoutUpdate address={item} />
-                      },
-                    ]}
-                  />
+              <Collapse
+                className="my-[16px]"
+                accordion
+                expandIconPosition="end"
+                collapsible="icon"
+                expandIcon={() => (
+                  <div className="bg-primary text-white p-0">Sửa</div>
                 )}
+                items={page.content.map((it) => {
+                  return {
+                    key: it.id,
+                    label: (
+                      <div className="flex justify-between items-center">
+                        <Radio id={`radio-${it.id}`} value={it.id}>
+                          <div>
+                            <span className="font-bold">{it.fullName}</span> |{" "}
+                            {it.phoneNumber}{" "}
+                            {currentUser?.addressId === it.id ? (
+                              <Badge color="blue" count={"Địa chỉ mặc định"} />
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                          <div>{it.address}</div>
+                        </Radio>
+                        <Popconfirm
+                          className="absolute right-12 top-4"
+                          title="Bạn có chắc chắn muốn xóa không?"
+                          onConfirm={() =>
+                            dispatch(deleteAddressAction({ aid: it.id }))
+                          }
+                          okText="Đồng ý"
+                          cancelText="Hủy"
+                          okButtonProps={{ loading: it.isDeleteLoading }}
+                        >
+                          <DeleteOutlined
+                            hidden={currentUser?.addressId === it.id}
+                          />
+                        </Popconfirm>
+                      </div>
+                    ),
+                    children: <ShippingAddressInfo address={it} />,
+                  };
+                })}
               />
             </Radio.Group>
           )}

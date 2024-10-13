@@ -242,7 +242,7 @@
 //                                             onChange={(e: RadioChangeEvent) => setShippingAddress(e.target.value)}>
 //                                             <List
 //                                                 dataSource={ePage.content}
-//                                                 renderItem={(item: AddressAPIResponse, index: number) => (
+//                                                 renderItem={(item: AddressAPIResponse, index.d.ts: number) => (
 //                                                     <Collapse
 //                                                         className="my-[16px]"
 //                                                         expandIconPosition={"end"}

@@ -57,7 +57,7 @@ export const {
 
 function* handleFetchProductCategories() {
   while (true) {
-    yield take(fetchProductCategoriesRequest.type);
+    yield take(fetchProductCategoriesRequest);
     try {
       const page: Page<ProductCategory[]> = yield call(
         getProductCategoriesPage,

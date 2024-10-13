@@ -171,6 +171,8 @@ const orderSlice = createSlice({
   },
 });
 
+export default orderSlice.reducer;
+
 export const {
   checkCartItemsSuccess,
   fetchOrdersSuccess,
@@ -185,9 +187,6 @@ export const {
   updatePaymentSuccess,
   updateShippingAddressSuccess,
 } = orderSlice.actions;
-
-export default orderSlice.reducer;
-
 export const updateOrderItemsAction = createAction<void>(
   `${SLICE_NAME}/updateOrderItemsRequest`
 );
@@ -212,7 +211,7 @@ function* handleFetchOrders() {
     const {
       payload: { queryParams },
     }: ReturnType<typeof fetchOrdersAction> = yield take(
-      fetchOrdersAction.type
+      fetchOrdersAction
     );
 
     try {
@@ -235,7 +234,7 @@ function* handleFetchOrder() {
   while (true) {
     const {
       payload: { orderId },
-    }: ReturnType<typeof fetchOrderAction> = yield take(fetchOrderAction.type);
+    }: ReturnType<typeof fetchOrderAction> = yield take(fetchOrderAction);
 
     try {
       const order: Order = yield call(getOrderById, orderId);
@@ -257,7 +256,7 @@ function* handleCreateOrder() {
     const {
       payload: { navigate },
     }: ReturnType<typeof createOrderAction> = yield take(
-      createOrderAction.type
+      createOrderAction
     );
     try {
       yield put(updateCreateLoading());
@@ -312,7 +311,7 @@ function* handleCreateOrder() {
 
 function* handleUpdateOrderItems() {
   while (true) {
-    yield take(updateOrderItemsAction.type);
+    yield take(updateOrderItemsAction);
     const carts: {
       readonly quantity: number;
       readonly productName: string;
@@ -335,7 +334,7 @@ function* handleUpdateOrderItems() {
 function* handleUpdateShippingAddress() {
   while (true) {
     const { payload }: ReturnType<typeof updateShippingAddressAction> =
-      yield take(updateShippingAddressAction.type);
+      yield take(updateShippingAddressAction);
     const addresses: {
       readonly id: string;
       readonly fullName: string;

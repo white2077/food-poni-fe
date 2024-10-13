@@ -1,11 +1,12 @@
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {Page, SearchResult} from "@/type/types.ts";
+import { Page, SearchResult } from "@/type/types.ts";
 import {
   call,
   cancel,
   delay,
   fork,
   put,
+  race,
   select,
   take,
 } from "redux-saga/effects";
@@ -16,6 +17,7 @@ import {
   deleteAddressById,
   getAddressesPage,
   searchAddresses,
+  updateAddress,
 } from "@/utils/api/address.ts";
 import { updateShippingAddressAction } from "@/redux/modules/order.ts";
 import { RootState } from "@/redux/store.ts";
@@ -33,7 +35,13 @@ export type AddressState = {
       readonly isDeleteLoading: boolean;
     }>
   >;
-  readonly form: {
+  readonly formSaved: {
+    readonly fields: Array<{
+      readonly field: string;
+      readonly value: string;
+    }> | null;
+  };
+  readonly formEditing: {
     readonly fields: Array<{
       readonly field: string;
       readonly value: string;
@@ -69,7 +77,10 @@ const initialState: AddressState = {
     numberOfElements: 0,
     empty: true,
   },
-  form: {
+  formSaved: {
+    fields: null,
+  },
+  formEditing: {
     fields: [
       {
         field: "fullName",
@@ -142,7 +153,7 @@ const addressSlide = createSlice({
       ...state,
       isFetchLoading: false,
     }),
-    createAddressSuccess: (
+    updateAddressSuccess: (
       state,
       action: PayloadAction<{
         readonly id: string;
@@ -153,28 +164,57 @@ const addressSlide = createSlice({
         readonly lat: number;
         readonly isDeleteLoading: boolean;
       }>,
-    ) => ({
-      ...state,
-      page: {
-        ...state.page,
-        content: [
-          ...state.page.content,
-          {
-            id: action.payload.id,
-            address: action.payload.address,
-            lat: action.payload.lat,
-            lon: action.payload.lon,
-            fullName: action.payload.fullName,
-            phoneNumber: action.payload.phoneNumber,
-            isDeleteLoading: action.payload.isDeleteLoading,
+    ) => {
+      const address = state.page.content.find(
+        (it) => it.id === action.payload.id,
+      );
+
+      if (address) {
+        return {
+          ...state,
+          page: {
+            ...state.page,
+            content: state.page.content.map((it) => {
+              if (it.id === action.payload.id) {
+                return {
+                  ...it,
+                  ...action.payload,
+                };
+              }
+              return it;
+            }),
           },
-        ],
-      },
-      isCreateLoading: false,
-    }),
+          isUpdateLoading: false,
+        };
+      }
+
+      if (!address) {
+        return {
+          ...state,
+          page: {
+            ...state.page,
+            content: [
+              ...state.page.content,
+              {
+                id: action.payload.id,
+                address: action.payload.address,
+                lat: action.payload.lat,
+                lon: action.payload.lon,
+                fullName: action.payload.fullName,
+                phoneNumber: action.payload.phoneNumber,
+                isDeleteLoading: action.payload.isDeleteLoading,
+              },
+            ],
+          },
+          isUpdateLoading: false,
+        };
+      }
+
+      return state;
+    },
     createAddressFailure: (state) => ({
       ...state,
-      isCreateLoading: false,
+      isUpdateLoading: false,
     }),
     deleteAddressSuccess: (state, action: PayloadAction<{ aid: string }>) => ({
       ...state,
@@ -209,10 +249,22 @@ const addressSlide = createSlice({
         }),
       },
     }),
-    updateFormSuccess: (
+    updateFormSavedSuccess: (
       state,
       action: PayloadAction<{
-        type: "TYPING" | "SELECT";
+        fields: Array<{ field: string; value: string }>;
+      }>,
+    ) => ({
+      ...state,
+      formSaved: {
+        ...state.formSaved,
+        fields: action.payload.fields,
+      },
+    }),
+    updateFormEditingSuccess: (
+      state,
+      action: PayloadAction<{
+        type?: "TYPING" | "SELECT";
         field: string;
         value: string;
       }>,
@@ -237,6 +289,13 @@ const addressSlide = createSlice({
             }
             if (isNaN(parseInt(action.payload.value))) {
               errorMessage = "Số điện thoại phải là số";
+              break;
+            }
+            if (
+              action.payload.value.startsWith("00") ||
+              !action.payload.value.startsWith("0")
+            ) {
+              errorMessage = "Số điện thoại không hợp lệ";
               break;
             }
             if (action.payload.value.length < 10) {
@@ -268,9 +327,9 @@ const addressSlide = createSlice({
       if (errorMessage) {
         return {
           ...state,
-          form: {
-            ...state.form,
-            fields: state.form.fields.map((it) => {
+          formEditing: {
+            ...state.formEditing,
+            fields: state.formEditing.fields.map((it) => {
               if (it.field === action.payload.field) {
                 return {
                   ...it,
@@ -286,9 +345,9 @@ const addressSlide = createSlice({
       } else {
         return {
           ...state,
-          form: {
-            ...state.form,
-            fields: state.form.fields.map((it) => {
+          formEditing: {
+            ...state.formEditing,
+            fields: state.formEditing.fields.map((it) => {
               if (it.field === action.payload.field) {
                 return {
                   ...it,
@@ -298,22 +357,29 @@ const addressSlide = createSlice({
               }
               return it;
             }),
-            isDirty: state.form.fields.some((it) => it.errorMessage !== null),
+            isDirty: !state.formEditing.fields.every(
+              (it) => it.errorMessage === null,
+            ),
           },
         };
       }
       return state;
     },
-    updateAddressesSearchedSuccess: (state, action: PayloadAction<{ addresses: Array<SearchResult> }>) => ({
+    updateAddressesSearchedSuccess: (
+      state,
+      action: PayloadAction<{ addresses: Array<SearchResult> }>,
+    ) => ({
       ...state,
       addressesSearched: action.payload.addresses,
     }),
     clearFormSuccess: (state) => ({
       ...state,
-      form: initialState.form,
+      formEditing: initialState.formEditing,
     }),
     updateShowAddForm: (state) => ({
       ...state,
+      formSaved: initialState.formSaved,
+      formEditing: initialState.formEditing,
       isShowAddForm: !state.isShowAddForm,
     }),
     updateFetchLoading: (state) => ({
@@ -322,7 +388,7 @@ const addressSlide = createSlice({
     }),
     updateCreateLoading: (state) => ({
       ...state,
-      isCreateLoading: true,
+      isUpdateLoading: true,
     }),
   },
 });
@@ -331,11 +397,12 @@ export default addressSlide.reducer;
 export const {
   fetchAddressesSuccess,
   fetchAddressesFailure,
-  createAddressSuccess,
+  updateAddressSuccess,
   createAddressFailure,
   deleteAddressSuccess,
   deleteAddressFailure,
-  updateFormSuccess,
+  updateFormSavedSuccess,
+  updateFormEditingSuccess,
   updateAddressesSearchedSuccess,
   clearFormSuccess,
   updateShowAddForm,
@@ -349,6 +416,9 @@ export const fetchAddressesAction = createAction<{ queryParams: QueryParams }>(
 export const createAddressAction = createAction<void>(
   `${SLICE_NAME}/createAddressRequest`,
 );
+export const updateAddressAction = createAction<{ id: string }>(
+  `${SLICE_NAME}/updateAddressRequest`,
+);
 export const deleteAddressAction = createAction<{
   aid: string;
 }>(`${SLICE_NAME}/deleteAddressRequest`);
@@ -360,9 +430,8 @@ function* handleFetchAddress() {
   while (true) {
     const {
       payload: { queryParams },
-    }: ReturnType<typeof fetchAddressesAction> = yield take(
-      fetchAddressesAction.type,
-    );
+    }: ReturnType<typeof fetchAddressesAction> =
+      yield take(fetchAddressesAction);
     try {
       yield put(updateFetchLoading());
       const page: Page<
@@ -394,34 +463,68 @@ function* handleFetchAddress() {
 
 function* handleCreateAddress() {
   while (true) {
-    yield take(createAddressAction.type);
+    const {
+      startCreateAddress,
+      startUpdateAddress,
+    }: {
+      startCreateAddress: ReturnType<typeof createAddressAction>;
+      startUpdateAddress: ReturnType<typeof updateAddressAction>;
+    } = yield race({
+      startCreateAddress: take(createAddressAction),
+      startUpdateAddress: take(updateAddressAction),
+    });
+
     try {
       yield put(updateCreateLoading());
       const fields: Array<{
         readonly field: string;
         readonly value: string;
         readonly errorMessage: string | null;
-      }> = yield select((state: RootState) => state.address.form.fields);
-      const {id}: { id: string } = yield call(createAddress, {
-        fullName: fields[0].value,
-        phoneNumber: fields[1].value,
-        address: fields[2].value,
-        lon: Number.parseInt(fields[3].value),
-        lat: Number.parseInt(fields[4].value),
-      });
-      yield put(
-        createAddressSuccess({
-          id: id,
+      }> = yield select((state: RootState) => state.address.formEditing.fields);
+      if (startCreateAddress) {
+        const { id }: { id: string } = yield call(createAddress, {
           fullName: fields[0].value,
           phoneNumber: fields[1].value,
           address: fields[2].value,
           lon: Number.parseInt(fields[3].value),
           lat: Number.parseInt(fields[4].value),
-          isDeleteLoading: false,
-        }),
-      );
-      yield put(clearFormSuccess());
-      yield put(updateShowAddForm());
+        });
+        yield put(
+          updateAddressSuccess({
+            id: id,
+            fullName: fields[0].value,
+            phoneNumber: fields[1].value,
+            address: fields[2].value,
+            lon: Number.parseInt(fields[3].value),
+            lat: Number.parseInt(fields[4].value),
+            isDeleteLoading: false,
+          }),
+        );
+        yield put(clearFormSuccess());
+        yield put(updateShowAddForm());
+      }
+
+      if (startUpdateAddress) {
+        yield call(updateAddress, {
+          id: startUpdateAddress.payload.id,
+          fullName: fields[0].value,
+          phoneNumber: fields[1].value,
+          address: fields[2].value,
+          lon: Number.parseInt(fields[3].value),
+          lat: Number.parseInt(fields[4].value),
+        });
+        yield put(
+          updateAddressSuccess({
+            id: startUpdateAddress.payload.id,
+            fullName: fields[0].value,
+            phoneNumber: fields[1].value,
+            address: fields[2].value,
+            lon: Number.parseInt(fields[3].value),
+            lat: Number.parseInt(fields[4].value),
+            isDeleteLoading: false,
+          }),
+        );
+      }
     } catch (e) {
       notification.open({
         message: "Error",
@@ -438,9 +541,7 @@ function* handleDeleteAddress() {
   while (true) {
     const {
       payload: { aid },
-    }: ReturnType<typeof deleteAddressAction> = yield take(
-      deleteAddressAction.type,
-    );
+    }: ReturnType<typeof deleteAddressAction> = yield take(deleteAddressAction);
     try {
       yield call(deleteAddressById, aid);
       yield put(deleteAddressSuccess({ aid }));
@@ -462,7 +563,7 @@ function* handleStartSearchAddress() {
     const {
       payload: { value },
     }: ReturnType<typeof startSearchAddressAction> = yield take(
-      startSearchAddressAction.type,
+      startSearchAddressAction,
     );
 
     if (searchTask) {
