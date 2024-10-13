@@ -62,6 +62,26 @@ export const notificationsSlice = createSlice({
         return it;
       }),
     }),
+    pushNotificationSuccess: (
+      state,
+      action: PayloadAction<{ notification: Notification }>,
+    ) => {
+      return {
+        ...state,
+        page: {
+          ...state.page,
+          content: [action.payload.notification, ...state.page.content],
+          totalElements: state.page.totalElements + 1,
+          empty: false,
+          last: false,
+          numberOfElements: state.page.numberOfElements + 1,
+          size: state.page.size + 1,
+          number: state.page.number + 1,
+          totalPages: state.page.totalPages + 1,
+          first: false,
+        },
+      };
+    },
   },
 });
 
@@ -70,7 +90,9 @@ export default notificationsSlice.reducer;
 export const {
   updateFetchLoading,
   fetchNotificationsSuccess,
+  fetchNotificationsFailure,
   markReadNotification,
+  pushNotificationSuccess,
 } = notificationsSlice.actions;
 
 export const fetchNotificationsAction = createAction<{
@@ -100,6 +122,8 @@ function* handleFetchingNotifications() {
         description: e.message,
         type: "error",
       });
+
+      yield put(fetchNotificationsFailure());
     }
   }
 }

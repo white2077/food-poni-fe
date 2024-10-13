@@ -19,10 +19,9 @@ import { RootState } from "@/redux/store.ts";
 import {
   fetchNotificationsAction,
   markIsReadNotificationsAction,
+  pushNotificationSuccess,
 } from "@/redux/modules/notification.ts";
-import {
-  getNotificationOrderMessage,
-} from "@/utils/constraint.ts";
+import { getNotificationOrderMessage } from "@/utils/constraint.ts";
 import { Client } from "@stomp/stompjs";
 import { Notification, NotificationAttributes } from "@/type/types.ts";
 import SockJS from "sockjs-client/dist/sockjs";
@@ -47,36 +46,42 @@ export default function NotificationDropdown() {
       server + "/notification-register?client-id=" + currentUser.id,
     );
     if (sock) {
-      console.log("Connect to socket successfully..." + currentUser.id);
-
       const client = new Client({
         webSocketFactory: () => sock,
         onConnect: () => {
+          console.log("Connect to socket successfully..." + currentUser.id);
           client.subscribe("/topic/admin-notifications", (message) => {
             const notificationEvent: Notification = JSON.parse(message.body);
-            // let attributes : {id: string, orderStatus: string} | null = null;
+
             const attributes = JSON.parse(
               notificationEvent.attributes,
             ) as NotificationAttributes;
 
-            notification.open({
-              type: "success",
-              placement: "bottomRight",
-              message: notificationEvent.createdDate.toString(),
-              description: getNotificationOrderMessage(
-                attributes.id.toUpperCase().substring(0,6),
-                attributes.orderStatus,
-              ),
-              duration: 10,
-              btn: (
-                <Button
-                  type="primary"
-                  onClick={() => console.log("Click vao thong bao")}
-                >
-                  Xem ngay
-                </Button>
-              ),
-            });
+            if (notificationEvent.toUser.id === currentUser.id) {
+              dispatch(
+                pushNotificationSuccess({ notification: notificationEvent }),
+              );
+              notification.open({
+                type: ["COMPLETED", "APPROVED"].includes(attributes.orderStatus)
+                  ? "success"
+                  : "error",
+                placement: "bottomRight",
+                message: notificationEvent.createdDate.toString(),
+                description: getNotificationOrderMessage(
+                  attributes.id,
+                  attributes.orderStatus,
+                ),
+                duration: 10,
+                btn: (
+                  <Button
+                    className="bg-primary text-white"
+                    onClick={() => console.log("Click vao thong bao")}
+                  >
+                    Xem ngay
+                  </Button>
+                ),
+              });
+            }
           });
         },
         onStompError: (frame) => {
@@ -115,6 +120,9 @@ export default function NotificationDropdown() {
                         {page.size > 0 ? (
                           <div className="flex flex-col gap-4">
                             {page.content.map((it, index) => {
+                              const attributes = JSON.parse(
+                                it.attributes,
+                              ) as NotificationAttributes;
                               return (
                                 <div
                                   key={index}
@@ -148,7 +156,10 @@ export default function NotificationDropdown() {
                                   <div className="flex flex-col gap-3.5">
                                     <div className="flex flex-col gap-1">
                                       <div className="text-2sm font-medium">
-                                        {getNotificationMessage(it.type)}
+                                        {getNotificationOrderMessage(
+                                          attributes.id,
+                                          attributes.orderStatus,
+                                        )}
                                       </div>
                                       <span className="flex items-center text-2xs font-medium text-gray-500">
                                         {(() => {

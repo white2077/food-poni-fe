@@ -80,12 +80,12 @@ export type OrderItem = {
 
 export type Notification = {
   readonly id: string;
-  readonly toUser: User;
   readonly fromUser: User;
+  readonly toUser: User;
   readonly read: boolean;
   readonly status: boolean;
   readonly attributes: string;
-  readonly type: "ORDER";
+  readonly type: "ORDER" | "PROMOTION" | "VOUCHER" | "RATE";
   readonly createdDate: Date;
 };
 
