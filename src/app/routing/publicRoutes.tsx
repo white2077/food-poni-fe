@@ -10,11 +10,12 @@ import SidebarLayout from "@/components/sidebarLayout.tsx";
 
 const PublicRoute = () => {
   const ProductPage = lazy(() => import("@/components/pages/productPage.tsx"));
+  const SingUpPage = lazy(() => import("@/components/pages/singUpPage.tsx"));
   const CheckoutPage = lazy(
-    () => import("@/components/pages/checkoutPage.tsx"),
+    () => import("@/components/pages/checkoutPage.tsx")
   );
   const ProductCategoryPage = lazy(
-    () => import("@/components/pages/productCategoryPage.tsx"),
+    () => import("@/components/pages/productCategoryPage.tsx")
   );
 
   const sidebarContents: ReactNode[] = [
@@ -38,6 +39,14 @@ const PublicRoute = () => {
         element={
           <SuspensedView>
             <ProductPage />
+          </SuspensedView>
+        }
+      />
+      <Route
+        path="sing-up/*"
+        element={
+          <SuspensedView>
+            <SingUpPage />
           </SuspensedView>
         }
       />
