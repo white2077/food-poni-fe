@@ -5,8 +5,8 @@ import { cartSagas } from "@/redux/modules/cart.ts";
 import { productCategorySagas } from "@/redux/modules/productCategory.ts";
 import { orderSagas } from "./modules/order";
 import { shippingAddressSagas } from "@/redux/modules/address.ts";
+import { notificationSagas } from "@/redux/modules/notification.ts";
 import { rateSagas } from "./modules/rate";
-import {notificationSagas} from "@/redux/modules/notification.ts";
 
 export default function* rootSaga() {
   yield all([

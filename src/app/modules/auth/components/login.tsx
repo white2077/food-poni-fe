@@ -33,7 +33,7 @@ export function Login() {
   const [isLoadingGoogle, setLoadingGoogle] = useState(false);
 
   const { rememberMe, isPending } = useSelector(
-    (state: RootState) => state.auth.login,
+    (state: RootState) => state.auth.login
   );
 
   useEffect(() => {
@@ -64,7 +64,7 @@ export function Login() {
         "&scope=" +
         scopes.join("+"),
       "Google Login",
-      "width=" + w + ",height=" + h + ",top=" + top + ", left=" + left,
+      "width=" + w + ",height=" + h + ",top=" + top + ", left=" + left
     );
 
     const getMessage = (event: MessageEvent<string>) => {
@@ -79,8 +79,8 @@ export function Login() {
                 readonly email: string;
                 readonly addressId: string;
                 readonly username: string;
-              },
-            ),
+              }
+            )
           );
           Cookies.set("refreshToken", event.data, { expires: 7 });
           navigate("/");
@@ -107,7 +107,7 @@ export function Login() {
             </div>
             <div className="flex justify-center gap-1 font-medium text-gray-500">
               Cần một tài khoản?
-              <a className="float-right" onClick={() => navigate("/signup")}>
+              <a className="float-right" onClick={() => navigate("/sing-up")}>
                 Đăng ký ngay
               </a>
             </div>
