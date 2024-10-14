@@ -24,14 +24,12 @@ export default function ProductCart({
   status: boolean;
 }) {
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
-
   const [quantity, setQuantity] = useState<number>(1);
-
   const { page, isCreateLoading } = useSelector(
     (state: RootState) => state.cart,
   );
+  const { currentUser } = useSelector((state: RootState) => state.auth);
 
   const isExisted: boolean = page.content.some(
     (item) => item.productDetail.id === id,
@@ -112,49 +110,55 @@ export default function ProductCart({
         </div>
         {status ? (
           <Flex vertical gap="small" className="w-full">
-            <Button
-              type="primary"
-              danger
-              block
-              onClick={() => {
-                if (!isExisted) {
-                  dispatch(
-                    createCartRequest({
-                      quantity: quantity,
-                      productDetail: id,
-                      productName: productName,
-                      productDetailName: productDetailName,
-                      price: price,
-                      thumbnail: thumbnail,
-                    }),
-                  );
-                }
-                navigate("/checkout");
-              }}
-            >
-              Mua ngay
-            </Button>
-            <Button
-              block
-              onClick={() =>
-                dispatch(
-                  createCartRequest({
-                    quantity: quantity,
-                    productDetail: id,
-                    productName: productName,
-                    productDetailName: productDetailName,
-                    price: price,
-                    thumbnail: thumbnail,
-                  }),
-                )
-              }
-              loading={isCreateLoading}
-              disabled={isExisted}
-            >
-              {isExisted
-                ? "Sản phẩm đã có trong giỏ hàng"
-                : "Thêm vào giỏ hàng"}
-            </Button>
+            {currentUser?.role === "RETAILER" ? (
+              <Button disabled={true}>Sản phẩm này đã hết</Button>
+            ) : (
+              <>
+                <Button
+                  type="primary"
+                  danger
+                  block
+                  onClick={() => {
+                    if (!isExisted) {
+                      dispatch(
+                        createCartRequest({
+                          quantity: quantity,
+                          productDetail: id,
+                          productName: productName,
+                          productDetailName: productDetailName,
+                          price: price,
+                          thumbnail: thumbnail,
+                        }),
+                      );
+                    }
+                    navigate("/checkout");
+                  }}
+                >
+                  Mua ngay
+                </Button>
+                <Button
+                  block
+                  onClick={() =>
+                    dispatch(
+                      createCartRequest({
+                        quantity: quantity,
+                        productDetail: id,
+                        productName: productName,
+                        productDetailName: productDetailName,
+                        price: price,
+                        thumbnail: thumbnail,
+                      }),
+                    )
+                  }
+                  loading={isCreateLoading}
+                  disabled={isExisted}
+                >
+                  {isExisted
+                    ? "Sản phẩm đã có trong giỏ hàng"
+                    : "Thêm vào giỏ hàng"}
+                </Button>
+              </>
+            )}
           </Flex>
         ) : (
           <Flex vertical gap="small" className="w-full">

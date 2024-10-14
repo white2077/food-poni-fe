@@ -47,7 +47,7 @@ export default function HeaderMain() {
         <div className="order-2 hidden md:block text-end">
           {currentUser ? (
             <div className="flex items-center justify-end gap-4 order-2 md:order-3">
-              <Cart />
+              {!(currentUser.role === "RETAILER") && <Cart />}
               <NotificationDropdown />
               <UserDropdown />
             </div>
