@@ -1,4 +1,5 @@
 import { server } from "@/utils/server.ts";
+import { User } from "@/type/types.ts";
 
 export const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("vi-VN", {
@@ -37,9 +38,15 @@ export const checkDirty = (
   return true;
 };
 
-export const getAvatar = (url: string | undefined | null) => {
-  if (url) {
-    return  url.startsWith("http" || "https") ? url : server + url;
+export const getAvatar = (user: User) => {
+  if (user.role === "RETAILER") {
+    return "/public/logo-02.png";
+  }
+
+  if (user.avatar) {
+    return user.avatar.startsWith("http" || "https")
+      ? user.avatar
+      : server + user.avatar;
   }
   return "/public/no-avatar.png";
 };
