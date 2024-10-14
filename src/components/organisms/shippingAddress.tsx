@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Collapse, Modal, Popconfirm, Radio } from "antd";
+import { Button, Card, Collapse, Modal, Popconfirm, Radio } from "antd";
 import { useEffect, useState } from "react";
 import ShippingAddressInfo from "@/components/organisms/shippingAddressInfo.tsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,7 +10,8 @@ import {
 } from "@/redux/modules/address.ts";
 import CardHome from "@/components/atoms/cardHome.tsx";
 import { updateShippingAddressAction } from "@/redux/modules/order.ts";
-import { DeleteOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, DeleteOutlined } from "@ant-design/icons";
+import { updateCurrentUserAddressAction } from "@/redux/modules/auth";
 
 export default function ShippingAddress() {
   const dispatch = useDispatch();
@@ -28,12 +29,12 @@ export default function ShippingAddress() {
           pageSize: 10,
           status: true,
         },
-      }),
+      })
     );
     if (currentUser) {
       dispatch(updateShippingAddressAction(currentUser.addressId));
     }
-  }, [dispatch]);
+  }, [dispatch, currentUser]);
 
   return (
     <Card style={{ marginBottom: "16px" }}>
@@ -75,9 +76,7 @@ export default function ShippingAddress() {
                 accordion
                 expandIconPosition="end"
                 collapsible="icon"
-                expandIcon={() => (
-                  <div className="bg-primary text-white p-0">Sửa</div>
-                )}
+                expandIcon={() => <span>Sửa</span>}
                 items={page.content.map((it) => {
                   return {
                     key: it.id,
@@ -88,9 +87,25 @@ export default function ShippingAddress() {
                             <span className="font-bold">{it.fullName}</span> |{" "}
                             {it.phoneNumber}{" "}
                             {currentUser?.addressId === it.id ? (
-                              <Badge color="blue" count={"Địa chỉ mặc định"} />
+                              <span className="text-green-700">
+                                <CheckCircleOutlined />{" "}
+                                <span className="text-sm">
+                                  Địa chỉ mặc định
+                                </span>
+                              </span>
                             ) : (
-                              ""
+                              <span
+                                className="px-1 rounded-lg cursor-pointer text-blue-700 hover:underline"
+                                onClick={() =>
+                                  dispatch(
+                                    updateCurrentUserAddressAction({
+                                      aid: it.id,
+                                    })
+                                  )
+                                }
+                              >
+                                Thiết lập mặc định
+                              </span>
                             )}
                           </div>
                           <div>{it.address}</div>

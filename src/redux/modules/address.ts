@@ -52,7 +52,7 @@ export type AddressState = {
   readonly addressesSearched: Array<SearchResult>;
   readonly isShowAddForm: boolean;
   readonly isFetchLoading: boolean;
-  readonly isCreateLoading: boolean;
+  readonly isUpdateLoading: boolean;
 };
 
 const initialState: AddressState = {
@@ -113,7 +113,7 @@ const initialState: AddressState = {
   addressesSearched: [],
   isShowAddForm: false,
   isFetchLoading: false,
-  isCreateLoading: false,
+  isUpdateLoading: false,
 };
 
 const SLICE_NAME = "address";

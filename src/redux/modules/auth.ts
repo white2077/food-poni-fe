@@ -1,18 +1,18 @@
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  AuthRequest,
-  AuthResponse,
-  UserRemember,
-} from "@/type/types.ts";
+import { AuthRequest, AuthResponse, UserRemember } from "@/type/types.ts";
 import { call, fork, put, select, take } from "redux-saga/effects";
 import { notification } from "antd";
-import { FieldLoginType } from "@/app/modules/auth/components/login.tsx";
 import jwtDecode from "jwt-decode";
 import Cookies from "js-cookie";
 import { REFRESH_TOKEN, REMEMBER_ME } from "@/utils/server.ts";
-import { login, registerUser } from "@/utils/api/auth.ts";
+import {
+  login,
+  registerUser,
+  updateCurrentUserAddress,
+} from "@/utils/api/auth.ts";
 import { RootState } from "@/redux/store.ts";
 import { NavigateFunction } from "react-router-dom";
+import { FieldLoginType } from "@/components/templates/loginWrapper.tsx";
 
 export type AuthState = {
   readonly login: {
@@ -21,19 +21,20 @@ export type AuthState = {
     readonly remember: boolean;
     readonly rememberMe: UserRemember;
     readonly isPending: boolean;
-    readonly error: string | null;
   };
-  readonly currentUser: {
-    readonly role: string;
-    readonly id: string;
-    readonly avatar: string;
-    readonly email: string;
-    readonly addressId: string;
-    readonly username: string;
-  } | null | undefined;
+  readonly currentUser:
+    | {
+        readonly role: string;
+        readonly id: string;
+        readonly avatar: string;
+        readonly email: string;
+        readonly addressId: string;
+        readonly username: string;
+      }
+    | null
+    | undefined;
   readonly register: {
     readonly isLoading: boolean;
-    readonly errors: Record<string, string>;
   };
   readonly formEditing: {
     readonly fields: Array<{
@@ -62,12 +63,10 @@ const initialState: AuthState = {
       avatar: "",
     },
     isPending: false,
-    error: null,
   },
   currentUser: undefined,
   register: {
     isLoading: false,
-    errors: {},
   },
   formEditing: {
     fields: [
@@ -86,12 +85,11 @@ const authSlice = createSlice({
   name: SLICE_NAME,
   initialState,
   reducers: {
-    loginRequest: (state, action: PayloadAction<{ navigate: NavigateFunction }>) => ({
+    updatePendingSuccess: (state) => ({
       ...state,
       login: {
         ...state.login,
         isPending: true,
-        error: null,
       },
     }),
     loginSuccess: (state) => ({
@@ -99,15 +97,13 @@ const authSlice = createSlice({
       login: {
         ...state.login,
         isPending: false,
-        error: null,
       },
     }),
-    loginFailure: (state, action: PayloadAction<string>) => ({
+    loginFailure: (state) => ({
       ...state,
       login: {
         ...state.login,
         isPending: false,
-        error: action.payload,
       },
     }),
     updateUsername: (state, action: PayloadAction<string>) => ({
@@ -145,6 +141,18 @@ const authSlice = createSlice({
       ...state,
       currentUser: action.payload,
     }),
+    updateCurrentUserAddressSuccess: (
+      state,
+      action: PayloadAction<{ aid: string }>
+    ) => ({
+      ...state,
+      currentUser: state.currentUser
+        ? {
+            ...state.currentUser,
+            addressId: action.payload.aid,
+          }
+        : null,
+    }),
     clearCurrentUser: (state) => ({
       ...state,
       currentUser: null,
@@ -163,7 +171,10 @@ const authSlice = createSlice({
         isLoading: false,
       },
     }),
-    registerUserFailure: (state, action: PayloadAction<Record<string, string>>) => ({
+    registerUserFailure: (
+      state,
+      action: PayloadAction<Record<string, string>>
+    ) => ({
       ...state,
       register: {
         ...state.register,
@@ -175,7 +186,7 @@ const authSlice = createSlice({
       state,
       action: PayloadAction<{
         fields: Array<{ field: string; value: string }>;
-      }>,
+      }>
     ) => ({
       ...state,
       formSaved: {
@@ -234,7 +245,7 @@ const authSlice = createSlice({
           break;
       }
 
-      const updatedFields = state.formEditing.fields.map((f) => 
+      const updatedFields = state.formEditing.fields.map((f) =>
         f.field === field ? { ...f, value, errorMessage } : f
       );
 
@@ -247,7 +258,7 @@ const authSlice = createSlice({
 });
 
 export const {
-  loginRequest,
+  updatePendingSuccess,
   loginSuccess,
   loginFailure,
   updateUsername,
@@ -255,6 +266,7 @@ export const {
   rememberMeRequest,
   updateRememberMe,
   updateCurrentUser,
+  updateCurrentUserAddressSuccess,
   clearCurrentUser,
   registerUserRequest,
   registerUserSuccess,
@@ -271,11 +283,20 @@ export const registerUserAction = createAction<{
   navigate: NavigateFunction;
 }>(`${SLICE_NAME}/registerUserAction`);
 
+export const updateCurrentUserAddressAction = createAction<{ aid: string }>(
+  `${SLICE_NAME}/updateCurrentUserAddressRequest`
+);
+
+export const loginAction = createAction<{ navigate: NavigateFunction }>(
+  `${SLICE_NAME}/loginRequest`
+);
+
 function* handleLogin() {
   while (true) {
     const { payload }: PayloadAction<{ navigate: NavigateFunction }> =
-      yield take(loginRequest.type);
+      yield take(loginAction.type);
     try {
+      yield put(updatePendingSuccess());
       const { username, password, remember }: FieldLoginType = yield select(
         (state: RootState) => state.auth.login
       );
@@ -309,9 +330,13 @@ function* handleLogin() {
 
       payload.navigate("/");
     } catch (e) {
-      const errorMessage = "Tên đăng nhập hoặc mật khẩu không đúng";
-      yield put(loginFailure(errorMessage));
- 
+      notification.open({
+        message: "Error",
+        description: e.message,
+        type: "error",
+      });
+
+      yield put(loginFailure());
     }
   }
 }
@@ -324,18 +349,21 @@ function* handleRegisterUser() {
       registerUserAction.type
     );
     yield put(registerUserRequest());
-    const formEditing: AuthState['formEditing'] = yield select(
+    const formEditing: AuthState["formEditing"] = yield select(
       (state: RootState) => state.auth.formEditing
     );
 
     if (formEditing.fields.some((field) => field.errorMessage !== null)) {
-      const errors = formEditing.fields.reduce((acc, field) => {
-        if (field.errorMessage) {
-          acc[field.field] = field.errorMessage; 
-        }
-        return acc;
-      }, {} as Record<string, string>);
-      
+      const errors = formEditing.fields.reduce(
+        (acc, field) => {
+          if (field.errorMessage) {
+            acc[field.field] = field.errorMessage;
+          }
+          return acc;
+        },
+        {} as Record<string, string>
+      );
+
       yield put(registerUserFailure(errors));
       notification.error({
         message: "Đăng ký thất bại",
@@ -370,4 +398,28 @@ function* handleRegisterUser() {
   }
 }
 
-export const authSagas = [fork(handleLogin), fork(handleRegisterUser)];
+function* handleUpdateCurrentUserAddress() {
+  while (true) {
+    const {
+      payload: { aid },
+    }: ReturnType<typeof updateCurrentUserAddressAction> = yield take(
+      updateCurrentUserAddressAction
+    );
+    try {
+      yield call(updateCurrentUserAddress, aid);
+      yield put(updateCurrentUserAddressSuccess({ aid }));
+    } catch (e) {
+      notification.open({
+        message: "Error",
+        description: e.message,
+        type: "error",
+      });
+    }
+  }
+}
+
+export const authSagas = [
+  fork(handleLogin),
+  fork(handleRegisterUser),
+  fork(handleUpdateCurrentUserAddress),
+];

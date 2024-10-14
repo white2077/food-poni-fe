@@ -7,7 +7,7 @@ import { clientId, redirectUri, responseType, scopes } from "@/utils/oauth2.ts";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "@/redux/store.ts";
 import {
-  loginRequest,
+  loginAction,
   rememberMeRequest,
   updateCurrentUser,
   updatePassword,
@@ -155,7 +155,7 @@ export function LoginWrapper() {
             name="normal_login"
             className="login-form"
             initialValues={{ remember: true }}
-            onFinish={() => dispatch(loginRequest({ navigate }))}
+            onFinish={() => dispatch(loginAction({ navigate }))}
           >
             <div className="flex flex-col gap-1 font-medium">
               Email hoặc username
