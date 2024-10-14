@@ -32,7 +32,7 @@ export function Login() {
 
   const [isLoadingGoogle, setLoadingGoogle] = useState(false);
 
-  const { rememberMe, isPending } = useSelector(
+  const { rememberMe, isPending, error } = useSelector(
     (state: RootState) => state.auth.login
   );
 
@@ -107,7 +107,10 @@ export function Login() {
             </div>
             <div className="flex justify-center gap-1 font-medium text-gray-500">
               Cần một tài khoản?
-              <a className="float-right" onClick={() => navigate("/sing-up")}>
+              <a
+                className="float-right"
+                onClick={() => navigate("/auth/signup")}
+              >
                 Đăng ký ngay
               </a>
             </div>
@@ -211,6 +214,11 @@ export function Login() {
               </Form.Item>
             </Form.Item>
             <Form.Item>
+              {error && (
+                <Form.Item>
+                  <div className="text-red-500">{error}</div>
+                </Form.Item>
+              )}
               <Button
                 type="primary"
                 htmlType="submit"

@@ -21,6 +21,7 @@ export type AuthState = {
     readonly remember: boolean;
     readonly rememberMe: UserRemember;
     readonly isPending: boolean;
+    readonly error: string | null;
   };
   readonly currentUser: {
     readonly role: string;
@@ -61,6 +62,7 @@ const initialState: AuthState = {
       avatar: "",
     },
     isPending: false,
+    error: null,
   },
   currentUser: undefined,
   register: {
@@ -89,6 +91,7 @@ const authSlice = createSlice({
       login: {
         ...state.login,
         isPending: true,
+        error: null,
       },
     }),
     loginSuccess: (state) => ({
@@ -96,13 +99,15 @@ const authSlice = createSlice({
       login: {
         ...state.login,
         isPending: false,
+        error: null,
       },
     }),
-    loginFailure: (state) => ({
+    loginFailure: (state, action: PayloadAction<string>) => ({
       ...state,
       login: {
         ...state.login,
         isPending: false,
+        error: action.payload,
       },
     }),
     updateUsername: (state, action: PayloadAction<string>) => ({
@@ -189,6 +194,55 @@ const authSlice = createSlice({
       };
       state.formSaved = { fields: null };
     },
+    validateFormField: (
+      state,
+      action: PayloadAction<{
+        field: string;
+        value: string;
+      }>
+    ) => {
+      let errorMessage: string | null = null;
+      const { field, value } = action.payload;
+
+      switch (field) {
+        case "username":
+          if (value === "") {
+            errorMessage = "Tên đăng nhập không được để trống";
+          } else if (value.length < 6 || value.length > 50) {
+            errorMessage = "Tên đăng nhập phải có từ 6 đến 50 ký tự";
+          } else if (/\s/.test(value)) {
+            errorMessage = "Tên đăng nhập không được chứa dấu cách";
+          }
+          break;
+        case "email":
+          if (value === "") {
+            errorMessage = "Email không được để trống";
+          } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            errorMessage = "Email không hợp lệ";
+          } else if (/\s/.test(value)) {
+            errorMessage = "Email không được chứa dấu cách";
+          }
+          break;
+        case "password":
+          if (value === "") {
+            errorMessage = "Mật khẩu không được để trống";
+          } else if (value.length < 6 || value.length > 50) {
+            errorMessage = "Mật khẩu phải có từ 6 đến 50 ký tự";
+          } else if (/\s/.test(value)) {
+            errorMessage = "Mật khẩu không được chứa dấu cách";
+          }
+          break;
+      }
+
+      const updatedFields = state.formEditing.fields.map((f) => 
+        f.field === field ? { ...f, value, errorMessage } : f
+      );
+
+      state.formEditing = {
+        fields: updatedFields,
+        isDirty: updatedFields.some((field) => field.errorMessage !== null),
+      };
+    },
   },
 });
 
@@ -207,6 +261,7 @@ export const {
   registerUserFailure,
   updateFormSavedSuccess,
   clearFormSuccess,
+  validateFormField,
 } = authSlice.actions;
 
 export default authSlice.reducer;
@@ -254,12 +309,9 @@ function* handleLogin() {
 
       payload.navigate("/");
     } catch (e) {
-      notification.open({
-        type: "error",
-        message: "Đăng nhập",
-        description: e.message,
-      });
-      yield put(loginFailure());
+      const errorMessage = "Tên đăng nhập hoặc mật khẩu không đúng";
+      yield put(loginFailure(errorMessage));
+ 
     }
   }
 }
@@ -311,13 +363,6 @@ function* handleRegisterUser() {
       yield put(clearFormSuccess());
       navigate("/auth/login");
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
-      
       yield put(
         registerUserFailure({ general: "Đăng ký thất bại. Vui lòng thử lại." })
       );
