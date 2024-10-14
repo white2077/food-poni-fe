@@ -331,8 +331,10 @@ const addressSlide = createSlice({
           case "username":
             if (action.payload.value === "") {
               errorMessage = "Tên đăng nhập không được để trống";
-            } else if (action.payload.value.length < 6) {
-              errorMessage = "Tên đăng nhập phải có ít nhất 6 ký tự";
+            } else if (action.payload.value.length < 6 || action.payload.value.length > 50) {
+              errorMessage = "Tên đăng nhập phải có từ 6 đến 50 ký tự";
+            } else if (/\s/.test(action.payload.value)) {
+              errorMessage = "Tên đăng nhập không được chứa dấu cách";
             }
             break;
           case "email":
@@ -340,14 +342,18 @@ const addressSlide = createSlice({
               errorMessage = "Email không được để trống";
             } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(action.payload.value)) {
               errorMessage = "Email không hợp lệ";
+            }else if (/\s/.test(action.payload.value)) {
+              errorMessage = "Email không được chứa dấu cách";
             }
             break;
           case "password":
             if (action.payload.value === "") {
               errorMessage = "Mật khẩu không được để trống";
-            } else if (action.payload.value.length < 6) {
-              errorMessage = "Mật khẩu phải có ít nhất 6 ký tự";
-            } 
+            } else if (action.payload.value.length < 6 || action.payload.value.length > 50) {
+              errorMessage = "Mật khẩu phải có từ 6 đến 50 ký tự";
+            } else if (/\s/.test(action.payload.value)) {
+              errorMessage = "Mật khẩu không được chứa dấu cách";
+            }
             break;
         }
       }

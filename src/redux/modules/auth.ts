@@ -317,6 +317,7 @@ function* handleRegisterUser() {
         type: "error",
       });
 
+      
       yield put(
         registerUserFailure({ general: "Đăng ký thất bại. Vui lòng thử lại." })
       );
