@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Avatar,
   Badge,
@@ -31,6 +31,7 @@ export default function NotificationDropdown() {
   const dispatch = useDispatch();
   const { page } = useSelector((state: RootState) => state.notification);
   const { currentUser } = useSelector((state: RootState) => state.auth);
+  const [tab, setTab] = useState<string>("all");
 
   useEffect(() => {
     dispatch(
@@ -113,37 +114,56 @@ export default function NotificationDropdown() {
             <div className="border-b border-b-gray-200"></div>
             <div className="px-5 mb-2">
               <div className="text-center">
-              <Radio.Group className="my-4" value="all" onChange={(e) => {
-                if (e.target.value === "all") {
-                  dispatch(
-                      fetchNotificationsAction({
-                        queryParams: {page: 0, pageSize: 10, sort: "createdDate,desc"},
-                      }),
-                  );
-                }
-                if (e.target.value === "unread") {
-                  dispatch(
-                      fetchNotificationsAction({
-                        queryParams: {page: 0, pageSize: 10, sort: "createdDate,desc", read: "false"},
-                      }),
-                  );
-                }
-                if (e.target.value === "read") {
-                  dispatch(
-                      fetchNotificationsAction({
-                        queryParams: {page: 0, pageSize: 10, sort: "createdDate,desc", read: "true"},
-                      }),
-                  );
-                }
-              }}>
-                <Radio.Button value="all">Tất cả</Radio.Button>
-                <Radio.Button value="unread">Chưa đọc</Radio.Button>
-                <Radio.Button value="read">Đã đọc</Radio.Button>
-              </Radio.Group>
+                <Radio.Group
+                  className="my-4"
+                  value={tab}
+                  onChange={(e) => {
+                    setTab(e.target.value);
+                    if (e.target.value === "all") {
+                      dispatch(
+                        fetchNotificationsAction({
+                          queryParams: {
+                            page: 0,
+                            pageSize: 10,
+                            sort: "createdDate,desc",
+                          },
+                        }),
+                      );
+                    }
+                    if (e.target.value === "unread") {
+                      dispatch(
+                        fetchNotificationsAction({
+                          queryParams: {
+                            page: 0,
+                            pageSize: 10,
+                            sort: "createdDate,desc",
+                            read: "false",
+                          },
+                        }),
+                      );
+                    }
+                    if (e.target.value === "read") {
+                      dispatch(
+                        fetchNotificationsAction({
+                          queryParams: {
+                            page: 0,
+                            pageSize: 10,
+                            sort: "createdDate,desc",
+                            read: "true",
+                          },
+                        }),
+                      );
+                    }
+                  }}
+                >
+                  <Radio.Button value="all">Tất cả</Radio.Button>
+                  <Radio.Button value="unread">Chưa đọc</Radio.Button>
+                  <Radio.Button value="read">Đã đọc</Radio.Button>
+                </Radio.Group>
               </div>
               <div className="max-h-[480px] overflow-auto scrollbar-rounded">
                 {page.size > 0 ? (
-                  <div className="flex flex-col">
+                  <div className="flex flex-col gap-1">
                     {page.content.map((it, index) => {
                       const attributes = JSON.parse(
                         it.attributes,
@@ -166,7 +186,7 @@ export default function NotificationDropdown() {
                             <img
                               alt=""
                               className="object-cover aspect-square rounded-full size-16"
-                              src={getAvatar(it.fromUser.avatar)}
+                              src={getAvatar(it.fromUser)}
                             />
 
                             <div className="bg-[#17c653] rounded-full size-2 badge badge-circle color-white absolute top-14 end-0.5 ring-1 ring-white transform -translate-y-1/2" />
