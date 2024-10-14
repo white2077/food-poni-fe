@@ -10,7 +10,7 @@ import { Avatar, Card, Image, List, Progress, Rate } from "antd";
 
 import { Link } from "react-router-dom";
 import { RootState } from "@/redux/store";
-import { fetchRatesByProductRequest } from "@/redux/modules/rate";
+import { getRatesRequest } from "@/redux/modules/rate";
 import { ProductDetail } from "@/type/types";
 import { server } from "@/utils/server";
 import EmptyNotice from "../empty-notice";
@@ -38,9 +38,7 @@ type Props = {
 
 export default function ProductRate({ item }: Props) {
   const dispatch = useDispatch();
-  const { page, isFetchLoading } = useSelector(
-    (state: RootState) => state.rate,
-  );
+  const { rates, loading } = useSelector((state: RootState) => state.rate);
   const [expandedComments, setExpandedComments] = useState<ExpandedComments>(
     {},
   );
@@ -48,7 +46,7 @@ export default function ProductRate({ item }: Props) {
   useEffect(() => {
     if (item.id) {
       dispatch(
-        fetchRatesByProductRequest({
+        getRatesRequest({
           productId: item.id,
           queryParams: { page: 0, pageSize: 5 },
         }),
@@ -80,21 +78,21 @@ export default function ProductRate({ item }: Props) {
           <Progress
             style={{ maxWidth: "100%", width: "13%" }}
             percent={
-              (page.content.filter((item) => item.rate === rating).length /
-                page.content.length) *
+              (rates?.content.filter((item) => item.rate === rating).length /
+                rates?.content.length) *
               100
             }
             showInfo={false}
           />
           <div>
-            {page.content.filter((item) => item.rate === rating).length}
+            {rates?.content.filter((item) => item.rate === rating).length}
           </div>
         </div>
       ))}
 
       <hr className="my-6" />
       <List
-        loading={isFetchLoading}
+        loading={loading}
         itemLayout="vertical"
         size="large"
         locale={{
@@ -112,16 +110,16 @@ export default function ProductRate({ item }: Props) {
           align: "center",
           onChange: (page) => {
             dispatch(
-              fetchRatesByProductRequest({
+              getRatesRequest({
                 productId: item.id,
                 queryParams: { page: page - 1, pageSize: 5 },
               }),
             );
           },
           pageSize: 5,
-          total: page.totalElements,
+          total: rates?.totalElements || 0,
         }}
-        dataSource={page.content}
+        dataSource={rates?.content || []}
         renderItem={(item, index) => (
           <List.Item key={index}>
             <div className="grid grid-cols-1 md:grid-cols-10 gap-4">

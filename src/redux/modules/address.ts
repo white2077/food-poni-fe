@@ -107,8 +107,23 @@ const initialState: AddressState = {
         value: "",
         errorMessage: null,
       },
+      {
+        field: "username",
+        value: "",
+        errorMessage: null,
+      },
+      {
+        field: "email",
+        value: "",
+        errorMessage: null,
+      },
+      {
+        field: "password",
+        value: "",
+        errorMessage: null,
+      },
     ],
-    isDirty: true,
+    isDirty: false,
   },
   addressesSearched: [],
   isShowAddForm: false,
@@ -269,7 +284,7 @@ const addressSlide = createSlice({
         value: string;
       }>,
     ) => {
-      let errorMessage;
+      let errorMessage: string | null = null;
       if (action.payload.type === "TYPING") {
         switch (action.payload.field) {
           case "fullName":
@@ -313,6 +328,27 @@ const addressSlide = createSlice({
               break;
             }
             break;
+          case "username":
+            if (action.payload.value === "") {
+              errorMessage = "Tên đăng nhập không được để trống";
+            } else if (action.payload.value.length < 6) {
+              errorMessage = "Tên đăng nhập phải có ít nhất 6 ký tự";
+            }
+            break;
+          case "email":
+            if (action.payload.value === "") {
+              errorMessage = "Email không được để trống";
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(action.payload.value)) {
+              errorMessage = "Email không hợp lệ";
+            }
+            break;
+          case "password":
+            if (action.payload.value === "") {
+              errorMessage = "Mật khẩu không được để trống";
+            } else if (action.payload.value.length < 6) {
+              errorMessage = "Mật khẩu phải có ít nhất 6 ký tự";
+            } 
+            break;
         }
       }
       if (action.payload.type === "SELECT") {
@@ -324,46 +360,27 @@ const addressSlide = createSlice({
             }
         }
       }
-      if (errorMessage) {
-        return {
-          ...state,
-          formEditing: {
-            ...state.formEditing,
-            fields: state.formEditing.fields.map((it) => {
-              if (it.field === action.payload.field) {
-                return {
-                  ...it,
-                  value: action.payload.value,
-                  errorMessage,
-                };
-              }
-              return it;
-            }),
-            isDirty: true,
-          },
-        };
-      } else {
-        return {
-          ...state,
-          formEditing: {
-            ...state.formEditing,
-            fields: state.formEditing.fields.map((it) => {
-              if (it.field === action.payload.field) {
-                return {
-                  ...it,
-                  value: action.payload.value,
-                  errorMessage: null,
-                };
-              }
-              return it;
-            }),
-            isDirty: !state.formEditing.fields.every(
-              (it) => it.errorMessage === null,
-            ),
-          },
-        };
-      }
-      return state;
+
+      const updatedFields = state.formEditing.fields.map((field) => {
+        if (field.field === action.payload.field) {
+          return {
+            ...field,
+            value: action.payload.value,
+            errorMessage,
+          };
+        }
+        return field;
+      });
+
+      const isDirty = updatedFields.some((field) => field.errorMessage !== null);
+
+      return {
+        ...state,
+        formEditing: {
+          fields: updatedFields,
+          isDirty,
+        },
+      };
     },
     updateAddressesSearchedSuccess: (
       state,
