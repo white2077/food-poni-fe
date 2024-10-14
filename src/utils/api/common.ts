@@ -3,6 +3,7 @@ export type QueryParams = {
   pageSize?: number;
   status?: boolean | undefined;
   sort?: string;
+  read?: string;
   // body?: z.infer<typeof productSchema>;
 };
 
@@ -10,7 +11,7 @@ export default function generateQueryString(
   url: string,
   params?: QueryParams,
 ): string {
-  const { page, pageSize, status, sort } = params ?? ({} as QueryParams);
+  const { page, pageSize, status, sort, read } = params ?? ({} as QueryParams);
   let queryString = "";
 
   if (page || pageSize || status || sort) {
@@ -39,6 +40,13 @@ export default function generateQueryString(
         queryString += "&";
       }
       queryString += `sort=${sort}`;
+    }
+
+    if (read) {
+      if (queryString.length > 1) {
+        queryString += "&";
+      }
+      queryString += `read=${read}`;
     }
   }
 
