@@ -25,6 +25,7 @@ import { getNotificationOrderMessage } from "@/utils/constraint.ts";
 import { Client } from "@stomp/stompjs";
 import { Notification, NotificationAttributes } from "@/type/types.ts";
 import SockJS from "sockjs-client/dist/sockjs";
+import { getAvatar } from "@/utils/common.ts";
 
 export default function NotificationDropdown() {
   const dispatch = useDispatch();
@@ -62,7 +63,7 @@ export default function NotificationDropdown() {
                 pushNotificationSuccess({ notification: notificationEvent }),
               );
               notification.open({
-                type: ["COMPLETED", "APPROVED"].includes(attributes.orderStatus)
+                type: ["COMPLETED", "APPROVED", "PENDING"].includes(attributes.orderStatus)
                   ? "success"
                   : "error",
                 placement: "bottomRight",
@@ -118,7 +119,7 @@ export default function NotificationDropdown() {
                     children: (
                       <div className="max-h-[480px] overflow-auto scrollbar-rounded">
                         {page.size > 0 ? (
-                          <div className="flex flex-col gap-4">
+                          <div className="flex flex-col gap-2">
                             {page.content.map((it, index) => {
                               const attributes = JSON.parse(
                                 it.attributes,
@@ -127,7 +128,7 @@ export default function NotificationDropdown() {
                                 <div
                                   key={index}
                                   onClick={() => {
-                                    if (it.read) {
+                                    if (!it.read) {
                                       dispatch(
                                         markIsReadNotificationsAction({
                                           id: it.id,
@@ -135,23 +136,16 @@ export default function NotificationDropdown() {
                                       );
                                     }
                                   }}
-                                  className="flex grow gap-2.5"
+                                  className="flex grow gap-2.5 bg-gray-100 rounded-lg p-2 cursor-pointer items-center"
                                 >
-                                  <div className="relative shrink-0 mt-0.5">
+                                  <div className="relative shrink-0">
                                     <img
                                       alt=""
-                                      className="object-cover aspect-square rounded-full size-12"
-                                      src={
-                                        it.fromUser.avatar.startsWith(
-                                          "http" || "https",
-                                        )
-                                          ? it.fromUser.avatar
-                                          : server + it.fromUser.avatar
-                                      }
+                                      className="object-cover aspect-square rounded-full size-16"
+                                      src={getAvatar(it.fromUser.avatar)}
                                     />
-                                    {!it.read && (
-                                      <div className="bg-[#17c653] rounded-full size-1.5 badge badge-circle color-white absolute top-7 end-0.5 ring-1 ring-white transform -translate-y-1/2" />
-                                    )}
+
+                                    <div className="bg-[#17c653] rounded-full size-2 badge badge-circle color-white absolute top-14 end-0.5 ring-1 ring-white transform -translate-y-1/2" />
                                   </div>
                                   <div className="flex flex-col gap-3.5">
                                     <div className="flex flex-col gap-1">

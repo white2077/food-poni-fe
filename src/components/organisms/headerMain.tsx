@@ -9,7 +9,6 @@ import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import NotificationDropdown from "@/components/organisms/notificationDropdown.tsx";
 
-// let sock: WebSocket | null = null;
 export default function HeaderMain() {
   const { currentUser } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
@@ -47,7 +46,8 @@ export default function HeaderMain() {
         <div className="order-2 hidden md:block text-end">
           {currentUser ? (
             <div className="flex items-center justify-end gap-4 order-2 md:order-3">
-              <Cart />
+              {currentUser.role !== "ADMIN" &&
+                currentUser.role !== "RETAILER" && <Cart />}{" "}
               <NotificationDropdown />
               <UserDropdown />
             </div>

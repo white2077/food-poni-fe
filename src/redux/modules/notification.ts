@@ -50,17 +50,20 @@ export const notificationsSlice = createSlice({
       ...state,
       isFetchLoading: false,
     }),
-    markReadNotification: (state, action: PayloadAction<{ id: string }>) => ({
+    markReadNotificationSuccess: (state, action: PayloadAction<{ id: string }>) => ({
       ...state,
-      data: state.page.content.map((it) => {
-        if (it.id === action.payload.id) {
-          return {
-            ...it,
-            isRead: true,
-          };
-        }
-        return it;
-      }),
+      page: {
+        ...state.page,
+        content: state.page.content.map((it) => {
+          if (it.id === action.payload.id) {
+            return {
+              ...it,
+              read: true,
+            }
+          }
+          return it;
+        }),
+      },
     }),
     pushNotificationSuccess: (
       state,
@@ -91,7 +94,7 @@ export const {
   updateFetchLoading,
   fetchNotificationsSuccess,
   fetchNotificationsFailure,
-  markReadNotification,
+  markReadNotificationSuccess,
   pushNotificationSuccess,
 } = notificationsSlice.actions;
 
@@ -141,7 +144,7 @@ function* handleMarkIsReadNotification() {
       );
       if (notification && !notification.read) {
         yield call(markIsReadNotification, id);
-        yield put(markReadNotification({ id }));
+        yield put(markReadNotificationSuccess({ id }));
       }
     } catch (e) {
       notification.open({

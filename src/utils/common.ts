@@ -1,3 +1,5 @@
+import { server } from "@/utils/server.ts";
+
 export const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -23,11 +25,21 @@ export const checkDirty = (
 
   //check value in editingFields is equal to value in savedFields
   for (let i = 0; i < editingFields.length; i++) {
-    if (!["lon", "lat"].includes(editingFields[i].field) && editingFields[i].value !== savedFields[i].value) {
+    if (
+      !["lon", "lat"].includes(editingFields[i].field) &&
+      editingFields[i].value !== savedFields[i].value
+    ) {
       console.log(editingFields[i].value, savedFields[i].value);
       return false;
     }
   }
 
   return true;
+};
+
+export const getAvatar = (url: string | undefined | null) => {
+  if (url) {
+    return  url.startsWith("http" || "https") ? url : server + url;
+  }
+  return "/public/no-avatar.png";
 };
