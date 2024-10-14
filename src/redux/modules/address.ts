@@ -107,21 +107,6 @@ const initialState: AddressState = {
         value: "",
         errorMessage: null,
       },
-      {
-        field: "username",
-        value: "",
-        errorMessage: null,
-      },
-      {
-        field: "email",
-        value: "",
-        errorMessage: null,
-      },
-      {
-        field: "password",
-        value: "",
-        errorMessage: null,
-      },
     ],
     isDirty: false,
   },
@@ -289,70 +274,43 @@ const addressSlide = createSlice({
         switch (action.payload.field) {
           case "fullName":
             if (action.payload.value === "") {
-              errorMessage = "Tên người nhận không được để trống";
+              errorMessage = "Tên người nhận không được để trống";
               break;
             }
             if (action.payload.value.length < 5) {
-              errorMessage = "Tên người nhận phải có ít nhất 5 ký tự";
+              errorMessage = "Tên người nhận phải có ít nhất 5 ký tự";
               break;
             }
             break;
           case "phoneNumber":
             if (action.payload.value === "") {
-              errorMessage = "Số điện thoại không được để trống";
+              errorMessage = "Số điện thoại không được để trống";
               break;
             }
             if (isNaN(parseInt(action.payload.value))) {
-              errorMessage = "Số điện thoại phải là số";
+              errorMessage = "Số điện thoại phải là số";
               break;
             }
             if (
               action.payload.value.startsWith("00") ||
               !action.payload.value.startsWith("0")
             ) {
-              errorMessage = "Số điện thoại không hợp lệ";
+              errorMessage = "Số điện thoại không hợp lệ";
               break;
             }
             if (action.payload.value.length < 10) {
-              errorMessage = "Số điện thoại phải có ít nhất 10 ký tự";
+              errorMessage = "Số điện thoại phải có ít nhất 10 ký tự";
               break;
             }
             break;
           case "address":
             if (action.payload.value === "") {
-              errorMessage = "Địa chỉ không được để trống";
+              errorMessage = "Địa chỉ không được để trống";
               break;
             }
             if (action.payload.value) {
               errorMessage = "Vui lòng chọn một địa chỉ";
               break;
-            }
-            break;
-          case "username":
-            if (action.payload.value === "") {
-              errorMessage = "Tên đăng nhập không được để trống";
-            } else if (action.payload.value.length < 6 || action.payload.value.length > 50) {
-              errorMessage = "Tên đăng nhập phải có từ 6 đến 50 ký tự";
-            } else if (/\s/.test(action.payload.value)) {
-              errorMessage = "Tên đăng nhập không được chứa dấu cách";
-            }
-            break;
-          case "email":
-            if (action.payload.value === "") {
-              errorMessage = "Email không được để trống";
-            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(action.payload.value)) {
-              errorMessage = "Email không hợp lệ";
-            }else if (/\s/.test(action.payload.value)) {
-              errorMessage = "Email không được chứa dấu cách";
-            }
-            break;
-          case "password":
-            if (action.payload.value === "") {
-              errorMessage = "Mật khẩu không được để trống";
-            } else if (action.payload.value.length < 6 || action.payload.value.length > 50) {
-              errorMessage = "Mật khẩu phải có từ 6 đến 50 ký tự";
-            } else if (/\s/.test(action.payload.value)) {
-              errorMessage = "Mật khẩu không được chứa dấu cách";
             }
             break;
         }
