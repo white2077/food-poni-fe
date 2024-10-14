@@ -10,7 +10,7 @@ import SidebarLayout from "@/components/sidebarLayout.tsx";
 
 const PublicRoute = () => {
   const ProductPage = lazy(() => import("@/components/pages/productPage.tsx"));
-  const SingUpPage = lazy(() => import("@/components/pages/singUpPage.tsx"));
+
   const CheckoutPage = lazy(
     () => import("@/components/pages/checkoutPage.tsx")
   );
@@ -42,14 +42,7 @@ const PublicRoute = () => {
           </SuspensedView>
         }
       />
-      <Route
-        path="sing-up/*"
-        element={
-          <SuspensedView>
-            <SingUpPage />
-          </SuspensedView>
-        }
-      />
+     
       <Route
         path="checkout"
         element={
