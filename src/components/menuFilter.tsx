@@ -1,12 +1,11 @@
+import { fetchProductsByCustomerRequest } from "@/redux/modules/product.ts";
 import {
   CrownOutlined,
-  DollarOutlined,
   StarOutlined,
-  TagOutlined,
+  TagOutlined
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import { useDispatch } from "react-redux";
-import { fetchProductsByCustomerRequest } from "@/redux/modules/product.ts";
 
 export default function MenuFilter() {
   const dispatch = useDispatch();
@@ -42,11 +41,6 @@ export default function MenuFilter() {
           label: "Bán chạy nhất",
           key: "bestsellers",
           icon: <CrownOutlined />,
-        },
-        {
-          label: "Khuyến mãi",
-          key: "promotion",
-          icon: <DollarOutlined />,
         },
         {
           label: "Mới nhất",

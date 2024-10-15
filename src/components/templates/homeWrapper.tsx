@@ -21,7 +21,7 @@ export default function HomeWrapper() {
           requestParams: {
             page: 0,
             pageSize: 10,
-            sort: "updatedDate,desc",
+            sort: "sales,desc",
             status: true,
           },
         })}
