@@ -5,9 +5,9 @@ import { RootState } from "@/redux/store.ts";
 import { useEffect } from "react";
 import OrderItems from "@/components/organisms/orderItems.tsx";
 import { fetchCartRequest } from "@/redux/modules/cart.ts";
-import ShippingAddress from "@/components/organisms/shippingAddress.tsx";
 import { createOrderAction } from "@/redux/modules/order.ts";
 import PaymentInfo from "@/components/organisms/paymentInfo.tsx";
+import ShippingAddress from "../organisms/shippingAddress";
 
 const { TextArea } = Input;
 
@@ -34,7 +34,7 @@ export default function CheckoutWrapper() {
       <h1 className="text-2xl mb-2">GIỎ HÀNG</h1>
       <Row gutter={16}>
         <Col flex="auto">
-          <OrderItems></OrderItems>
+          <OrderItems/>
         </Col>
         <Col flex="400px">
           <ShippingAddress />

@@ -10,13 +10,13 @@ import {
 } from "@/redux/modules/fileUploads";
 import { setShowModalFileUpload } from "@/redux/modules/rate";
 import { REFRESH_TOKEN } from "@/utils/server";
-import { getCookie } from "cookies-next";
 import { UploadRequestOption } from "rc-upload/lib/interface";
 import { FileUpload } from "@/type/types";
+import Cookies from "js-cookie";
 
 export default function FileUploads() {
   const dispatch = useDispatch();
-  const refreshToken = getCookie(REFRESH_TOKEN) as string;
+  const refreshToken = Cookies.get(REFRESH_TOKEN);
   const {
     filesUpload,
     isUploading,

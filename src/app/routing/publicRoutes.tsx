@@ -7,13 +7,12 @@ import SuspensedView from "@/components/atoms/suspensedView.tsx";
 import ProductCategory from "@/components/molecules/productCategory.tsx";
 import { server } from "@/utils/server.ts";
 import SidebarLayout from "@/components/sidebarLayout.tsx";
+import CheckoutWrapper from "@/components/templates/checkoutWrapper";
+import { DefaultLayout } from "@/components/defaultLayout";
 
 const PublicRoute = () => {
   const ProductPage = lazy(() => import("@/components/pages/productPage.tsx"));
-
-  const CheckoutPage = lazy(
-    () => import("@/components/pages/checkoutPage.tsx")
-  );
+  
   const ProductCategoryPage = lazy(
     () => import("@/components/pages/productCategoryPage.tsx")
   );
@@ -42,15 +41,11 @@ const PublicRoute = () => {
           </SuspensedView>
         }
       />
-     
-      <Route
-        path="checkout"
-        element={
-          <SuspensedView>
-            <CheckoutPage />
-          </SuspensedView>
-        }
-      />
+
+      <Route element={<DefaultLayout />}>
+        <Route path="checkout" element={<CheckoutWrapper />} />
+      </Route>
+
       <Route
         path="danh-muc/*"
         element={

@@ -79,7 +79,7 @@ export function LoginWrapper() {
             ),
           );
           Cookies.set("refreshToken", event.data, { expires: 7 });
-          navigate("/");
+          window.location.href = "/";
         }
         window.removeEventListener("message", getMessage);
         setLoadingGoogle(false);

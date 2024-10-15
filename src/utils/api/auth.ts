@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { AuthRequest, AuthResponse, CurrentUser } from "@/type/types.ts";
+import { AuthRequest, AuthResponse, CurrentUser, User } from "@/type/types.ts";
 import { accessToken, api, apiWithToken } from "@/utils/axiosConfig.ts";
 import generateQueryString from "./common";
 
@@ -9,9 +9,16 @@ export const login = (user: AuthRequest): Promise<AuthResponse> => {
     .then((res: AxiosResponse<AuthResponse>) => res.data);
 };
 
-export const registerUser = async (user: AuthRequest): Promise<CurrentUser> => {
-  const res: AxiosResponse<CurrentUser> = await api.post("/users", user);
-  return res.data;
+export const registerUser = (user: AuthRequest): Promise<CurrentUser> => {
+  return api
+    .post("/users", user)
+    .then((res: AxiosResponse<CurrentUser>) => res.data);
+};
+
+export const getUserById = (uid: string): Promise<User> => {
+  return api
+    .get(generateQueryString(`/users/${uid}`))
+    .then((res: AxiosResponse<User>) => res.data);
 };
 
 export const updateCurrentUserAddress = (aid: string): Promise<void> => {

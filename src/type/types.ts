@@ -92,7 +92,7 @@ export type Notification = {
 export type NotificationAttributes = {
   readonly id: string;
   readonly orderStatus: string | "REJECTED" | "APPROVED" | "COMPLETED";
-}
+};
 
 export type Page<T> = {
   readonly content: T;
@@ -159,6 +159,7 @@ export type User = {
   readonly username: string;
   readonly role: string;
   readonly status: boolean;
+  readonly address: Address;
 };
 
 export type UserRemember = {

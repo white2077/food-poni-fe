@@ -70,7 +70,7 @@ export default function ShippingAddressInfo({
         }),
       );
     }
-  }, [dispatch]);
+  }, [dispatch, address]);
 
   if (address && !formSaved.fields) {
     return null;

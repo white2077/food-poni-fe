@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 import { REFRESH_TOKEN } from "@/utils/server.ts";
 import jwtDecode from "jwt-decode";
 import { useDispatch } from "react-redux";
-import { updateCurrentUser } from "@/redux/modules/auth.ts";
+import { fetchUserAction } from "@/redux/modules/auth.ts";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -22,7 +22,7 @@ const App = () => {
         readonly addressId: string;
         readonly username: string;
       } = jwtDecode(refresh_token);
-      dispatch(updateCurrentUser(payload));
+      dispatch(fetchUserAction({uid: payload.id}));
     }
   }, [dispatch]);
 

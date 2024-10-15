@@ -1,11 +1,12 @@
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AuthRequest, AuthResponse, UserRemember } from "@/type/types.ts";
+import { AuthRequest, AuthResponse, User, UserRemember } from "@/type/types.ts";
 import { call, fork, put, select, take } from "redux-saga/effects";
 import { notification } from "antd";
 import jwtDecode from "jwt-decode";
 import Cookies from "js-cookie";
 import { REFRESH_TOKEN, REMEMBER_ME } from "@/utils/server.ts";
 import {
+  getUserById,
   login,
   registerUser,
   updateCurrentUserAddress,
@@ -291,6 +292,10 @@ export const loginAction = createAction<{ navigate: NavigateFunction }>(
   `${SLICE_NAME}/loginRequest`
 );
 
+export const fetchUserAction = createAction<{ uid: string }>(
+  `${SLICE_NAME}/fetchUserRequest`
+);
+
 function* handleLogin() {
   while (true) {
     const { payload }: PayloadAction<{ navigate: NavigateFunction }> =
@@ -328,7 +333,7 @@ function* handleLogin() {
         });
       } else Cookies.remove(REMEMBER_ME);
 
-      payload.navigate("/");
+      window.location.href = "/";
     } catch (e) {
       notification.open({
         message: "Error",
@@ -418,8 +423,37 @@ function* handleUpdateCurrentUserAddress() {
   }
 }
 
+function* handleFetchUser() {
+  while (true) {
+    const {
+      payload: { uid },
+    }: ReturnType<typeof fetchUserAction> = yield take(fetchUserAction);
+    try {
+      const user: User = yield call(getUserById, uid);
+
+      yield put(
+        updateCurrentUser({
+          id: user.id,
+          avatar: user.avatar,
+          role: user.role,
+          email: user.email,
+          addressId: user.address.id,
+          username: user.username,
+        })
+      );
+    } catch (e) {
+      notification.open({
+        message: "Error",
+        description: e.message,
+        type: "error",
+      });
+    }
+  }
+}
+
 export const authSagas = [
   fork(handleLogin),
   fork(handleRegisterUser),
   fork(handleUpdateCurrentUserAddress),
+  fork(handleFetchUser),
 ];
