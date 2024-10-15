@@ -1,4 +1,9 @@
 import { Button } from "antd";
+import { useDispatch } from "react-redux";
+import {
+  setShowModalAddRate,
+  setSelectOrderItemRate,
+} from "@/redux/modules/rate";
 
 type Props = {
   orderDetailId: string;
@@ -8,10 +13,13 @@ type Props = {
 };
 
 export function OrderItemActions({
+  orderDetailId,
   orderStatus,
   isInCart,
   createCartItem,
 }: Props) {
+  const dispatch = useDispatch();
+
   return (
     <div className="flex flex-wrap gap-2">
       <Button
@@ -20,10 +28,15 @@ export function OrderItemActions({
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-30"
         }`}
-        onClick={() => {}}
+        onClick={() => {
+          dispatch(setSelectOrderItemRate(orderDetailId));
+          dispatch(setShowModalAddRate(true));
+        }}
+        disabled={orderStatus !== "COMPLETED"}
       >
         Đánh giá
       </Button>
+
       <Button className="border border-primary text-primary">
         Xem đánh giá
       </Button>

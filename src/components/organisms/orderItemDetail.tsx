@@ -5,6 +5,7 @@ import { server } from "@/utils/server";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { OrderItemActions } from "../molecules/orderItemActions";
+import RateAdd from "./reateAdd";
 
 type Props = {
   orderItem: OrderItem;
@@ -50,6 +51,7 @@ export function OrderItemDetail({ orderItem, orderStatus }: Props) {
               navigate("/checkout");
             }}
           />
+          <RateAdd></RateAdd>
         </div>
       </div>
     </div>
