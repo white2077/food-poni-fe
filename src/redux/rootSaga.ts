@@ -7,6 +7,7 @@ import { orderSagas } from "./modules/order";
 import { shippingAddressSagas } from "@/redux/modules/address.ts";
 import { notificationSagas } from "@/redux/modules/notification.ts";
 import { rateSagas } from "./modules/rate";
+import { fileUploadsSagas } from "./modules/fileUploads";
 
 export default function* rootSaga() {
   yield all([
@@ -18,5 +19,6 @@ export default function* rootSaga() {
     ...orderSagas,
     ...shippingAddressSagas,
     ...rateSagas,
+    ...fileUploadsSagas
   ]);
 }
