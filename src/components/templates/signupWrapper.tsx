@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Card, Form, Input, Space } from "antd";
-import { validateFormField, registerUserAction } from "@/redux/modules/auth";
+import { updateFormEditingSuccess, registerUserAction } from "@/redux/modules/auth";
 import { RootState } from "@/redux/store.ts";
 import { useNavigate } from "react-router-dom";
 
@@ -57,7 +57,7 @@ export default function SignupWrapper() {
                 placeholder="Tên đăng nhập"
                 onChange={(e) =>
                   dispatch(
-                    validateFormField({
+                    updateFormEditingSuccess({
                       field: "username",
                       value: e.target.value,
                     }),
@@ -75,7 +75,7 @@ export default function SignupWrapper() {
                 placeholder="Email"
                 onChange={(e) =>
                   dispatch(
-                    validateFormField({
+                    updateFormEditingSuccess({
                       field: "email",
                       value: e.target.value,
                     }),
@@ -93,7 +93,7 @@ export default function SignupWrapper() {
                 placeholder="Mật khẩu"
                 onChange={(e) =>
                   dispatch(
-                    validateFormField({
+                    updateFormEditingSuccess({
                       field: "password",
                       value: e.target.value,
                     }),
@@ -108,7 +108,7 @@ export default function SignupWrapper() {
                 htmlType="submit"
                 className="sign-up-form-button"
                 block
-                disabled={!isFormValid}
+                disabled={isFormValid}
               >
                 Đăng ký
               </Button>

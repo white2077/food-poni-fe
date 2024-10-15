@@ -1,7 +1,6 @@
 import CarouselBanner from "@/components/carousel-banner.tsx";
-import { fetchProductsByCustomerRequest } from "@/redux/modules/product.ts";
-import { ProductRows } from "@/components/organisms/productRows.tsx";
 import { ProductRowsFilter } from "@/components/organisms/productRowsFilter.tsx";
+import { fetchProductsByCustomerRequest } from "@/redux/modules/product.ts";
 
 export default function HomeWrapper() {
   return (
@@ -27,26 +26,6 @@ export default function HomeWrapper() {
           },
         })}
       />
-      <ProductRows
-        hasBorder={false}
-        title={
-          <div className="flex items-center">
-            <img src="/sale.png" alt="Title" className="w-auto h-8" />
-          </div>
-        }
-        action={fetchProductsByCustomerRequest({
-          requestParams: { page: 0, pageSize: 10, status: true },
-        })}
-        legacyBehavior={true}
-      />
-      <ProductRows
-        hasBorder={false}
-        title="Món ngon - Giá sốc"
-        action={fetchProductsByCustomerRequest({
-          requestParams: { page: 0, pageSize: 10, status: false },
-        })}
-      />
-
       <div className="bg-white">
         <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
           <h2 className="text-2xl font-bold tracking-tight text-gray-900">

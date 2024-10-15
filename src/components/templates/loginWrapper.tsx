@@ -103,7 +103,7 @@ export function LoginWrapper() {
             </div>
             <div className="flex justify-center gap-1 font-medium text-gray-500">
               Cần một tài khoản?
-              <a className="float-right" onClick={() => navigate("/sing-up")}>
+              <a className="float-right" onClick={() => navigate("/auth/signup")}>
                 Đăng ký ngay
               </a>
             </div>

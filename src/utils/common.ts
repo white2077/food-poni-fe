@@ -14,7 +14,7 @@ export const checkDirty = (
     readonly value: string;
     readonly errorMessage: string | null;
   }>,
-  savedFields: Array<{ field: string; value: string }> | null,
+  savedFields: Array<{ field: string; value: string }> | null
 ): boolean => {
   if (!savedFields) {
     return false;
@@ -44,7 +44,7 @@ export const getAvatar = (user: User) => {
   }
 
   if (user.avatar) {
-    return user.avatar.startsWith("http" || "https")
+    return user.avatar.startsWith("http") || user.avatar.startsWith("https")
       ? user.avatar
       : server + user.avatar;
   }

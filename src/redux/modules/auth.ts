@@ -1,19 +1,18 @@
-import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { FieldLoginType } from "@/components/templates/loginWrapper.tsx";
+import { RootState } from "@/redux/store.ts";
 import { AuthRequest, AuthResponse, User, UserRemember } from "@/type/types.ts";
-import { call, fork, put, select, take } from "redux-saga/effects";
-import { notification } from "antd";
-import jwtDecode from "jwt-decode";
-import Cookies from "js-cookie";
-import { REFRESH_TOKEN, REMEMBER_ME } from "@/utils/server.ts";
 import {
   getUserById,
   login,
-  registerUser,
-  updateCurrentUserAddress,
+  updateCurrentUserAddress
 } from "@/utils/api/auth.ts";
-import { RootState } from "@/redux/store.ts";
+import { REFRESH_TOKEN, REMEMBER_ME } from "@/utils/server.ts";
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { notification } from "antd";
+import Cookies from "js-cookie";
+import jwtDecode from "jwt-decode";
 import { NavigateFunction } from "react-router-dom";
-import { FieldLoginType } from "@/components/templates/loginWrapper.tsx";
+import { call, fork, put, select, take } from "redux-saga/effects";
 
 export type AuthState = {
   readonly login: {
@@ -195,6 +194,81 @@ const authSlice = createSlice({
         fields: action.payload.fields,
       },
     }),
+    updateFormEditingSuccess: (
+      state,
+      action: PayloadAction<{
+        field: string;
+        value: string;
+      }>
+    ) => {
+      let errorMessage: string | null = null;
+
+      switch (action.payload.field) {
+        case "username":
+          if (action.payload.value === "") {
+            errorMessage = "Username không được để trống";
+            break;
+          }
+          if (action.payload.value.includes(" ")) {
+            errorMessage = "Username không hợp lệ";
+            break;
+          }
+          if (action.payload.value.length < 5) {
+            errorMessage = "Username phải có ít nhất 6 ký tự";
+            break;
+          }
+          break;
+        case "email":
+          if (!/^[^\s@]+@[^\s@]+.[^\s@]+$/.test(action.payload.value)) {
+            errorMessage = "Email không hợp lệ";
+            break;
+          }
+          break;
+        case "password":
+          if (action.payload.value === "") {
+            errorMessage = "Password không được để trống";
+            break;
+          }
+          if (action.payload.value.length < 6) {
+            errorMessage = "Password phải có ít nhất 6 ký tự";
+            break;
+          }
+          break;
+      }
+
+      const updatedFields = state.formEditing.fields.map((field) => {
+        if (field.field === action.payload.field) {
+          return {
+            ...field,
+            value: action.payload.value,
+            errorMessage,
+          };
+        }
+        return field;
+      });
+
+      if (errorMessage) {
+        return {
+          ...state,
+          formEditing: {
+            fields: updatedFields,
+            isDirty: true,
+          },
+        };
+      }
+
+      const isDirty = updatedFields.every(
+        (field) => field.errorMessage === null
+      );
+
+      return {
+        ...state,
+        formEditing: {
+          fields: updatedFields,
+          isDirty: !isDirty,
+        },
+      };
+    },
     clearFormSuccess: (state) => {
       state.formEditing = {
         fields: [
@@ -205,55 +279,6 @@ const authSlice = createSlice({
         isDirty: false,
       };
       state.formSaved = { fields: null };
-    },
-    validateFormField: (
-      state,
-      action: PayloadAction<{
-        field: string;
-        value: string;
-      }>
-    ) => {
-      let errorMessage: string | null = null;
-      const { field, value } = action.payload;
-
-      switch (field) {
-        case "username":
-          if (value === "") {
-            errorMessage = "Tên đăng nhập không được để trống";
-          } else if (value.length < 6 || value.length > 50) {
-            errorMessage = "Tên đăng nhập phải có từ 6 đến 50 ký tự";
-          } else if (/\s/.test(value)) {
-            errorMessage = "Tên đăng nhập không được chứa dấu cách";
-          }
-          break;
-        case "email":
-          if (value === "") {
-            errorMessage = "Email không được để trống";
-          } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-            errorMessage = "Email không hợp lệ";
-          } else if (/\s/.test(value)) {
-            errorMessage = "Email không được chứa dấu cách";
-          }
-          break;
-        case "password":
-          if (value === "") {
-            errorMessage = "Mật khẩu không được để trống";
-          } else if (value.length < 6 || value.length > 50) {
-            errorMessage = "Mật khẩu phải có từ 6 đến 50 ký tự";
-          } else if (/\s/.test(value)) {
-            errorMessage = "Mật khẩu không được chứa dấu cách";
-          }
-          break;
-      }
-
-      const updatedFields = state.formEditing.fields.map((f) =>
-        f.field === field ? { ...f, value, errorMessage } : f
-      );
-
-      state.formEditing = {
-        fields: updatedFields,
-        isDirty: updatedFields.some((field) => field.errorMessage !== null),
-      };
     },
   },
 });
@@ -273,8 +298,8 @@ export const {
   registerUserSuccess,
   registerUserFailure,
   updateFormSavedSuccess,
+  updateFormEditingSuccess,
   clearFormSuccess,
-  validateFormField,
 } = authSlice.actions;
 
 export default authSlice.reducer;
@@ -298,8 +323,7 @@ export const fetchUserAction = createAction<{ uid: string }>(
 
 function* handleLogin() {
   while (true) {
-    const { payload }: PayloadAction<{ navigate: NavigateFunction }> =
-      yield take(loginAction.type);
+    yield take(loginAction);
     try {
       yield put(updatePendingSuccess());
       const { username, password, remember }: FieldLoginType = yield select(
@@ -349,57 +373,12 @@ function* handleLogin() {
 function* handleRegisterUser() {
   while (true) {
     const {
-      payload: { values, navigate },
+      payload: { navigate },
     }: ReturnType<typeof registerUserAction> = yield take(
       registerUserAction.type
     );
-    yield put(registerUserRequest());
-    const formEditing: AuthState["formEditing"] = yield select(
-      (state: RootState) => state.auth.formEditing
-    );
 
-    if (formEditing.fields.some((field) => field.errorMessage !== null)) {
-      const errors = formEditing.fields.reduce(
-        (acc, field) => {
-          if (field.errorMessage) {
-            acc[field.field] = field.errorMessage;
-          }
-          return acc;
-        },
-        {} as Record<string, string>
-      );
-
-      yield put(registerUserFailure(errors));
-      notification.error({
-        message: "Đăng ký thất bại",
-        description: "Vui lòng kiểm tra lại thông tin đăng ký.",
-      });
-      continue;
-    }
-
-    try {
-      yield call(registerUser, values);
-      yield put(registerUserSuccess());
-      notification.success({
-        message: "Đăng ký thành công",
-        description: "Đăng ký tài khoản thành công!",
-      });
-
-      Cookies.set(
-        REMEMBER_ME,
-        btoa(
-          JSON.stringify({ username: values.username, email: values.email })
-        ),
-        { expires: 30 }
-      );
-
-      yield put(clearFormSuccess());
-      navigate("/auth/login");
-    } catch (e) {
-      yield put(
-        registerUserFailure({ general: "Đăng ký thất bại. Vui lòng thử lại." })
-      );
-    }
+    console.log(navigate);
   }
 }
 
@@ -437,7 +416,7 @@ function* handleFetchUser() {
           avatar: user.avatar,
           role: user.role,
           email: user.email,
-          addressId: user.address.id,
+          addressId: user.address && user.address.id,
           username: user.username,
         })
       );
