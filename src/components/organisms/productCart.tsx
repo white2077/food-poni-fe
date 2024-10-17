@@ -1,38 +1,29 @@
 import { Button, Card, Flex } from "antd";
-import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Banner from "../slide-banner.tsx";
 import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "@/redux/store.ts";
-import { server } from "@/utils/server.ts";
-import { createCartRequest } from "@/redux/modules/cart.ts";
+import { createCartAction } from "@/redux/modules/cart.ts";
 import CustomInput from "@/components/molecules/customInput .tsx";
+import { updateProductSelectedQuantitySuccess } from "@/redux/modules/product.ts";
+import { getThumbnail } from "@/utils/common.ts";
 
-export default function ProductCart({
-  id,
-  price,
-  thumbnail,
-  productName,
-  productDetailName,
-  status,
-}: {
-  id: string;
-  price: number;
-  thumbnail: string;
-  productName: string;
-  productDetailName: string;
-  status: boolean;
-}) {
+export default function ProductCart() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [quantity, setQuantity] = useState<number>(1);
+  const { toppingsSelected, productDetail, quantity, type } = useSelector(
+    (state: RootState) => state.product.itemsSelected,
+  );
   const { page, isCreateLoading } = useSelector(
     (state: RootState) => state.cart,
   );
   const { currentUser } = useSelector((state: RootState) => state.auth);
 
   const isExisted: boolean = page.content.some(
-    (item) => item.productDetail.id === id,
+    (it) =>
+      it.productDetail.id === productDetail.id &&
+      JSON.stringify(it.toppings) === JSON.stringify(toppingsSelected) &&
+      it.type === type,
   );
 
   return (
@@ -40,15 +31,15 @@ export default function ProductCart({
       <Card className="text-left text-black h-fit" size="small">
         <div className="flex justify-between">
           <div className="flex">
-            <Link to={`/cua-hang/${id}`}>
+            <Link to={`/cua-hang/${productDetail.id}`}>
               <img
                 className="w-12 h-12 rounded-[100%] overflow-hidden object-cover"
-                src={server + id}
+                src={getThumbnail("")}
                 alt={""}
               />
             </Link>
             <div>
-              <span className="mx-2 font-semibold">{id}</span>
+              <span className="mx-2 font-semibold">{productDetail.id}</span>
               <div className="ml-2 font-semibold flex gap-2">
                 <div>
                   <span className="flex items-center gap-1">
@@ -94,7 +85,11 @@ export default function ProductCart({
               min={1}
               defaultValue={1}
               value={quantity}
-              onChange={(value: number) => setQuantity(value)}
+              onChange={(value: number) =>
+                dispatch(
+                  updateProductSelectedQuantitySuccess({ quantity: value }),
+                )
+              }
               disabled={false}
             />
           </div>
@@ -102,66 +97,48 @@ export default function ProductCart({
             <div className="text-md font-medium mb-2">Tạm tính</div>
             <div>
               <div className="text-2xl font-semibold">
-                {price * quantity}
+                {(productDetail.price +
+                  toppingsSelected.reduce((acc, it) => acc + it.price, 0)) *
+                  quantity}
                 <sup>₫</sup>
               </div>
             </div>
           </div>
         </div>
-        {status ? (
+        {productDetail.status ? (
           <Flex vertical gap="small" className="w-full">
             <Button
-                type="primary"
-                danger
-                block
-                onClick={() => {
-                  if (!isExisted) {
-                    dispatch(
-                        createCartRequest({
-                          quantity: quantity,
-                          productDetail: id,
-                          productName: productName,
-                          productDetailName: productDetailName,
-                          price: price,
-                          thumbnail: thumbnail,
-                        }),
-                    );
-                  }
-                  navigate("/checkout");
-                }}
-                disabled={isExisted || (currentUser?.role === "ADMIN" || currentUser?.role === "RETAILER")}
+              type="primary"
+              danger
+              block
+              onClick={() => {
+                if (!isExisted) {
+                  dispatch(createCartAction());
+                }
+                navigate("/checkout");
+              }}
+              disabled={currentUser?.role === "RETAILER"}
             >
               Mua ngay
             </Button>
             <Button
-                block
-                onClick={() =>
-                    dispatch(
-                        createCartRequest({
-                          quantity: quantity,
-                          productDetail: id,
-                          productName: productName,
-                          productDetailName: productDetailName,
-                          price: price,
-                          thumbnail: thumbnail,
-                        }),
-                    )
-                }
-                loading={isCreateLoading}
-                disabled={isExisted || (currentUser?.role === "ADMIN" || currentUser?.role === "RETAILER")}
+              block
+              onClick={() => dispatch(createCartAction())}
+              loading={isCreateLoading}
+              disabled={isExisted || currentUser?.role === "RETAILER"}
             >
               {isExisted
-                  ? "Sản phẩm đã có trong giỏ hàng"
-                  : "Thêm vào giỏ hàng"}
+                ? "Sản phẩm đã có trong giỏ hàng"
+                : "Thêm vào giỏ hàng"}
             </Button>
           </Flex>
         ) : (
           <Flex vertical gap="small" className="w-full">
-            <Button disabled={!status}>Sản phẩm này đã hết</Button>
+            <Button disabled={true}>Sản phẩm này đã hết</Button>
           </Flex>
         )}
       </Card>
-      <Banner></Banner>
+      <Banner />
     </div>
   );
 }

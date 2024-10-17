@@ -24,9 +24,12 @@ export type Cart = {
   readonly quantity: number;
   readonly productName: string;
   readonly productDetail: ProductDetail;
+  readonly toppings: Array<{
+    readonly name: string;
+    readonly price: number;
+  }>;
+  readonly type: string | null;
   readonly checked: boolean;
-  readonly isUpdateLoading: boolean;
-  readonly isDeleteLoading: boolean;
 };
 
 export type CurrentUser = {
@@ -74,6 +77,11 @@ export type OrderItem = {
   readonly quantity: number;
   readonly price: number;
   readonly productDetail: ProductDetail;
+  readonly toppings: Array<{
+    readonly name: string;
+    readonly price: number;
+  }>;
+  readonly type: string | null;
   readonly note: string;
   readonly rate: Rate;
 };
@@ -123,6 +131,8 @@ export type Product = {
   readonly rateCount: number;
   readonly minPrice: number;
   readonly maxPrice: number;
+  readonly toppings: Array<{ readonly name: string; readonly price: number }>;
+  readonly types: Array<string>;
   readonly createdDate: Date;
   readonly updatedDate: Date;
 };

@@ -1,6 +1,6 @@
 import CarouselBanner from "@/components/carousel-banner.tsx";
 import { ProductRowsFilter } from "@/components/organisms/productRowsFilter.tsx";
-import { fetchProductsByCustomerRequest } from "@/redux/modules/product.ts";
+import { fetchProductsAction } from "@/redux/modules/product.ts";
 
 export default function HomeWrapper() {
   return (
@@ -17,8 +17,8 @@ export default function HomeWrapper() {
         {/*<SearchPosition />*/}
       </div>
       <ProductRowsFilter
-        action={fetchProductsByCustomerRequest({
-          requestParams: {
+        action={fetchProductsAction({
+          queryParams: {
             page: 0,
             pageSize: 10,
             sort: "sales,desc",

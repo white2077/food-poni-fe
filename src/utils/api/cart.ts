@@ -15,34 +15,34 @@ export const getCartsPage = (
     .then((res: AxiosResponse<Page<Cart[]>>) => res.data);
 };
 
-export const createCart = ({
-  quantity,
-  productDetail,
-}: {
-  quantity: number;
-  productDetail: string;
-}): Promise<void> => {
-  return apiWithToken().post(
-    "/carts",
-    { quantity, productDetail },
-    {
-      headers: {
-        Authorization: "Bearer " + accessToken,
+export const createCart = (
+  quantity: number,
+  id: string,
+  toppings: Array<{ name: string; price: number }>,
+  type: string | null,
+): Promise<{ id: string }> => {
+  return apiWithToken()
+    .post(
+      "/carts",
+      { quantity, productDetail: { id }, toppings, type },
+      {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+        },
       },
-    },
-  );
+    )
+    .then((res: AxiosResponse<string>) => {
+      return { id: res.data };
+    });
 };
 
-export const updateCartQuantity = ({
-  pdid,
-  quantity,
-}: {
-  pdid: string;
-  quantity: number;
-}): Promise<void> => {
+export const updateCartQuantity = (
+  id: string,
+  quantity: number,
+): Promise<void> => {
   return apiWithToken().patch(
     "/carts/update-quantity",
-    { pdid, quantity },
+    { id, quantity },
     {
       headers: {
         Authorization: "Bearer " + accessToken,
@@ -52,15 +52,15 @@ export const updateCartQuantity = ({
 };
 
 export const updateCartChecked = ({
-  pdid,
+  id,
   checked,
 }: {
-  pdid: string;
+  id: string;
   checked: boolean;
 }): Promise<void> => {
   return apiWithToken().patch(
     "/carts/update-checked",
-    { pdid, checked },
+    { id, checked },
     {
       headers: {
         Authorization: "Bearer " + accessToken,
@@ -81,8 +81,8 @@ export const updateCartAllChecked = (): Promise<void> => {
   );
 };
 
-export const deleteCart = (pdid: string): Promise<void> => {
-  return apiWithToken().delete(`/carts/${pdid}`, {
+export const deleteCart = (id: string): Promise<void> => {
+  return apiWithToken().delete(`/carts/${id}`, {
     headers: {
       Authorization: "Bearer " + accessToken,
     },

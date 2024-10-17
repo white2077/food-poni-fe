@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { Page } from "@/type/types.ts";
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Cart, Page } from "@/type/types.ts";
 import {
   call,
   cancel,
@@ -24,10 +24,12 @@ import {
 import { RootState } from "@/redux/store.ts";
 import { Task } from "redux-saga";
 import { updateOrderItemsAction } from "@/redux/modules/order.ts";
+import { ProductState } from "@/redux/modules/product.ts";
 
 export type CartState = {
   readonly page: Page<
     {
+      readonly id: string;
       readonly quantity: number;
       readonly productName: string;
       readonly productDetail: {
@@ -36,6 +38,11 @@ export type CartState = {
         readonly price: number;
         readonly images: string[];
       };
+      readonly toppings: Array<{
+        readonly name: string;
+        readonly price: number;
+      }>;
+      readonly type: string | null;
       readonly checked: boolean;
       readonly isUpdateLoading: boolean;
       readonly isDeleteLoading: boolean;
@@ -50,21 +57,7 @@ export type CartState = {
 
 const initialState: CartState = {
   page: {
-    content: [
-      {
-        quantity: 1,
-        productName: "",
-        productDetail: {
-          id: "",
-          name: "",
-          price: 1,
-          images: [""],
-        },
-        checked: true,
-        isUpdateLoading: false,
-        isDeleteLoading: false,
-      },
-    ],
+    content: [],
     totalElements: 0,
     totalPages: 0,
     size: 0,
@@ -87,39 +80,20 @@ const cartListSlide = createSlice({
   name: SLICE_NAME,
   initialState,
   reducers: {
-    fetchCartRequest: (
-      state,
-      { payload }: { payload: string | undefined },
-    ) => ({
+    updateFetchLoading: (state) => ({
       ...state,
       isFetchLoading: true,
     }),
-    fetchCartSuccess: (
+    fetchCartsSuccess: (
       state,
-      {
-        payload,
-      }: {
-        payload: Page<
-          {
-            readonly quantity: number;
-            readonly productName: string;
-            readonly productDetail: {
-              readonly id: string;
-              readonly name: string;
-              readonly price: number;
-              readonly images: string[];
-            };
-            readonly checked: boolean;
-            readonly isUpdateLoading: boolean;
-            readonly isDeleteLoading: boolean;
-          }[]
-        >;
-      },
+      action: PayloadAction<{ page: CartState["page"] }>,
     ) => {
-      const isAnyChecked = payload.content.every((cart) => cart.checked);
+      const isAnyChecked = action.payload.page.content.every(
+        (cart) => cart.checked,
+      );
       return {
         ...state,
-        page: payload,
+        page: action.payload.page,
         isFetchLoading: false,
         isAllChecked: isAnyChecked,
       };
@@ -128,48 +102,18 @@ const cartListSlide = createSlice({
       ...state,
       isFetchLoading: false,
     }),
-    createCartRequest: (
-      state,
-      {
-        payload,
-      }: {
-        payload: {
-          quantity: number;
-          productDetail: string;
-          productName: string;
-          productDetailName: string;
-          price: number;
-          thumbnail: string;
-        };
-      },
-    ) => ({
+    updateCreateLoading: (state) => ({
       ...state,
       isCreateLoading: true,
     }),
     createCartSuccess: (
       state,
-      {
-        payload,
-      }: {
-        payload: {
-          quantity: number;
-          productName: string;
-          productDetail: {
-            id: string;
-            name: string;
-            price: number;
-            images: string[];
-          };
-          checked: boolean;
-          isUpdateLoading: boolean;
-          isDeleteLoading: boolean;
-        };
-      },
+      action: PayloadAction<{ cart: CartState["page"]["content"][0] }>,
     ) => ({
       ...state,
       page: {
         ...state.page,
-        content: [payload, ...state.page.content],
+        content: [action.payload.cart, ...state.page.content],
         totalElements: state.page.totalElements + 1,
       },
       isCreateLoading: false,
@@ -178,72 +122,36 @@ const cartListSlide = createSlice({
       ...state,
       isCreateLoading: false,
     }),
-    updateDecreaseQuantityRequest: (
+    updateQuantityLoadingSuccess: (
       state,
-      { payload }: { payload: { pdid: string } },
+      action: PayloadAction<{ id: string }>,
     ) => ({
       ...state,
       page: {
         ...state.page,
-        content: state.page.content.map((cart) => {
-          if (cart.productDetail.id === payload.pdid) {
+        content: state.page.content.map((it) => {
+          if (it.id === action.payload.id) {
             return {
-              ...cart,
+              ...it,
               isUpdateLoading: true,
             };
           }
-          return cart;
-        }),
-      },
-    }),
-    updateIncreaseQuantityRequest: (
-      state,
-      { payload }: { payload: { pdid: string } },
-    ) => ({
-      ...state,
-      page: {
-        ...state.page,
-        content: state.page.content.map((cart) => {
-          if (cart.productDetail.id === payload.pdid) {
-            return {
-              ...cart,
-              isUpdateLoading: true,
-            };
-          }
-          return cart;
-        }),
-      },
-    }),
-    updateQuantityRequest: (
-      state,
-      { payload }: { payload: { pdid: string; quantity: number } },
-    ) => ({
-      ...state,
-      page: {
-        ...state.page,
-        content: state.page.content.map((cart) => {
-          if (cart.productDetail.id === payload.pdid) {
-            return {
-              ...cart,
-              isUpdateLoading: true,
-            };
-          }
-          return cart;
+          return it;
         }),
       },
     }),
     updateQuantitySuccess: (
       state,
-      { payload }: { payload: { pdid: string; quantity: number } },
+      action: PayloadAction<{ id: string; quantity: number }>,
     ) => ({
       ...state,
       page: {
         ...state.page,
         content: state.page.content.map((cart) => {
-          if (cart.productDetail.id === payload.pdid) {
+          if (cart.id === action.payload.id) {
             return {
               ...cart,
-              quantity: payload.quantity,
+              quantity: action.payload.quantity,
               isUpdateLoading: false,
             };
           }
@@ -251,12 +159,12 @@ const cartListSlide = createSlice({
         }),
       },
     }),
-    updateQuantityFailure: (state, { payload }: { payload: string }) => ({
+    updateQuantityFailure: (state, action: PayloadAction<{ id: string }>) => ({
       ...state,
       page: {
         ...state.page,
         content: state.page.content.map((cart) => {
-          if (cart.productDetail.id === payload) {
+          if (cart.id === action.payload.id) {
             return {
               ...cart,
               isUpdateLoading: false,
@@ -266,39 +174,38 @@ const cartListSlide = createSlice({
         }),
       },
     }),
-    updateCheckedRequest: (
+    updateCartCheckedLoadingSuccess: (
       state,
-      { payload }: { payload: { pdid: string; checked: boolean } },
+      action: PayloadAction<{ id: string }>,
     ) => ({
       ...state,
       page: {
         ...state.page,
-        content: state.page.content.map((cart) => {
-          if (cart.productDetail.id === payload.pdid) {
+        content: state.page.content.map((it) => {
+          if (it.id === action.payload.id) {
             return {
-              ...cart,
-              isUpdateLoading: true,
+              ...it
             };
           }
-          return cart;
+          return it;
         }),
       },
     }),
     updateCheckedSuccess: (
       state,
-      { payload }: { payload: { pdid: string; checked: boolean } },
+      action: PayloadAction<{ id: string; checked: boolean }>,
     ) => {
-      const updatedContent = state.page.content.map((cart) => {
-        if (cart.productDetail.id === payload.pdid) {
+      const updatedContent = state.page.content.map((it) => {
+        if (it.id === action.payload.id) {
           return {
-            ...cart,
-            checked: payload.checked,
+            ...it,
+            checked: action.payload.checked,
             isUpdateLoading: false,
           };
         }
-        return cart;
+        return it;
       });
-      const isAnyChecked = updatedContent.every((cart) => cart.checked);
+      const isAnyChecked = updatedContent.every((it) => it.checked);
       return {
         ...state,
         page: {
@@ -312,9 +219,9 @@ const cartListSlide = createSlice({
       ...state,
       page: {
         ...state.page,
-        content: state.page.content.map((cart) => {
+        content: state.page.content.map((it) => {
           return {
-            ...cart,
+            ...it,
             isUpdateLoading: false,
           };
         }),
@@ -326,15 +233,15 @@ const cartListSlide = createSlice({
     }),
     updateAllCheckedSuccess: (
       state,
-      { payload }: { payload: { checked: boolean } },
+      action: PayloadAction<{ checked: boolean }>,
     ) => {
-      const updatedContent = state.page.content.map((cart) => {
+      const updatedContent = state.page.content.map((it) => {
         return {
-          ...cart,
-          checked: !payload.checked,
+          ...it,
+          checked: !action.payload.checked,
         };
       });
-      const isAnyChecked = updatedContent.some((cart) => cart.checked);
+      const isAnyChecked = updatedContent.some((it) => it.checked);
       return {
         ...state,
         page: {
@@ -349,51 +256,51 @@ const cartListSlide = createSlice({
       ...state,
       isUpdateAllLoading: false,
     }),
-    deleteCartRequest: (state, { payload }: { payload: string }) => ({
+    deleteCartRequest: (state, action: PayloadAction<{ id: string }>) => ({
       ...state,
       page: {
         ...state.page,
-        content: state.page.content.map((cart) => {
-          if (cart.productDetail.id === payload) {
+        content: state.page.content.map((it) => {
+          if (it.id === action.payload.id) {
             return {
-              ...cart,
+              ...it,
               isDeleteLoading: true,
             };
           }
-          return cart;
+          return it;
         }),
       },
     }),
-    deleteCartSuccess: (state, { payload }: { payload: string }) => ({
+    deleteCartSuccess: (state, action: PayloadAction<{ id: string }>) => ({
       ...state,
       page: {
         ...state.page,
         content: state.page.content
-          .map((cart) => {
-            if (cart.productDetail.id === payload) {
+          .map((it) => {
+            if (it.id === action.payload.id) {
               return {
-                ...cart,
+                ...it,
                 isDeleteLoading: false,
               };
             }
-            return cart;
+            return it;
           })
-          .filter((cart) => cart.productDetail.id !== payload),
+          .filter((cart) => cart.id !== action.payload.id),
         totalElements: state.page.totalElements - 1,
       },
     }),
-    deleteCartFailure: (state, { payload }: { payload: string }) => ({
+    deleteCartFailure: (state, action: PayloadAction<{ id: string }>) => ({
       ...state,
       page: {
         ...state.page,
-        content: state.page.content.map((cart) => {
-          if (cart.productDetail.id === payload) {
+        content: state.page.content.map((it) => {
+          if (it.id === action.payload.id) {
             return {
-              ...cart,
+              ...it,
               isDeleteLoading: false,
             };
           }
-          return cart;
+          return it;
         }),
       },
     }),
@@ -401,14 +308,8 @@ const cartListSlide = createSlice({
       ...state,
       isDeleteAllLoading: true,
     }),
-    deleteAllCartSuccess: (state) => ({
-      ...state,
-      page: {
-        ...state.page,
-        content: [],
-        totalElements: 0,
-      },
-      isDeleteAllLoading: false,
+    deleteAllCartSuccess: () => ({
+      ...initialState,
     }),
     deleteAllCartFailure: (state) => ({
       ...state,
@@ -419,18 +320,16 @@ const cartListSlide = createSlice({
 export default cartListSlide.reducer;
 
 export const {
-  fetchCartRequest,
-  fetchCartSuccess,
+  updateFetchLoading,
+  fetchCartsSuccess,
   fetchCartFailure,
-  createCartRequest,
+  updateCreateLoading,
   createCartSuccess,
   createCartFailure,
-  updateDecreaseQuantityRequest,
-  updateIncreaseQuantityRequest,
-  updateQuantityRequest,
+  updateQuantityLoadingSuccess,
   updateQuantitySuccess,
   updateQuantityFailure,
-  updateCheckedRequest,
+  updateCartCheckedLoadingSuccess,
   updateCheckedSuccess,
   updateCheckedFailure,
   updateAllCheckedRequest,
@@ -444,35 +343,63 @@ export const {
   deleteAllCartFailure,
 } = cartListSlide.actions;
 
+export const fetchCartsAction = createAction<{ queryParams: QueryParams }>(
+  `${SLICE_NAME}/fetchCartsRequest`,
+);
+export const createCartAction = createAction<void>(
+  `${SLICE_NAME}/createCartRequest`,
+);
+export const updateQuantityButtonAction = createAction<{
+  type: "INCREASE" | "DECREASE";
+  id: string;
+}>(`${SLICE_NAME}/updateQuantityButtonRequest`);
+export const updateQuantityInputAction = createAction<{
+  id: string;
+  quantity: number;
+}>(`${SLICE_NAME}/updateQuantityInputRequest`);
+export const updateCheckedAction = createAction<{
+  id: string;
+  checked: boolean;
+}>(`${SLICE_NAME}/updateCheckedRequest`);
+
 function* handleFetchCart() {
   while (true) {
-    const { payload }: ReturnType<typeof fetchCartRequest> = yield take(
-      fetchCartRequest,
-    );
+    const {
+      payload: { queryParams },
+    }: ReturnType<typeof fetchCartsAction> = yield take(fetchCartsAction);
     try {
-      const queryParams: QueryParams = {
-        pageSize: 10,
-        page: 0,
-        status: true,
-      };
-
-      queryParams.sort = payload;
-      const page: Page<
-        {
-          readonly quantity: number;
-          readonly productName: string;
-          readonly productDetail: {
-            readonly id: string;
-            readonly name: string;
-            readonly price: number;
-            readonly images: string[];
-          };
-          readonly checked: boolean;
-          readonly isUpdateLoading: boolean;
-          readonly isDeleteLoading: boolean;
-        }[]
-      > = yield call(getCartsPage, queryParams);
-      yield put(fetchCartSuccess(page));
+      yield put(updateFetchLoading());
+      const page: Page<Cart[]> = yield call(getCartsPage, queryParams);
+      yield put(
+        fetchCartsSuccess({
+          page: {
+            content: page.content.map((it) => ({
+              id: it.id,
+              quantity: it.quantity,
+              productName: it.productName,
+              productDetail: {
+                id: it.productDetail.id,
+                name: it.productDetail.name,
+                price: it.productDetail.price,
+                images: it.productDetail.images,
+              },
+              toppings: it.toppings,
+              type: it.type,
+              checked: it.checked,
+              isUpdateLoading: false,
+              isDeleteLoading: false,
+            })),
+            totalElements: page.totalElements,
+            totalPages: page.totalPages,
+            size: page.size,
+            number: page.number,
+            first: page.first,
+            last: page.last,
+            numberOfElements: page.numberOfElements,
+            empty: page.empty,
+          },
+        }),
+      );
       yield put(updateOrderItemsAction());
     } catch (e) {
       notification.open({
@@ -488,40 +415,45 @@ function* handleFetchCart() {
 
 function* handleCreateCart() {
   while (true) {
-    const { payload }: ReturnType<typeof createCartRequest> = yield take(
-      createCartRequest,
-    );
+    yield take(createCartAction);
     try {
-      yield call(createCart, {
-        quantity: payload.quantity,
-        productDetail: payload.productDetail,
-      });
-      const cart: {
-        readonly quantity: number;
-        readonly productName: string;
-        readonly productDetail: {
-          readonly id: string;
-          readonly name: string;
-          readonly price: number;
-          readonly images: string[];
-        };
-        readonly checked: boolean;
-        readonly isUpdateLoading: boolean;
-        readonly isDeleteLoading: boolean;
-      } = {
-        quantity: payload.quantity,
-        productName: payload.productName + " - " + payload.productDetailName,
+      yield put(updateCreateLoading());
+      const {
+        productDetail,
+        toppingsSelected,
+        type,
+        quantity,
+      }: ProductState["itemsSelected"] = yield select(
+        (state: RootState) => state.product.itemsSelected,
+      );
+      const { product }: ProductState["productSelected"] = yield select(
+        (state: RootState) => state.product.productSelected,
+      );
+
+      const { id }: { id: string } = yield call(
+        createCart,
+        quantity,
+        productDetail.id,
+        toppingsSelected,
+        type,
+      );
+      const cart = {
+        id,
+        quantity,
+        productName: product.name + " - " + productDetail.name,
         productDetail: {
-          id: payload.productDetail,
-          name: payload.productDetailName,
-          price: payload.price,
-          images: [payload.thumbnail],
+          id: productDetail.id,
+          name: productDetail.name,
+          price: productDetail.price,
+          images: productDetail.images,
         },
+        toppings: toppingsSelected,
+        type: type,
         checked: true,
         isUpdateLoading: false,
         isDeleteLoading: false,
       };
-      yield put(createCartSuccess(cart));
+      yield put(createCartSuccess({ cart }));
     } catch (e) {
       notification.open({
         message: "Error",
@@ -536,81 +468,68 @@ function* handleCreateCart() {
 
 function* handleDelay(pdid: string, quantity: number) {
   yield delay(500);
-  yield call(updateCartQuantity, {
-    pdid: pdid,
-    quantity: quantity,
-  });
+  yield call(updateCartQuantity, pdid, quantity);
 }
 
 function* handleUpdateQuantityCart() {
-  let task: Task | null = null;
+  let typingTask: Task | null = null;
   while (true) {
     const {
-      updateDecreaseQuantity,
-      updateIncreaseQuantity,
-      updateQuantity,
+      updateQuantityButton,
+      updateQuantityInput,
     }: {
-      updateDecreaseQuantity: ReturnType<typeof updateDecreaseQuantityRequest>;
-      updateIncreaseQuantity: ReturnType<typeof updateIncreaseQuantityRequest>;
-      updateQuantity: ReturnType<typeof updateQuantityRequest>;
+      updateQuantityButton: ReturnType<typeof updateQuantityButtonAction>;
+      updateQuantityInput: ReturnType<typeof updateQuantityInputAction>;
     } = yield race({
-      updateDecreaseQuantity: take(updateDecreaseQuantityRequest),
-      updateIncreaseQuantity: take(updateIncreaseQuantityRequest),
-      updateQuantity: take(updateQuantityRequest),
+      updateQuantityButton: take(updateQuantityButtonAction),
+      updateQuantityInput: take(updateQuantityInputAction),
     });
+
     try {
-      if (updateDecreaseQuantity) {
-        const { quantity } = yield select((state: RootState) =>
-          state.cart.page.content.find(
-            (cart) =>
-              cart.productDetail.id === updateDecreaseQuantity.payload.pdid,
-          ),
+      if (updateQuantityButton) {
+        const { type, id } = updateQuantityButton.payload;
+        const content: CartState["page"]["content"] = yield select(
+          (state: RootState) => state.cart.page.content,
         );
-        yield call(updateCartQuantity, {
-          pdid: updateDecreaseQuantity.payload.pdid,
-          quantity: quantity - 1,
-        });
+        const cart = content.find((it) => it.id === id);
 
-        yield put(
-          updateQuantitySuccess({
-            pdid: updateDecreaseQuantity.payload.pdid,
-            quantity: quantity - 1,
-          }),
-        );
-      }
-      if (updateIncreaseQuantity) {
-        const { quantity } = yield select((state: RootState) =>
-          state.cart.page.content.find(
-            (cart) =>
-              cart.productDetail.id === updateIncreaseQuantity.payload.pdid,
-          ),
-        );
-        yield call(updateCartQuantity, {
-          pdid: updateIncreaseQuantity.payload.pdid,
-          quantity: quantity + 1,
-        });
+        if (cart) {
+          if (type === "DECREASE") {
+            yield put(updateQuantityLoadingSuccess({ id }));
+            yield call(updateCartQuantity, id, cart.quantity - 1);
 
-        yield put(
-          updateQuantitySuccess({
-            pdid: updateIncreaseQuantity.payload.pdid,
-            quantity: quantity + 1,
-          }),
-        );
-      }
-      if (updateQuantity) {
-        if (task) {
-          yield cancel(task);
-          task = null;
+            yield put(
+              updateQuantitySuccess({
+                id,
+                quantity: cart.quantity - 1,
+              }),
+            );
+          }
+
+          if (type === "INCREASE") {
+            yield put(updateQuantityLoadingSuccess({ id }));
+            yield call(updateCartQuantity, id, cart.quantity + 1);
+
+            yield put(
+              updateQuantitySuccess({
+                id,
+                quantity: cart.quantity + 1,
+              }),
+            );
+          }
         }
-        task = yield fork(
-          handleDelay,
-          updateQuantity.payload.pdid,
-          updateQuantity.payload.quantity,
-        );
+      }
+      if (updateQuantityInput) {
+        const { id, quantity } = updateQuantityInput.payload;
+        if (typingTask) {
+          yield cancel(typingTask);
+          typingTask = null;
+        }
+        typingTask = yield fork(handleDelay, id, quantity);
         yield put(
           updateQuantitySuccess({
-            pdid: updateQuantity.payload.pdid,
-            quantity: updateQuantity.payload.quantity,
+            id,
+            quantity,
           }),
         );
       }
@@ -621,32 +540,27 @@ function* handleUpdateQuantityCart() {
         description: e.message,
         type: "error",
       });
-      if (updateDecreaseQuantity) {
-        yield put(updateQuantityFailure(updateDecreaseQuantity.payload.pdid));
-      }
-      if (updateIncreaseQuantity) {
-        yield put(updateQuantityFailure(updateIncreaseQuantity.payload.pdid));
-      }
-      if (updateQuantity) {
-        yield put(updateQuantityFailure(updateQuantity.payload.pdid));
-      }
+
+      // const { id } =
+      //   updateQuantityInput.payload || updateQuantityButton.payload;
+      //
+      // yield put(updateQuantityFailure({ id }));
     }
   }
 }
 
 function* handleUpdateCheckedCart() {
   while (true) {
-    const { payload }: ReturnType<typeof updateCheckedRequest> = yield take(
-      updateCheckedRequest,
-    );
+    const {
+      payload: { id, checked },
+    }: ReturnType<typeof updateCheckedAction> = yield take(updateCheckedAction);
     try {
+      yield put(updateCartCheckedLoadingSuccess({ id }));
       yield call(updateCartChecked, {
-        pdid: payload.pdid,
-        checked: payload.checked,
+        id,
+        checked,
       });
-      yield put(
-        updateCheckedSuccess({ pdid: payload.pdid, checked: payload.checked }),
-      );
+      yield put(updateCheckedSuccess({ id, checked }));
       yield put(updateOrderItemsAction());
     } catch (e) {
       notification.open({
@@ -654,6 +568,7 @@ function* handleUpdateCheckedCart() {
         description: e.message,
         type: "error",
       });
+
       yield put(updateCheckedFailure());
     }
   }
@@ -682,12 +597,12 @@ function* handleUpdateAllCheckedCart() {
 
 function* handleDeleteCart() {
   while (true) {
-    const { payload }: ReturnType<typeof deleteCartRequest> = yield take(
-      deleteCartRequest,
-    );
+    const {
+      payload: { id },
+    }: ReturnType<typeof deleteCartRequest> = yield take(deleteCartRequest);
     try {
-      yield call(deleteCart, payload);
-      yield put(deleteCartSuccess(payload));
+      yield call(deleteCart, id);
+      yield put(deleteCartSuccess({ id }));
 
       const isAnyChecked: boolean = yield select((state: RootState) =>
         state.cart.page.content.every((cart) => cart.checked),
@@ -701,7 +616,8 @@ function* handleDeleteCart() {
         description: e.message,
         type: "error",
       });
-      yield put(deleteCartFailure(payload));
+
+      yield put(deleteCartFailure({ id }));
     }
   }
 }

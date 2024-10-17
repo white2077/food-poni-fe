@@ -7,25 +7,29 @@ import { QueryParams } from "@/utils/api/common";
 import { RootState } from "@/redux/store.ts";
 import { CartState, deleteAllCartRequest } from "@/redux/modules/cart.ts";
 import { NavigateFunction } from "react-router-dom";
-import { AddressState } from "./address";
 
 export type OrderState = {
   readonly page: Page<Order[]>;
   readonly selectedOrder: Order | null;
   readonly form: {
-    readonly orderItems: {
+    readonly orderItems: Array<{
       readonly quantity: number;
       readonly productDetail: {
         readonly id: string;
       };
-    }[];
+      readonly toppings: Array<{
+        readonly name: string;
+        readonly price: number;
+      }>;
+      readonly type: string | null;
+    }>;
     readonly shippingAddress: {
       readonly fullName: string;
       readonly phoneNumber: string;
       readonly address: string;
       readonly lon: number;
       readonly lat: number;
-    } | null;
+    };
     readonly payment: {
       readonly method: string;
       readonly status: string;
@@ -50,7 +54,13 @@ const initialState: OrderState = {
   selectedOrder: null,
   form: {
     orderItems: [],
-    shippingAddress: null,
+    shippingAddress: {
+      fullName: "",
+      phoneNumber: "",
+      address: "",
+      lon: 0,
+      lat: 0,
+    },
     payment: {
       method: "CASH",
       status: "PAYING",
@@ -68,7 +78,7 @@ const orderSlice = createSlice({
   reducers: {
     fetchOrdersSuccess: (
       state,
-      action: PayloadAction<{ page: Page<Order[]> }>
+      action: PayloadAction<{ page: Page<Order[]> }>,
     ) => ({
       ...state,
       page: action.payload.page,
@@ -97,31 +107,34 @@ const orderSlice = createSlice({
     }),
     updateOrderItemsSuccess: (
       state,
-      {
-        payload,
-      }: {
-        payload: {
-          readonly quantity: number;
-          readonly productDetail: {
-            readonly id: string;
-          };
-        }[];
-      }
+      action: PayloadAction<{
+        orderItems: OrderState["form"]["orderItems"];
+      }>,
     ) => ({
       ...state,
       form: {
         ...state.form,
-        orderItems: payload,
+        orderItems: action.payload.orderItems,
       },
     }),
     updateShippingAddressSuccess: (
       state,
-      action: PayloadAction<OrderState["form"]["shippingAddress"] | null>
+      {
+        payload,
+      }: {
+        payload: {
+          readonly fullName: string;
+          readonly phoneNumber: string;
+          readonly address: string;
+          readonly lon: number;
+          readonly lat: number;
+        };
+      },
     ) => ({
       ...state,
       form: {
         ...state.form,
-        shippingAddress: action.payload,
+        shippingAddress: payload,
       },
     }),
     updatePaymentSuccess: (
@@ -130,7 +143,7 @@ const orderSlice = createSlice({
         payload: {
           readonly method: string;
         };
-      }
+      },
     ) => ({
       ...state,
       form: {
@@ -173,22 +186,22 @@ export const {
   updateShippingAddressSuccess,
 } = orderSlice.actions;
 export const updateOrderItemsAction = createAction<void>(
-  `${SLICE_NAME}/updateOrderItemsRequest`
+  `${SLICE_NAME}/updateOrderItemsRequest`,
 );
-export const updateShippingAddressAction = createAction<{ sid: string | null }>(
-  `${SLICE_NAME}/updateShippingAddressRequest`
+export const updateShippingAddressAction = createAction<string>(
+  `${SLICE_NAME}/updateShippingAddressRequest`,
 );
 export const checkCartItemsAction = createAction<void>(
-  `${SLICE_NAME}/checkCartItemsRequest`
+  `${SLICE_NAME}/checkCartItemsRequest`,
 );
 export const fetchOrdersAction = createAction<{ queryParams: QueryParams }>(
-  `${SLICE_NAME}/fetchOrdersRequest`
+  `${SLICE_NAME}/fetchOrdersRequest`,
 );
 export const fetchOrderAction = createAction<{ orderId: string }>(
-  `${SLICE_NAME}/fetchOrderRequest`
+  `${SLICE_NAME}/fetchOrderRequest`,
 );
 export const createOrderAction = createAction<{ navigate: NavigateFunction }>(
-  `${SLICE_NAME}/createOrderRequest`
+  `${SLICE_NAME}/createOrderRequest`,
 );
 
 function* handleFetchOrders() {
@@ -273,30 +286,38 @@ function* handleUpdateOrderItems() {
   while (true) {
     yield take(updateOrderItemsAction);
     const carts: CartState["page"]["content"] = yield select(
-      (state: RootState) => state.cart.page.content
+      (state: RootState) => state.cart.page.content,
     );
     const selectedCarts = carts.filter((it) => it.checked);
 
-    yield put(updateOrderItemsSuccess(selectedCarts));
+    yield put(
+      updateOrderItemsSuccess({
+        orderItems: selectedCarts.map((it) => {
+          return {
+            quantity: it.quantity,
+            productDetail: { id: it.productDetail.id },
+            toppings: it.toppings,
+            type: it.type,
+          };
+        }),
+      }),
+    );
   }
 }
 
 function* handleUpdateShippingAddress() {
   while (true) {
-    const {
-      payload: { sid },
-    }: ReturnType<typeof updateShippingAddressAction> = yield take(
-      updateShippingAddressAction
-    );
-
-    if (sid === null) {
-      yield put(updateShippingAddressSuccess(null));
-    }
-
-    const { content }: { content: AddressState["page"]["content"] } =
-      yield select((state: RootState) => state.address.page);
-    const address = content.find((it) => it.id === sid);
-
+    const { payload }: ReturnType<typeof updateShippingAddressAction> =
+      yield take(updateShippingAddressAction);
+    const addresses: {
+      readonly id: string;
+      readonly fullName: string;
+      readonly phoneNumber: string;
+      readonly address: string;
+      readonly lon: number;
+      readonly lat: number;
+    }[] = yield select((state: RootState) => state.address.page.content);
+    const address = addresses.find((it) => it.id === payload);
     if (address) {
       yield put(updateShippingAddressSuccess(address));
     }

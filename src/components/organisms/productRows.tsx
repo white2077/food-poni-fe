@@ -89,7 +89,7 @@ export function ProductRows({
         )}
       </div>
       <div style={{ maxWidth: "59rem", margin: "auto" }}>
-        {data.isLoading ? (
+        {data.isFetchLoading ? (
           <ProductLoading />
         ) : (
           <Carousel

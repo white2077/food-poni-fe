@@ -1,9 +1,5 @@
-import { fetchProductsByCustomerRequest } from "@/redux/modules/product.ts";
-import {
-  CrownOutlined,
-  StarOutlined,
-  TagOutlined
-} from "@ant-design/icons";
+import { fetchProductsAction } from "@/redux/modules/product.ts";
+import { CrownOutlined, StarOutlined, TagOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
 import { useDispatch } from "react-redux";
 
@@ -29,8 +25,8 @@ export default function MenuFilter() {
             return;
         }
         dispatch(
-          fetchProductsByCustomerRequest({
-            requestParams: { page: 0, pageSize: 10, sort: sortOption },
+          fetchProductsAction({
+            queryParams: { page: 0, pageSize: 10, sort: sortOption },
           }),
         );
       }}

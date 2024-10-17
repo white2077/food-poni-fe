@@ -2,28 +2,16 @@ import { Button, Input } from "antd";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import {
-  updateDecreaseQuantityRequest,
-  updateIncreaseQuantityRequest,
-  updateQuantityRequest,
+  CartState,
+  updateQuantityButtonAction,
+  updateQuantityInputAction,
 } from "@/redux/modules/cart.ts";
 
-type Props = {
-  readonly item: {
-    readonly quantity: number;
-    readonly productName: string;
-    readonly productDetail: {
-      readonly id: string;
-      readonly name: string;
-      readonly price: number;
-      readonly images: string[];
-    };
-    readonly checked: boolean;
-    readonly isUpdateLoading: boolean;
-    readonly isDeleteLoading: boolean;
-  };
-};
-
-export function QuantityInput({ item }: Props) {
+export function QuantityInput({
+  item,
+}: {
+  item: CartState["page"]["content"][number];
+}) {
   const dispatch = useDispatch();
 
   return (
@@ -33,14 +21,17 @@ export function QuantityInput({ item }: Props) {
         icon={<MinusOutlined />}
         loading={item.isUpdateLoading}
         disabled={item.quantity <= 1}
-        onClick={() =>
+        onClick={() => {
           dispatch(
-            updateDecreaseQuantityRequest({ pdid: item.productDetail.id }),
-          )
-        }
+            updateQuantityButtonAction({
+              type: "DECREASE",
+              id: item.id,
+            }),
+          );
+        }}
       />
       <Input
-        className="w-8 p-1 text-center"
+        className="w-10 p-1 text-center"
         min={1}
         defaultValue={1}
         value={item.quantity}
@@ -48,8 +39,8 @@ export function QuantityInput({ item }: Props) {
           const inputValue = parseInt(e.target.value);
           if (!isNaN(inputValue) && inputValue >= 1) {
             dispatch(
-              updateQuantityRequest({
-                pdid: item.productDetail.id,
+              updateQuantityInputAction({
+                id: item.id,
                 quantity: inputValue,
               }),
             );
@@ -63,7 +54,10 @@ export function QuantityInput({ item }: Props) {
         loading={item.isUpdateLoading}
         onClick={() =>
           dispatch(
-            updateIncreaseQuantityRequest({ pdid: item.productDetail.id }),
+            updateQuantityButtonAction({
+              type: "INCREASE",
+              id: item.id,
+            }),
           )
         }
       />

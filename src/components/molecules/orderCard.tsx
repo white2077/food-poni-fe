@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { Order } from "@/type/types";
 import { server } from "@/utils/server";
 import { Link } from "react-router-dom";
+import { currencyFormat } from "@/utils/common.ts";
 const { Text } = Typography;
 
 const statusText: Record<string, string> = {
@@ -81,20 +82,37 @@ const OrderCard = ({ order, index }: { order: Order; index: number }) => {
                       </Col>
                       <Col span={19} className="justify-between">
                         <div className="flex justify-between  nunito">
-                          <div className="text-orange-600 text-base">
-                            {item.productDetail?.product?.name}
-                            {item.productDetail?.name
-                              ? ` - ${item.productDetail?.name}`
-                              : ""}
-                          </div>
                           <div>
-                            {new Intl.NumberFormat("vi-VN", {
-                              style: "currency",
-                              currency: "VND",
-                            }).format(item.price)}
+                            <div className="text-orange-600 text-base">
+                              {item.productDetail?.product?.name}
+                              {item.productDetail?.name
+                                ? ` - ${item.productDetail?.name}`
+                                : ""}
+                            </div>
+                            {item.type && (
+                              <div className="text-[10px]">
+                                Loại:{" "}
+                                <span className="bg-primary text-white rounded-lg mr-1 px-1">
+                                  {item.type}
+                                </span>
+                              </div>
+                            )}
+                            {item.toppings && item.toppings.length > 0 && (
+                              <div className="text-[10px]">
+                                <div>Topping:</div>
+                                {item.toppings.map((tp, index) => {
+                                  return (
+                                    <div
+                                      key={index}
+                                      className="inline-block bg-primary text-white rounded-lg mr-1 px-1 mb-1"
+                                    >{`${tp.name}: ${tp.price}₫`}</div>
+                                  );
+                                })}
+                              </div>
+                            )}
                           </div>
+                          <div>{currencyFormat(item.price)}</div>
                         </div>
-
                         <div className="flex gap-2 font-sans"></div>
                         {order.status === "COMPLETED" &&
                         Object.keys(item.rate ?? {}).length === 0 ? (
@@ -134,10 +152,7 @@ const OrderCard = ({ order, index }: { order: Order; index: number }) => {
               <div className="flex justify-end mt-4 text-xl gap-2 font-sans">
                 <div className="text-gray-400">Tổng tiền:</div>
                 <div className="nunito text-green-600">
-                  {new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  }).format(order.totalAmount)}
+                  {currencyFormat(order.totalAmount)}
                 </div>
               </div>
             </div>
