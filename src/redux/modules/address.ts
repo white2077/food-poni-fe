@@ -293,7 +293,8 @@ const addressSlide = createSlice({
             }
             if (
               action.payload.value.startsWith("00") ||
-              !action.payload.value.startsWith("0")
+              !action.payload.value.startsWith("0") ||
+              action.payload.value.length > 12
             ) {
               errorMessage = "Số điện thoại không hợp lệ";
               break;
