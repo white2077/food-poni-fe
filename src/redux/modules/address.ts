@@ -1,5 +1,17 @@
+import { updateShippingAddressAction } from "@/redux/modules/order.ts";
+import { RootState } from "@/redux/store.ts";
+import { Address, Page, SearchResult } from "@/type/types.ts";
+import {
+  createAddress,
+  deleteAddressById,
+  getAddressesPage,
+  searchAddresses,
+  updateAddress,
+} from "@/utils/api/address.ts";
+import { QueryParams } from "@/utils/api/common.ts";
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Page, SearchResult } from "@/type/types.ts";
+import { notification } from "antd";
+import { Task } from "redux-saga";
 import {
   call,
   cancel,
@@ -10,18 +22,7 @@ import {
   select,
   take,
 } from "redux-saga/effects";
-import { notification } from "antd";
-import { QueryParams } from "@/utils/api/common.ts";
-import {
-  createAddress,
-  deleteAddressById,
-  getAddressesPage,
-  searchAddresses,
-  updateAddress,
-} from "@/utils/api/address.ts";
-import { updateShippingAddressAction } from "@/redux/modules/order.ts";
-import { RootState } from "@/redux/store.ts";
-import { Task } from "redux-saga";
+import { AuthState } from "./auth";
 
 export type AddressState = {
   readonly page: Page<
@@ -57,17 +58,7 @@ export type AddressState = {
 
 const initialState: AddressState = {
   page: {
-    content: [
-      {
-        id: "",
-        fullName: "",
-        phoneNumber: "",
-        address: "",
-        lon: 0,
-        lat: 0,
-        isDeleteLoading: false,
-      },
-    ],
+    content: [],
     totalElements: 0,
     totalPages: 0,
     size: 0,
@@ -125,18 +116,8 @@ const addressSlide = createSlice({
     fetchAddressesSuccess: (
       state,
       action: PayloadAction<{
-        page: Page<
-          {
-            readonly id: string;
-            readonly fullName: string;
-            readonly phoneNumber: string;
-            readonly address: string;
-            readonly lon: number;
-            readonly lat: number;
-            readonly isDeleteLoading: boolean;
-          }[]
-        >;
-      }>,
+        page: AddressState["page"];
+      }>
     ) => ({
       ...state,
       page: {
@@ -163,10 +144,10 @@ const addressSlide = createSlice({
         readonly lon: number;
         readonly lat: number;
         readonly isDeleteLoading: boolean;
-      }>,
+      }>
     ) => {
       const address = state.page.content.find(
-        (it) => it.id === action.payload.id,
+        (it) => it.id === action.payload.id
       );
 
       if (address) {
@@ -253,7 +234,7 @@ const addressSlide = createSlice({
       state,
       action: PayloadAction<{
         fields: Array<{ field: string; value: string }>;
-      }>,
+      }>
     ) => ({
       ...state,
       formSaved: {
@@ -267,7 +248,7 @@ const addressSlide = createSlice({
         type?: "TYPING" | "SELECT";
         field: string;
         value: string;
-      }>,
+      }>
     ) => {
       let errorMessage: string | null = null;
       if (action.payload.type === "TYPING") {
@@ -337,7 +318,9 @@ const addressSlide = createSlice({
         return field;
       });
 
-      const isDirty = updatedFields.some((field) => field.errorMessage !== null);
+      const isDirty = updatedFields.some(
+        (field) => field.errorMessage !== null
+      );
 
       return {
         ...state,
@@ -349,7 +332,7 @@ const addressSlide = createSlice({
     },
     updateAddressesSearchedSuccess: (
       state,
-      action: PayloadAction<{ addresses: Array<SearchResult> }>,
+      action: PayloadAction<{ addresses: Array<SearchResult> }>
     ) => ({
       ...state,
       addressesSearched: action.payload.addresses,
@@ -393,13 +376,13 @@ export const {
 } = addressSlide.actions;
 
 export const fetchAddressesAction = createAction<{ queryParams: QueryParams }>(
-  `${SLICE_NAME}/fetchAddressesRequest`,
+  `${SLICE_NAME}/fetchAddressesRequest`
 );
 export const createAddressAction = createAction<void>(
-  `${SLICE_NAME}/createAddressRequest`,
+  `${SLICE_NAME}/createAddressRequest`
 );
 export const updateAddressAction = createAction<{ id: string }>(
-  `${SLICE_NAME}/updateAddressRequest`,
+  `${SLICE_NAME}/updateAddressRequest`
 );
 export const deleteAddressAction = createAction<{
   aid: string;
@@ -408,7 +391,7 @@ export const startSearchAddressAction = createAction<{
   value: string;
 }>(`${SLICE_NAME}/startSearchAddressRequest`);
 
-function* handleFetchAddress() {
+function* handleFetchAddresses() {
   while (true) {
     const {
       payload: { queryParams },
@@ -416,21 +399,34 @@ function* handleFetchAddress() {
       yield take(fetchAddressesAction);
     try {
       yield put(updateFetchLoading());
-      const page: Page<
-        {
-          readonly id: string;
-          readonly fullName: string;
-          readonly phoneNumber: string;
-          readonly address: string;
-          readonly lon: number;
-          readonly lat: number;
-          readonly isDeleteLoading: boolean;
-        }[]
-      > = yield call(getAddressesPage, queryParams);
-      yield put(fetchAddressesSuccess({ page }));
-      const { currentUser } = yield select((state: RootState) => state.auth);
+
+      const page: Page<Array<Address>> = yield call(
+        getAddressesPage,
+        queryParams
+      );
+      yield put(
+        fetchAddressesSuccess({
+          page: {
+            ...page,
+            content: page.content.map((it) => ({
+              ...it,
+              isDeleteLoading: false,
+            })),
+            totalPages: page.totalPages,
+            totalElements: page.totalElements,
+            size: page.size,
+            number: page.number,
+            first: page.first,
+            last: page.last,
+          },
+        })
+      );
+
+      const { currentUser }: { currentUser: AuthState["currentUser"] } =
+        yield select((state: RootState) => state.auth);
+
       if (currentUser) {
-        yield put(updateShippingAddressAction(currentUser.addressId));
+        yield put(updateShippingAddressAction({ sid: currentUser.addressId }));
       }
     } catch (e) {
       notification.open({
@@ -480,7 +476,7 @@ function* handleCreateAddress() {
             lon: Number.parseInt(fields[3].value),
             lat: Number.parseInt(fields[4].value),
             isDeleteLoading: false,
-          }),
+          })
         );
         yield put(clearFormSuccess());
         yield put(updateShowAddForm());
@@ -504,7 +500,10 @@ function* handleCreateAddress() {
             lon: Number.parseInt(fields[3].value),
             lat: Number.parseInt(fields[4].value),
             isDeleteLoading: false,
-          }),
+          })
+        );
+        yield put(
+          updateShippingAddressAction({ sid: startUpdateAddress.payload.id })
         );
       }
     } catch (e) {
@@ -527,6 +526,7 @@ function* handleDeleteAddress() {
     try {
       yield call(deleteAddressById, aid);
       yield put(deleteAddressSuccess({ aid }));
+      yield put(updateShippingAddressAction({ sid: null }));
     } catch (e) {
       notification.open({
         message: "Error",
@@ -545,7 +545,7 @@ function* handleStartSearchAddress() {
     const {
       payload: { value },
     }: ReturnType<typeof startSearchAddressAction> = yield take(
-      startSearchAddressAction,
+      startSearchAddressAction
     );
 
     if (searchTask) {
@@ -564,7 +564,7 @@ function* searchAddress(value: string) {
 }
 
 export const shippingAddressSagas = [
-  fork(handleFetchAddress),
+  fork(handleFetchAddresses),
   fork(handleCreateAddress),
   fork(handleDeleteAddress),
   fork(handleStartSearchAddress),

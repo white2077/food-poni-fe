@@ -2,6 +2,7 @@ import { AxiosResponse } from "axios";
 import generateQueryString, { QueryParams } from "./common";
 import { accessToken, apiWithToken } from "@/utils/axiosConfig.ts";
 import { Order, Page } from "@/type/types.ts";
+import { OrderState } from "@/redux/modules/order";
 
 export const getOrdersPage = (
   queryParams: QueryParams
@@ -45,25 +46,7 @@ export const createOrder = ({
   orderItems,
   shippingAddress,
   payment,
-}: {
-  orderItems: {
-    quantity: number;
-    productDetail: {
-      id: string;
-    };
-  }[];
-  shippingAddress: {
-    fullName: string;
-    phoneNumber: string;
-    address: string;
-    lon: number;
-    lat: number;
-  };
-  payment: {
-    method: string;
-    status: string;
-  };
-}): Promise<string> => {
+}: OrderState["form"]): Promise<string> => {
   return apiWithToken()
     .post(
       "/orders",

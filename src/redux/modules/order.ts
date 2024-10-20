@@ -5,8 +5,9 @@ import { Order, Page } from "@/type/types";
 import { createOrder, getOrderById, getOrdersPage } from "@/utils/api/order";
 import { QueryParams } from "@/utils/api/common";
 import { RootState } from "@/redux/store.ts";
-import { deleteAllCartRequest } from "@/redux/modules/cart.ts";
+import { CartState, deleteAllCartRequest } from "@/redux/modules/cart.ts";
 import { NavigateFunction } from "react-router-dom";
+import { AddressState } from "./address";
 
 export type OrderState = {
   readonly page: Page<Order[]>;
@@ -24,7 +25,7 @@ export type OrderState = {
       readonly address: string;
       readonly lon: number;
       readonly lat: number;
-    };
+    } | null;
     readonly payment: {
       readonly method: string;
       readonly status: string;
@@ -49,13 +50,7 @@ const initialState: OrderState = {
   selectedOrder: null,
   form: {
     orderItems: [],
-    shippingAddress: {
-      fullName: "",
-      phoneNumber: "",
-      address: "",
-      lon: 0,
-      lat: 0,
-    },
+    shippingAddress: null,
     payment: {
       method: "CASH",
       status: "PAYING",
@@ -121,22 +116,12 @@ const orderSlice = createSlice({
     }),
     updateShippingAddressSuccess: (
       state,
-      {
-        payload,
-      }: {
-        payload: {
-          readonly fullName: string;
-          readonly phoneNumber: string;
-          readonly address: string;
-          readonly lon: number;
-          readonly lat: number;
-        };
-      }
+      action: PayloadAction<OrderState["form"]["shippingAddress"] | null>
     ) => ({
       ...state,
       form: {
         ...state.form,
-        shippingAddress: payload,
+        shippingAddress: action.payload,
       },
     }),
     updatePaymentSuccess: (
@@ -190,7 +175,7 @@ export const {
 export const updateOrderItemsAction = createAction<void>(
   `${SLICE_NAME}/updateOrderItemsRequest`
 );
-export const updateShippingAddressAction = createAction<string>(
+export const updateShippingAddressAction = createAction<{ sid: string | null }>(
   `${SLICE_NAME}/updateShippingAddressRequest`
 );
 export const checkCartItemsAction = createAction<void>(
@@ -210,9 +195,7 @@ function* handleFetchOrders() {
   while (true) {
     const {
       payload: { queryParams },
-    }: ReturnType<typeof fetchOrdersAction> = yield take(
-      fetchOrdersAction
-    );
+    }: ReturnType<typeof fetchOrdersAction> = yield take(fetchOrdersAction);
 
     try {
       yield put(updateFetchLoading());
@@ -255,34 +238,11 @@ function* handleCreateOrder() {
   while (true) {
     const {
       payload: { navigate },
-    }: ReturnType<typeof createOrderAction> = yield take(
-      createOrderAction
-    );
+    }: ReturnType<typeof createOrderAction> = yield take(createOrderAction);
     try {
       yield put(updateCreateLoading());
-      const {
-        orderItems,
-        shippingAddress,
-        payment,
-      }: {
-        readonly orderItems: {
-          readonly quantity: number;
-          readonly productDetail: {
-            readonly id: string;
-          };
-        }[];
-        readonly shippingAddress: {
-          readonly fullName: string;
-          readonly phoneNumber: string;
-          readonly address: string;
-          readonly lon: number;
-          readonly lat: number;
-        };
-        readonly payment: {
-          readonly method: string;
-          readonly status: string;
-        };
-      } = yield select((state: RootState) => state.order.form);
+      const { orderItems, shippingAddress, payment }: OrderState["form"] =
+        yield select((state: RootState) => state.order.form);
       const orderId: string = yield call(createOrder, {
         orderItems,
         shippingAddress,
@@ -312,19 +272,9 @@ function* handleCreateOrder() {
 function* handleUpdateOrderItems() {
   while (true) {
     yield take(updateOrderItemsAction);
-    const carts: {
-      readonly quantity: number;
-      readonly productName: string;
-      readonly productDetail: {
-        readonly id: string;
-        readonly name: string;
-        readonly price: number;
-        readonly images: string[];
-      };
-      readonly checked: boolean;
-      readonly isUpdateLoading: boolean;
-      readonly isDeleteLoading: boolean;
-    }[] = yield select((state: RootState) => state.cart.page.content);
+    const carts: CartState["page"]["content"] = yield select(
+      (state: RootState) => state.cart.page.content
+    );
     const selectedCarts = carts.filter((it) => it.checked);
 
     yield put(updateOrderItemsSuccess(selectedCarts));
@@ -333,17 +283,20 @@ function* handleUpdateOrderItems() {
 
 function* handleUpdateShippingAddress() {
   while (true) {
-    const { payload }: ReturnType<typeof updateShippingAddressAction> =
-      yield take(updateShippingAddressAction);
-    const addresses: {
-      readonly id: string;
-      readonly fullName: string;
-      readonly phoneNumber: string;
-      readonly address: string;
-      readonly lon: number;
-      readonly lat: number;
-    }[] = yield select((state: RootState) => state.address.page.content);
-    const address = addresses.find((it) => it.id === payload);
+    const {
+      payload: { sid },
+    }: ReturnType<typeof updateShippingAddressAction> = yield take(
+      updateShippingAddressAction
+    );
+
+    if (sid === null) {
+      yield put(updateShippingAddressSuccess(null));
+    }
+
+    const { content }: { content: AddressState["page"]["content"] } =
+      yield select((state: RootState) => state.address.page);
+    const address = content.find((it) => it.id === sid);
+
     if (address) {
       yield put(updateShippingAddressSuccess(address));
     }

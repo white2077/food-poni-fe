@@ -10,7 +10,7 @@ import {
 import { RootState } from "@/redux/store.ts";
 import { Address, SearchResult } from "@/type/types.ts";
 import { useEffect } from "react";
-import {checkDirty} from "@/utils/common.ts";
+import { checkDirty } from "@/utils/common.ts";
 
 export type FormRule = {
   fullName: string;
@@ -40,34 +40,34 @@ export default function ShippingAddressInfo({
             { field: "lon", value: address.lon.toString() },
             { field: "lat", value: address.lat.toString() },
           ],
-        }),
+        })
       );
       dispatch(
         updateFormEditingSuccess({
           field: "fullName",
           value: address.fullName,
-        }),
+        })
       );
       dispatch(
         updateFormEditingSuccess({
           field: "phoneNumber",
           value: address.phoneNumber,
-        }),
+        })
       );
       dispatch(
-        updateFormEditingSuccess({ field: "address", value: address.address }),
+        updateFormEditingSuccess({ field: "address", value: address.address })
       );
       dispatch(
         updateFormEditingSuccess({
           field: "lon",
           value: address.lon.toString(),
-        }),
+        })
       );
       dispatch(
         updateFormEditingSuccess({
           field: "lat",
           value: address.lat.toString(),
-        }),
+        })
       );
     }
   }, [dispatch, address]);
@@ -96,7 +96,7 @@ export default function ShippingAddressInfo({
         dispatch(
           address
             ? updateAddressAction({ id: address.id })
-            : createAddressAction(),
+            : createAddressAction()
         )
       }
     >
@@ -118,7 +118,7 @@ export default function ShippingAddressInfo({
                 type: "TYPING",
                 field: "fullName",
                 value: e.target.value,
-              }),
+              })
             )
           }
         />
@@ -141,7 +141,7 @@ export default function ShippingAddressInfo({
                 type: "TYPING",
                 field: "phoneNumber",
                 value: e.target.value,
-              }),
+              })
             )
           }
         />
@@ -171,7 +171,7 @@ export default function ShippingAddressInfo({
               label: result.display_name,
               data: result,
               key: index,
-            }),
+            })
           )}
           onSelect={(_: string, option: { data: SearchResult }): void => {
             if (option.data.display_name) {
@@ -180,21 +180,21 @@ export default function ShippingAddressInfo({
                   type: "SELECT",
                   field: "address",
                   value: option.data.display_name,
-                }),
+                })
               );
               dispatch(
                 updateFormEditingSuccess({
                   type: "SELECT",
                   field: "lon",
                   value: option.data.lon + "",
-                }),
+                })
               );
               dispatch(
                 updateFormEditingSuccess({
                   type: "SELECT",
                   field: "lat",
                   value: option.data.lat + "",
-                }),
+                })
               );
             }
           }}
@@ -205,7 +205,7 @@ export default function ShippingAddressInfo({
                 type: "TYPING",
                 field: "address",
                 value: value,
-              }),
+              })
             );
           }}
           placeholder="Tìm kiếm địa chỉ tại đây"
@@ -218,7 +218,10 @@ export default function ShippingAddressInfo({
           htmlType="submit"
           className="add-address-form-button"
           loading={isUpdateLoading}
-          disabled={formEditing.isDirty || checkDirty(formEditing.fields, formSaved.fields)}
+          disabled={
+            formEditing.isDirty ||
+            checkDirty(formEditing.fields, formSaved.fields)
+          }
           block
         >
           Lưu địa chỉ

@@ -31,10 +31,7 @@ export default function ShippingAddress() {
         },
       })
     );
-    if (currentUser) {
-      dispatch(updateShippingAddressAction(currentUser.addressId));
-    }
-  }, [dispatch, currentUser]);
+  }, [dispatch]);
 
   return (
     <Card style={{ marginBottom: "16px" }}>
@@ -68,7 +65,7 @@ export default function ShippingAddress() {
               className="w-full"
               defaultValue={currentUser?.addressId}
               onChange={(e) =>
-                dispatch(updateShippingAddressAction(e.target.value))
+                dispatch(updateShippingAddressAction({ sid: e.target.value }))
               }
             >
               <Collapse
@@ -83,7 +80,7 @@ export default function ShippingAddress() {
                     label: (
                       <div className="flex justify-between items-center">
                         <Radio id={`radio-${it.id}`} value={it.id}>
-                          <div>
+                          <div className="truncate">
                             <span className="font-bold">{it.fullName}</span> |{" "}
                             {it.phoneNumber}{" "}
                             {currentUser?.addressId === it.id ? (
@@ -135,9 +132,9 @@ export default function ShippingAddress() {
         </Modal>
       </div>
       <div>
-        {form && (
+        {form.shippingAddress && (
           <>
-            <div>
+            <div className="text-ellipsis">
               <span style={{ fontWeight: "bold" }}>
                 {form.shippingAddress.fullName}
               </span>{" "}
