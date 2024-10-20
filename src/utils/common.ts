@@ -14,7 +14,7 @@ export const checkDirty = (
     readonly value: string;
     readonly errorMessage: string | null;
   }>,
-  savedFields: Array<{ field: string; value: string }> | null
+  savedFields: Array<{ field: string; value: string }> | null,
 ): boolean => {
   if (!savedFields) {
     return false;
@@ -49,4 +49,20 @@ export const getAvatar = (user: User) => {
       : server + user.avatar;
   }
   return "/public/no-avatar.png";
+};
+
+export const getThumbnail = (thumbnail: string | null | undefined) => {
+  if (thumbnail) {
+    return thumbnail.startsWith("http") || thumbnail.startsWith("https")
+      ? thumbnail
+      : server + thumbnail;
+  }
+  return "/public/no-avatar.png";
+};
+
+export const currencyFormat = (amount: number) => {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(amount);
 };

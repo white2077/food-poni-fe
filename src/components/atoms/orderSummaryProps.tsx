@@ -1,14 +1,9 @@
+import {currencyFormat} from "@/utils/common.ts";
+
 interface OrderSummaryProps {
   totalAmount: number;
   shippingFee: number;
 }
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-  }).format(amount);
-};
 
 export const OrderSummary: React.FC<OrderSummaryProps> = ({
   totalAmount,
@@ -23,12 +18,12 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
       <div className="font-bold">Tổng cộng</div>
     </div>
     <div className="text-right">
-      <div className="mb-2">{formatCurrency(totalAmount)}</div>
-      <div className="mb-2">{formatCurrency(shippingFee)}</div>
+      <div className="mb-2">{currencyFormat(totalAmount)}</div>
+      <div className="mb-2">{currencyFormat(shippingFee)}</div>
       <div className="mb-2">0 ₫</div>
       <div className="mb-2">0 ₫</div>
       <div className="text-2xl text-orange-600 font-bold">
-        {formatCurrency(totalAmount + shippingFee)}
+        {currencyFormat(totalAmount + shippingFee)}
       </div>
     </div>
   </div>

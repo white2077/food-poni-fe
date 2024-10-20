@@ -1,25 +1,31 @@
-import { createAction, createSlice } from "@reduxjs/toolkit";
-import { CurrentUser, Page, Product, ProductDetail } from "@/type/types.ts";
-import { call, fork, take, race, select, put } from "redux-saga/effects";
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Page, Product, ProductDetail } from "@/type/types.ts";
+import { call, fork, put, race, take } from "redux-saga/effects";
 import {
   getProductByIdOrSlug,
   getProductsPage,
   getProductsPageByCategory,
-  getProductsPageByRetailer,
 } from "@/utils/api/product.ts";
-import { RootState } from "@/redux/store.ts";
 import { notification } from "antd";
 import { QueryParams } from "@/utils/api/common.ts";
 import { getProductDetailsByProductId } from "@/utils/api/productDetail.ts";
 
 export type ProductState = {
   readonly page: Page<Product[]>;
-  readonly isLoading: boolean;
+  readonly isFetchLoading: boolean;
   readonly productSelected: {
-    readonly product: Product | null | undefined;
+    readonly product: Product;
     readonly productDetails: ProductDetail[];
   };
-  readonly productDetailSelected: ProductDetail | null | undefined;
+  readonly itemsSelected: {
+    readonly productDetail: ProductDetail;
+    readonly toppingsSelected: Array<{
+      readonly name: string;
+      readonly price: number;
+    }>;
+    readonly type: string | null;
+    readonly quantity: number;
+  };
 };
 
 const initialState: ProductState = {
@@ -34,13 +40,17 @@ const initialState: ProductState = {
     numberOfElements: 0,
     empty: true,
   },
-  isLoading: true,
-
+  isFetchLoading: false,
   productSelected: {
-    product: null,
+    product: {} as Product,
     productDetails: [],
   },
-  productDetailSelected: null,
+  itemsSelected: {
+    productDetail: {} as ProductDetail,
+    toppingsSelected: [],
+    type: null,
+    quantity: 1,
+  },
 };
 
 const SLICE_NAME = "product";
@@ -49,93 +59,176 @@ const productSlide = createSlice({
   name: SLICE_NAME,
   initialState,
   reducers: {
-    fetchProductsByCustomerRequest: (
-      state,
-      action: { payload: { requestParams: QueryParams } },
-    ) => {
-      state.isLoading = true;
-    },
-    fetchProductsByProductCategoryRequest: (
-      state,
-      action: { payload: { pathVariable: string; requestParams: QueryParams } },
-    ) => {
-      state.isLoading = true;
-    },
+    updateFetchLoadingSuccess: (state) => ({
+      ...state,
+      isFetchLoading: true,
+    }),
     fetchProductsSuccess: (
       state,
-      { payload }: { payload: Page<Product[]> },
-    ) => {
-      state.page = payload;
-      state.isLoading = false;
-    },
-    fetchProductsFailure: (state) => {
-      state.isLoading = false;
-    },
-    fetchProductSuccess: (state, { payload }: { payload: Product }) => {
-      state.productSelected.product = payload;
-    },
+      action: PayloadAction<{ page: Page<Product[]> }>,
+    ) => ({
+      ...state,
+      page: action.payload.page,
+      isFetchLoading: false,
+    }),
+    fetchProductsFailure: (state) => ({
+      ...state,
+      isFetchLoading: false,
+    }),
+    fetchProductSuccess: (
+      state,
+      action: PayloadAction<{ product: Product }>,
+    ) => ({
+      ...state,
+      productSelected: {
+        ...state.productSelected,
+        product: action.payload.product,
+      },
+      itemsSelected: {
+        ...state.itemsSelected,
+        type:
+          action.payload.product.types.length > 0
+            ? action.payload.product.types[0]
+            : null,
+      },
+    }),
+    fetchProductFailure: (state) => ({
+      ...state,
+      isFetchLoading: false,
+    }),
     fetchProductDetailsSuccess: (
       state,
       { payload }: { payload: ProductDetail[] },
-    ) => {
-      state.productSelected.productDetails = payload;
-    },
-    updateProductDetailSelected: (
+    ) => ({
+      ...state,
+      productSelected: {
+        ...state.productSelected,
+        productDetails: payload,
+      },
+    }),
+    updateProductDetailSelectedSuccess: (
       state,
-      { payload }: { payload: ProductDetail | null | undefined },
+      action: PayloadAction<{ productDetail: ProductDetail }>,
+    ) => ({
+      ...state,
+      itemsSelected: {
+        ...state.itemsSelected,
+        productDetail: action.payload.productDetail,
+      },
+    }),
+    updateTypeSelectedSuccess: (
+      state,
+      action: PayloadAction<{ type: string }>,
+    ) => ({
+      ...state,
+      itemsSelected: {
+        ...state.itemsSelected,
+        type: action.payload.type,
+      },
+    }),
+    updateToppingsSelectedSuccess: (
+      state,
+      action: PayloadAction<{
+        topping: { readonly name: string; readonly price: number };
+      }>,
     ) => {
-      state.productDetailSelected = payload;
+      const check = state.itemsSelected.toppingsSelected.some(
+        (it) => it.name === action.payload.topping.name,
+      );
+      if (check) {
+        return {
+          ...state,
+          itemsSelected: {
+            ...state.itemsSelected,
+            toppingsSelected: state.itemsSelected.toppingsSelected
+              .filter((it) => it.name !== action.payload.topping.name)
+              .sort((a, b) => a.name.localeCompare(b.name)),
+          },
+        };
+      }
+
+      return {
+        ...state,
+        itemsSelected: {
+          ...state.itemsSelected,
+          toppingsSelected: [
+            ...state.itemsSelected.toppingsSelected,
+            action.payload.topping,
+          ].sort((a, b) => a.name.localeCompare(b.name)),
+        },
+      };
     },
+    updateProductSelectedQuantitySuccess: (
+      state,
+      action: PayloadAction<{ quantity: number }>,
+    ) => ({
+      ...state,
+      itemsSelected: {
+        ...state.itemsSelected,
+        quantity: action.payload.quantity,
+      },
+    }),
   },
 });
 export default productSlide.reducer;
 
 export const {
-  fetchProductsByCustomerRequest,
-  fetchProductsByProductCategoryRequest,
+  updateFetchLoadingSuccess,
   fetchProductsSuccess,
   fetchProductsFailure,
   fetchProductSuccess,
+  fetchProductFailure,
   fetchProductDetailsSuccess,
-  updateProductDetailSelected,
+  updateProductDetailSelectedSuccess,
+  updateTypeSelectedSuccess,
+  updateToppingsSelectedSuccess,
+  updateProductSelectedQuantitySuccess,
 } = productSlide.actions;
 
-export const fetchProductAction = createAction<string>(
+export const fetchProductAction = createAction<{ pathVariable: string }>(
   `${SLICE_NAME}/fetchProductRequest`,
 );
+export const fetchProductsAction = createAction<{ queryParams: QueryParams }>(
+  `${SLICE_NAME}/fetchProductsRequest`,
+);
+export const fetchProductsByProductCategoryAction = createAction<{
+  pathVariable: string;
+  queryParams: QueryParams;
+}>(`${SLICE_NAME}/fetchProductsByCategoryProductRequest`);
 
 function* handleFetchProducts() {
   while (true) {
     const {
-      fetchProductByCustomer,
+      fetchProducts,
       fetchProductsByProductCategory,
     }: {
-      fetchProductByCustomer: ReturnType<typeof fetchProductsByCustomerRequest>;
+      fetchProducts: ReturnType<typeof fetchProductsAction>;
       fetchProductsByProductCategory: ReturnType<
-        typeof fetchProductsByProductCategoryRequest
+        typeof fetchProductsByProductCategoryAction
       >;
     } = yield race({
-      fetchProductByCustomer: take(fetchProductsByCustomerRequest),
+      fetchProducts: take(fetchProductsAction),
       fetchProductsByProductCategory: take(
-        fetchProductsByProductCategoryRequest,
+        fetchProductsByProductCategoryAction,
       ),
     });
     try {
-      if (fetchProductByCustomer) {
+      yield put(updateFetchLoadingSuccess());
+      if (fetchProducts) {
         const page: Page<Product[]> = yield call(
           getProductsPage,
-          fetchProductByCustomer.payload.requestParams,
+          fetchProducts.payload.queryParams,
         );
-        yield put(fetchProductsSuccess(page));
+        yield put(fetchProductsSuccess({ page }));
       }
 
       if (fetchProductsByProductCategory) {
         const page: Page<Product[]> = yield call(
           getProductsPageByCategory,
           fetchProductsByProductCategory.payload.pathVariable,
-          fetchProductsByProductCategory.payload.requestParams,
+          fetchProductsByProductCategory.payload.queryParams,
         );
-        yield put(fetchProductsSuccess(page));
+        yield put(fetchProductsSuccess({ page }));
       }
     } catch (e) {
       notification.open({
@@ -151,13 +244,13 @@ function* handleFetchProducts() {
 
 function* handleFetchProduct() {
   while (true) {
-    const { payload }: ReturnType<typeof fetchProductAction> = yield take(
-      fetchProductAction,
-    );
+    const {
+      payload: { pathVariable },
+    }: ReturnType<typeof fetchProductAction> = yield take(fetchProductAction);
     try {
-      const product: Product = yield call(getProductByIdOrSlug, payload);
+      const product: Product = yield call(getProductByIdOrSlug, pathVariable);
       yield fork(handleFetchProductDetails, product.id);
-      yield put(fetchProductSuccess(product));
+      yield put(fetchProductSuccess({ product }));
     } catch (e) {
       notification.open({
         message: "Error",
@@ -165,7 +258,7 @@ function* handleFetchProduct() {
         type: "error",
       });
 
-      yield put(fetchProductsFailure());
+      yield put(fetchProductFailure());
     }
   }
 }
@@ -177,7 +270,9 @@ function* handleFetchProductDetails(pid: string) {
       pid,
     );
     yield put(fetchProductDetailsSuccess(content));
-    yield put(updateProductDetailSelected(content[0]));
+    yield put(
+      updateProductDetailSelectedSuccess({ productDetail: content[0] }),
+    );
   } catch (e) {
     notification.open({
       message: "Error",

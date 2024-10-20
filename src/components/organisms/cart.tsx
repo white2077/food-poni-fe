@@ -6,8 +6,8 @@ import EmptyNotice from "../empty-notice.tsx";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "@/redux/store.ts";
 import { QuantityInput } from "@/components/molecules/quantityInput.tsx";
-import { deleteCartRequest, fetchCartRequest } from "@/redux/modules/cart.ts";
-import { server } from "@/utils/server.ts";
+import { deleteCartRequest, fetchCartsAction } from "@/redux/modules/cart.ts";
+import { currencyFormat, getThumbnail } from "@/utils/common.ts";
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -23,16 +23,17 @@ export default function Cart() {
   const [pending, setPending] = useState<boolean>(false);
 
   useEffect(() => {
-    dispatch(fetchCartRequest("createdDate,desc"));
+    dispatch(
+      fetchCartsAction({
+        queryParams: {
+          page: 0,
+          pageSize: 10,
+          status: true,
+          sort: "createdDate,desc",
+        },
+      }),
+    );
   }, [dispatch]);
-
-  const totalAmount = (): number => {
-    let total = 0;
-    page.content.forEach((item) => {
-      total += item.productDetail.price * item.quantity;
-    });
-    return total;
-  };
 
   return (
     <div>
@@ -61,90 +62,109 @@ export default function Cart() {
               itemLayout="horizontal"
               dataSource={page.content}
               loading={isFetchLoading}
-              renderItem={(item) => (
+              renderItem={(it) => (
                 <List.Item>
                   <List.Item.Meta
                     avatar={
-                      <div className="relative inline-block flex items-center">
-                        <Avatar
-                          className="rounded-lg w-20 h-20"
-                          src={
-                            item.productDetail.images[0].includes("http")
-                              ? item.productDetail.images[0]
-                              : server + item.productDetail.images[0]
-                          }
-                        />
-                        <div className="absolute top-[-5px] w-6 h-6 right-[-5px] bg-gray-300 rounded-[100px] flex p-0 justify-center">
+                      <div className="relative flex items-center">
+                        <div className="w-20">
+                          <Avatar
+                            className="rounded-lg w-20 h-20"
+                            src={getThumbnail(it.productDetail.images[0])}
+                          />
+                        </div>
+                        <div className="absolute top-[-5px] w-5 h-5 right-[-5px] bg-gray-300 rounded-[100px] flex p-0 justify-center">
                           <Popconfirm
                             title="Bạn có chắc chắn muốn xóa không?"
                             onConfirm={() =>
-                              dispatch(deleteCartRequest(item.productDetail.id))
+                              dispatch(deleteCartRequest({ id: it.id }))
                             }
                             okText="Đồng ý"
                             cancelText="Hủy"
-                            okButtonProps={{ loading: item.isDeleteLoading }}
+                            okButtonProps={{ loading: it.isDeleteLoading }}
                           >
-                            <CloseOutlined
-                              className="p-0"
-                              id={`delete-icon-${item.productDetail.id}`}
-                              key="list-loadmore-edit"
-                            />
+                            <CloseOutlined className="p-0" />
                           </Popconfirm>
                         </div>
                       </div>
                     }
-                    title={<span>{item.productName}</span>}
+                    title={<div>{it.productName}</div>}
                     description={
-                      <span>
+                      <div>
                         <span style={{ marginRight: "10px" }}>
-                          {item.productDetail.price}
-                          <sup>₫</sup>
+                          {currencyFormat(it.productDetail.price)}
                         </span>
-                      </span>
+                        {it.type && (
+                          <div className="text-[10px]">
+                            Loại:{" "}
+                            <span className="bg-primary text-white rounded-lg mr-1 px-1">
+                              {it.type}
+                            </span>
+                          </div>
+                        )}
+                        {it.toppings.length > 0 && (
+                          <div className="text-[10px]">
+                            <div>Topping:</div>
+                            {it.toppings.map((tp, index) => {
+                              return (
+                                <div
+                                  key={index}
+                                  className="inline-block bg-primary text-white rounded-lg mr-1 px-1 mb-1"
+                                >{`${tp.name}: ${tp.price}₫`}</div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
                     }
                   />
                   <div className="mb-auto">
                     <div className="text-right mb-auto">
-                      {item.productDetail.price * item.quantity}
+                      {currencyFormat(
+                        (it.productDetail.price +
+                          it.toppings.reduce((sum, tp) => sum + tp.price, 0)) *
+                          it.quantity,
+                      )}
                       <sup>₫</sup>
                     </div>
-                    <QuantityInput item={item} />
+                    <QuantityInput item={it} />
                   </div>
                 </List.Item>
               )}
             />
             <Divider />
-          </div>
-        )}
-        {page.content.length > 0 && (
-          <div>
-            <div className="mt-3 flex justify-between">
-              <div>Tổng tiền</div>
-              <div>
-                {totalAmount()}
-                <sup>₫</sup>
+            <div>
+              <div className="mt-3 flex justify-between">
+                <div>Tổng tiền</div>
+                <div>
+                  {currencyFormat(
+                    page.content.reduce(
+                      (total, it) =>
+                        total +
+                        (it.productDetail.price +
+                          it.toppings.reduce((sum, tp) => sum + tp.price, 0)) *
+                          it.quantity,
+                      0,
+                    ),
+                  )}
+                </div>
               </div>
+              <Divider />
+              <Button
+                className="my-5s mt-2"
+                type="primary"
+                danger
+                block
+                disabled={pending}
+                loading={pending}
+                onClick={() => {
+                  setPending(true);
+                  navigate("/checkout");
+                }}
+              >
+                Thanh toán ngay
+              </Button>
             </div>
-            <Divider />
-            <Button
-              className="my-5s mt-2"
-              type="primary"
-              danger
-              block
-              disabled={pending}
-              loading={pending}
-              onClick={() => {
-                setPending(true);
-                // if (currentUser.id) {
-                navigate("/checkout");
-                // } else {
-                //     navigate("/auth/login");
-                //     setPending(false);
-                // }
-              }}
-            >
-              Thanh toán ngay
-            </Button>
           </div>
         )}
       </Drawer>

@@ -2,6 +2,7 @@ import { Product } from "@/type/types.ts";
 import { server } from "@/utils/server.ts";
 import { Card, Rate, Space } from "antd";
 import { Link } from "react-router-dom";
+import {currencyFormat} from "@/utils/common.ts";
 
 export type ElementDistance = {
   readonly distance: {
@@ -63,11 +64,10 @@ export function ProductCard({ product }: { product: Product }) {
               </div>
               <div>
                 <div className="text-left text-[20px] nunito">
-                  {product.minPrice}
+                  {currencyFormat(product.minPrice)}
                   {product.maxPrice === product.minPrice
                     ? ""
-                    : " - " + product.maxPrice}
-                  <sup>₫</sup>
+                    : " - " + currencyFormat(product.maxPrice)}
                 </div>
                 <div>Đã bán: {product.sales}</div>
               </div>

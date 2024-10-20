@@ -47,7 +47,6 @@ export default function OrderDetail() {
                       orderStatus={selectedOrder.status}
                     />
                   </div>
-
                   <div className="col-span-5">
                     <OrderItemPricing price={it.price} quantity={it.quantity} />
                   </div>

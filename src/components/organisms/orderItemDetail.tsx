@@ -1,4 +1,4 @@
-import { createCartRequest } from "@/redux/modules/cart";
+import { createCartAction } from "@/redux/modules/cart";
 import { RootState } from "@/redux/store";
 import { OrderItem } from "@/type/types";
 import { server } from "@/utils/server";
@@ -27,31 +27,47 @@ export function OrderItemDetail({ orderItem, orderStatus }: Props) {
         />
         <div>
           <div>
-            {orderItem.productDetail.product.name +
-              " " +
-              orderItem.productDetail.name}
+            <div>
+              {orderItem.productDetail.product.name +
+                " " +
+                orderItem.productDetail.name}
+            </div>
+            {orderItem.type && (
+                <div className="text-[10px]">
+                  Loại:{" "}
+                  <span className="bg-primary text-white rounded-lg mr-1 px-1">
+                                  {orderItem.type}
+                                </span>
+                </div>
+            )}
+            {orderItem.toppings && orderItem.toppings.length > 0 && (
+                <div className="text-[10px]">
+                  <div>Topping:</div>
+                  {orderItem.toppings.map((tp, index) => {
+                    return (
+                        <div
+                            key={index}
+                            className="inline-block bg-primary text-white rounded-lg mr-1 px-1 mb-1"
+                        >{`${tp.name}: ${tp.price}₫`}</div>
+                    );
+                  })}
+                </div>
+            )}
           </div>
           <OrderItemActions
             orderDetailId={orderItem.id}
             orderStatus={orderStatus}
             isInCart={page.content.some(
-              (it) => it.productDetail.id === orderItem.productDetail.id
+              (it) => it.productDetail && it.productDetail.id === orderItem.productDetail.id
             )}
             createCartItem={() => {
               dispatch(
-                createCartRequest({
-                  quantity: orderItem.quantity,
-                  productDetail: orderItem.productDetail.id,
-                  productName: orderItem.productDetail.product.name,
-                  productDetailName: orderItem.productDetail.name,
-                  price: orderItem.price,
-                  thumbnail: orderItem.productDetail.product.thumbnail,
-                })
+                createCartAction()
               );
               navigate("/checkout");
             }}
           />
-          <RateAdd></RateAdd>
+          <RateAdd/>
         </div>
       </div>
     </div>

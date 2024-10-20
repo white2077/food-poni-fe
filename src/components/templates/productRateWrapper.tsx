@@ -44,15 +44,13 @@ export default function ProductRate({ item }: Props) {
   );
 
   useEffect(() => {
-    if (item.id) {
-      dispatch(
-        getRatesRequest({
-          productId: item.id,
-          queryParams: { page: 0, pageSize: 5 },
-        }),
-      );
-    }
-  }, [dispatch, item.id]);
+    dispatch(
+      getRatesRequest({
+        productId: item.id,
+        queryParams: { page: 0, pageSize: 5 },
+      }),
+    );
+  }, [dispatch]);
 
   const toggleExpand = (index: number) => {
     setExpandedComments((prev) => ({ ...prev, [index]: !prev[index] }));

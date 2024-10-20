@@ -7,18 +7,23 @@ import { QueryParams } from "@/utils/api/common";
 import { RootState } from "@/redux/store.ts";
 import { CartState, deleteAllCartRequest } from "@/redux/modules/cart.ts";
 import { NavigateFunction } from "react-router-dom";
-import { AddressState } from "./address";
+import { AddressState } from "@/redux/modules/address.ts";
 
 export type OrderState = {
   readonly page: Page<Order[]>;
   readonly selectedOrder: Order | null;
   readonly form: {
-    readonly orderItems: {
+    readonly orderItems: Array<{
       readonly quantity: number;
       readonly productDetail: {
         readonly id: string;
       };
-    }[];
+      readonly toppings: Array<{
+        readonly name: string;
+        readonly price: number;
+      }>;
+      readonly type: string | null;
+    }>;
     readonly shippingAddress: {
       readonly fullName: string;
       readonly phoneNumber: string;
@@ -68,7 +73,7 @@ const orderSlice = createSlice({
   reducers: {
     fetchOrdersSuccess: (
       state,
-      action: PayloadAction<{ page: Page<Order[]> }>
+      action: PayloadAction<{ page: Page<Order[]> }>,
     ) => ({
       ...state,
       page: action.payload.page,
@@ -97,31 +102,26 @@ const orderSlice = createSlice({
     }),
     updateOrderItemsSuccess: (
       state,
-      {
-        payload,
-      }: {
-        payload: {
-          readonly quantity: number;
-          readonly productDetail: {
-            readonly id: string;
-          };
-        }[];
-      }
+      action: PayloadAction<{
+        orderItems: OrderState["form"]["orderItems"];
+      }>,
     ) => ({
       ...state,
       form: {
         ...state.form,
-        orderItems: payload,
+        orderItems: action.payload.orderItems,
       },
     }),
     updateShippingAddressSuccess: (
       state,
-      action: PayloadAction<OrderState["form"]["shippingAddress"] | null>
+      action: PayloadAction<{
+        shippingAddress: OrderState["form"]["shippingAddress"] | null;
+      }>,
     ) => ({
       ...state,
       form: {
         ...state.form,
-        shippingAddress: action.payload,
+        shippingAddress: action.payload.shippingAddress,
       },
     }),
     updatePaymentSuccess: (
@@ -130,7 +130,7 @@ const orderSlice = createSlice({
         payload: {
           readonly method: string;
         };
-      }
+      },
     ) => ({
       ...state,
       form: {
@@ -173,22 +173,22 @@ export const {
   updateShippingAddressSuccess,
 } = orderSlice.actions;
 export const updateOrderItemsAction = createAction<void>(
-  `${SLICE_NAME}/updateOrderItemsRequest`
+  `${SLICE_NAME}/updateOrderItemsRequest`,
 );
 export const updateShippingAddressAction = createAction<{ sid: string | null }>(
-  `${SLICE_NAME}/updateShippingAddressRequest`
+  `${SLICE_NAME}/updateShippingAddressRequest`,
 );
 export const checkCartItemsAction = createAction<void>(
-  `${SLICE_NAME}/checkCartItemsRequest`
+  `${SLICE_NAME}/checkCartItemsRequest`,
 );
 export const fetchOrdersAction = createAction<{ queryParams: QueryParams }>(
-  `${SLICE_NAME}/fetchOrdersRequest`
+  `${SLICE_NAME}/fetchOrdersRequest`,
 );
 export const fetchOrderAction = createAction<{ orderId: string }>(
-  `${SLICE_NAME}/fetchOrderRequest`
+  `${SLICE_NAME}/fetchOrderRequest`,
 );
 export const createOrderAction = createAction<{ navigate: NavigateFunction }>(
-  `${SLICE_NAME}/createOrderRequest`
+  `${SLICE_NAME}/createOrderRequest`,
 );
 
 function* handleFetchOrders() {
@@ -251,7 +251,7 @@ function* handleCreateOrder() {
       yield put(createOrderSuccess());
       yield put(deleteAllCartRequest());
 
-      navigate("/don-hang/" + orderId);
+      navigate("/quan-ly/don-hang/" + orderId);
       notification.open({
         message: "Đơn hàng",
         description: "Bạn vừa đặt hàng.",
@@ -273,11 +273,22 @@ function* handleUpdateOrderItems() {
   while (true) {
     yield take(updateOrderItemsAction);
     const carts: CartState["page"]["content"] = yield select(
-      (state: RootState) => state.cart.page.content
+      (state: RootState) => state.cart.page.content,
     );
     const selectedCarts = carts.filter((it) => it.checked);
 
-    yield put(updateOrderItemsSuccess(selectedCarts));
+    yield put(
+      updateOrderItemsSuccess({
+        orderItems: selectedCarts.map((it) => {
+          return {
+            quantity: it.quantity,
+            productDetail: { id: it.productDetail.id },
+            toppings: it.toppings,
+            type: it.type,
+          };
+        }),
+      }),
+    );
   }
 }
 
@@ -286,11 +297,11 @@ function* handleUpdateShippingAddress() {
     const {
       payload: { sid },
     }: ReturnType<typeof updateShippingAddressAction> = yield take(
-      updateShippingAddressAction
+      updateShippingAddressAction,
     );
 
     if (sid === null) {
-      yield put(updateShippingAddressSuccess(null));
+      yield put(updateShippingAddressSuccess({ shippingAddress: null }));
     }
 
     const { content }: { content: AddressState["page"]["content"] } =
@@ -298,7 +309,7 @@ function* handleUpdateShippingAddress() {
     const address = content.find((it) => it.id === sid);
 
     if (address) {
-      yield put(updateShippingAddressSuccess(address));
+      yield put(updateShippingAddressSuccess({ shippingAddress: address }));
     }
   }
 }

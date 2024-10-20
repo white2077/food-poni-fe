@@ -2,18 +2,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { Params, useParams } from "react-router-dom";
 import { RootState } from "@/redux/store.ts";
 import { useEffect } from "react";
-import {
-  fetchProductAction,
-  updateProductDetailSelected,
-} from "@/redux/modules/product.ts";
 import ProductGallery from "@/components/product-gallery.tsx";
-import { Card, Radio, Rate } from "antd";
+import { Card, Checkbox, Radio, Rate } from "antd";
 import Tym from "@/components/atoms/tym.tsx";
 import ReadMore from "@/components/atoms/readMore.tsx";
 import { ProductLoading } from "@/components/atoms/productLoading.tsx";
 import ProductCart from "@/components/organisms/productCart.tsx";
-import { server } from "@/utils/server.ts";
 import ProductRate from "./productRateWrapper";
+import {
+  fetchProductAction,
+  updateProductDetailSelectedSuccess,
+  updateTypeSelectedSuccess,
+  updateToppingsSelectedSuccess,
+} from "@/redux/modules/product.ts";
+import {currencyFormat} from "@/utils/common.ts";
 
 export default function ProductWrapper() {
   const { pathVariable } = useParams<Params<string>>();
@@ -21,22 +23,17 @@ export default function ProductWrapper() {
   const { product, productDetails } = useSelector(
     (state: RootState) => state.product.productSelected,
   );
-  const { productDetailSelected } = useSelector(
-    (state: RootState) => state.product,
+  const { productDetail, toppingsSelected } = useSelector(
+    (state: RootState) => state.product.itemsSelected,
   );
 
   useEffect(() => {
     if (pathVariable) {
-      dispatch(fetchProductAction(pathVariable));
+      dispatch(fetchProductAction({ pathVariable }));
     }
   }, [pathVariable]);
 
-  if (
-    !product ||
-    !productDetails ||
-    productDetails.length < 1 ||
-    !productDetailSelected
-  ) {
+  if (productDetails.length < 1) {
     return <ProductLoading />;
   }
 
@@ -44,38 +41,35 @@ export default function ProductWrapper() {
     <div className="grid gap-4">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[2fr_3fr_2fr] gap-4">
         <div className="lg:sticky top-5">
-          <ProductGallery
-            images={Array.from(new Set(productDetailSelected.images))}
-          />
+          <ProductGallery images={Array.from(new Set(productDetail.images))} />
         </div>
         <div className="grid gap-4 lg:order-1 order-2">
           <Card size="small">
             <h2 className="text-xl">
-              {product.name + " - " + productDetailSelected.name}
+              {product.name + " - " + productDetail.name}
             </h2>
             <div className="my-2 flex flex-wrap items-center">
               <span className="border-r-2 py-1 pr-2 flex items-center">
                 <span className="m-1 border-b-2 text-lg">
-                  {(productDetailSelected.rate
-                    ? productDetailSelected.rate.toFixed(1)
-                    : 0) + ""}
+                  {(productDetail.rate ? productDetail.rate.toFixed(1) : 0) +
+                    ""}
                 </span>
                 <Rate
                   allowHalf
                   disabled
-                  value={productDetailSelected.rate}
+                  value={productDetail.rate}
                   className="text-xs mr-[8px]"
                 />
               </span>
               <span className="border-r-2 py-1 px-1 hidden md:inline">
                 <span className="text-lg m-1 border-b-2">
-                  {productDetailSelected.rateCount}
+                  {productDetail.rateCount}
                 </span>{" "}
                 Đánh giá
               </span>
               <span className="border-r-2 py-1 px-1">
                 <span className="text-lg m-1 border-b-2">
-                  {productDetailSelected.sales}
+                  {productDetail.sales}
                 </span>{" "}
                 Lượt bán
               </span>
@@ -84,24 +78,20 @@ export default function ProductWrapper() {
               </span>
             </div>
             <h3 className="text-2xl font-semibold">
-              {productDetailSelected.price}
-              <sup>₫</sup>
+              {currencyFormat(productDetail.price)}
             </h3>
           </Card>
-          <Card
-            hidden={productDetails.length == 1}
-            size="small"
-            title="Loại sản phẩm"
-            className="static"
-          >
-            {productDetails && productDetails.length > 1 && (
+          {productDetails.length > 1 && (
+            <Card size="small" title="Loại sản phẩm" className="static">
               <Radio.Group defaultValue={productDetails[0].name || "default"}>
                 {(productDetails || []).map((productDetail) => (
                   <Radio.Button
                     key={productDetail.id}
                     value={productDetail.name || "default"}
                     onClick={() =>
-                      dispatch(updateProductDetailSelected(productDetail))
+                      dispatch(
+                        updateProductDetailSelectedSuccess({ productDetail }),
+                      )
                     }
                     className="!rounded-lg m-2 static hover:static border-[1px]"
                   >
@@ -109,8 +99,33 @@ export default function ProductWrapper() {
                   </Radio.Button>
                 ))}
               </Radio.Group>
-            )}
-          </Card>
+            </Card>
+          )}
+          {product.toppings.length > 0 && (
+            <Card size="small" title="Các loại topping" className="static">
+              {product.toppings.map((it, index) => (
+                <Checkbox
+                  key={index}
+                  checked={toppingsSelected.includes(it)}
+                  onClick={() =>
+                    dispatch(updateToppingsSelectedSuccess({ topping: it }))
+                  }
+                >{`${it.name}: ${currencyFormat(it.price)}`}</Checkbox>
+              ))}
+            </Card>
+          )}
+          {product.types.length > 0 && (
+            <Card size="small" title="Loại" className="static">
+              <Radio.Group
+                onChange={(e) =>
+                  dispatch(updateTypeSelectedSuccess({ type: e.target.value }))
+                }
+                defaultValue={product.types[0]}
+                options={product.types}
+              />
+            </Card>
+          )}
+
           {/*<Card size='small' title='Thông tin vận chuyển' hidden={currentShippingAddress.id === ""}>*/}
           {/*    <ProductLoading loading={Object.keys(currentShippingAddress).length === 0}>*/}
           {/*        {currentShippingAddress.address}*/}
@@ -126,25 +141,13 @@ export default function ProductWrapper() {
           </Card>
           {/*<RelatedProducts title="Sản phẩm liên quan"*/}
           {/*                 query={getProductsCardPage({page: 0, pageSize: 20, status: true})}/>*/}
-          <ReadMore content={productDetailSelected.description} />
+          <ReadMore content={productDetail.description} />
         </div>
         <div className="lg:sticky top-5 lg:order-2 order-1">
-          <ProductCart
-            id={productDetailSelected.id}
-            price={productDetailSelected.price}
-            thumbnail={
-              productDetailSelected.images &&
-              productDetailSelected.images.length > 0
-                ? server + productDetailSelected.images[0]
-                : ""
-            }
-            productName={product.name}
-            productDetailName={productDetailSelected.name}
-            status={productDetailSelected.status}
-          />
+          <ProductCart />
         </div>
       </div>
-      <ProductRate item={productDetailSelected} />
+      <ProductRate item={productDetail} />
     </div>
   );
 }

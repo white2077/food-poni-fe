@@ -1,17 +1,14 @@
 import { Suspense, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { LayoutProvider, LayoutSplashScreen } from "@/_metronic/layout/core";
-import { AuthInit } from "./modules/auth";
 import Cookies from "js-cookie";
 import { REFRESH_TOKEN } from "@/utils/server.ts";
 import jwtDecode from "jwt-decode";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { fetchUserAction } from "@/redux/modules/auth.ts";
-import { RootState } from "@/redux/store";
 
 const App = () => {
   const dispatch = useDispatch();
-  const { currentUser } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     const refresh_token = Cookies.get(REFRESH_TOKEN);
@@ -28,16 +25,10 @@ const App = () => {
     }
   }, [dispatch]);
 
-  if (!currentUser) {
-    return <LayoutSplashScreen />;
-  }
-
   return (
     <Suspense fallback={<LayoutSplashScreen />}>
       <LayoutProvider>
-        <AuthInit>
-          <Outlet />
-        </AuthInit>
+        <Outlet />
       </LayoutProvider>
     </Suspense>
   );
