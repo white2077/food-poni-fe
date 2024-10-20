@@ -15,7 +15,9 @@ export default function CheckoutWrapper() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const carts = useSelector((state: RootState) => state.cart.page);
-  const { isCreateLoading } = useSelector((state: RootState) => state.order);
+  const { form, isCreateLoading } = useSelector(
+    (state: RootState) => state.order
+  );
 
   const totalAmount = (): number => {
     return carts.content
@@ -34,7 +36,7 @@ export default function CheckoutWrapper() {
       <h1 className="text-2xl mb-2">GIỎ HÀNG</h1>
       <Row gutter={16}>
         <Col flex="auto">
-          <OrderItems/>
+          <OrderItems />
         </Col>
         <Col flex="400px">
           <ShippingAddress />
@@ -83,7 +85,9 @@ export default function CheckoutWrapper() {
                 danger
                 block
                 loading={isCreateLoading}
-                disabled={carts.content.length == 0}
+                disabled={
+                  carts.content.length < 1 || form.shippingAddress === null
+                }
               >
                 Thanh toán
               </Button>

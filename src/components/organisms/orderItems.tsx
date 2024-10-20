@@ -78,7 +78,7 @@ export default function OrderItems() {
                         updateCheckedRequest({
                           pdid: cart.productDetail.id,
                           checked: !cart.checked,
-                        }),
+                        })
                       )
                     }
                     checked={cart.checked}
@@ -133,7 +133,7 @@ export default function OrderItems() {
                 </Col>
               </Row>
             </div>
-          ),
+          )
         )
       ) : (
         <Card className="my-2">

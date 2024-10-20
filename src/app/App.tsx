@@ -5,11 +5,13 @@ import { AuthInit } from "./modules/auth";
 import Cookies from "js-cookie";
 import { REFRESH_TOKEN } from "@/utils/server.ts";
 import jwtDecode from "jwt-decode";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchUserAction } from "@/redux/modules/auth.ts";
+import { RootState } from "@/redux/store";
 
 const App = () => {
   const dispatch = useDispatch();
+  const { currentUser } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     const refresh_token = Cookies.get(REFRESH_TOKEN);
@@ -22,9 +24,13 @@ const App = () => {
         readonly addressId: string;
         readonly username: string;
       } = jwtDecode(refresh_token);
-      dispatch(fetchUserAction({uid: payload.id}));
+      dispatch(fetchUserAction({ uid: payload.id }));
     }
   }, [dispatch]);
+
+  if (!currentUser) {
+    return <LayoutSplashScreen />;
+  }
 
   return (
     <Suspense fallback={<LayoutSplashScreen />}>
