@@ -4,7 +4,7 @@ import { AuthRequest, AuthResponse, User, UserRemember } from "@/type/types.ts";
 import {
   getUserById,
   login,
-  updateCurrentUserAddress
+  updateCurrentUserAddress,
 } from "@/utils/api/auth.ts";
 import { REFRESH_TOKEN, REMEMBER_ME } from "@/utils/server.ts";
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
@@ -22,17 +22,15 @@ export type AuthState = {
     readonly rememberMe: UserRemember;
     readonly isPending: boolean;
   };
-  readonly currentUser:
-    | {
-        readonly role: string;
-        readonly id: string;
-        readonly avatar: string;
-        readonly email: string;
-        readonly addressId: string;
-        readonly username: string;
-      }
-    | null
-    | undefined;
+  readonly currentUser: {
+    readonly role: string;
+    readonly id: string;
+    readonly avatar: string;
+    readonly email: string;
+    readonly addressId: string;
+    readonly username: string;
+  } | null;
+  readonly isFetchingUser: boolean;
   readonly register: {
     readonly isLoading: boolean;
   };
@@ -64,7 +62,8 @@ const initialState: AuthState = {
     },
     isPending: false,
   },
-  currentUser: undefined,
+  currentUser: null,
+  isFetchingUser: true,
   register: {
     isLoading: false,
   },
@@ -134,16 +133,21 @@ const authSlice = createSlice({
         rememberMe: action.payload,
       },
     }),
-    updateCurrentUser: (
+    updateCurrentUserSuccess: (
       state,
-      action: PayloadAction<AuthState["currentUser"]>
+      action: PayloadAction<AuthState["currentUser"]>,
     ) => ({
       ...state,
       currentUser: action.payload,
+      isFetchingUser: false,
+    }),
+    updateCurrentUserFailure: (state) => ({
+      ...state,
+      isFetchingUser: false,
     }),
     updateCurrentUserAddressSuccess: (
       state,
-      action: PayloadAction<{ aid: string }>
+      action: PayloadAction<{ aid: string }>,
     ) => ({
       ...state,
       currentUser: state.currentUser
@@ -173,7 +177,7 @@ const authSlice = createSlice({
     }),
     registerUserFailure: (
       state,
-      action: PayloadAction<Record<string, string>>
+      action: PayloadAction<Record<string, string>>,
     ) => ({
       ...state,
       register: {
@@ -186,7 +190,7 @@ const authSlice = createSlice({
       state,
       action: PayloadAction<{
         fields: Array<{ field: string; value: string }>;
-      }>
+      }>,
     ) => ({
       ...state,
       formSaved: {
@@ -199,7 +203,7 @@ const authSlice = createSlice({
       action: PayloadAction<{
         field: string;
         value: string;
-      }>
+      }>,
     ) => {
       let errorMessage: string | null = null;
 
@@ -258,7 +262,7 @@ const authSlice = createSlice({
       }
 
       const isDirty = updatedFields.every(
-        (field) => field.errorMessage === null
+        (field) => field.errorMessage === null,
       );
 
       return {
@@ -269,17 +273,11 @@ const authSlice = createSlice({
         },
       };
     },
-    clearFormSuccess: (state) => {
-      state.formEditing = {
-        fields: [
-          { field: "username", value: "", errorMessage: null },
-          { field: "email", value: "", errorMessage: null },
-          { field: "password", value: "", errorMessage: null },
-        ],
-        isDirty: false,
-      };
-      state.formSaved = { fields: null };
-    },
+    clearFormSuccess: (state) => ({
+      ...state,
+      formEditing: initialState.formEditing,
+      formSaved: initialState.formSaved,
+    }),
   },
 });
 
@@ -291,7 +289,8 @@ export const {
   updatePassword,
   rememberMeRequest,
   updateRememberMe,
-  updateCurrentUser,
+  updateCurrentUserSuccess,
+  updateCurrentUserFailure,
   updateCurrentUserAddressSuccess,
   clearCurrentUser,
   registerUserRequest,
@@ -310,15 +309,15 @@ export const registerUserAction = createAction<{
 }>(`${SLICE_NAME}/registerUserAction`);
 
 export const updateCurrentUserAddressAction = createAction<{ aid: string }>(
-  `${SLICE_NAME}/updateCurrentUserAddressRequest`
+  `${SLICE_NAME}/updateCurrentUserAddressRequest`,
 );
 
 export const loginAction = createAction<{ navigate: NavigateFunction }>(
-  `${SLICE_NAME}/loginRequest`
+  `${SLICE_NAME}/loginRequest`,
 );
 
 export const fetchUserAction = createAction<{ uid: string }>(
-  `${SLICE_NAME}/fetchUserRequest`
+  `${SLICE_NAME}/fetchUserRequest`,
 );
 
 function* handleLogin() {
@@ -327,7 +326,7 @@ function* handleLogin() {
     try {
       yield put(updatePendingSuccess());
       const { username, password, remember }: FieldLoginType = yield select(
-        (state: RootState) => state.auth.login
+        (state: RootState) => state.auth.login,
       );
       const user: AuthRequest = {
         username,
@@ -337,9 +336,9 @@ function* handleLogin() {
 
       yield put(loginSuccess());
       yield put(
-        updateCurrentUser(
-          jwtDecode(res.refreshToken) as AuthState["currentUser"]
-        )
+        updateCurrentUserSuccess(
+          jwtDecode(res.refreshToken) as AuthState["currentUser"],
+        ),
       );
 
       Cookies.set(REFRESH_TOKEN, res.refreshToken, { expires: 7 });
@@ -375,7 +374,7 @@ function* handleRegisterUser() {
     const {
       payload: { navigate },
     }: ReturnType<typeof registerUserAction> = yield take(
-      registerUserAction.type
+      registerUserAction.type,
     );
 
     console.log(navigate);
@@ -387,7 +386,7 @@ function* handleUpdateCurrentUserAddress() {
     const {
       payload: { aid },
     }: ReturnType<typeof updateCurrentUserAddressAction> = yield take(
-      updateCurrentUserAddressAction
+      updateCurrentUserAddressAction,
     );
     try {
       yield call(updateCurrentUserAddress, aid);
@@ -411,14 +410,14 @@ function* handleFetchUser() {
       const user: User = yield call(getUserById, uid);
 
       yield put(
-        updateCurrentUser({
+        updateCurrentUserSuccess({
           id: user.id,
           avatar: user.avatar,
           role: user.role,
           email: user.email,
           addressId: user.address && user.address.id,
           username: user.username,
-        })
+        }),
       );
     } catch (e) {
       notification.open({
@@ -426,6 +425,8 @@ function* handleFetchUser() {
         description: e.message,
         type: "error",
       });
+
+      yield put(updateCurrentUserFailure());
     }
   }
 }

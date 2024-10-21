@@ -25,6 +25,7 @@ export type Cart = {
   readonly productName: string;
   readonly productDetail: ProductDetail;
   readonly toppings: Array<{
+    readonly id: string;
     readonly name: string;
     readonly price: number;
   }>;
@@ -131,7 +132,11 @@ export type Product = {
   readonly rateCount: number;
   readonly minPrice: number;
   readonly maxPrice: number;
-  readonly toppings: Array<{ readonly name: string; readonly price: number }>;
+  readonly toppings: Array<{
+    readonly id: string;
+    readonly name: string;
+    readonly price: number;
+  }>;
   readonly types: Array<string>;
   readonly createdDate: Date;
   readonly updatedDate: Date;

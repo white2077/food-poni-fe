@@ -9,7 +9,7 @@ import { RootState } from "@/redux/store.ts";
 import {
   loginAction,
   rememberMeRequest,
-  updateCurrentUser,
+  updateCurrentUserSuccess,
   updatePassword,
   updateRememberMe,
   updateUsername,
@@ -67,7 +67,7 @@ export function LoginWrapper() {
       if (server.startsWith(event.origin)) {
         if (event.data) {
           dispatch(
-            updateCurrentUser(
+            updateCurrentUserSuccess(
               jwtDecode(event.data) as {
                 readonly role: string;
                 readonly id: string;

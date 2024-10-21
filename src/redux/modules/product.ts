@@ -20,6 +20,7 @@ export type ProductState = {
   readonly itemsSelected: {
     readonly productDetail: ProductDetail;
     readonly toppingsSelected: Array<{
+      readonly id: string;
       readonly name: string;
       readonly price: number;
     }>;
@@ -129,11 +130,11 @@ const productSlide = createSlice({
     updateToppingsSelectedSuccess: (
       state,
       action: PayloadAction<{
-        topping: { readonly name: string; readonly price: number };
+        topping: ProductState["itemsSelected"]["toppingsSelected"][0];
       }>,
     ) => {
       const check = state.itemsSelected.toppingsSelected.some(
-        (it) => it.name === action.payload.topping.name,
+        (it) => it.id === action.payload.topping.id,
       );
       if (check) {
         return {
@@ -141,8 +142,8 @@ const productSlide = createSlice({
           itemsSelected: {
             ...state.itemsSelected,
             toppingsSelected: state.itemsSelected.toppingsSelected
-              .filter((it) => it.name !== action.payload.topping.name)
-              .sort((a, b) => a.name.localeCompare(b.name)),
+              .filter((it) => it.id !== action.payload.topping.id)
+              .sort((a, b) => a.id.localeCompare(b.id)),
           },
         };
       }
@@ -154,7 +155,7 @@ const productSlide = createSlice({
           toppingsSelected: [
             ...state.itemsSelected.toppingsSelected,
             action.payload.topping,
-          ].sort((a, b) => a.name.localeCompare(b.name)),
+          ].sort((a, b) => a.id.localeCompare(b.id)),
         },
       };
     },

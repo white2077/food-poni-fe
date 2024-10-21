@@ -6,7 +6,7 @@ import { RootState } from "@/redux/store.ts";
 import { createCartAction } from "@/redux/modules/cart.ts";
 import CustomInput from "@/components/molecules/customInput .tsx";
 import { updateProductSelectedQuantitySuccess } from "@/redux/modules/product.ts";
-import {currencyFormat, getThumbnail} from "@/utils/common.ts";
+import { currencyFormat, getThumbnail } from "@/utils/common.ts";
 
 export default function ProductCart() {
   const navigate = useNavigate();
@@ -97,9 +97,11 @@ export default function ProductCart() {
             <div className="text-md font-medium mb-2">Tạm tính</div>
             <div>
               <div className="text-2xl font-semibold">
-                {currencyFormat((productDetail.price +
-                        toppingsSelected.reduce((acc, it) => acc + it.price, 0)) *
-                    quantity)}
+                {currencyFormat(
+                  (productDetail.price +
+                    toppingsSelected.reduce((acc, it) => acc + it.price, 0)) *
+                    quantity,
+                )}
               </div>
             </div>
           </div>
@@ -112,9 +114,8 @@ export default function ProductCart() {
               block
               onClick={() => {
                 if (!isExisted) {
-                  dispatch(createCartAction());
+                  dispatch(createCartAction({ navigate }));
                 }
-                navigate("/checkout");
               }}
               disabled={currentUser?.role === "RETAILER"}
             >
@@ -122,7 +123,7 @@ export default function ProductCart() {
             </Button>
             <Button
               block
-              onClick={() => dispatch(createCartAction())}
+              onClick={() => dispatch(createCartAction({ navigate: null }))}
               loading={isCreateLoading}
               disabled={isExisted || currentUser?.role === "RETAILER"}
             >

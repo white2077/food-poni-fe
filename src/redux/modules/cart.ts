@@ -25,6 +25,7 @@ import { RootState } from "@/redux/store.ts";
 import { Task } from "redux-saga";
 import { updateOrderItemsAction } from "@/redux/modules/order.ts";
 import { ProductState } from "@/redux/modules/product.ts";
+import { NavigateFunction } from "react-router-dom";
 
 export type CartState = {
   readonly page: Page<
@@ -39,6 +40,7 @@ export type CartState = {
         readonly images: string[];
       };
       readonly toppings: Array<{
+        readonly id: string;
         readonly name: string;
         readonly price: number;
       }>;
@@ -184,7 +186,7 @@ const cartListSlide = createSlice({
         content: state.page.content.map((it) => {
           if (it.id === action.payload.id) {
             return {
-              ...it
+              ...it,
             };
           }
           return it;
@@ -346,9 +348,9 @@ export const {
 export const fetchCartsAction = createAction<{ queryParams: QueryParams }>(
   `${SLICE_NAME}/fetchCartsRequest`,
 );
-export const createCartAction = createAction<void>(
-  `${SLICE_NAME}/createCartRequest`,
-);
+export const createCartAction = createAction<{
+  navigate: NavigateFunction | null;
+}>(`${SLICE_NAME}/createCartRequest`);
 export const updateQuantityButtonAction = createAction<{
   type: "INCREASE" | "DECREASE";
   id: string;
@@ -415,7 +417,9 @@ function* handleFetchCart() {
 
 function* handleCreateCart() {
   while (true) {
-    yield take(createCartAction);
+    const {
+      payload: { navigate },
+    }: ReturnType<typeof createCartAction> = yield take(createCartAction);
     try {
       yield put(updateCreateLoading());
       const {
@@ -454,6 +458,9 @@ function* handleCreateCart() {
         isDeleteLoading: false,
       };
       yield put(createCartSuccess({ cart }));
+      if (navigate) {
+        navigate("/checkout");
+      }
     } catch (e) {
       notification.open({
         message: "Error",
@@ -541,10 +548,14 @@ function* handleUpdateQuantityCart() {
         type: "error",
       });
 
-      // const { id } =
-      //   updateQuantityInput.payload || updateQuantityButton.payload;
-      //
-      // yield put(updateQuantityFailure({ id }));
+      if (updateQuantityInput) {
+        const id = updateQuantityInput.payload.id;
+        yield put(updateQuantityFailure({ id }));
+      }
+      if (updateQuantityButton) {
+        const id = updateQuantityInput.payload.id;
+        yield put(updateQuantityFailure({ id }));
+      }
     }
   }
 }
