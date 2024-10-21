@@ -5,25 +5,25 @@ import { useEffect } from "react";
 import { Col, Pagination, Row } from "antd";
 import { ProductLoading } from "@/components/atoms/productLoading.tsx";
 import { ProductCard } from "@/components/molecules/productCard.tsx";
-import { fetchProductsByProductCategoryRequest } from "@/redux/modules/product.ts";
+import { fetchProductsByProductCategoryAction } from "@/redux/modules/product.ts";
 
 export default function ProductCategoryWrapper() {
   const { pathVariable } = useParams<Params<string>>();
   const dispatch = useDispatch();
-  const { page, isLoading } = useSelector((state: RootState) => state.product);
+  const { page, isFetchLoading } = useSelector((state: RootState) => state.product);
 
   useEffect(() => {
     if (pathVariable) {
       dispatch(
-        fetchProductsByProductCategoryRequest({
+        fetchProductsByProductCategoryAction({
           pathVariable,
-          requestParams: { page: 0, pageSize: 10, status: true },
+          queryParams: { page: 0, pageSize: 10, status: true },
         }),
       );
     }
   }, [pathVariable]);
 
-  if (isLoading) {
+  if (isFetchLoading) {
     return <ProductLoading />;
   }
 

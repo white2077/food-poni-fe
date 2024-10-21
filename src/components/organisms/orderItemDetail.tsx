@@ -8,6 +8,7 @@ import { createCartAction } from "@/redux/modules/cart";
 import RateAdd from "./reateAdd";
 import { useEffect } from "react";
 import { setInitialRatedItems } from "@/redux/modules/rate";
+import {currencyFormat} from "@/utils/common.ts";
 
 type Props = {
   orderItem: OrderItem;
@@ -49,6 +50,27 @@ export function OrderItemDetail({ orderItem, orderStatus }: Props) {
             {orderItem.productDetail.product.name +
               " " +
               orderItem.productDetail.name}
+            {orderItem.type && (
+                <div className="text-[10px]">
+                  Loại:{" "}
+                  <span className="bg-primary text-white rounded-lg mr-1 px-1">
+                              {orderItem.type}
+                            </span>
+                </div>
+            )}
+            {orderItem.toppings.length > 0 && (
+                <div className="text-[10px]">
+                  <div>Topping:</div>
+                  {orderItem.toppings.map((tp, index) => {
+                    return (
+                        <div
+                            key={index}
+                            className="inline-block bg-primary text-white rounded-lg mr-1 px-1 mb-1"
+                        >{`${tp.name}: ${currencyFormat(tp.price)}`}</div>
+                    );
+                  })}
+                </div>
+            )}
           </div>
           <OrderItemActions
             orderDetailId={orderItem.id}
