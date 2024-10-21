@@ -4,32 +4,28 @@ import { Button, Divider, List, Modal, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { RootState } from "@/redux/store";
 import {
-  selectedMultiFile,
-  uploadFileRequest,
-  fetchFileUploadsRequest,
+  setSelectedMultiFile,
+  fetchFileUploadsAction,
+  updateFileUploadForm,
+  uploadFileAction,
 } from "@/redux/modules/fileUploads";
 import { setShowModalFileUpload } from "@/redux/modules/rate";
-import { REFRESH_TOKEN } from "@/utils/server";
 import { UploadRequestOption } from "rc-upload/lib/interface";
 import { FileUpload } from "@/type/types";
-import Cookies from "js-cookie";
 
 export default function FileUploads() {
   const dispatch = useDispatch();
-  const refreshToken = Cookies.get(REFRESH_TOKEN);
   const {
-    filesUpload,
-    isUploading,
+    page,
+    isUploadLoading,
     selectedMultiFile: selectedFiles,
   } = useSelector((state: RootState) => state.fileUpload);
   const { showModalFileUpload } = useSelector((state: RootState) => state.rate);
   const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
-    if (refreshToken) {
-      dispatch(fetchFileUploadsRequest(refreshToken));
-    }
-  }, [dispatch, refreshToken]);
+    dispatch(fetchFileUploadsAction());
+  }, [dispatch]);
 
   return (
     <Modal
@@ -41,7 +37,7 @@ export default function FileUploads() {
       <List
         className="scrollbar-rounded overflow-scroll max-h-96 h-96 p-2"
         grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 4, xl: 4, xxl: 4 }}
-        dataSource={filesUpload}
+        dataSource={page.content}
         renderItem={(file: FileUpload) => (
           <List.Item>
             <div
@@ -49,7 +45,7 @@ export default function FileUploads() {
                 const newSelectedFiles = selectedFiles.includes(file.url)
                   ? selectedFiles.filter((url) => url !== file.url)
                   : [...selectedFiles, file.url];
-                dispatch(selectedMultiFile(newSelectedFiles));
+                dispatch(setSelectedMultiFile(newSelectedFiles));
               }}
               className="p-0 relative"
             >
@@ -81,9 +77,10 @@ export default function FileUploads() {
             onSuccess,
             onError,
           }: UploadRequestOption): Promise<void> => {
-            if (refreshToken && file instanceof File) {
+            if (file instanceof File) {
               try {
-                await dispatch(uploadFileRequest({ refreshToken, file }));
+                dispatch(updateFileUploadForm({ file }));
+                dispatch(uploadFileAction());
                 onSuccess?.("OK");
               } catch (err) {
                 onError?.(new Error("Upload failed"));
@@ -92,7 +89,7 @@ export default function FileUploads() {
           }}
           showUploadList={false}
         >
-          <Button icon={<UploadOutlined />} loading={isUploading}>
+          <Button icon={<UploadOutlined />} loading={isUploadLoading}>
             Upload
           </Button>
         </Upload>
