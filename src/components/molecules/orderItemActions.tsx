@@ -1,5 +1,6 @@
 import { Button } from "antd";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 import {
   setShowModalAddRate,
   setSelectOrderItemRate,
@@ -19,12 +20,14 @@ export function OrderItemActions({
   createCartItem,
 }: Props) {
   const dispatch = useDispatch();
+  const ratedOrderItems = useSelector((state: RootState) => state.rate.ratedOrderItems);
+  const isRated = ratedOrderItems.includes(orderDetailId);
 
   return (
     <div className="flex flex-wrap gap-2">
       <Button
         className={`border border-primary text-primary ${
-          orderStatus === "COMPLETED"
+          orderStatus === "COMPLETED" && !isRated
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-30"
         }`}
@@ -32,9 +35,9 @@ export function OrderItemActions({
           dispatch(setSelectOrderItemRate(orderDetailId));
           dispatch(setShowModalAddRate(true));
         }}
-        disabled={orderStatus !== "COMPLETED"}
+        disabled={orderStatus !== "COMPLETED" || isRated}
       >
-        Đánh giá
+        {isRated ? "Đã đánh giá" : "Đánh giá"}
       </Button>
 
       <Button className="border border-primary text-primary">

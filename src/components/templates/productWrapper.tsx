@@ -147,7 +147,7 @@ export default function ProductWrapper() {
           <ProductCart />
         </div>
       </div>
-      <ProductRate item={productDetail} />
+      <ProductRate productDetail={productDetail} />
     </div>
   );
 }

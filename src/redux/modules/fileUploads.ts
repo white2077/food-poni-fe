@@ -1,22 +1,40 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { call, put, fork, take } from "redux-saga/effects";
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { call, put, fork, take, select } from "redux-saga/effects";
 import { notification } from "antd";
-
 import { FileUpload, Page } from "@/type/types";
 import { getFileUploads, uploadFile } from "@/utils/api/fileUploads";
+import { RootState } from "@/redux/store";
 
 export type FileUploadsState = {
-  readonly filesUpload: FileUpload[];
+  readonly page: Page<FileUpload[]>;
+  readonly isFetchLoading: boolean;
+  readonly isUploadLoading: boolean;
   readonly selectedMultiFile: string[];
-  readonly isUploading: boolean;
-  readonly error: string | null;
+  readonly showModalFileUpload: boolean;
+  readonly form: {
+    file: File | null;
+  };
 };
 
 const initialState: FileUploadsState = {
-  filesUpload: [],
+  page: {
+    content: [],
+    totalElements: 0,
+    totalPages: 0,
+    size: 0,
+    number: 0,
+    first: true,
+    last: true,
+    numberOfElements: 0,
+    empty: true,
+  },
+  isFetchLoading: false,
+  isUploadLoading: false,
   selectedMultiFile: [],
-  isUploading: false,
-  error: null,
+  showModalFileUpload: false,
+  form: {
+    file: null,
+  },
 };
 
 const SLICE_NAME = "fileUploads";
@@ -25,73 +43,103 @@ const fileUploadsSlice = createSlice({
   name: SLICE_NAME,
   initialState,
   reducers: {
-    setFileUploads: (state, { payload }: PayloadAction<FileUpload[]>) => ({
+    fetchFileUploadsRequest: (state) => ({
       ...state,
-      filesUpload: payload,
+      isFetchLoading: true,
     }),
-    selectedMultiFile: (state, { payload }: PayloadAction<string[]>) => ({
+    fetchFileUploadsSuccess: (state, action: PayloadAction<{ page: Page<FileUpload[]> }>) => ({
       ...state,
-      selectedMultiFile: payload,
+      page: action.payload.page,
+      isFetchLoading: false,
+    }),
+    fetchFileUploadsFailure: (state) => ({
+      ...state,
+      isFetchLoading: false,
+    }),
+    uploadFileRequest: (state) => ({
+      ...state,
+      isUploadLoading: true,
+    }),
+    uploadFileSuccess: (state, action: PayloadAction<FileUpload>) => ({
+      ...state,
+      page: {
+        ...state.page,
+        content: [...state.page.content, action.payload],
+      },
+      selectedMultiFile: [...state.selectedMultiFile, action.payload.url],
+      isUploadLoading: false,
+      form: { file: null },
+    }),
+    uploadFileFailure: (state) => ({
+      ...state,
+      isUploadLoading: false,
+    }),
+    setSelectedMultiFile: (state, action: PayloadAction<string[]>) => ({
+      ...state,
+      selectedMultiFile: action.payload,
     }),
     unSelectedMultiFile: (state) => ({
       ...state,
       selectedMultiFile: [],
     }),
-    uploadFileRequest: (state, action: PayloadAction<{ refreshToken: string; file: File }>) => ({
+    setShowModalFileUpload: (state, action: PayloadAction<boolean>) => ({
       ...state,
-      isUploading: true,
-      error: null,
+      showModalFileUpload: action.payload,
     }),
-    uploadFileSuccess: (state, { payload }: PayloadAction<FileUpload>) => ({
+    updateFileUploadForm: (state, action: PayloadAction<Partial<FileUploadsState['form']>>) => ({
       ...state,
-      filesUpload: [...state.filesUpload, payload],
-      selectedMultiFile: [...state.selectedMultiFile, payload.url],
-      isUploading: false,
-    }),
-    uploadFileFailure: (state, { payload }: PayloadAction<string>) => ({
-      ...state,
-      isUploading: false,
-      error: payload,
-    }),
-    fetchFileUploadsRequest: (state, action: PayloadAction<string>) => ({
-      ...state,
-      isUploading: true,
-      error: null,
-    }),
-    fetchFileUploadsSuccess: (state, { payload }: PayloadAction<FileUpload[]>) => ({
-      ...state,
-      filesUpload: payload,
-      isUploading: false,
-    }),
-    fetchFileUploadsFailure: (state, { payload }: PayloadAction<string>) => ({
-      ...state,
-      isUploading: false,
-      error: payload,
+      form: { ...state.form, ...action.payload },
     }),
   },
 });
 
-export default fileUploadsSlice.reducer;
-
 export const {
-  setFileUploads,
-  selectedMultiFile,
-  unSelectedMultiFile,
-  uploadFileRequest,
-  uploadFileSuccess,
-  uploadFileFailure,
   fetchFileUploadsRequest,
   fetchFileUploadsSuccess,
   fetchFileUploadsFailure,
+  uploadFileRequest,
+  uploadFileSuccess,
+  uploadFileFailure,
+  setSelectedMultiFile,
+  unSelectedMultiFile,
+  setShowModalFileUpload,
+  updateFileUploadForm,
 } = fileUploadsSlice.actions;
 
-function* handleFileUpload() {
+export default fileUploadsSlice.reducer;
+
+export const fetchFileUploadsAction = createAction(`${SLICE_NAME}/fetchFileUploadsAction`);
+export const uploadFileAction = createAction(`${SLICE_NAME}/uploadFileAction`);
+
+function* handleFetchFileUploads() {
   while (true) {
-    const { payload }: ReturnType<typeof uploadFileRequest> = yield take(uploadFileRequest);
+    yield take(fetchFileUploadsAction);
     try {
-      const response: FileUpload = yield call(uploadFile, payload.file);
+      yield put(fetchFileUploadsRequest());
+      const page: Page<FileUpload[]> = yield call(getFileUploads);
+      yield put(fetchFileUploadsSuccess({ page }));
+    } catch (e) {
+      notification.open({
+        message: "Error",
+        description: e.message,
+        type: "error",
+      });
+      yield put(fetchFileUploadsFailure());
+    }
+  }
+}
+
+function* handleUploadFile() {
+  while (true) {
+    yield take(uploadFileAction);
+    try {
+      yield put(uploadFileRequest());
+      const { form } = yield select((state: RootState) => state.fileUpload);
+      if (!form.file) {
+        throw new Error("No file selected");
+      }
+      const response: FileUpload = yield call(uploadFile, form.file);
       yield put(uploadFileSuccess(response));
-      yield put(fetchFileUploadsRequest(payload.refreshToken));
       notification.success({
         message: "Upload thành công",
         description: "File đã được tải lên thành công.",
@@ -102,36 +150,12 @@ function* handleFileUpload() {
         description: e.message,
         type: "error",
       });
-
-      yield put(uploadFileFailure(e.message));
-    }
-  }
-}
-
-function* handleFetchFileUploads() {
-  while (true) {
-    yield take(fetchFileUploadsRequest);
-    try {
-      const response: Page<FileUpload[]> = yield call(getFileUploads);
-      if (response && response.content) {
-        yield put(fetchFileUploadsSuccess(response.content));
-      } else {
-        throw new Error('Invalid response structure');
-      }
-    } catch (e) {
-      console.error("Error fetching file uploads:", e);
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
-      yield put(fetchFileUploadsFailure(e.message));
+      yield put(uploadFileFailure());
     }
   }
 }
 
 export const fileUploadsSagas = [
-  fork(handleFileUpload),
   fork(handleFetchFileUploads),
+  fork(handleUploadFile),
 ];
