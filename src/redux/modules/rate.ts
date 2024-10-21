@@ -1,155 +1,198 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { call, put, fork, take } from "redux-saga/effects";
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { call, put, fork, take, select } from "redux-saga/effects";
 import { notification } from "antd";
 import { Rate, Page } from "@/type/types";
 import { getRatesByProductId, createRate } from "@/utils/api/rate";
 import { QueryParams } from "@/utils/api/common";
+import { RootState } from "@/redux/store";
 
 export type RateState = {
-  rates: Page<Rate[]> | null;
-  loading: boolean;
-  error: string | null;
-  showModalAddRate: boolean;
-  selectOrderItemRate: string;
-  showModalFileUpload: boolean;
+  readonly page: Page<Rate[]>;
+  readonly isLoading: boolean;
+  readonly showModalAddRate: boolean;
+  readonly selectOrderItemRate: string;
+  readonly showModalFileUpload: boolean;
+  readonly form: {
+    rate: number;
+    message: string;
+    images: string[];
+  };
+  readonly ratedOrderItems: string[];
 };
 
 const initialState: RateState = {
-  rates: null,
-  loading: false,
-  error: null,
+  page: {
+    content: [],
+    totalElements: 0,
+    totalPages: 0,
+    size: 0,
+    number: 0,
+    first: true,
+    last: true,
+    numberOfElements: 0,
+    empty: true,
+  },
+  isLoading: false,
   showModalAddRate: false,
   selectOrderItemRate: "",
   showModalFileUpload: false,
+  form: {
+    rate: 0,
+    message: "",
+    images: [],
+  },
+  ratedOrderItems: [],
 };
 
+const SLICE_NAME = "rate";
+
 const rateSlice = createSlice({
-  name: "rate",
+  name: SLICE_NAME,
   initialState,
   reducers: {
-    getRatesRequest: (
-      state,
-      action: PayloadAction<{ productId: string; queryParams: QueryParams }>,
-    ) => ({
-      ...state,
-      loading: true,
-      error: null,
-    }),
     getRatesSuccess: (
       state,
-      action: PayloadAction<Page<Rate[]>>,
+      action: PayloadAction<{ page: Page<Rate[]> }>
     ) => ({
       ...state,
-      rates: action.payload,
-      loading: false,
+      page: action.payload.page,
+      isLoading: false,
     }),
-    getRatesFailure: (
-      state,
-      action: PayloadAction<string>,
-    ) => ({
+    getRatesFailure: (state) => ({
       ...state,
-      error: action.payload,
-      loading: false,
+      isLoading: false,
     }),
-    createRateRequest: (
-      state,
-      action: PayloadAction<{ orderItemId: string; rateRequest: Rate }>,
-    ) => ({
+    createRateSuccess: (state, action: PayloadAction<Rate>) => ({
       ...state,
-      loading: true,
-      error: null,
+      isLoading: false,
+      showModalAddRate: false,
+      form: initialState.form,
+      page: {
+        ...state.page,
+        content: [action.payload, ...state.page.content],
+        totalElements: state.page.totalElements + 1,
+      },
+      ratedOrderItems: [...state.ratedOrderItems, state.selectOrderItemRate],
     }),
-    createRateSuccess: (state) => ({
+    createRateFailure: (state) => ({
       ...state,
-      loading: false,
+      isLoading: false,
     }),
-    createRateFailure: (
-      state,
-      action: PayloadAction<string>,
-    ) => ({
+    setShowModalAddRate: (state, action: PayloadAction<boolean>) => ({
       ...state,
-      error: action.payload,
-      loading: false,
+      showModalAddRate: action.payload,
     }),
-    setShowModalAddRate: (
-      state,
-      action: PayloadAction<boolean>,
-    ) => {
-      console.log("Updating showModalAddRate:", action.payload);
-      state.showModalAddRate = action.payload;
-    },
-    setSelectOrderItemRate: (
-      state,
-      action: PayloadAction<string>,
-    ) => ({
+    setSelectOrderItemRate: (state, action: PayloadAction<string>) => ({
       ...state,
       selectOrderItemRate: action.payload,
     }),
-    closeModalAddRate: (state) => ({
-      ...state,
-      showModalAddRate: false,
-    }),
-    setShowModalFileUpload: (
-      state,
-      action: PayloadAction<boolean>,
-    ) => ({
+    setShowModalFileUpload: (state, action: PayloadAction<boolean>) => ({
       ...state,
       showModalFileUpload: action.payload,
     }),
+    updateLoadingSuccess: (state) => ({
+      ...state,
+      isLoading: true,
+    }),
+    updateRateForm: (
+      state,
+      action: PayloadAction<Partial<RateState["form"]>>
+    ) => ({
+      ...state,
+      form: {
+        ...state.form,
+        ...action.payload,
+      },
+    }),
+    setInitialRatedItems: (state, action: PayloadAction<string[]>) => ({
+      ...state,
+      ratedOrderItems: action.payload,
+    }),
+    addRatedOrderItem: (state, action: PayloadAction<string>) => {
+      state.ratedOrderItems.push(action.payload);
+    },
   },
 });
 
+export default rateSlice.reducer;
+
 export const {
-  getRatesRequest,
   getRatesSuccess,
   getRatesFailure,
-  createRateRequest,
   createRateSuccess,
   createRateFailure,
   setShowModalAddRate,
   setSelectOrderItemRate,
-  closeModalAddRate,
   setShowModalFileUpload,
+  updateLoadingSuccess,
+  updateRateForm,
+  setInitialRatedItems,
+  addRatedOrderItem,
 } = rateSlice.actions;
 
-export default rateSlice.reducer;
+export const getRatesAction = createAction<{
+  productId: string;
+  queryParams: QueryParams;
+}>(`${SLICE_NAME}/getRatesRequest`);
+export const createRateAction = createAction(`${SLICE_NAME}/createRateRequest`);
 
 function* handleGetRates() {
   while (true) {
-    const action: ReturnType<typeof getRatesRequest> = yield take(getRatesRequest.type);
+    const {
+      payload: { productId, queryParams },
+    }: ReturnType<typeof getRatesAction> = yield take(getRatesAction);
     try {
-      const { productId, queryParams } = action.payload;
-      const rates: Page<Rate[]> = yield call(getRatesByProductId, productId, queryParams);
-      yield put(getRatesSuccess(rates));
-    } catch (error) {
-      yield put(getRatesFailure(error.message));
+      yield put(updateLoadingSuccess());
+      const page: Page<Rate[]> = yield call(
+        getRatesByProductId,
+        productId,
+        queryParams
+      );
+      yield put(getRatesSuccess({ page }));
+    } catch (e) {
+      notification.open({
+        message: "Error",
+        description: e.message,
+        type: "error",
+      });
+      yield put(getRatesFailure());
     }
   }
 }
 
 function* handleCreateRate() {
   while (true) {
-    const action: ReturnType<typeof createRateRequest> = yield take(createRateRequest.type);
+    yield take(createRateAction);
     try {
-      const { orderItemId, rateRequest } = action.payload;
-      yield call(createRate, orderItemId, rateRequest);
-      yield put(createRateSuccess());
-      yield put(closeModalAddRate());
+      yield put(updateLoadingSuccess());
+      const { selectOrderItemRate: orderItemId, form } = yield select(
+        (state: RootState) => state.rate
+      );
+
+      const rateRequest: Rate = {
+        ...form,
+        name: "",
+        thumbnail: "",
+        username: "",
+        avatar: "",
+      };
+
+      const newRate: Rate = yield call(createRate, orderItemId, rateRequest);
+      yield put(createRateSuccess(newRate));
+      yield put(addRatedOrderItem(orderItemId));
       notification.success({
         message: "Đánh giá",
         description: "Đánh giá thành công!",
       });
-    } catch (error) {
-      yield put(createRateFailure(error.message));
-      notification.error({
-        message: "Đánh giá",
-        description: error.message,
+    } catch (e) {
+      notification.open({
+        message: "Error",
+        description: e.message,
+        type: "error",
       });
+      yield put(createRateFailure());
     }
   }
 }
 
-export const rateSagas = [
-  fork(handleGetRates),
-  fork(handleCreateRate),
-];
+export const rateSagas = [fork(handleGetRates), fork(handleCreateRate)];
