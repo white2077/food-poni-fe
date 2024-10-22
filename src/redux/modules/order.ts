@@ -5,7 +5,7 @@ import { Order, Page } from "@/type/types";
 import { createOrder, getOrderById, getOrdersPage } from "@/utils/api/order";
 import { QueryParams } from "@/utils/api/common";
 import { RootState } from "@/redux/store.ts";
-import { CartState, deleteAllCartRequest } from "@/redux/modules/cart.ts";
+import { CartState } from "@/redux/modules/cart.ts";
 import { NavigateFunction } from "react-router-dom";
 import { AddressState } from "@/redux/modules/address.ts";
 
@@ -249,7 +249,6 @@ function* handleCreateOrder() {
         payment,
       });
       yield put(createOrderSuccess());
-      yield put(deleteAllCartRequest());
 
       navigate("/quan-ly/don-hang/" + orderId);
       notification.open({

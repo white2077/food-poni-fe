@@ -4,7 +4,7 @@ import Banner from "../slide-banner.tsx";
 import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "@/redux/store.ts";
 import { createCartAction } from "@/redux/modules/cart.ts";
-import CustomInput from "@/components/molecules/customInput .tsx";
+import CustomInput from "@/components/molecules/customInput.tsx";
 import { updateProductSelectedQuantitySuccess } from "@/redux/modules/product.ts";
 import { currencyFormat, getThumbnail } from "@/utils/common.ts";
 
@@ -83,6 +83,7 @@ export default function ProductCart() {
             <div className="text-md font-medium mb-2">Số lượng</div>
             <CustomInput
               min={1}
+              max={100}
               defaultValue={1}
               value={quantity}
               onChange={(value: number) =>
