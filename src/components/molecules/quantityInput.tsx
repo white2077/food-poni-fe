@@ -33,11 +33,12 @@ export function QuantityInput({
       <Input
         className="w-10 p-1 text-center"
         min={1}
+        max={100}
         defaultValue={1}
         value={item.quantity}
         onChange={(e) => {
           const inputValue = parseInt(e.target.value);
-          if (!isNaN(inputValue) && inputValue >= 1) {
+          if (!isNaN(inputValue) && inputValue >= 1 && inputValue <= 100) {
             dispatch(
               updateQuantityInputAction({
                 id: item.id,
@@ -52,6 +53,7 @@ export function QuantityInput({
         type="text"
         icon={<PlusOutlined />}
         loading={item.isUpdateLoading}
+        disabled={item.quantity >= 100}
         onClick={() =>
           dispatch(
             updateQuantityButtonAction({
