@@ -3,9 +3,10 @@ import generateQueryString, { QueryParams } from "./common";
 import { accessToken, apiWithToken } from "@/utils/axiosConfig.ts";
 import { Order, Page } from "@/type/types.ts";
 import { OrderState } from "@/redux/modules/order";
+import { server } from "@/utils/server.ts";
 
 export const getOrdersPage = (
-  queryParams: QueryParams
+  queryParams: QueryParams,
 ): Promise<Page<Order[]>> => {
   return apiWithToken()
     .get(generateQueryString("/customer/orders", queryParams), {
@@ -28,7 +29,7 @@ export const getOrderById = (oid: string): Promise<Order> => {
 
 export const getOrdersPageByStatus = (
   status: string,
-  queryParams: QueryParams
+  queryParams: QueryParams,
 ): Promise<Page<Order[]>> => {
   return apiWithToken()
     .get(
@@ -37,7 +38,7 @@ export const getOrdersPageByStatus = (
         headers: {
           Authorization: "Bearer " + accessToken,
         },
-      }
+      },
     )
     .then((res: AxiosResponse<Page<Order[]>>) => res.data);
 };
@@ -55,7 +56,26 @@ export const createOrder = ({
         headers: {
           Authorization: "Bearer " + accessToken,
         },
-      }
+      },
     )
+    .then((res: AxiosResponse<string>) => res.data);
+};
+
+export const createVNPayOrder = (
+  orderId: string,
+  totalAmount: number,
+): Promise<string> => {
+  return apiWithToken()
+    .get("/vn-pay", {
+      params: {
+        amount: totalAmount,
+        bankCode: "NCB",
+        vnp_OrderInfo: orderId,
+        vnp_ReturnUrl: `${server}/api/v1/vn-pay/ipn`,
+      },
+      headers: {
+        Authorization: "Bearer " + accessToken,
+      },
+    })
     .then((res: AxiosResponse<string>) => res.data);
 };

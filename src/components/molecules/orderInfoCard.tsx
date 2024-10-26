@@ -5,7 +5,7 @@ import { RootState } from "@/redux/store";
 const { Text } = Typography;
 
 export function OrderInfoCard() {
-  const {selectedOrder} = useSelector((state: RootState) => state.order);
+  const { selectedOrder } = useSelector((state: RootState) => state.order);
 
   if (!selectedOrder) return null;
 
@@ -22,7 +22,9 @@ export function OrderInfoCard() {
             <Text>Địa chỉ: {selectedOrder.shippingAddress.address}</Text>
           </div>
           <div>
-            <Text>Số điện thoại: {selectedOrder.shippingAddress.phoneNumber}</Text>
+            <Text>
+              Số điện thoại: {selectedOrder.shippingAddress.phoneNumber}
+            </Text>
           </div>
         </div>
       </Card>
@@ -39,7 +41,7 @@ export function OrderInfoCard() {
             <Text>Giao vào thứ 5, 11/11</Text>
           </div>
           <div className="mb-2">
-            <Text>Được giao bởi BATMAN</Text>
+            <Text>Được giao bởi ????</Text>
           </div>
           <div>
             <Text>Phí vận chuyển: {selectedOrder.shippingFee}đ</Text>
@@ -54,14 +56,47 @@ export function OrderInfoCard() {
           <Divider></Divider>
           <div className="flex items-center">
             <img
-              src="/tien-mat.png"
+              src={
+                selectedOrder.payment.method?.includes("CASH")
+                  ? "/tien-mat.png"
+                  : "/VNP.png"
+              }
               className="w-9 h-9 mr-2"
               alt="Payment method"
             />
             <Text>
-              {selectedOrder.payment.method?.includes("CASH") ? "Tiền mặt" : "VNPay"}
+              {selectedOrder.payment.method?.includes("CASH")
+                ? "Tiền mặt"
+                : "VNPAY"}
             </Text>
+            {!selectedOrder.payment.method?.includes("CASH") && (
+              <>
+                <span className="mx-2">/</span>
+                {selectedOrder.payment.status === "PAID" && (
+                  <span className="text-green-500">Đã thanh toán</span>
+                )}
+                {selectedOrder.payment.status === "PAYING" && (
+                  <span className="text-yellow-500">Đang thanh toán</span>
+                )}
+                {selectedOrder.payment.status === "FAILED" && (
+                  <span className="text-red-500">Thanh toán thất bại</span>
+                )}
+              </>
+            )}
           </div>
+          {selectedOrder.payment.paymentUrl && (
+            <div className="flex items-center mt-1">
+              <img src={"/link.png"} className="w-6 h-6 ml-2 mr-3" alt="" />
+              <a
+                href={selectedOrder.payment.paymentUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center text-orange-500"
+              >
+                Link thanh toán
+              </a>
+            </div>
+          )}
         </div>
       </Card>
     </div>

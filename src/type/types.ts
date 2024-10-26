@@ -118,6 +118,7 @@ export type Page<T> = {
 export type PaymentInfo = {
   readonly method: string;
   readonly status: string;
+  readonly paymentUrl: string;
 };
 
 export type Product = {

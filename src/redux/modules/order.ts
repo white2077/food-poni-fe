@@ -2,7 +2,12 @@ import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { call, fork, put, select, take } from "redux-saga/effects";
 import { notification } from "antd";
 import { Order, Page } from "@/type/types";
-import { createOrder, getOrderById, getOrdersPage } from "@/utils/api/order";
+import {
+  createOrder,
+  createVNPayOrder,
+  getOrderById,
+  getOrdersPage,
+} from "@/utils/api/order";
 import { QueryParams } from "@/utils/api/common";
 import { RootState } from "@/redux/store.ts";
 import { CartState } from "@/redux/modules/cart.ts";
@@ -31,9 +36,11 @@ export type OrderState = {
       readonly lon: number;
       readonly lat: number;
     } | null;
+    readonly totalAmount: number;
     readonly payment: {
       readonly method: string;
-      readonly status: string;
+      readonly status: "PAYING" | "PAID" | "FAILED";
+      readonly paymentUrl: string;
     };
   };
   readonly isFetchLoading: boolean;
@@ -55,10 +62,12 @@ const initialState: OrderState = {
   selectedOrder: null,
   form: {
     orderItems: [],
+    totalAmount: 0,
     shippingAddress: null,
     payment: {
       method: "CASH",
       status: "PAYING",
+      paymentUrl: "",
     },
   },
   isFetchLoading: false,
@@ -241,21 +250,36 @@ function* handleCreateOrder() {
     }: ReturnType<typeof createOrderAction> = yield take(createOrderAction);
     try {
       yield put(updateCreateLoading());
-      const { orderItems, shippingAddress, payment }: OrderState["form"] =
-        yield select((state: RootState) => state.order.form);
+      const {
+        orderItems,
+        shippingAddress,
+        payment,
+        totalAmount,
+      }: OrderState["form"] = yield select(
+        (state: RootState) => state.order.form,
+      );
       const orderId: string = yield call(createOrder, {
         orderItems,
         shippingAddress,
         payment,
+        totalAmount,
       });
-      yield put(createOrderSuccess());
-
-      navigate("/quan-ly/don-hang/" + orderId);
-      notification.open({
-        message: "Đơn hàng",
-        description: "Bạn vừa đặt hàng.",
-        type: "success",
-      });
+      if (payment.method === "VNPAY") {
+        const vnpayUrl: string = yield call(
+          createVNPayOrder,
+          orderId,
+          totalAmount,
+        );
+        window.location.href = vnpayUrl;
+      } else {
+        yield put(createOrderSuccess());
+        navigate("/quan-ly/don-hang/" + orderId);
+        notification.open({
+          message: "Đơn hàng",
+          description: "Bạn vừa đặt hàng.",
+          type: "success",
+        });
+      }
     } catch (e) {
       notification.open({
         message: "Error",

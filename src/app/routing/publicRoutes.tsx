@@ -9,12 +9,13 @@ import { server } from "@/utils/server.ts";
 import SidebarLayout from "@/components/sidebarLayout.tsx";
 import CheckoutWrapper from "@/components/templates/checkoutWrapper";
 import { DefaultLayout } from "@/components/defaultLayout";
+import { PaymentPage } from "@/components/pages/paymentPage.tsx";
 
 const PublicRoute = () => {
   const ProductPage = lazy(() => import("@/components/pages/productPage.tsx"));
-  
+
   const ProductCategoryPage = lazy(
-    () => import("@/components/pages/productCategoryPage.tsx")
+    () => import("@/components/pages/productCategoryPage.tsx"),
   );
 
   const sidebarContents: ReactNode[] = [
@@ -51,6 +52,15 @@ const PublicRoute = () => {
         element={
           <SuspensedView>
             <ProductCategoryPage />
+          </SuspensedView>
+        }
+      />
+
+      <Route
+        path="payment-success"
+        element={
+          <SuspensedView>
+            <PaymentPage />
           </SuspensedView>
         }
       />
