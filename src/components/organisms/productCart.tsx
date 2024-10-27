@@ -1,7 +1,6 @@
 import { Button, Card, Flex } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import Banner from "../slide-banner.tsx";
-import { useNavigate } from "react-router-dom";
 import { RootState } from "@/redux/store.ts";
 import { createCartAction } from "@/redux/modules/cart.ts";
 import CustomInput from "@/components/molecules/customInput.tsx";
@@ -9,7 +8,6 @@ import { updateProductSelectedQuantitySuccess } from "@/redux/modules/product.ts
 import { currencyFormat } from "@/utils/common.ts";
 
 export default function ProductCart() {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { toppingsSelected, productDetail, quantity, type } = useSelector(
     (state: RootState) => state.product.itemsSelected,
@@ -66,7 +64,7 @@ export default function ProductCart() {
               block
               onClick={() => {
                 if (!isExisted) {
-                  dispatch(createCartAction({ navigate }));
+                  dispatch(createCartAction());
                 }
                 window.location.href = "/checkout";
               }}
@@ -76,7 +74,7 @@ export default function ProductCart() {
             </Button>
             <Button
               block
-              onClick={() => dispatch(createCartAction({ navigate: null }))}
+              onClick={() => dispatch(createCartAction())}
               loading={isCreateLoading}
               disabled={isExisted || currentUser?.role === "RETAILER"}
             >

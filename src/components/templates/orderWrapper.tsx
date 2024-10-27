@@ -29,7 +29,7 @@ export default function OrderWrapper() {
     );
   }, [dispatch]);
 
-  if (isFetchLoading) {
+  if (page.content.length < 1 && isFetchLoading) {
     return <ProductLoading />;
   }
 
@@ -48,7 +48,11 @@ export default function OrderWrapper() {
       dataSource={page.content}
       renderItem={(order: Order, index: number) => (
         <List.Item>
-          <OrderCard order={order} index={(currentPage - 1) * 10 + index + 1} />
+          <OrderCard
+            order={order}
+            index={(currentPage - 1) * 10 + index + 1}
+            isFetchLoading={isFetchLoading}
+          />
         </List.Item>
       )}
       locale={{

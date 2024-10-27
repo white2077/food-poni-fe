@@ -1,5 +1,4 @@
 import { Col, Flex, Image, Menu, MenuProps } from "antd";
-import { server } from "@/utils/server.ts";
 import {
   CustomerServiceOutlined,
   EnvironmentOutlined,
@@ -11,12 +10,13 @@ import {
   WalletFilled,
 } from "@ant-design/icons";
 import React from "react";
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import {Navigate, Outlet, useLocation, useNavigate} from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store.ts";
 import HeaderBar from "@/components/header-bar.tsx";
 import HeaderMain from "@/components/organisms/headerMain.tsx";
 import Footer from "@/components/organisms/footer.tsx";
+import { getThumbnail } from "@/utils/common.ts";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -38,8 +38,9 @@ function getItem(
 
 export default function ManagementLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { currentUser } = useSelector((state: RootState) => state.auth);
-
+  console.log(location)
   if (!currentUser) {
     <Navigate to={"/"} />;
     return null;
@@ -55,46 +56,55 @@ export default function ManagementLayout() {
             <div className="p-4 bg-white rounded-lg h-fit">
               <div className="flex">
                 <Image
-                    width={50}
-                    height={50}
-                    className="object-center rounded-full shadow-lg  overflow-hidden object-cover "
-                    src={server + currentUser.avatar}
-                    preview={false}
+                  width={50}
+                  height={50}
+                  className="object-center rounded-full shadow-lg  overflow-hidden object-cover "
+                  src={getThumbnail(currentUser.avatar)}
+                  preview={false}
                 />
                 <div className="mx-2">
-            <span className="text-[13px] text-gray-500 font-extralight">
-              Tài khoản của
-            </span>
-                  <div className="nunito text-orange-500">{currentUser.username}</div>
+                  <span className="text-[13px] text-gray-500 font-extralight">
+                    Tài khoản của
+                  </span>
+                  <div className="nunito text-orange-500">
+                    {currentUser.username}
+                  </div>
                 </div>
               </div>
               <Col>
                 <div className="mt-[16px]">
                   <Menu
-                      onClick={(e) => navigate(`/quan-ly/${e.key}`)}
-                      className="min-w-[256px] rounded-[8px] !border-none"
-                      defaultSelectedKeys={["1"]}
-                      defaultOpenKeys={["sub1"]}
-                      mode="inline"
-                      items={[
-                        getItem(
-                            "Thông tin tài khoản",
-                            "thong-tin-tai-khoan",
-                            <UserOutlined />,
-                        ),
-                        getItem("Sổ địa chỉ", "so-dia-chi", <EnvironmentOutlined />),
-                        getItem("Quản lý đơn hàng", "don-hang", <ProfileOutlined />),
-                        getItem(
-                            "Sản phẩm yêu thích",
-                            "san-pham-yeu-thich",
-                            <LikeOutlined />,
-                        ),
-                        getItem(
-                            "Hỗ trợ khách hàng",
-                            "ho-tro-khach-hang",
-                            <CustomerServiceOutlined />,
-                        ),
-                      ]}
+                    onClick={(e) => navigate(`${e.key}`)}
+                    className="min-w-[256px] rounded-[8px] !border-none"
+                    selectedKeys={[location.pathname]}
+                    mode="inline"
+                    items={[
+                      getItem(
+                        "Thông tin tài khoản",
+                        "/quan-ly/thong-tin-tai-khoan",
+                        <UserOutlined />,
+                      ),
+                      getItem(
+                        "Sổ địa chỉ",
+                        "/quan-ly/so-dia-chi",
+                        <EnvironmentOutlined />,
+                      ),
+                      getItem(
+                        "Quản lý đơn hàng",
+                        "/quan-ly/don-hang",
+                        <ProfileOutlined />,
+                      ),
+                      getItem(
+                        "Sản phẩm yêu thích",
+                        "/quan-ly/san-pham-yeu-thich",
+                        <LikeOutlined />,
+                      ),
+                      getItem(
+                        "Hỗ trợ khách hàng",
+                        "/quan-ly/ho-tro-khach-hang",
+                        <CustomerServiceOutlined />,
+                      ),
+                    ]}
                   />
                 </div>
               </Col>

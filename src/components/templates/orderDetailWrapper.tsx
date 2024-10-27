@@ -11,6 +11,7 @@ import { LeftOutlined } from "@ant-design/icons";
 import { OrderInfoCard } from "../molecules/orderInfoCard";
 import { OrderItemPricing } from "../molecules/orderItemPricing";
 import { OrderItemDetail } from "../organisms/orderItemDetail";
+import {ProductLoading} from "@/components/atoms/productLoading.tsx";
 
 export default function OrderDetail() {
   const { orderId } = useParams<{ orderId: string }>();
@@ -24,7 +25,7 @@ export default function OrderDetail() {
   }, [orderId, dispatch]);
 
   if (!selectedOrder) {
-    return null;
+    return <ProductLoading/>;
   }
 
   return (
