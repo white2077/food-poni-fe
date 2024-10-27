@@ -79,6 +79,7 @@ export type OrderItem = {
   readonly price: number;
   readonly productDetail: ProductDetail;
   readonly toppings: Array<{
+    readonly id: string;
     readonly name: string;
     readonly price: number;
   }>;

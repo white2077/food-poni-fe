@@ -1,5 +1,5 @@
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Cart, Page } from "@/type/types.ts";
+import { Cart, OrderItem, Page } from "@/type/types.ts";
 import {
   call,
   cancel,
@@ -350,6 +350,9 @@ export const fetchCartsAction = createAction<{ queryParams: QueryParams }>(
 export const createCartAction = createAction<void>(
   `${SLICE_NAME}/createCartRequest`,
 );
+export const buyBackCartAction = createAction<{ orderItem: OrderItem }>(
+  `${SLICE_NAME}/buyBackCartRequest`,
+);
 export const updateQuantityButtonAction = createAction<{
   type: "INCREASE" | "DECREASE";
   id: string;
@@ -449,6 +452,51 @@ function* handleCreateCart() {
           images: productDetail.images,
         },
         toppings: toppingsSelected,
+        type: type,
+        checked: true,
+        isUpdateLoading: false,
+        isDeleteLoading: false,
+      };
+      yield put(createCartSuccess({ cart }));
+    } catch (e) {
+      notification.open({
+        message: "Error",
+        description: e.message,
+        type: "error",
+      });
+
+      yield put(createCartFailure());
+    }
+  }
+}
+
+function* handleBuyBackCart() {
+  while (true) {
+    const {
+      payload: { orderItem },
+    }: ReturnType<typeof buyBackCartAction> = yield take(buyBackCartAction);
+    try {
+      yield put(updateCreateLoading());
+      const { productDetail, toppings, type, quantity } = orderItem;
+
+      const { id }: { id: string } = yield call(
+        createCart,
+        quantity,
+        productDetail.id,
+        toppings,
+        type,
+      );
+      const cart = {
+        id,
+        quantity,
+        productName: productDetail.product.name + " - " + productDetail.name,
+        productDetail: {
+          id: productDetail.id,
+          name: productDetail.name,
+          price: productDetail.price,
+          images: productDetail.images,
+        },
+        toppings: toppings,
         type: type,
         checked: true,
         isUpdateLoading: false,
@@ -648,6 +696,7 @@ function* handleDeleteAllCart() {
 export const cartSagas = [
   fork(handleFetchCart),
   fork(handleCreateCart),
+  fork(handleBuyBackCart),
   fork(handleUpdateQuantityCart),
   fork(handleUpdateCheckedCart),
   fork(handleUpdateAllCheckedCart),

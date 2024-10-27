@@ -2,26 +2,24 @@ import { Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import {
-  setShowModalAddRate,
   setSelectOrderItemRate,
+  setShowModalAddRate,
 } from "@/redux/modules/rate";
+import { OrderItem } from "@/type/types.ts";
+import { buyBackCartAction } from "@/redux/modules/cart.ts";
 
 type Props = {
-  orderDetailId: string;
+  orderItem: OrderItem;
   orderStatus: string;
   isInCart: boolean;
-  createCartItem: () => void;
 };
 
-export function OrderItemActions({
-  orderDetailId,
-  orderStatus,
-  isInCart,
-  createCartItem,
-}: Props) {
+export function OrderItemActions({ orderItem, orderStatus, isInCart }: Props) {
   const dispatch = useDispatch();
-  const ratedOrderItems = useSelector((state: RootState) => state.rate.ratedOrderItems);
-  const isRated = ratedOrderItems.includes(orderDetailId);
+  const ratedOrderItems = useSelector(
+    (state: RootState) => state.rate.ratedOrderItems,
+  );
+  const isRated = ratedOrderItems.includes(orderItem.id);
 
   return (
     <div className="flex flex-wrap gap-2">
@@ -32,7 +30,7 @@ export function OrderItemActions({
             : "pointer-events-none opacity-30"
         }`}
         onClick={() => {
-          dispatch(setSelectOrderItemRate(orderDetailId));
+          dispatch(setSelectOrderItemRate(orderItem.id));
           dispatch(setShowModalAddRate(true));
         }}
         disabled={orderStatus !== "COMPLETED" || isRated}
@@ -44,7 +42,12 @@ export function OrderItemActions({
         Xem đánh giá
       </Button>
       <Button
-        onClick={() => createCartItem()}
+        onClick={() => {
+          if (orderItem) {
+            dispatch(buyBackCartAction({ orderItem }));
+          }
+          window.location.href = "/checkout";
+        }}
         className={`border border-primary text-primary ${
           isInCart
             ? "opacity-50 cursor-not-allowed"

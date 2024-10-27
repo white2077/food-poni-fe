@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { CheckCircleFilled } from "@ant-design/icons";
+import { CheckCircleFilled, UserOutlined } from "@ant-design/icons";
 import { Avatar, Card, Image, List, Progress, Rate } from "antd";
 import { Link } from "react-router-dom";
 import { RootState } from "@/redux/store";
@@ -108,9 +108,15 @@ export default function ProductRate({ productDetail }: Props) {
                 <div className="flex gap-2">
                   <Avatar
                     src={
-                      item.avatar.startsWith("http" || "https")
-                        ? item.avatar
-                        : server + item.avatar
+                      item.avatar ? (
+                        item.avatar.startsWith("http" || "https") ? (
+                          item.avatar
+                        ) : (
+                          server + item.avatar
+                        )
+                      ) : (
+                        <Avatar icon={<UserOutlined />} />
+                      )
                     }
                     className="w-10 h-10"
                   />

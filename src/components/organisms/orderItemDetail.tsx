@@ -2,9 +2,7 @@ import { RootState } from "@/redux/store";
 import { OrderItem } from "@/type/types";
 import { server } from "@/utils/server";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { OrderItemActions } from "../molecules/orderItemActions";
-import { createCartAction } from "@/redux/modules/cart";
 import RateAdd from "./reateAdd";
 import { useEffect } from "react";
 import { setInitialRatedItems } from "@/redux/modules/rate";
@@ -17,7 +15,6 @@ type Props = {
 
 export function OrderItemDetail({ orderItem, orderStatus }: Props) {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const { page } = useSelector((state: RootState) => state.cart);
   const ratedOrderItems = useSelector(
@@ -30,13 +27,11 @@ export function OrderItemDetail({ orderItem, orderStatus }: Props) {
     }
   }, [orderItem, ratedOrderItems, dispatch]);
 
-  const handleCreateCart = () => {
-    dispatch(createCartAction());
-    navigate("/checkout");
-  };
-
   const isInCart = page.content.some(
-    (item) => item.productDetail.id === orderItem.productDetail.id,
+    (item) =>
+      item.productDetail.id === orderItem.productDetail.id &&
+      JSON.stringify(item.toppings) === JSON.stringify(orderItem.toppings) &&
+      item.type === orderItem.type,
   );
 
   return (
@@ -75,10 +70,9 @@ export function OrderItemDetail({ orderItem, orderStatus }: Props) {
             )}
           </div>
           <OrderItemActions
-            orderDetailId={orderItem.id}
+            orderItem={orderItem}
             orderStatus={orderStatus}
             isInCart={isInCart}
-            createCartItem={handleCreateCart}
           />
           <RateAdd />
         </div>

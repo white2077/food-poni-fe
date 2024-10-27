@@ -24,6 +24,7 @@ export type OrderState = {
         readonly id: string;
       };
       readonly toppings: Array<{
+        readonly id: string;
         readonly name: string;
         readonly price: number;
       }>;
