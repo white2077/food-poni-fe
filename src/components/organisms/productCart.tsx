@@ -117,6 +117,7 @@ export default function ProductCart() {
                 if (!isExisted) {
                   dispatch(createCartAction({ navigate }));
                 }
+                navigate("/checkout");
               }}
               disabled={currentUser?.role === "RETAILER"}
             >
