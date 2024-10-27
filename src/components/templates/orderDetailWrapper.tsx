@@ -5,13 +5,13 @@ import { RootState } from "@/redux/store";
 import { fetchOrderAction } from "@/redux/modules/order";
 import { Button, Card, Divider, List } from "antd";
 import { OrderHeader } from "../molecules/orderHeaderOrder";
-import HeadTable from "../table-head";
+import HeadTable from "../molecules/tableHead.tsx";
 import { OrderSummary } from "../atoms/orderSummaryProps";
 import { LeftOutlined } from "@ant-design/icons";
 import { OrderInfoCard } from "../molecules/orderInfoCard";
 import { OrderItemPricing } from "../molecules/orderItemPricing";
 import { OrderItemDetail } from "../organisms/orderItemDetail";
-import {ProductLoading} from "@/components/atoms/productLoading.tsx";
+import { ProductLoading } from "@/components/atoms/productLoading.tsx";
 
 export default function OrderDetail() {
   const { orderId } = useParams<{ orderId: string }>();
@@ -25,7 +25,7 @@ export default function OrderDetail() {
   }, [orderId, dispatch]);
 
   if (!selectedOrder) {
-    return <ProductLoading/>;
+    return <ProductLoading />;
   }
 
   return (
@@ -49,7 +49,7 @@ export default function OrderDetail() {
                     />
                   </div>
                   <div className="col-span-5">
-                    <OrderItemPricing price={it.price} quantity={it.quantity} />
+                    <OrderItemPricing orderItem={it} />
                   </div>
                 </div>
               </List.Item>
