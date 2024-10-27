@@ -4,7 +4,6 @@ import { RootState } from "@/redux/store.ts";
 import { useEffect } from "react";
 import ProductGallery from "@/components/product-gallery.tsx";
 import { Card, Checkbox, Radio, Rate } from "antd";
-import Tym from "@/components/atoms/tym.tsx";
 import ReadMore from "@/components/atoms/readMore.tsx";
 import { ProductLoading } from "@/components/atoms/productLoading.tsx";
 import ProductCart from "@/components/organisms/productCart.tsx";
@@ -12,10 +11,10 @@ import ProductRate from "./productRateWrapper";
 import {
   fetchProductAction,
   updateProductDetailSelectedSuccess,
-  updateTypeSelectedSuccess,
   updateToppingsSelectedSuccess,
+  updateTypeSelectedSuccess,
 } from "@/redux/modules/product.ts";
-import {currencyFormat} from "@/utils/common.ts";
+import { currencyFormat } from "@/utils/common.ts";
 
 export default function ProductWrapper() {
   const { pathVariable } = useParams<Params<string>>();
@@ -67,14 +66,11 @@ export default function ProductWrapper() {
                 </span>{" "}
                 Đánh giá
               </span>
-              <span className="border-r-2 py-1 px-1">
+              <span className="py-1 px-1">
                 <span className="text-lg m-1 border-b-2">
                   {productDetail.sales}
-                </span>{" "}
+                </span>
                 Lượt bán
-              </span>
-              <span className="flex items-center px-1">
-                <Tym /> <span className=" ml-1">9999 Lượt thích</span>
               </span>
             </div>
             <h3 className="text-2xl font-semibold">
@@ -125,7 +121,6 @@ export default function ProductWrapper() {
               />
             </Card>
           )}
-
           {/*<Card size='small' title='Thông tin vận chuyển' hidden={currentShippingAddress.id === ""}>*/}
           {/*    <ProductLoading loading={Object.keys(currentShippingAddress).length === 0}>*/}
           {/*        {currentShippingAddress.address}*/}
@@ -139,8 +134,6 @@ export default function ProductWrapper() {
               }}
             ></div>
           </Card>
-          {/*<RelatedProducts title="Sản phẩm liên quan"*/}
-          {/*                 query={getProductsCardPage({page: 0, pageSize: 20, status: true})}/>*/}
           <ReadMore content={productDetail.description} />
         </div>
         <div className="lg:sticky top-5 lg:order-2 order-1">

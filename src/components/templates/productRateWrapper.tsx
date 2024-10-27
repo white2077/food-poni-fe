@@ -1,26 +1,13 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  CheckCircleFilled,
-  CommentOutlined,
-  LikeOutlined,
-  ShareAltOutlined,
-} from "@ant-design/icons";
+import { CheckCircleFilled } from "@ant-design/icons";
 import { Avatar, Card, Image, List, Progress, Rate } from "antd";
-
 import { Link } from "react-router-dom";
 import { RootState } from "@/redux/store";
 import { getRatesAction } from "@/redux/modules/rate";
 import { ProductDetail } from "@/type/types";
 import { server } from "@/utils/server";
 import EmptyNotice from "../empty-notice";
-import Tym from "../atoms/tym";
-import Start from "../start";
-import Like from "../like";
-
-type ExpandedComments = {
-  [key: number]: boolean;
-};
 
 const REVIEW_TEXTS = [
   "Rất không hài lòng",
@@ -39,9 +26,6 @@ type Props = {
 export default function ProductRate({ productDetail }: Props) {
   const dispatch = useDispatch();
   const { page, isLoading } = useSelector((state: RootState) => state.rate);
-  const [expandedComments, setExpandedComments] = useState<ExpandedComments>(
-    {},
-  );
 
   useEffect(() => {
     dispatch(
@@ -50,11 +34,7 @@ export default function ProductRate({ productDetail }: Props) {
         queryParams: { page: 0, pageSize: 5 },
       }),
     );
-  }, [dispatch]);
-
-  const toggleExpand = (index: number) => {
-    setExpandedComments((prev) => ({ ...prev, [index]: !prev[index] }));
-  };
+  }, [dispatch, productDetail]);
 
   return (
     <Card size="small">
@@ -69,7 +49,9 @@ export default function ProductRate({ productDetail }: Props) {
           value={productDetail?.rate}
         />
       </div>
-      <div className="my-2 text-gray-400">({productDetail.rateCount} đánh giá)</div>
+      <div className="my-2 text-gray-400">
+        ({productDetail.rateCount} đánh giá)
+      </div>
       {[5, 4, 3, 2, 1].map((rt) => (
         <div key={rt} className="flex flex-wrap gap-1 text-gray-400">
           <Rate disabled value={rt} />
@@ -82,12 +64,9 @@ export default function ProductRate({ productDetail }: Props) {
             }
             showInfo={false}
           />
-          <div>
-            {page.content.filter((it) => it.rate === rt).length}
-          </div>
+          <div>{page.content.filter((it) => it.rate === rt).length}</div>
         </div>
       ))}
-
       <hr className="my-6" />
       <List
         loading={isLoading}
@@ -103,27 +82,38 @@ export default function ProductRate({ productDetail }: Props) {
             />
           ),
         }}
-        pagination={{
-          position: "bottom",
-          align: "center",
-          onChange: (page) => {
-            dispatch(
-              getRatesAction({
-                productId: productDetail.id,
-                queryParams: { page: page - 1, pageSize: 5 },
-              }),
-            );
-          },
-          pageSize: 5,
-          total: page.totalElements || 0,
-        }}
+        pagination={
+          productDetail.rateCount === 0
+            ? false
+            : {
+                position: "bottom",
+                align: "center",
+                onChange: (page) => {
+                  dispatch(
+                    getRatesAction({
+                      productId: productDetail.id,
+                      queryParams: { page: page - 1, pageSize: 5 },
+                    }),
+                  );
+                },
+                pageSize: 5,
+                total: page.totalElements || 0,
+              }
+        }
         dataSource={page.content || []}
         renderItem={(item, index) => (
           <List.Item key={index}>
             <div className="grid grid-cols-1 md:grid-cols-10 gap-4">
               <div className="col-span-1 md:col-span-2">
                 <div className="flex gap-2">
-                  <Avatar src={server + item.avatar} className="w-10 h-10" />
+                  <Avatar
+                    src={
+                      item.avatar.startsWith("http" || "https")
+                        ? item.avatar
+                        : server + item.avatar
+                    }
+                    className="w-10 h-10"
+                  />
                   <div>
                     <Link to={`/user/${item.username}`}>
                       <span className="text-black-800 font-sans text-base">
@@ -131,24 +121,9 @@ export default function ProductRate({ productDetail }: Props) {
                       </span>
                     </Link>
                     <div className="text-xs font-sans text-gray-400">
-                      Đã tham gia {item.name}
+                      Đã mua {productDetail.product.name + " - " + item.name}
                     </div>
                   </div>
-                </div>
-                <div className="flex justify-between text-xs font-sans text-gray-400 mt-2">
-                  <div className="gap-2 flex">
-                    <CommentOutlined />
-                    <div>Đã viết</div>
-                  </div>
-                  <div>1 đánh giá</div>
-                </div>
-                <hr className="my-2" />
-                <div className="flex justify-between text-xs font-sans text-gray-400">
-                  <div className="gap-2 flex">
-                    <LikeOutlined />
-                    <div>Đã nhận</div>
-                  </div>
-                  <div>10 lượt cảm ơn</div>
                 </div>
               </div>
               <div className="col-span-1 md:col-span-8">
@@ -161,17 +136,7 @@ export default function ProductRate({ productDetail }: Props) {
                   Đã nhận hàng
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <div
-                    className={`text-sm font-normal my-3 ${expandedComments[index] ? "w-auto" : "max-w-24 truncate"}`}
-                  >
-                    {item.message}
-                  </div>
-                  <button
-                    onClick={() => toggleExpand(index)}
-                    className="text-orange-400"
-                  >
-                    {expandedComments[index] ? "rút gọn" : "xem thêm"}
-                  </button>
+                  <div className="text-sm font-normal my-3">{item.message}</div>
                 </div>
                 <div className="flex flex-wrap">
                   {item.images?.map((url, imgIndex) => (
@@ -185,20 +150,6 @@ export default function ProductRate({ productDetail }: Props) {
                       />
                     </div>
                   ))}
-                </div>
-                <div className="flex flex-wrap text-sm text-gray-400 justify-between">
-                  <div className="flex flex-wrap gap-3">
-                    <div className="flex gap-1 items-center">
-                      <Start />
-                    </div>
-                    <div className="flex gap-1 items-center">
-                      <Like />
-                    </div>
-                    <div className="flex gap-1 items-center">
-                      <Tym />
-                    </div>
-                  </div>
-                  <ShareAltOutlined />
                 </div>
               </div>
             </div>

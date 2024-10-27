@@ -11,15 +11,11 @@ import { currencyFormat, getThumbnail } from "@/utils/common.ts";
 
 export default function Cart() {
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
-
   const [open, setOpen] = useState<boolean>(false);
-
   const { page, isFetchLoading } = useSelector(
     (state: RootState) => state.cart,
   );
-
   const [pending, setPending] = useState<boolean>(false);
 
   useEffect(() => {
@@ -125,7 +121,6 @@ export default function Cart() {
                           it.toppings.reduce((sum, tp) => sum + tp.price, 0)) *
                           it.quantity,
                       )}
-                      <sup>₫</sup>
                     </div>
                     <QuantityInput item={it} />
                   </div>
