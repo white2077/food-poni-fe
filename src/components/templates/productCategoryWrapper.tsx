@@ -6,7 +6,7 @@ import { Col, Pagination, Row } from "antd";
 import { ProductLoading } from "@/components/atoms/productLoading.tsx";
 import { ProductCard } from "@/components/molecules/productCard.tsx";
 import { fetchProductsByProductCategoryAction } from "@/redux/modules/product.ts";
-import EmptyNotice from "@/components/empty-notice.tsx";
+import EmptyNotice from "@/components/atoms/emptyNotice.tsx";
 
 export default function ProductCategoryWrapper() {
   const { pathVariable } = useParams<Params<string>>();

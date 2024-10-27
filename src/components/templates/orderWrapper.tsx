@@ -7,7 +7,7 @@ import { Order } from "@/type/types";
 import { ProductLoading } from "../atoms/productLoading";
 import OrderCard from "../molecules/orderCard";
 import { fetchOrdersAction } from "@/redux/modules/order";
-import EmptyNotice from "@/components/empty-notice.tsx";
+import EmptyNotice from "@/components/atoms/emptyNotice.tsx";
 
 export default function OrderWrapper() {
   const dispatch = useDispatch();

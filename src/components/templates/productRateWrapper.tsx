@@ -7,7 +7,7 @@ import { RootState } from "@/redux/store";
 import { getRatesAction } from "@/redux/modules/rate";
 import { ProductDetail } from "@/type/types";
 import { server } from "@/utils/server";
-import EmptyNotice from "../empty-notice";
+import EmptyNotice from "../atoms/emptyNotice.tsx";
 
 const REVIEW_TEXTS = [
   "Rất không hài lòng",
