@@ -24,11 +24,7 @@ export function OrderItemActions({ orderItem, orderStatus, isInCart }: Props) {
   return (
     <div className="flex flex-wrap gap-2">
       <Button
-        className={`border border-primary text-primary ${
-          orderStatus === "COMPLETED" && !isRated
-            ? "pointer-events-auto opacity-100"
-            : "pointer-events-none opacity-30"
-        }`}
+        className="border border-primary text-primary"
         onClick={() => {
           dispatch(setSelectOrderItemRate(orderItem.id));
           dispatch(setShowModalAddRate(true));
@@ -37,7 +33,6 @@ export function OrderItemActions({ orderItem, orderStatus, isInCart }: Props) {
       >
         {isRated ? "Đã đánh giá" : "Đánh giá"}
       </Button>
-
       <Button className="border border-primary text-primary">
         Xem đánh giá
       </Button>
@@ -48,12 +43,8 @@ export function OrderItemActions({ orderItem, orderStatus, isInCart }: Props) {
           }
           window.location.href = "/checkout";
         }}
-        className={`border border-primary text-primary ${
-          isInCart
-            ? "opacity-50 cursor-not-allowed"
-            : "opacity-100 cursor-pointer"
-        }`}
-        disabled={orderStatus !== "COMPLETED" && isInCart}
+        className="border border-primary text-primary"
+        disabled={orderStatus !== "COMPLETED" || isInCart}
       >
         {isInCart ? "Đã có trong giỏ hàng" : "Mua lại"}
       </Button>
