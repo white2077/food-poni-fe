@@ -20,17 +20,27 @@ export type AuthRequest = {
 
 export type Cart = {
   readonly id: string;
-  readonly user: User;
+  readonly user?: {
+    readonly id: string;
+    readonly username: string;
+    readonly avatar: string;
+  };
   readonly quantity: number;
   readonly productName: string;
-  readonly productDetail: ProductDetail;
+  readonly productDetail: {
+    readonly id: string;
+    readonly name: string;
+    readonly price: number;
+    readonly images: string[];
+  };
   readonly toppings: Array<{
     readonly id: string;
     readonly name: string;
     readonly price: number;
   }>;
   readonly type: string | null;
-  readonly checked: boolean;
+  readonly note?: string;
+  readonly checked?: boolean;
 };
 
 export type CurrentUser = {
@@ -86,6 +96,60 @@ export type OrderItem = {
   readonly type: string | null;
   readonly note: string;
   readonly rate: Rate;
+};
+
+export type CartGroup = {
+  readonly roomId: string;
+  readonly timeout: number;
+  readonly user: {
+    readonly id: string;
+    readonly username: string;
+    readonly avatar: string;
+  };
+  readonly cartItems: Array<Cart>;
+};
+
+export type CartGroupEvent = {
+  readonly type:
+    | "UPDATE_CART_ITEM_QUANTITY"
+    | "UPDATE_CART_ITEM_NOTE"
+    | "ADD_CART_ITEM"
+    | "DELETE_CART_ITEM"
+    | "LEAVE_GROUP"
+    | "DELETE_GROUP";
+  readonly roomId: string;
+  readonly user: {
+    readonly id: string;
+    readonly username: string;
+    readonly avatar: string;
+  };
+  readonly attributes:
+    | {
+        readonly cartItemId: string;
+        readonly productName: string;
+        readonly productDetail: {
+          readonly id: string;
+          readonly name: string;
+          readonly price: number;
+          readonly images: Array<string>;
+        };
+        readonly toppings: Array<{
+          readonly id: string;
+          readonly name: string;
+          readonly price: number;
+        }>;
+        readonly type: string | null;
+        readonly quantity: number;
+      }
+    | {
+        readonly cartItemId: string;
+        readonly quantity: number;
+      }
+    | {
+        readonly cartItemId: string;
+        readonly note: string;
+      }
+    | null;
 };
 
 export type Notification = {
@@ -151,7 +215,7 @@ export type ProductCategory = {
   readonly description: string;
   readonly thumbnail: string;
   readonly level: number;
-  parentProductCategory: ProductCategory | null;
+  readonly parentProductCategory: ProductCategory | null;
 };
 
 export type ProductDetail = {

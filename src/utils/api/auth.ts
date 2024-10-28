@@ -2,10 +2,18 @@ import { AxiosResponse } from "axios";
 import { AuthRequest, AuthResponse, CurrentUser, User } from "@/type/types.ts";
 import { accessToken, api, apiWithToken } from "@/utils/axiosConfig.ts";
 import generateQueryString from "./common";
+import { REFRESH_TOKEN } from "../server";
+import Cookies from "js-cookie";
 
 export const login = (user: AuthRequest): Promise<AuthResponse> => {
   return api
     .post("/auth/login", user)
+    .then((res: AxiosResponse<AuthResponse>) => res.data);
+};
+
+export const refreshToken = (): Promise<AuthResponse> => {
+  return api
+    .post("/auth/refresh-token", {refreshToken: Cookies.get(REFRESH_TOKEN)})
     .then((res: AxiosResponse<AuthResponse>) => res.data);
 };
 

@@ -1,7 +1,8 @@
+import ChatBot from "@/components/organisms/chatBot.tsx";
+import CatBackground from "@/components/pet.tsx";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import CatBackground from "@/components/pet.tsx";
-import ChatBot from "@/components/organisms/chatBot.tsx";
+import { CartGroup } from "@/components/organisms/cartGroup.tsx";
 
 export default function Footer() {
   const [showChatbot, setShowChatbot] = useState(false);
@@ -149,6 +150,7 @@ export default function Footer() {
         </div>
       </footer>
       <ChatBot showChatbot={showChatbot} toggleChatbot={toggleChatbot} />
+      <CartGroup />
     </div>
   );
 }

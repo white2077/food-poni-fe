@@ -6,10 +6,13 @@ import {
   updateQuantityButtonAction,
   updateQuantityInputAction,
 } from "@/redux/modules/cart.ts";
+import { updateCartItemQuantityAction } from "@/redux/modules/cartGroup.ts";
 
 export function QuantityInput({
+  enableCartGroup,
   item,
 }: {
+  enableCartGroup?: boolean;
   item: CartState["page"]["content"][number];
 }) {
   const dispatch = useDispatch();
@@ -23,10 +26,15 @@ export function QuantityInput({
         disabled={item.quantity <= 1}
         onClick={() => {
           dispatch(
-            updateQuantityButtonAction({
-              type: "DECREASE",
-              id: item.id,
-            }),
+            !enableCartGroup
+              ? updateQuantityButtonAction({
+                  type: "DECREASE",
+                  id: item.id,
+                })
+              : updateCartItemQuantityAction({
+                  id: item.id,
+                  quantity: item.quantity - 1,
+                }),
           );
         }}
       />
@@ -40,10 +48,15 @@ export function QuantityInput({
           const inputValue = parseInt(e.target.value);
           if (!isNaN(inputValue) && inputValue >= 1 && inputValue <= 100) {
             dispatch(
-              updateQuantityInputAction({
-                id: item.id,
-                quantity: inputValue,
-              }),
+              !enableCartGroup
+                ? updateQuantityInputAction({
+                    id: item.id,
+                    quantity: inputValue,
+                  })
+                : updateCartItemQuantityAction({
+                    id: item.id,
+                    quantity: inputValue,
+                  }),
             );
           }
         }}
@@ -56,10 +69,15 @@ export function QuantityInput({
         disabled={item.quantity >= 100}
         onClick={() =>
           dispatch(
-            updateQuantityButtonAction({
-              type: "INCREASE",
-              id: item.id,
-            }),
+            !enableCartGroup
+              ? updateQuantityButtonAction({
+                  type: "INCREASE",
+                  id: item.id,
+                })
+              : updateCartItemQuantityAction({
+                  id: item.id,
+                  quantity: item.quantity + 1,
+                }),
           )
         }
       />

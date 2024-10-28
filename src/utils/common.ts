@@ -1,5 +1,6 @@
 import { server } from "@/utils/server.ts";
-import { User } from "@/type/types.ts";
+import { Cart, User } from "@/type/types.ts";
+import { CartGroupState } from "@/redux/modules/cartGroup.ts";
 
 export const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("vi-VN", {
@@ -14,7 +15,7 @@ export const checkDirty = (
     readonly value: string;
     readonly errorMessage: string | null;
   }>,
-  savedFields: Array<{ field: string; value: string }> | null,
+  savedFields: Array<{ field: string; value: string }> | null
 ): boolean => {
   if (!savedFields) {
     return false;
@@ -65,4 +66,43 @@ export const currencyFormat = (amount: number) => {
     style: "currency",
     currency: "VND",
   }).format(amount);
+};
+
+export const groupByUser = (
+  cartItems: CartGroupState["cartGroupJoined"][number]["cartItems"]
+) => {
+  const userMap = new Map<
+    string,
+    {
+      user: { id: string; username: string; avatar: string };
+      items: Cart[];
+    }
+  >();
+
+  cartItems.forEach((ci) => {
+    if (ci.user) {
+      const userId = ci.user.id;
+
+      if (!userMap.has(userId)) {
+        userMap.set(userId, { user: ci.user, items: [] });
+      }
+      userMap.get(userId)?.items.push(ci);
+    }
+  });
+
+  return Array.from(userMap.values());
+};
+
+export const totalAmount = (
+  content: Array<Cart>,
+  skipCheck?: boolean
+): number => {
+  const getItemTotal = (item: Cart): number => {
+    const toppingTotal = item.toppings.reduce((sum, tp) => sum + tp.price, 0);
+    return (item.productDetail.price + toppingTotal) * item.quantity;
+  };
+
+  return content
+    .filter((it) => skipCheck || it.checked)
+    .reduce((total, it) => total + getItemTotal(it), 0);
 };

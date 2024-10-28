@@ -1,4 +1,4 @@
-import { Button, Card, Flex } from "antd";
+import { Button, Card, Dropdown, Flex } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import Banner from "../slide-banner.tsx";
 import { RootState } from "@/redux/store.ts";
@@ -6,14 +6,21 @@ import { createCartAction } from "@/redux/modules/cart.ts";
 import CustomInput from "@/components/molecules/customInput.tsx";
 import { updateProductSelectedQuantitySuccess } from "@/redux/modules/product.ts";
 import { currencyFormat } from "@/utils/common.ts";
+import { addToCartGroupAction } from "@/redux/modules/cartGroup.ts";
+import { AvatarInfo } from "../atoms/avatarInfo.tsx";
+import { useNavigate } from "react-router-dom";
 
 export default function ProductCart() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { toppingsSelected, productDetail, quantity, type } = useSelector(
-    (state: RootState) => state.product.itemsSelected,
+    (state: RootState) => state.product.itemsSelected
   );
   const { page, isCreateLoading } = useSelector(
-    (state: RootState) => state.cart,
+    (state: RootState) => state.cart
+  );
+  const { cartGroupJoined, addingToCartItemLoading } = useSelector(
+    (state: RootState) => state.cartGroup
   );
   const { currentUser } = useSelector((state: RootState) => state.auth);
 
@@ -21,7 +28,7 @@ export default function ProductCart() {
     (it) =>
       it.productDetail.id === productDetail.id &&
       JSON.stringify(it.toppings) === JSON.stringify(toppingsSelected) &&
-      it.type === type,
+      it.type === type
   );
 
   return (
@@ -37,7 +44,7 @@ export default function ProductCart() {
               value={quantity}
               onChange={(value: number) =>
                 dispatch(
-                  updateProductSelectedQuantitySuccess({ quantity: value }),
+                  updateProductSelectedQuantitySuccess({ quantity: value })
                 )
               }
               disabled={false}
@@ -50,7 +57,7 @@ export default function ProductCart() {
                 {currencyFormat(
                   (productDetail.price +
                     toppingsSelected.reduce((acc, it) => acc + it.price, 0)) *
-                    quantity,
+                    quantity
                 )}
               </div>
             </div>
@@ -64,9 +71,10 @@ export default function ProductCart() {
               block
               onClick={() => {
                 if (!isExisted) {
-                  dispatch(createCartAction());
+                  dispatch(createCartAction({ navigate }));
+                } else {
+                  navigate("/checkout");
                 }
-                window.location.href = "/checkout";
               }}
               disabled={currentUser?.role === "RETAILER"}
             >
@@ -74,7 +82,7 @@ export default function ProductCart() {
             </Button>
             <Button
               block
-              onClick={() => dispatch(createCartAction())}
+              onClick={() => dispatch(createCartAction({ navigate: null }))}
               loading={isCreateLoading}
               disabled={isExisted || currentUser?.role === "RETAILER"}
             >
@@ -82,6 +90,35 @@ export default function ProductCart() {
                 ? "Sản phẩm đã có trong giỏ hàng"
                 : "Thêm vào giỏ hàng"}
             </Button>
+            {cartGroupJoined.length > 0 && (
+              <Dropdown
+                menu={{
+                  items: cartGroupJoined.map((it, index) => ({
+                    key: index,
+                    label: (
+                      <span
+                        onClick={() =>
+                          dispatch(addToCartGroupAction({ roomId: it.roomId }))
+                        }
+                      >
+                        <AvatarInfo
+                          fullName={it.user.username}
+                          avatar={it.user.avatar}
+                          info={`#${it.roomId}`}
+                          timeout={it.timeout}
+                        />
+                      </span>
+                    ),
+                  })),
+                }}
+                placement="bottom"
+                arrow
+              >
+                <Button danger block loading={addingToCartItemLoading}>
+                  Thêm vào đơn nhóm
+                </Button>
+              </Dropdown>
+            )}
           </Flex>
         ) : (
           <Flex vertical gap="small" className="w-full">
