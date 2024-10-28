@@ -4,8 +4,10 @@ import { AuthRequest, AuthResponse, User, UserRemember } from "@/type/types.ts";
 import {
   getUserById,
   login,
+  refreshToken,
   updateCurrentUserAddress,
 } from "@/utils/api/auth.ts";
+import { setAccessToken } from "@/utils/axiosConfig";
 import { REFRESH_TOKEN, REMEMBER_ME } from "@/utils/server.ts";
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { notification } from "antd";
@@ -13,6 +15,7 @@ import Cookies from "js-cookie";
 import jwtDecode from "jwt-decode";
 import { NavigateFunction } from "react-router-dom";
 import { call, fork, put, select, take } from "redux-saga/effects";
+import { fetchCartGroupsRequest } from "@/redux/modules/cartGroup.ts";
 
 export type AuthState = {
   readonly login: {
@@ -408,6 +411,11 @@ function* handleFetchUser() {
     }: ReturnType<typeof fetchUserAction> = yield take(fetchUserAction);
     try {
       const user: User = yield call(getUserById, uid);
+
+      const auth: AuthResponse = yield call(refreshToken);
+      setAccessToken(auth.accessToken);
+
+      yield put(fetchCartGroupsRequest());
 
       yield put(
         updateCurrentUserSuccess({

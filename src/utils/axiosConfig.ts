@@ -2,8 +2,13 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { REFRESH_TOKEN, server } from "./server";
 import Cookies from "js-cookie";
 import { AuthResponse, Error } from "@/type/types.ts";
+import { refreshToken } from "./api/auth";
 
 export let accessToken: string | null;
+
+export const setAccessToken = (token: string | null) => {
+  accessToken = token;
+};
 
 export const api = axios.create({
   baseURL: server + "/api/v1",
@@ -21,12 +26,9 @@ export const apiWithToken = () => {
     },
     (error: AxiosError) => {
       if (error.response && error.response.status === 401) {
-        return api
-          .post("/auth/refresh-token", {
-            refreshToken: Cookies.get(REFRESH_TOKEN),
-          })
-          .then((res: AxiosResponse<AuthResponse>) => {
-            accessToken = res.data.accessToken;
+        return refreshToken()
+          .then((res: AuthResponse) => {
+            accessToken = res.accessToken;
             if (error.config) {
               error.config.headers.Authorization = `Bearer ${accessToken}`;
 
@@ -43,7 +45,7 @@ export const apiWithToken = () => {
           });
       }
       return Promise.reject(error);
-    },
+    }
   );
   return api;
 };

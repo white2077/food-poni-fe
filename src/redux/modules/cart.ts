@@ -25,29 +25,16 @@ import { RootState } from "@/redux/store.ts";
 import { Task } from "redux-saga";
 import { updateOrderItemsAction } from "@/redux/modules/order.ts";
 import { ProductState } from "@/redux/modules/product.ts";
+import { NavigateFunction } from "react-router-dom";
 
 export type CartState = {
   readonly page: Page<
-    {
-      readonly id: string;
-      readonly quantity: number;
-      readonly productName: string;
-      readonly productDetail: {
-        readonly id: string;
-        readonly name: string;
-        readonly price: number;
-        readonly images: string[];
-      };
-      readonly toppings: Array<{
-        readonly id: string;
-        readonly name: string;
-        readonly price: number;
-      }>;
-      readonly type: string | null;
-      readonly checked: boolean;
-      readonly isUpdateLoading: boolean;
-      readonly isDeleteLoading: boolean;
-    }[]
+    Array<
+      Cart & {
+        readonly isUpdateLoading?: boolean;
+        readonly isDeleteLoading?: boolean;
+      }
+    >
   >;
   readonly isFetchLoading: boolean;
   readonly isCreateLoading: boolean;
@@ -87,10 +74,10 @@ const cartListSlide = createSlice({
     }),
     fetchCartsSuccess: (
       state,
-      action: PayloadAction<{ page: CartState["page"] }>,
+      action: PayloadAction<{ page: CartState["page"] }>
     ) => {
       const isAnyChecked = action.payload.page.content.every(
-        (cart) => cart.checked,
+        (cart) => cart.checked
       );
       return {
         ...state,
@@ -109,7 +96,7 @@ const cartListSlide = createSlice({
     }),
     createCartSuccess: (
       state,
-      action: PayloadAction<{ cart: CartState["page"]["content"][0] }>,
+      action: PayloadAction<{ cart: CartState["page"]["content"][0] }>
     ) => ({
       ...state,
       page: {
@@ -125,7 +112,7 @@ const cartListSlide = createSlice({
     }),
     updateQuantityLoadingSuccess: (
       state,
-      action: PayloadAction<{ id: string }>,
+      action: PayloadAction<{ id: string }>
     ) => ({
       ...state,
       page: {
@@ -143,7 +130,7 @@ const cartListSlide = createSlice({
     }),
     updateQuantitySuccess: (
       state,
-      action: PayloadAction<{ id: string; quantity: number }>,
+      action: PayloadAction<{ id: string; quantity: number }>
     ) => ({
       ...state,
       page: {
@@ -177,7 +164,7 @@ const cartListSlide = createSlice({
     }),
     updateCartCheckedLoadingSuccess: (
       state,
-      action: PayloadAction<{ id: string }>,
+      action: PayloadAction<{ id: string }>
     ) => ({
       ...state,
       page: {
@@ -194,7 +181,7 @@ const cartListSlide = createSlice({
     }),
     updateCheckedSuccess: (
       state,
-      action: PayloadAction<{ id: string; checked: boolean }>,
+      action: PayloadAction<{ id: string; checked: boolean }>
     ) => {
       const updatedContent = state.page.content.map((it) => {
         if (it.id === action.payload.id) {
@@ -234,7 +221,7 @@ const cartListSlide = createSlice({
     }),
     updateAllCheckedSuccess: (
       state,
-      action: PayloadAction<{ checked: boolean }>,
+      action: PayloadAction<{ checked: boolean }>
     ) => {
       const updatedContent = state.page.content.map((it) => {
         return {
@@ -345,13 +332,13 @@ export const {
 } = cartListSlide.actions;
 
 export const fetchCartsAction = createAction<{ queryParams: QueryParams }>(
-  `${SLICE_NAME}/fetchCartsRequest`,
+  `${SLICE_NAME}/fetchCartsRequest`
 );
-export const createCartAction = createAction<void>(
-  `${SLICE_NAME}/createCartRequest`,
-);
+export const createCartAction = createAction<{
+  navigate: NavigateFunction | null;
+}>(`${SLICE_NAME}/createCartRequest`);
 export const buyBackCartAction = createAction<{ orderItem: OrderItem }>(
-  `${SLICE_NAME}/buyBackCartRequest`,
+  `${SLICE_NAME}/buyBackCartRequest`
 );
 export const updateQuantityButtonAction = createAction<{
   type: "INCREASE" | "DECREASE";
@@ -389,7 +376,7 @@ function* handleFetchCart() {
               },
               toppings: it.toppings,
               type: it.type,
-              checked: it.checked,
+              checked: it.checked ?? false,
               isUpdateLoading: false,
               isDeleteLoading: false,
             })),
@@ -402,7 +389,7 @@ function* handleFetchCart() {
             numberOfElements: page.numberOfElements,
             empty: page.empty,
           },
-        }),
+        })
       );
       yield put(updateOrderItemsAction());
     } catch (e) {
@@ -419,7 +406,9 @@ function* handleFetchCart() {
 
 function* handleCreateCart() {
   while (true) {
-    yield take(createCartAction);
+    const {
+      payload: { navigate },
+    }: ReturnType<typeof createCartAction> = yield take(createCartAction);
     try {
       yield put(updateCreateLoading());
       const {
@@ -428,10 +417,10 @@ function* handleCreateCart() {
         type,
         quantity,
       }: ProductState["itemsSelected"] = yield select(
-        (state: RootState) => state.product.itemsSelected,
+        (state: RootState) => state.product.itemsSelected
       );
       const { product }: ProductState["productSelected"] = yield select(
-        (state: RootState) => state.product.productSelected,
+        (state: RootState) => state.product.productSelected
       );
 
       const { id }: { id: string } = yield call(
@@ -439,7 +428,7 @@ function* handleCreateCart() {
         quantity,
         productDetail.id,
         toppingsSelected,
-        type,
+        type
       );
       const cart = {
         id,
@@ -458,6 +447,9 @@ function* handleCreateCart() {
         isDeleteLoading: false,
       };
       yield put(createCartSuccess({ cart }));
+      if (navigate) {
+        navigate("/checkout");
+      }
     } catch (e) {
       notification.open({
         message: "Error",
@@ -484,7 +476,7 @@ function* handleBuyBackCart() {
         quantity,
         productDetail.id,
         toppings,
-        type,
+        type
       );
       const cart = {
         id,
@@ -538,7 +530,7 @@ function* handleUpdateQuantityCart() {
       if (updateQuantityButton) {
         const { type, id } = updateQuantityButton.payload;
         const content: CartState["page"]["content"] = yield select(
-          (state: RootState) => state.cart.page.content,
+          (state: RootState) => state.cart.page.content
         );
         const cart = content.find((it) => it.id === id);
 
@@ -551,7 +543,7 @@ function* handleUpdateQuantityCart() {
               updateQuantitySuccess({
                 id,
                 quantity: cart.quantity - 1,
-              }),
+              })
             );
           }
 
@@ -563,7 +555,7 @@ function* handleUpdateQuantityCart() {
               updateQuantitySuccess({
                 id,
                 quantity: cart.quantity + 1,
-              }),
+              })
             );
           }
         }
@@ -579,7 +571,7 @@ function* handleUpdateQuantityCart() {
           updateQuantitySuccess({
             id,
             quantity,
-          }),
+          })
         );
       }
       yield put(updateOrderItemsAction());
@@ -633,7 +625,7 @@ function* handleUpdateAllCheckedCart() {
     try {
       yield call(updateCartAllChecked);
       const isAnyChecked: boolean = yield select((state: RootState) =>
-        state.cart.page.content.every((cart) => cart.checked),
+        state.cart.page.content.every((cart) => cart.checked)
       );
       yield put(updateAllCheckedSuccess({ checked: isAnyChecked }));
       yield put(updateOrderItemsAction());
@@ -658,7 +650,7 @@ function* handleDeleteCart() {
       yield put(deleteCartSuccess({ id }));
 
       const isAnyChecked: boolean = yield select((state: RootState) =>
-        state.cart.page.content.every((cart) => cart.checked),
+        state.cart.page.content.every((cart) => cart.checked)
       );
       yield put(updateAllCheckedSuccess({ checked: !isAnyChecked }));
 

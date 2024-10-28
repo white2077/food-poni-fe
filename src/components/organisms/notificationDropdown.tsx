@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { BellOutlined } from "@ant-design/icons";
 import {
   Avatar,
   Badge,
@@ -8,24 +8,37 @@ import {
   Radio,
   Result,
 } from "antd";
-import { BellOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
 
-import { useDispatch, useSelector } from "react-redux";
 import { server } from "@/utils/server.ts";
 import { format, formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
+import { useDispatch, useSelector } from "react-redux";
 
-import { RootState } from "@/redux/store.ts";
+import { ScrollPane } from "@/components/atoms/scrollPane.tsx";
+import {
+  addToCartItemsSuccess,
+  deleteCartGroupSuccess,
+  deleteCartItemSuccess,
+  leaveCartGroupSuccess,
+  updateCartItemQuantitySuccess
+} from "@/redux/modules/cartGroup";
 import {
   fetchNotificationsAction,
   markIsReadNotificationsAction,
   pushNotificationSuccess,
 } from "@/redux/modules/notification.ts";
+import { RootState } from "@/redux/store.ts";
+import {
+  CartGroupEvent,
+  Notification,
+  NotificationAttributes,
+} from "@/type/types.ts";
+import { accessToken } from "@/utils/axiosConfig";
+import { getAvatar } from "@/utils/common.ts";
 import { getNotificationOrderMessage } from "@/utils/constraint.ts";
 import { Client } from "@stomp/stompjs";
-import { Notification, NotificationAttributes } from "@/type/types.ts";
 import SockJS from "sockjs-client/dist/sockjs";
-import { getAvatar } from "@/utils/common.ts";
 
 export default function NotificationDropdown() {
   const dispatch = useDispatch();
@@ -37,16 +50,14 @@ export default function NotificationDropdown() {
     dispatch(
       fetchNotificationsAction({
         queryParams: { page: 0, pageSize: 10, sort: "createdDate,desc" },
-      }),
+      })
     );
   }, [dispatch]);
 
   useEffect(() => {
     if (!currentUser) return;
 
-    const sock = new SockJS(
-      server + "/notification-register?client-id=" + currentUser.id,
-    );
+    const sock = new SockJS(`${server}/ws?token=Bearer ${accessToken}`);
     if (sock) {
       const client = new Client({
         webSocketFactory: () => sock,
@@ -56,16 +67,16 @@ export default function NotificationDropdown() {
             const notificationEvent: Notification = JSON.parse(message.body);
 
             const attributes = JSON.parse(
-              notificationEvent.attributes,
+              notificationEvent.attributes
             ) as NotificationAttributes;
 
             if (notificationEvent.toUser.id === currentUser.id) {
               dispatch(
-                pushNotificationSuccess({ notification: notificationEvent }),
+                pushNotificationSuccess({ notification: notificationEvent })
               );
               notification.open({
                 type: ["COMPLETED", "APPROVED", "PENDING"].includes(
-                  attributes.orderStatus,
+                  attributes.orderStatus
                 )
                   ? "success"
                   : "error",
@@ -73,7 +84,7 @@ export default function NotificationDropdown() {
                 message: notificationEvent.createdDate.toString(),
                 description: getNotificationOrderMessage(
                   attributes.id,
-                  attributes.orderStatus,
+                  attributes.orderStatus
                 ),
                 duration: 10,
                 btn: (
@@ -85,6 +96,82 @@ export default function NotificationDropdown() {
                   </Button>
                 ),
               });
+            }
+          });
+
+          client.subscribe("/user/topic/room", (message) => {
+            const cartGroupEvent: CartGroupEvent = JSON.parse(message.body);
+            if (
+              cartGroupEvent.type === "ADD_CART_ITEM" &&
+              cartGroupEvent.attributes &&
+              "productDetail" in cartGroupEvent.attributes
+            ) {
+              const {
+                cartItemId,
+                quantity,
+                productDetail,
+                productName,
+                toppings,
+                type,
+              } = cartGroupEvent.attributes;
+              dispatch(
+                addToCartItemsSuccess({
+                  cartItem: {
+                    id: cartItemId,
+                    quantity,
+                    productDetail,
+                    productName,
+                    user: cartGroupEvent.user,
+                    toppings,
+                    type,
+                    updatingQuantityLoading: false,
+                    deletingCartItemLoading: false,
+                  },
+                  roomId: cartGroupEvent.roomId,
+                })
+              );
+            }
+
+            if (cartGroupEvent.user.id !== currentUser.id) {
+              if (
+                cartGroupEvent.type === "UPDATE_CART_ITEM_QUANTITY" &&
+                cartGroupEvent.attributes &&
+                "cartItemId" in cartGroupEvent.attributes &&
+                "quantity" in cartGroupEvent.attributes
+              ) {
+                const { cartItemId, quantity } = cartGroupEvent.attributes;
+                dispatch(
+                  updateCartItemQuantitySuccess({ id: cartItemId, quantity })
+                );
+              }
+
+              if (
+                cartGroupEvent.type === "DELETE_CART_ITEM" &&
+                cartGroupEvent.attributes &&
+                "cartItemId" in cartGroupEvent.attributes
+              ) {
+                const { cartItemId } = cartGroupEvent.attributes;
+                dispatch(deleteCartItemSuccess({ id: cartItemId }));
+              }
+
+              if (cartGroupEvent.type === "LEAVE_GROUP") {
+                dispatch(
+                  leaveCartGroupSuccess({
+                    roomId: cartGroupEvent.roomId,
+                    userId: cartGroupEvent.user.id,
+                  })
+                );
+              }
+
+              if (cartGroupEvent.type === "DELETE_GROUP") {
+                dispatch(
+                  deleteCartGroupSuccess({
+                    roomId: cartGroupEvent.roomId,
+                  })
+                );         
+              }
+
+              // console.log(message.body);
             }
           });
         },
@@ -127,7 +214,7 @@ export default function NotificationDropdown() {
                             pageSize: 10,
                             sort: "createdDate,desc",
                           },
-                        }),
+                        })
                       );
                     }
                     if (e.target.value === "unread") {
@@ -139,7 +226,7 @@ export default function NotificationDropdown() {
                             sort: "createdDate,desc",
                             read: "false",
                           },
-                        }),
+                        })
                       );
                     }
                     if (e.target.value === "read") {
@@ -151,7 +238,7 @@ export default function NotificationDropdown() {
                             sort: "createdDate,desc",
                             read: "true",
                           },
-                        }),
+                        })
                       );
                     }
                   }}
@@ -161,12 +248,12 @@ export default function NotificationDropdown() {
                   <Radio.Button value="read">Đã đọc</Radio.Button>
                 </Radio.Group>
               </div>
-              <div className="max-h-[480px] overflow-auto scrollbar-rounded">
+              <ScrollPane maxHeight="max-h-[480px]">
                 {page.size > 0 ? (
                   <div className="flex flex-col gap-1">
                     {page.content.map((it, index) => {
                       const attributes = JSON.parse(
-                        it.attributes,
+                        it.attributes
                       ) as NotificationAttributes;
                       return (
                         <div
@@ -176,7 +263,7 @@ export default function NotificationDropdown() {
                               dispatch(
                                 markIsReadNotificationsAction({
                                   id: it.id,
-                                }),
+                                })
                               );
                             }
                           }}
@@ -196,7 +283,7 @@ export default function NotificationDropdown() {
                               <div className="text-2sm font-medium">
                                 {getNotificationOrderMessage(
                                   attributes.id,
-                                  attributes.orderStatus,
+                                  attributes.orderStatus
                                 )}
                               </div>
                               <span className="flex items-center text-2xs font-medium text-gray-500">
@@ -204,7 +291,7 @@ export default function NotificationDropdown() {
                                   const hoursDiff =
                                     Math.abs(
                                       new Date().getTime() -
-                                        new Date(it.createdDate).getTime(),
+                                        new Date(it.createdDate).getTime()
                                     ) / 36e5;
 
                                   if (hoursDiff > 48) {
@@ -212,7 +299,7 @@ export default function NotificationDropdown() {
                                       <span>
                                         {format(
                                           it.createdDate,
-                                          "hh:mm dd-MM-yyyy",
+                                          "hh:mm dd-MM-yyyy"
                                         )}
                                       </span>
                                     );
@@ -253,7 +340,7 @@ export default function NotificationDropdown() {
                     title="Bạn chưa có thông báo"
                   />
                 )}
-              </div>
+              </ScrollPane>
               {/*<Tabs*/}
               {/*  defaultActiveKey="1"*/}
               {/*  items={[*/}

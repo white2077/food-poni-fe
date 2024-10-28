@@ -57,6 +57,7 @@ export default function generateQueryString(
       }
       queryString += `read=${read}`;
     }
+
   }
 
   return url + queryString;

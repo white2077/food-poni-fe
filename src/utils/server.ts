@@ -8,6 +8,6 @@ export const HEADER_TOKEN: string = "Authorization";
 
 export const server: string =
   process.env.NODE_ENV === "production"
-    ? "https://production.server.com"
+    ? "http://192.168.1.8:8080"
     : // : 'http://34.92.177.122:8080';
       "http://localhost:8080";

@@ -1,15 +1,16 @@
-import { Avatar, Dropdown, MenuProps } from "antd";
-import { REFRESH_TOKEN, server } from "@/utils/server.ts";
+import { RootState } from "@/redux/store.ts";
+import { getThumbnail } from "@/utils/common";
+import { REFRESH_TOKEN } from "@/utils/server.ts";
 import {
   LogoutOutlined,
   QuestionCircleOutlined,
   ShoppingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store.ts";
+import { Avatar, Dropdown, MenuProps } from "antd";
 import Cookies from "js-cookie";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export function UserDropdown() {
   const { currentUser } = useSelector((state: RootState) => state.auth);
@@ -94,11 +95,7 @@ export function UserDropdown() {
         {currentUser.avatar ? (
           <Avatar
             className="w-8 h-8 rounded-[100%] border-orange-400 border-2 p-0"
-            src={
-              currentUser.avatar.startsWith("http" || "https")
-                ? currentUser.avatar
-                : server + currentUser.avatar
-            }
+            src={getThumbnail(currentUser.avatar)}
           />
         ) : (
           <Avatar icon={<UserOutlined />} />
