@@ -32,7 +32,7 @@ export default function HeaderMain() {
         <Button
           className="block sm:hidden"
           type="primary"
-          onClick={() => navigate("/auth/login")}
+          onClick={() => navigate("/login")}
           icon={<UserOutlined />}
           size="large"
         >
@@ -54,7 +54,7 @@ export default function HeaderMain() {
           ) : (
             <Button
               type="primary"
-              onClick={() => navigate("/auth/login")}
+              onClick={() => navigate("/login")}
               icon={<UserOutlined />}
               size="large"
             >

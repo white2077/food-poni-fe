@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import SuspensedView from "@/components/atoms/suspensedView.tsx";
 import { lazy } from "react";
-import ManagementLayout from "@/components/managementLayout.tsx";
+import ManagementLayout from "@/components/templates/ManagementLayout";
 
 const PrivateRoutes = () => {
   const OrderPage = lazy(() => import("@/components/pages/orderPage.tsx"));

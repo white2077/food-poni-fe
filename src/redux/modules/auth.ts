@@ -1,4 +1,4 @@
-import { FieldLoginType } from "@/components/templates/loginWrapper.tsx";
+import { FieldLoginType } from "@/components/pages/LoginPage";
 import { RootState } from "@/redux/store.ts";
 import { AuthRequest, AuthResponse, User, UserRemember } from "@/type/types.ts";
 import {

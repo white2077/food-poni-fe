@@ -23,13 +23,13 @@ export type FieldLoginType = {
   remember: boolean;
 };
 
-export function LoginWrapper() {
+export const LoginPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingGoogle, setLoadingGoogle] = useState(false);
   const { rememberMe, isPending } = useSelector(
-    (state: RootState) => state.auth.login,
+    (state: RootState) => state.auth.login
   );
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export function LoginWrapper() {
         "&scope=" +
         scopes.join("+"),
       "Google LoginWrapper",
-      "width=" + w + ",height=" + h + ",top=" + top + ", left=" + left,
+      "width=" + w + ",height=" + h + ",top=" + top + ", left=" + left
     );
 
     const getMessage = (event: MessageEvent<string>) => {
@@ -75,8 +75,8 @@ export function LoginWrapper() {
                 readonly email: string;
                 readonly addressId: string;
                 readonly username: string;
-              },
-            ),
+              }
+            )
           );
           Cookies.set("refreshToken", event.data, { expires: 7 });
           window.location.href = "/";
@@ -103,7 +103,10 @@ export function LoginWrapper() {
             </div>
             <div className="flex justify-center gap-1 font-medium text-gray-500">
               Cần một tài khoản?
-              <a className="float-right" onClick={() => navigate("/auth/signup")}>
+              <a
+                className="float-right"
+                onClick={() => navigate("/signup")}
+              >
                 Đăng ký ngay
               </a>
             </div>
@@ -219,4 +222,4 @@ export function LoginWrapper() {
       </Card>
     </div>
   );
-}
+};

@@ -19,6 +19,7 @@ export const api = axios.create({
   },
 });
 
+const promises: Array<Promise<AxiosResponse>> = [];
 export const apiWithToken = () => {
   api.interceptors.response.use(
     (response: AxiosResponse) => {
@@ -26,7 +27,7 @@ export const apiWithToken = () => {
     },
     (error: AxiosError) => {
       if (error.response && error.response.status === 401) {
-        return refreshToken()
+        const refresh = refreshToken()
           .then((res: AuthResponse) => {
             accessToken = res.accessToken;
             if (error.config) {
@@ -42,7 +43,16 @@ export const apiWithToken = () => {
               window.location.href = "/login";
             }
             throw res;
+          })
+          .finally(() => {
+            if (promises.length > 0) {
+              promises.slice(0, promises.length);
+            }
           });
+        promises.push(refresh);
+        if (promises.length === 1) {
+          return refresh;
+        }
       }
       return Promise.reject(error);
     }

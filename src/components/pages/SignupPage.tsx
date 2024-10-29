@@ -1,10 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Card, Form, Input, Space } from "antd";
-import { updateFormEditingSuccess, registerUserAction } from "@/redux/modules/auth";
+import {
+  updateFormEditingSuccess,
+  registerUserAction,
+} from "@/redux/modules/auth";
 import { RootState } from "@/redux/store.ts";
 import { useNavigate } from "react-router-dom";
 
-export default function SignupWrapper() {
+export const SignupPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { formEditing } = useSelector((state: RootState) => state.auth);
@@ -36,7 +39,7 @@ export default function SignupWrapper() {
               Bạn đã có tài khoản?
               <a
                 className="float-right cursor-pointer text-blue-500 hover:underline"
-                onClick={() => navigate("/auth/login")}
+                onClick={() => navigate("/login")}
               >
                 Đăng nhập
               </a>
@@ -60,7 +63,7 @@ export default function SignupWrapper() {
                     updateFormEditingSuccess({
                       field: "username",
                       value: e.target.value,
-                    }),
+                    })
                   )
                 }
               />
@@ -78,7 +81,7 @@ export default function SignupWrapper() {
                     updateFormEditingSuccess({
                       field: "email",
                       value: e.target.value,
-                    }),
+                    })
                   )
                 }
               />
@@ -96,7 +99,7 @@ export default function SignupWrapper() {
                     updateFormEditingSuccess({
                       field: "password",
                       value: e.target.value,
-                    }),
+                    })
                   )
                 }
               />
@@ -118,4 +121,4 @@ export default function SignupWrapper() {
       </Card>
     </div>
   );
-}
+};

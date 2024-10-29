@@ -5,30 +5,18 @@ import {
   WalletFilled,
 } from "@ant-design/icons";
 
-import { Outlet } from "react-router-dom";
 import HeaderBar from "@/components/header-bar.tsx";
-import HeaderMain from "@/components/organisms/headerMain.tsx";
 import Footer from "@/components/organisms/footer.tsx";
-import {ReactNode} from "react";
+import HeaderMain from "@/components/organisms/headerMain.tsx";
+import { ReactNode } from "react";
 
-
-
-export default function SidebarLayout({ sidebarContents }: { sidebarContents: ReactNode[] }) {
+export const DefaultLayout = ({ children }: { children: ReactNode }) => {
   return (
     <div>
       <HeaderBar />
       <HeaderMain />
       <div className="bg-[#F5F5FA]">
-        <div className="px-2 max-w-screen-xl mx-auto py-4">
-          <div className="flex gap-4">
-            <div className="hidden md:flex flex-col gap-4 w-[260px] shrink-0">
-              {sidebarContents.map((item, index) => (
-                <div key={index}>{item}</div>
-              ))}
-            </div>
-            <Outlet />
-          </div>
-        </div>
+        <div className="px-2 max-w-screen-xl mx-auto py-4">{children}</div>
       </div>
       <div className="text-center">
         <div className="fixed z-50 w-full h-12 max-w-lg -translate-x-1/2 bg-white border border-gray-200 rounded-lg bottom-4 left-1/2 dark:bg-gray-700 dark:border-gray-600 md:hidden">
@@ -121,4 +109,4 @@ export default function SidebarLayout({ sidebarContents }: { sidebarContents: Re
       </div>
     </div>
   );
-}
+};

@@ -10,7 +10,7 @@ const Step5: FC = () => {
 
         <div className="text-gray-500 fw-bold fs-6">
           If you need more info, please
-          <Link to="/auth/login" className="link-primary fw-bolder">
+          <Link to="/login" className="link-primary fw-bolder">
             {" "}
             Sign In
           </Link>
