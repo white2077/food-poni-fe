@@ -22,10 +22,8 @@ export const HomePage = () => {
         <div className="overflow-auto relative">
           <CarouselBanner
             images={[
-              "https://cdn.magicdecor.in/com/2023/09/29153817/Fast-Food-Banner-Background-for-Wall-1.jpg",
-              "https://ik.imagekit.io/awwybhhmo/satellite_images/chinese/beyondmenu/hero/7.jpg?tr=w-3840,q-50",
-              "https://cdn.magicdecor.in/com/2023/09/29153817/Fast-Food-Banner-Background-for-Wall-1.jpg",
-              "https://ik.imagekit.io/awwybhhmo/satellite_images/chinese/beyondmenu/hero/7.jpg?tr=w-3840,q-50",
+              "/public/7.webp",
+              "/public/Fast-Food-Banner-Background-for-Wall-1.jpg",
             ]}
           />
           {/*<SearchPosition />*/}
