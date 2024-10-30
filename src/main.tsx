@@ -8,9 +8,6 @@ import { LoginPage } from "./components/pages/LoginPage";
 import { OrderDetailPage } from "./components/pages/OrderDetailPage";
 import { ProductDetailPage } from "./components/pages/ProductDetailPage";
 import { SignupPage } from "./components/pages/SignupPage";
-import { CheckoutPage } from "./components/pages/checkoutPage";
-import { OrderPage } from "./components/pages/orderPage";
-import { ProductCategoryPage } from "./components/pages/productCategoryPage";
 import { fetchUserAction } from "./redux/modules/auth";
 import { ReactNode, useEffect } from "react";
 import Cookies from "js-cookie";
@@ -18,6 +15,11 @@ import { REFRESH_TOKEN } from "./utils/server";
 import jwtDecode from "jwt-decode";
 import { ProductLoading } from "./components/atoms/productLoading";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { DashboardPage } from "./components/pages/Dashboard";
+import { ProductCategoryPage } from "./components/pages/ProductCategoryPage";
+import { CheckoutPage } from "./components/pages/CheckoutPage";
+import { OrderPage } from "./components/pages/OrderPage";
+import { ProductTablePage } from "./components/pages/ProductTablePage";
 
 const router = createBrowserRouter([
   // Public routes
@@ -69,6 +71,39 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: "/admin",
+    children: [
+      {
+        path: "dashboard",
+        element: <OrderPage />,
+      },
+      {
+        path: "file-manager",
+        element: <div>File Manager</div>,
+      },
+      {
+        path: "orders-realtime",
+        element: <div>Orders Realtime</div>,
+      },
+      {
+        path: "orders-table",
+        element: <div>Orders</div>,
+      },
+      {
+        path: "products-table",
+        element: <ProductTablePage />,
+      },
+      {
+        path: "product-categories-table",
+        element: <div>Product Categories</div>,
+      },
+      {
+        path: "toppings-table",
+        element: <div>Topping</div>,
+      },
+    ],
+  },
 ]);
 
 const useDispatchProps = () => {
@@ -91,7 +126,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const refresh_token = Cookies.get(REFRESH_TOKEN);
 
   useEffect(() => {
-
     if (refresh_token) {
       const payload: {
         readonly role: string;
@@ -109,7 +143,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return <>{children}</>;
 };
-
 
 const container = document.getElementById("root");
 if (container) {
