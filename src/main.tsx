@@ -1,25 +1,19 @@
-import store, { RootState } from "@/redux/store.ts";
+import store from "@/redux/store.ts";
 import { ConfigProvider } from "antd";
 import { createRoot } from "react-dom/client";
-import { Provider, useDispatch, useSelector } from "react-redux";
+import { Provider } from "react-redux";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "../styles/globals.scss";
+import { AuthProvider } from "./components/AuthProvider";
+import { CheckoutPage } from "./components/pages/CheckoutPage";
 import { HomePage } from "./components/pages/HomePage";
 import { LoginPage } from "./components/pages/LoginPage";
 import { OrderDetailPage } from "./components/pages/OrderDetailPage";
-import { ProductDetailPage } from "./components/pages/ProductDetailPage";
-import { SignupPage } from "./components/pages/SignupPage";
-import { fetchUserAction } from "./redux/modules/auth";
-import { ReactNode, useEffect } from "react";
-import Cookies from "js-cookie";
-import { REFRESH_TOKEN } from "./utils/server";
-import jwtDecode from "jwt-decode";
-import { ProductLoading } from "./components/atoms/productLoading";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { DashboardPage } from "./components/pages/Dashboard";
-import { ProductCategoryPage } from "./components/pages/ProductCategoryPage";
-import { CheckoutPage } from "./components/pages/CheckoutPage";
 import { OrderPage } from "./components/pages/OrderPage";
+import { ProductCategoryPage } from "./components/pages/ProductCategoryPage";
+import { ProductDetailPage } from "./components/pages/ProductDetailPage";
 import { ProductTablePage } from "./components/pages/ProductTablePage";
+import { SignupPage } from "./components/pages/SignupPage";
 
 const router = createBrowserRouter([
   // Public routes
@@ -105,44 +99,6 @@ const router = createBrowserRouter([
     ],
   },
 ]);
-
-const useDispatchProps = () => {
-  const dispatch = useDispatch();
-
-  const getCurentUser = (id: string) => dispatch(fetchUserAction({ uid: id }));
-
-  return { getCurentUser };
-};
-
-const useSelectorProps = () => {
-  const { currentUser } = useSelector((state: RootState) => state.auth);
-
-  return { currentUser };
-};
-
-const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const { getCurentUser } = useDispatchProps();
-  const { currentUser } = useSelectorProps();
-  const refresh_token = Cookies.get(REFRESH_TOKEN);
-
-  useEffect(() => {
-    if (refresh_token) {
-      const payload: {
-        readonly role: string;
-        readonly id: string;
-        readonly avatar: string;
-        readonly email: string;
-        readonly addressId: string;
-        readonly username: string;
-      } = jwtDecode(refresh_token);
-      getCurentUser(payload.id);
-    }
-  }, []);
-
-  if (refresh_token && !currentUser) return <ProductLoading />;
-
-  return <>{children}</>;
-};
 
 const container = document.getElementById("root");
 if (container) {
