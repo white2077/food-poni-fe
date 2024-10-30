@@ -1,15 +1,14 @@
 import { getThumbnail } from "@/utils/common";
 import { DeleteOutlined, EditOutlined, LoginOutlined } from "@ant-design/icons";
 import {
-    Button,
-    Divider,
-    Dropdown,
-    Popconfirm,
-    Table,
-    TableColumnsType,
-    theme
+  Button,
+  Divider,
+  Dropdown,
+  Popconfirm,
+  Table,
+  TableColumnsType,
+  theme,
 } from "antd";
-import { TableRowSelection } from "antd/es/table/interface";
 import React, { useState } from "react";
 import { AvatarInfo } from "../atoms/avatarInfo";
 import { AdminLayout } from "../templates/AdminLayout";
@@ -28,52 +27,19 @@ export const ProductTablePage = () => {
   const { token } = useToken();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
-  const rowSelection: TableRowSelection<ProductState> = {
-    selectedRowKeys,
-    onChange: (newSelectedRowKeys) => setSelectedRowKeys(newSelectedRowKeys),
-    selections: [
-      Table.SELECTION_ALL,
-      Table.SELECTION_INVERT,
-      Table.SELECTION_NONE,
-      {
-        key: "odd",
-        text: "Select Odd Row",
-        onSelect: (changeableRowKeys) => {
-          let newSelectedRowKeys = [];
-          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
-            if (index % 2 !== 0) {
-              return false;
-            }
-            return true;
-          });
-          setSelectedRowKeys(newSelectedRowKeys);
-        },
-      },
-      {
-        key: "even",
-        text: "Select Even Row",
-        onSelect: (changeableRowKeys) => {
-          let newSelectedRowKeys = [];
-          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
-            if (index % 2 !== 0) {
-              return true;
-            }
-            return false;
-          });
-          setSelectedRowKeys(newSelectedRowKeys);
-        },
-      },
-    ],
-  };
-
   return (
     <AdminLayout>
       <Table
-        rowSelection={rowSelection}
+        rowSelection={{
+          selectedRowKeys,
+          onChange: (newSelectedRowKeys) =>
+            setSelectedRowKeys(newSelectedRowKeys),
+        }}
         columns={columns}
-        dataSource={data.map((it) => ({
+        dataSource={data.map((it, index) => ({
           ...it,
           key: it.id,
+          no: index + 1,
           name: (
             <AvatarInfo
               fullName={it.name}
@@ -112,7 +78,6 @@ export const ProductTablePage = () => {
                     backgroundColor: token.colorBgElevated,
                     borderRadius: token.borderRadiusLG,
                     boxShadow: token.boxShadowSecondary,
-                
                   }}
                 >
                   {React.cloneElement(menu as React.ReactElement, {
@@ -146,7 +111,11 @@ export const ProductTablePage = () => {
 
 const columns: TableColumnsType = [
   {
-    title: "Name",
+    title: "No.",
+    dataIndex: "no",
+  },
+  {
+    title: "__________Name",
     dataIndex: "name",
   },
   {
