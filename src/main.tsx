@@ -1,13 +1,8 @@
-import store from "@/redux/store.ts";
+import store, { RootState } from "@/redux/store.ts";
 import { ConfigProvider } from "antd";
 import { createRoot } from "react-dom/client";
-import { Provider } from "react-redux";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import "../styles/globals.scss";
-import "./_metronic/assets/keenicons/duotone/style.css";
-import "./_metronic/assets/keenicons/outline/style.css";
-import "./_metronic/assets/keenicons/solid/style.css";
-import { Error404 } from "./app/modules/errors/components/Error404";
 import { HomePage } from "./components/pages/HomePage";
 import { LoginPage } from "./components/pages/LoginPage";
 import { OrderDetailPage } from "./components/pages/OrderDetailPage";
@@ -16,7 +11,13 @@ import { SignupPage } from "./components/pages/SignupPage";
 import { CheckoutPage } from "./components/pages/checkoutPage";
 import { OrderPage } from "./components/pages/orderPage";
 import { ProductCategoryPage } from "./components/pages/productCategoryPage";
-import { AuthProvider } from "./authProvider";
+import { fetchUserAction } from "./redux/modules/auth";
+import { ReactNode, useEffect } from "react";
+import Cookies from "js-cookie";
+import { REFRESH_TOKEN } from "./utils/server";
+import jwtDecode from "jwt-decode";
+import { ProductLoading } from "./components/atoms/productLoading";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router = createBrowserRouter([
   // Public routes
@@ -56,7 +57,7 @@ const router = createBrowserRouter([
   // Private routes
   {
     path: "/quan-ly",
-    errorElement: <Error404 />,
+    errorElement: <div>error</div>,
     children: [
       {
         path: "don-hang",
@@ -69,6 +70,46 @@ const router = createBrowserRouter([
     ],
   },
 ]);
+
+const useDispatchProps = () => {
+  const dispatch = useDispatch();
+
+  const getCurentUser = (id: string) => dispatch(fetchUserAction({ uid: id }));
+
+  return { getCurentUser };
+};
+
+const useSelectorProps = () => {
+  const { currentUser } = useSelector((state: RootState) => state.auth);
+
+  return { currentUser };
+};
+
+const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const { getCurentUser } = useDispatchProps();
+  const { currentUser } = useSelectorProps();
+  const refresh_token = Cookies.get(REFRESH_TOKEN);
+
+  useEffect(() => {
+
+    if (refresh_token) {
+      const payload: {
+        readonly role: string;
+        readonly id: string;
+        readonly avatar: string;
+        readonly email: string;
+        readonly addressId: string;
+        readonly username: string;
+      } = jwtDecode(refresh_token);
+      getCurentUser(payload.id);
+    }
+  }, []);
+
+  if (refresh_token && !currentUser) return <ProductLoading />;
+
+  return <>{children}</>;
+};
+
 
 const container = document.getElementById("root");
 if (container) {
