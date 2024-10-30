@@ -92,6 +92,7 @@ export default function ProductCart() {
             </Button>
             {cartGroupJoined.length > 0 && (
               <Dropdown
+                trigger={["click"]}
                 menu={{
                   items: cartGroupJoined.map((it, index) => ({
                     key: index,
