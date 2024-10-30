@@ -48,9 +48,12 @@ export const OrderPage = () => {
         <Segmented
           value={status}
           onChange={(value) => {
-            setStatus(value as string);
-            setCurrentPage(1);
+            if (!isFetchLoading) {
+              setStatus(value);
+              setCurrentPage(1);
+            }
           }}
+          disabled={isFetchLoading}
           options={ORDER_STATUSES.map((item) => ({
             label: (
               <Badge

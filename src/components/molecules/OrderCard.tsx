@@ -1,4 +1,4 @@
-import { Badge, Card } from "antd";
+import { Badge, Card, Skeleton } from "antd";
 import {
   EnvironmentOutlined,
   ShoppingOutlined,
@@ -47,16 +47,26 @@ const OrderCard = ({
             hoverable={true}
             loading={isFetchLoading}
             title={
-              <div className="flex gap-2 items-center">
-                <span>{`${index}. Đơn hàng #${order.id
-                  ?.substring(0, 7)
-                  .toUpperCase()} `}</span>
-                <span className="text-primary font-bold">/</span>
-                <span>
-                  {format(new Date(order.createdDate ?? ""), "dd-MM-yyyy")}
-                </span>
-                <span className="text-primary font-bold">/</span>
-              </div>
+              !isFetchLoading ? (
+                <div className="flex gap-2 items-center">
+                  <span>{`${index}. Đơn hàng #${order.id?.substring(0, 7).toUpperCase()} `}</span>
+                  <span className="text-primary font-bold">/</span>
+                  <span>
+                    {format(
+                      new Date(order.createdDate ?? ""),
+                      "dd-MM-yyyy HH:mm"
+                    )}
+                  </span>
+                  <span className="text-primary font-bold">/</span>
+                </div>
+              ) : (
+                <div className="flex gap-2 items-center">
+                  <Skeleton.Button active size="small" className="!w-32" />
+                  <span className="text-primary font-bold">/</span>
+                  <Skeleton.Button active size="small" className="!w-32" />
+                  <span className="text-primary font-bold">/</span>
+                </div>
+              )
             }
           >
             <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
