@@ -35,6 +35,7 @@ import { useDispatch } from "react-redux";
 import ShippingAddress from "./shippingAddress";
 import PaymentInfo from "./paymentInfo";
 import TextArea from "antd/es/input/TextArea";
+import { TransitionGroup, CSSTransition } from "react-transition-group";
 
 export function CartGroupDetail({
   cartGroupJoined,
@@ -106,31 +107,41 @@ export function CartGroupDetail({
             <Row gutter={16}>
               <Col flex="700">
                 <ScrollPane maxHeight="h-[600px]">
-                  {groupByUser(it.cartItems).map((ci, index) => (
-                    <div key={index}>
-                      <Card
-                        size="small"
-                        title={
-                          <AvatarInfo
-                            fullName={ci.user.username}
-                            avatar={ci.user.avatar}
-                            info={`${ci.items.length} sản phẩm`}
-                            padding={"py-1"}
-                          />
-                        }
+                  <TransitionGroup>
+                    {groupByUser(it.cartItems).map((ci) => (
+                      <CSSTransition
+                        key={ci.user.id}
+                        timeout={200}
+                        classNames="fade"
                       >
-                        <CartHeader enableCartGroup={true} />
-                        <CartBody
-                          isFetchLoading={false}
-                          enableCartGroup={true}
-                          carts={ci.items}
-                          currentUserId={currentUserId}
-                        />
-                      </Card>
-                      <div>{currencyFormat(totalAmount(ci.items, true))}</div>
-                      <Divider />
-                    </div>
-                  ))}
+                        <div>
+                          <Card
+                            size="small"
+                            title={
+                              <AvatarInfo
+                                fullName={ci.user.username}
+                                avatar={ci.user.avatar}
+                                info={`${ci.items.length} sản phẩm`}
+                                padding={"py-1"}
+                              />
+                            }
+                          >
+                            <CartHeader enableCartGroup={true} />
+                            <CartBody
+                              isFetchLoading={false}
+                              enableCartGroup={true}
+                              carts={ci.items}
+                              currentUserId={currentUserId}
+                            />
+                          </Card>
+                          <div>
+                            {currencyFormat(totalAmount(ci.items, true))}
+                          </div>
+                          <Divider />
+                        </div>
+                      </CSSTransition>
+                    ))}
+                  </TransitionGroup>
                 </ScrollPane>
               </Col>
               <Col flex="300">
