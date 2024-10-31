@@ -1,5 +1,4 @@
 import SearchKeyword from "@/components/molecules/SearchKeyword";
-import MenuMobile from "@/components/menu-mobile.tsx";
 import { UserDropdown } from "@/components/molecules/UserDropdown";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store.ts";
@@ -15,8 +14,6 @@ export default function HeaderMain() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] px-2 mx-auto items-center py-2 gap-4 max-w-screen-xl">
       <div className="flex items-center justify-between md:justify-start">
-        <MenuMobile />
-
         <div
           onClick={() => (window.location.href = "/")}
           className="flex items-center gap-1 nunito text-3xl md:text-4xl text-orange-400 cursor-pointer hover:text-orange-500"

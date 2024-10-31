@@ -1,6 +1,6 @@
 import { Button, Card, Dropdown, Flex } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import SlideBanner from "../SlideBanner.tsx";
+import SlideBanner from "../atoms/SlideBanner.tsx";
 import { RootState } from "@/redux/store.ts";
 import { createCartAction } from "@/redux/modules/cart.ts";
 import CustomInput from "@/components/molecules/CustomInput.tsx";

@@ -23,7 +23,7 @@ import { useEffect, useState } from "react";
 import { ProductLoading } from "@/components/atoms/ProductLoading";
 import { api } from "@/utils/axiosConfig.ts";
 import { server } from "@/utils/server.ts";
-import ComboboxDate from "@/components/combobox-date.tsx";
+import ComboboxDate from "@/components/atoms/ComboboxDate";
 
 const { confirm } = Modal;
 

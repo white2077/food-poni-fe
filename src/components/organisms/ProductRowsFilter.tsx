@@ -1,6 +1,6 @@
 import { Action } from "redux";
-import MenuFilter from "@/components/menuFilter.tsx";
 import { ProductRows } from "@/components/organisms/ProductRows";
+import MenuFilter from "../molecules/MenuFilter";
 
 interface ProductFilterRowProps {
   action: Action;

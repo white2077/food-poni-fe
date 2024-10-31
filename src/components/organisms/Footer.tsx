@@ -1,5 +1,5 @@
 import ChatBot from "@/components/organisms/ChatBot";
-import CatBackground from "@/components/pet.tsx";
+import CatBackground from "@/components/atoms/Pet";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { CartGroup } from "@/components/organisms/CartGroup";
