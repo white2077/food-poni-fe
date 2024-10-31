@@ -38,9 +38,15 @@ const OrderCard = ({
     <div>
       <Link to={`/quan-ly/don-hang/${order.id}`}>
         <Badge.Ribbon
-          text={statusText[order.status]}
-          color={statusColors[order.status]}
-          className="font-sans"
+          text={
+            !isFetchLoading ? (
+              statusText[order.status]
+            ) : (
+              <Skeleton.Button active size="small" className="!w-28" />
+            )
+          }
+          color={!isFetchLoading ? statusColors[order.status] : "#f0f0f0"}
+          className={`font-sans ${!isFetchLoading ? "" : "!p-0"}`}
         >
           <Card
             className="font-sans min-h-60 !border-orange-200"
@@ -54,10 +60,9 @@ const OrderCard = ({
                   <span>
                     {format(
                       new Date(order.createdDate ?? ""),
-                      "dd-MM-yyyy HH:mm"
+                      "dd-MM-yyyy - HH:mm"
                     )}
                   </span>
-                  <span className="text-primary font-bold">/</span>
                 </div>
               ) : (
                 <div className="flex gap-2 items-center">
@@ -69,10 +74,10 @@ const OrderCard = ({
               )
             }
           >
-            <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+            <h2 className="mb-2 text-lg font-semibold text-gray-900">
               Thông tin đơn hàng:
             </h2>
-            <ul className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+            <ul className="max-w-md space-y-1 text-gray-500 list-inside">
               <li>
                 <UserOutlined /> Khách hàng: {order.shippingAddress.fullName}
               </li>
