@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { AuthState } from "@/redux/modules/auth";
 import { Select } from "antd";
-import { UserAPIResponse } from "../models/user/UserAPIResponse";
+import { useEffect, useState } from "react";
 
-const ComboboxDate = ({ user }: { user: UserAPIResponse }) => {
+const ComboboxDate = ({ user }: { user: AuthState["currentUser"] }) => {
   const [selectedDay, setSelectedDay] = useState<number | "">(20);
   const [selectedMonth, setSelectedMonth] = useState<number | "">(10);
   const [selectedYear, setSelectedYear] = useState<number | "">(2000);
@@ -19,12 +19,12 @@ const ComboboxDate = ({ user }: { user: UserAPIResponse }) => {
     );
     setYears(yearsList);
 
-    if (user.birthday) {
-      const parsedBirthday = new Date(user.birthday);
-      setSelectedDay(parsedBirthday.getDate());
-      setSelectedMonth(parsedBirthday.getMonth() + 1);
-      setSelectedYear(parsedBirthday.getFullYear());
-    }
+    // if (user.birthday) {
+    //   const parsedBirthday = new Date(user.birthday);
+    //   setSelectedDay(parsedBirthday.getDate());
+    //   setSelectedMonth(parsedBirthday.getMonth() + 1);
+    //   setSelectedYear(parsedBirthday.getFullYear());
+    // }
   }, [user]);
 
   const handleDayChange = (value: number | "") => {

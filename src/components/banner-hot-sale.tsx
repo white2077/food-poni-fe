@@ -1,4 +1,3 @@
-import React from "react";
 
 const categories = [
   { name: "Đồ ăn vặt", image: "/hot-2.png" },

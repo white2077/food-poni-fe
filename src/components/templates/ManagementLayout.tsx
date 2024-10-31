@@ -1,4 +1,4 @@
-import HeaderBar from "@/components/header-bar.tsx";
+import HeaderBar from "@/components/molecules/HeaderBar";
 import Footer from "@/components/organisms/Footer";
 import HeaderMain from "@/components/organisms/HeaderMain";
 import { RootState } from "@/redux/store.ts";

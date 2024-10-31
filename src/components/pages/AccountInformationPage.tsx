@@ -22,7 +22,6 @@ import { RootState } from "@/redux/store.ts";
 import { useEffect, useState } from "react";
 import { ProductLoading } from "@/components/atoms/ProductLoading";
 import { api } from "@/utils/axiosConfig.ts";
-import SelectedItemLabel from "@/components/select-label.tsx";
 import { server } from "@/utils/server.ts";
 import ComboboxDate from "@/components/combobox-date.tsx";
 
@@ -35,11 +34,11 @@ export default function AccountInformationPage() {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState({
     id: "",
-    name: "",
+    username: "",
     email: "",
-    phone: "",
-    address: "",
+    addressId: "",
     avatar: "",
+    role: ""
   });
 
   const [isLoading, setLoading] = useState<boolean>(false);
@@ -138,7 +137,7 @@ export default function AccountInformationPage() {
                 fill="#f36f24"
               ></path>
             </svg>
-            <SelectedItemLabel label={"Đổi mật khẩu"} />
+            {/* <SelectedItemLabel label={"Đổi mật khẩu"} /> */}
           </div>
           {/*<ChangePassword />*/}
         </div>
@@ -200,7 +199,7 @@ export default function AccountInformationPage() {
                       <dt className="text-[15px] flex items-center font-sans">
                         Họ & Tên
                       </dt>
-                      <Input value={user.name}></Input>
+                      <Input value={user.username}></Input>
                     </div>
                   </div>
                 </div>

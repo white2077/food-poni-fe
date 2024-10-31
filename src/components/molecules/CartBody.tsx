@@ -22,7 +22,7 @@ export const CartBody = ({
   isFetchLoading: boolean;
   carts: Array<CartState["page"]["content"][number]>;
   enableCartGroup: boolean;
-  currentUserId: string;
+  currentUserId?: string;
 }) => {
   const dispatch = useDispatch();
   return (

@@ -1,9 +1,6 @@
-import React from "react";
-import { DefaultLayout } from "./_layout";
-import { getProductsCardPage } from "../queries/product.query";
-import ProductRowsSale from "../components/product-rows-sale";
 import BannerHotSale from "../components/banner-hot-sale";
 import CarouselBanner from "../components/carousel-banner";
+import { DefaultLayout } from "./templates/DefaultLayout";
 
 const RedMoreRow = () => {
   const bannerImages = [
@@ -17,10 +14,10 @@ const RedMoreRow = () => {
     <DefaultLayout>
       <CarouselBanner images={bannerImages} />
       <BannerHotSale />
-      <ProductRowsSale
+      {/* <ProductRowsSale
         hasMenu={false}
         query={getProductsCardPage({ status: true })}
-      />
+      /> */}
       <div className="w-full my-5 rounded-lg">
         <img
           src="/banner-hot-pizza.png"
@@ -28,10 +25,10 @@ const RedMoreRow = () => {
           className="w-full object-cover rounded-lg"
         />
       </div>
-      <ProductRowsSale
+      {/* <ProductRowsSale
         hasMenu={false}
         query={getProductsCardPage({ status: true })}
-      />
+      /> */}
     </DefaultLayout>
   );
 };
