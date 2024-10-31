@@ -4,14 +4,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { fetchOrderAction } from "@/redux/modules/order";
 import { Button, Card, Divider, List } from "antd";
-import { OrderHeader } from "../molecules/orderHeaderOrder.tsx";
-import HeadTable from "../molecules/tableHead.tsx";
-import { OrderSummary } from "../atoms/orderSummaryProps.tsx";
+import { OrderHeader } from "../molecules/OrderHeader.tsx";
+import HeadTable from "../molecules/TableHead.tsx";
+import { OrderSummary } from "../atoms/OrderSummaryProps.tsx";
 import { LeftOutlined } from "@ant-design/icons";
-import { OrderInfoCard } from "../molecules/orderInfoCard.tsx";
-import { OrderItemPricing } from "../molecules/orderItemPricing.tsx";
-import { OrderItemDetail } from "../organisms/orderItemDetail.tsx";
-import { ProductLoading } from "@/components/atoms/productLoading.tsx";
+import { OrderInfoCard } from "../molecules/OrderInfoCard.tsx";
+import { OrderItemPricing } from "../molecules/OrderItemPricing.tsx";
+import { OrderItemDetail } from "../organisms/OrderItemDetail.tsx";
+import { ProductLoading } from "@/components/atoms/ProductLoading.tsx";
 import { ManagementLayout } from "../templates/ManagementLayout.tsx";
 
 export const OrderDetailPage = () => {

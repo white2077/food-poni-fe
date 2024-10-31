@@ -1,13 +1,13 @@
-import SearchKeyword from "@/components/searchKeyword.tsx";
+import SearchKeyword from "@/components/molecules/SearchKeyword";
 import MenuMobile from "@/components/menu-mobile.tsx";
-import { UserDropdown } from "@/components/molecules/userDropdown.tsx";
+import { UserDropdown } from "@/components/molecules/UserDropdown";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store.ts";
-import Cart from "@/components/organisms/cart.tsx";
+import Cart from "@/components/organisms/Cart";
 import { UserOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
-import NotificationDropdown from "@/components/organisms/notificationDropdown.tsx";
+import NotificationDropdown from "@/components/organisms/NotificationDropdown";
 
 export default function HeaderMain() {
   const { currentUser } = useSelector((state: RootState) => state.auth);

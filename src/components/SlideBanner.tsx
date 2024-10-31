@@ -1,5 +1,5 @@
-import React from "react";
 import { Carousel } from "antd";
+import React from "react";
 
 const contentStyle: React.CSSProperties = {
   height: "140px",
@@ -11,7 +11,7 @@ const contentStyle: React.CSSProperties = {
   borderRadius: "10px",
 };
 
-const Banner: React.FC = () => (
+const SlideBanner = () => (
   <div className="lg:max-w-[22rem] w-full">
     <Carousel arrows infinite autoplay>
       <div>
@@ -54,4 +54,4 @@ const Banner: React.FC = () => (
   </div>
 );
 
-export default Banner;
+export default SlideBanner;

@@ -6,8 +6,8 @@ import {
 } from "@ant-design/icons";
 
 import HeaderBar from "@/components/header-bar.tsx";
-import Footer from "@/components/organisms/footer.tsx";
-import HeaderMain from "@/components/organisms/headerMain.tsx";
+import Footer from "@/components/organisms/Footer";
+import HeaderMain from "@/components/organisms/HeaderMain";
 import { ReactNode } from "react";
 
 export const DefaultLayout = ({ children }: { children: ReactNode }) => {

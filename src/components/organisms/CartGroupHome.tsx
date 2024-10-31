@@ -1,5 +1,5 @@
-import { AvatarInfo } from "@/components/atoms/avatarInfo.tsx";
-import { CodeInput } from "@/components/atoms/codeInput.tsx";
+import { AvatarInfo } from "@/components/atoms/AvatarInfo";
+import { CodeInput } from "@/components/atoms/CodeInput";
 import {
   createCartGroupRequest,
   deleteCartGroupAction,

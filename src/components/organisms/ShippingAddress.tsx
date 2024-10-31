@@ -1,6 +1,6 @@
 import { Button, Card, Collapse, Modal, Popconfirm, Radio } from "antd";
 import { useEffect, useState } from "react";
-import ShippingAddressInfo from "@/components/organisms/shippingAddressInfo.tsx";
+import ShippingAddressInfo from "@/components/organisms/ShippingAddressInfo";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store.ts";
 import {
@@ -8,7 +8,7 @@ import {
   fetchAddressesAction,
   updateShowAddForm,
 } from "@/redux/modules/address.ts";
-import CardHome from "@/components/atoms/cardHome.tsx";
+import CardHome from "@/components/atoms/CardHome";
 import { updateShippingAddressAction } from "@/redux/modules/order.ts";
 import { CheckCircleOutlined, DeleteOutlined } from "@ant-design/icons";
 import { updateCurrentUserAddressAction } from "@/redux/modules/auth";

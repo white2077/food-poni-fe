@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { Avatar, Badge, Button, Divider, Drawer, List, Popconfirm } from "antd";
 import { CloseOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import EmptyNotice from "../atoms/emptyNotice.tsx";
+import EmptyNotice from "../atoms/EmptyNotice.tsx";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "@/redux/store.ts";
-import { QuantityInput } from "@/components/molecules/quantityInput.tsx";
+import { QuantityInput } from "@/components/molecules/QuantityInput.tsx";
 import { deleteCartRequest, fetchCartsAction } from "@/redux/modules/cart.ts";
 import { currencyFormat, getThumbnail } from "@/utils/common.ts";
 

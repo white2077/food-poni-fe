@@ -2,8 +2,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store.ts";
 import { Button, Modal } from "antd";
 import { updateVisible } from "@/redux/modules/cartGroup.ts";
-import { CartGroupHome } from "@/components/organisms/cartGroupHome.tsx";
-import { CartGroupDetail } from "@/components/organisms/cartGroupDetail.tsx";
+import { CartGroupHome } from "@/components/organisms/CartGroupHome";
+import { CartGroupDetail } from "@/components/organisms/CartGroupDetail";
 
 export function CartGroup() {
   const dispatch = useDispatch();

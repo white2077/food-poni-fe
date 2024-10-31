@@ -3,12 +3,12 @@ import { Params, useParams } from "react-router-dom";
 import { RootState } from "@/redux/store.ts";
 import { useEffect } from "react";
 import { Col, Pagination, Row } from "antd";
-import { ProductLoading } from "@/components/atoms/productLoading.tsx";
-import { ProductCard } from "@/components/molecules/productCard.tsx";
+import { ProductLoading } from "@/components/atoms/ProductLoading";
+import { ProductCard } from "@/components/molecules/ProductCard";
 import { fetchProductsByProductCategoryAction } from "@/redux/modules/product.ts";
-import EmptyNotice from "@/components/atoms/emptyNotice.tsx";
+import EmptyNotice from "@/components/atoms/EmptyNotice";
 import { SidebarLayout } from "../templates/SidebarLayout";
-import ProductCategory from "../molecules/productCategory";
+import ProductCategory from "../molecules/ProductCategory";
 
 export const ProductCategoryPage = () => {
   const { pathVariable } = useParams<Params<string>>();

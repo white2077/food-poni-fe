@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 import { Action } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store.ts";
-import { ProductLoading } from "@/components/atoms/productLoading.tsx";
-import { ProductCard } from "@/components/molecules/productCard.tsx";
+import { ProductLoading } from "@/components/atoms/ProductLoading";
+import { ProductCard } from "@/components/molecules/ProductCard";
 
 interface ProductFilterRowProps {
   title?: string | ReactNode;

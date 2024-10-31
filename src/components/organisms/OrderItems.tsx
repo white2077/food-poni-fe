@@ -4,8 +4,8 @@ import {
 } from "@/redux/modules/cart.ts";
 import { RootState } from "@/redux/store.ts";
 import { useDispatch, useSelector } from "react-redux";
-import { CartBody } from "../molecules/cartBody.tsx";
-import { CartHeader } from "../molecules/cartHeader.tsx";
+import { CartBody } from "../molecules/CartBody.tsx";
+import { CartHeader } from "../molecules/CartHeader.tsx";
 
 export default function OrderItems() {
   const dispatch = useDispatch();

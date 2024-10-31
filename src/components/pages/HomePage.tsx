@@ -1,7 +1,7 @@
 import CarouselBanner from "@/components/carousel-banner.tsx";
-import { ProductRowsFilter } from "@/components/organisms/productRowsFilter.tsx";
+import { ProductRowsFilter } from "@/components/organisms/ProductRowsFilter";
 import { fetchProductsAction } from "@/redux/modules/product.ts";
-import ProductCategory from "../molecules/productCategory";
+import ProductCategory from "../molecules/ProductCategory";
 import { server } from "@/utils/server";
 import { SidebarLayout } from "../templates/SidebarLayout";
 

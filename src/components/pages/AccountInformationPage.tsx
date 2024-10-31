@@ -20,7 +20,7 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store.ts";
 import { useEffect, useState } from "react";
-import { ProductLoading } from "@/components/atoms/productLoading.tsx";
+import { ProductLoading } from "@/components/atoms/ProductLoading";
 import { api } from "@/utils/axiosConfig.ts";
 import SelectedItemLabel from "@/components/select-label.tsx";
 import { server } from "@/utils/server.ts";
@@ -28,7 +28,7 @@ import ComboboxDate from "@/components/combobox-date.tsx";
 
 const { confirm } = Modal;
 
-export default function AccountInformation() {
+export default function AccountInformationPage() {
   const { currentUser } = useSelector((state: RootState) => state.auth);
   const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
   const [openUpdate, setOpenUpdate] = useState(false);

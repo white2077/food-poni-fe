@@ -10,7 +10,7 @@ import {
   theme,
 } from "antd";
 import React, { useState } from "react";
-import { AvatarInfo } from "../atoms/avatarInfo";
+import { AvatarInfo } from "../atoms/AvatarInfo";
 import { AdminLayout } from "../templates/AdminLayout";
 const { useToken } = theme;
 

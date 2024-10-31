@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
 import { Avatar, Card, Image, Segmented } from "antd";
-import { server } from "../utils/server";
+import { useEffect, useState } from "react";
+import { server } from "../../utils/server";
 
 const ProductGallery = ({ images }: { images: string[] }) => {
   const [selectedImage, setSelectedImage] = useState<string>();

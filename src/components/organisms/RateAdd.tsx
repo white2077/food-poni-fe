@@ -9,7 +9,7 @@ import {
   updateRateForm,
 } from "@/redux/modules/rate";
 import { unSelectedMultiFile } from "@/redux/modules/fileUploads";
-import FileUploads from "./fileUploads";
+import FileUploads from "./FileUploads";
 
 const RateAdd = () => {
   const dispatch = useDispatch();

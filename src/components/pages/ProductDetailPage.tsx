@@ -2,12 +2,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Params, useParams } from "react-router-dom";
 import { RootState } from "@/redux/store.ts";
 import { useEffect } from "react";
-import ProductGallery from "@/components/product-gallery.tsx";
+import ProductGallery from "@/components/molecules/ProductGallery";
 import { Card, Checkbox, Radio, Rate } from "antd";
-import ReadMore from "@/components/atoms/readMore.tsx";
-import { ProductLoading } from "@/components/atoms/productLoading.tsx";
-import ProductCart from "@/components/organisms/productCart.tsx";
-import ProductRate from "../templates/productRateWrapper";
+import ReadMore from "@/components/atoms/ReadMore";
+import { ProductLoading } from "@/components/atoms/ProductLoading";
+import ProductCart from "@/components/organisms/ProductCart";
+import ProductRate from "../organisms/ProductRate";
 import {
   fetchProductAction,
   updateProductDetailSelectedSuccess,

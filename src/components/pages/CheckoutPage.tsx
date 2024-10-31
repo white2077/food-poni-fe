@@ -1,5 +1,5 @@
-import OrderItems from "@/components/organisms/orderItems.tsx";
-import PaymentInfo from "@/components/organisms/paymentInfo.tsx";
+import OrderItems from "@/components/organisms/OrderItems";
+import PaymentInfo from "@/components/organisms/PaymentInfo";
 import { fetchCartsAction } from "@/redux/modules/cart.ts";
 import { createOrderAction } from "@/redux/modules/order.ts";
 import { RootState } from "@/redux/store.ts";
@@ -8,7 +8,7 @@ import { Button, Card, Col, Divider, Form, Input, Popconfirm, Row } from "antd";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import ShippingAddress from "../organisms/shippingAddress";
+import ShippingAddress from "../organisms/ShippingAddress";
 import { DefaultLayout } from "../templates/DefaultLayout";
 
 const { TextArea } = Input;

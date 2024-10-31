@@ -1,13 +1,13 @@
 import { Button, Card, Dropdown, Flex } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import Banner from "../slide-banner.tsx";
+import SlideBanner from "../SlideBanner.tsx";
 import { RootState } from "@/redux/store.ts";
 import { createCartAction } from "@/redux/modules/cart.ts";
-import CustomInput from "@/components/molecules/customInput.tsx";
+import CustomInput from "@/components/molecules/CustomInput.tsx";
 import { updateProductSelectedQuantitySuccess } from "@/redux/modules/product.ts";
 import { currencyFormat } from "@/utils/common.ts";
 import { addToCartGroupAction } from "@/redux/modules/cartGroup.ts";
-import { AvatarInfo } from "../atoms/avatarInfo.tsx";
+import { AvatarInfo } from "../atoms/AvatarInfo.tsx";
 import { useNavigate } from "react-router-dom";
 
 export default function ProductCart() {
@@ -127,7 +127,7 @@ export default function ProductCart() {
           </Flex>
         )}
       </Card>
-      <Banner />
+      <SlideBanner />
     </div>
   );
 }

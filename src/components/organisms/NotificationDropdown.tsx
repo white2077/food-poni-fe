@@ -15,7 +15,7 @@ import { format, formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import { useDispatch, useSelector } from "react-redux";
 
-import { ScrollPane } from "@/components/atoms/scrollPane.tsx";
+import { ScrollPane } from "@/components/atoms/ScrollPane";
 import {
   addToCartItemsSuccess,
   deleteCartGroupSuccess,

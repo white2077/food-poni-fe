@@ -1,12 +1,12 @@
-import EmptyNotice from "@/components/atoms/emptyNotice.tsx";
+import EmptyNotice from "@/components/atoms/EmptyNotice";
 import { fetchOrdersAction } from "@/redux/modules/order";
 import { RootState } from "@/redux/store";
 import { Order } from "@/type/types";
 import { Badge, List, Segmented, Space } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ProductLoading } from "../atoms/productLoading";
-import OrderCard from "../molecules/orderCard";
+import { ProductLoading } from "../atoms/ProductLoading";
+import OrderCard from "../molecules/OrderCard";
 import { ManagementLayout } from "../templates/ManagementLayout";
 
 const ORDER_STATUSES = [

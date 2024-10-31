@@ -2,7 +2,7 @@ import { formatCurrency } from "@/utils/common";
 import { Button, Result } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 
-export const PaymentResult = () => {
+export const PaymentSuccessPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 

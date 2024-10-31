@@ -4,7 +4,7 @@ import { REFRESH_TOKEN } from "@/utils/server";
 import jwtDecode from "jwt-decode";
 import { ReactNode, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ProductLoading } from "./atoms/productLoading";
+import { ProductLoading } from "./atoms/ProductLoading";
 import Cookies from "js-cookie";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {

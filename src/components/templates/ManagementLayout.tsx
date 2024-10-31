@@ -1,6 +1,6 @@
 import HeaderBar from "@/components/header-bar.tsx";
-import Footer from "@/components/organisms/footer.tsx";
-import HeaderMain from "@/components/organisms/headerMain.tsx";
+import Footer from "@/components/organisms/Footer";
+import HeaderMain from "@/components/organisms/HeaderMain";
 import { RootState } from "@/redux/store.ts";
 import { getThumbnail } from "@/utils/common.ts";
 import {

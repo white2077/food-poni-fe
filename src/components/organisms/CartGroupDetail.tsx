@@ -1,7 +1,7 @@
-import { AvatarInfo } from "@/components/atoms/avatarInfo.tsx";
-import { ScrollPane } from "@/components/atoms/scrollPane.tsx";
-import { CartBody } from "@/components/molecules/cartBody.tsx";
-import { CartHeader } from "@/components/molecules/cartHeader.tsx";
+import { AvatarInfo } from "@/components/atoms/AvatarInfo";
+import { ScrollPane } from "@/components/atoms/ScrollPane";
+import { CartBody } from "@/components/molecules/CartBody";
+import { CartHeader } from "@/components/molecules/CartHeader";
 import {
   CartGroupState,
   createCartGroupRequest,
@@ -32,8 +32,8 @@ import {
   Tabs,
 } from "antd";
 import { useDispatch } from "react-redux";
-import ShippingAddress from "./shippingAddress";
-import PaymentInfo from "./paymentInfo";
+import ShippingAddress from "./ShippingAddress";
+import PaymentInfo from "./PaymentInfo";
 import TextArea from "antd/es/input/TextArea";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 
