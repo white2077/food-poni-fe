@@ -30,7 +30,7 @@ export default function generateQueryString(
       queryString += `size=${pageSize}`;
     }
 
-    if (status) {
+    if (status !== undefined) {
       if (queryString.length > 1) {
         queryString += "&";
       }

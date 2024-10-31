@@ -14,6 +14,7 @@ import { ProductCategoryPage } from "./components/pages/ProductCategoryPage";
 import { ProductDetailPage } from "./components/pages/ProductDetailPage";
 import { ProductTablePage } from "./components/pages/ProductTablePage";
 import { SignupPage } from "./components/pages/SignupPage";
+import { AdminProductDetailPage } from "./components/pages/AdminProductDetailPage";
 
 const router = createBrowserRouter([
   // Public routes
@@ -87,6 +88,10 @@ const router = createBrowserRouter([
       {
         path: "products-table",
         element: <ProductTablePage />,
+      },
+      {
+        path: "product-details/:pid",
+        element: <AdminProductDetailPage />,
       },
       {
         path: "product-categories-table",
