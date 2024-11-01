@@ -1,16 +1,16 @@
 export type QueryParams = {
-  page?: number;
-  pageSize?: number;
-  status?: boolean | undefined;
-  orderStatus?: string;
-  sort?: string;
-  read?: string;
+  page?: number | null;
+  pageSize?: number | null;
+  status?: boolean | null;
+  orderStatus?: string | null;
+  sort?: string[] | null;
+  read?: string | null;
   // body?: z.infer<typeof productSchema>;
 };
 
 export default function generateQueryString(
   url: string,
-  params?: QueryParams,
+  params?: QueryParams
 ): string {
   const { page, pageSize, status, orderStatus, sort, read } =
     params ?? ({} as QueryParams);
@@ -48,7 +48,7 @@ export default function generateQueryString(
       if (queryString.length > 1) {
         queryString += "&";
       }
-      queryString += `sort=${sort}`;
+      queryString += `sort=${sort.join("&sort=")}`;
     }
 
     if (read) {
@@ -57,7 +57,6 @@ export default function generateQueryString(
       }
       queryString += `read=${read}`;
     }
-
   }
 
   return url + queryString;

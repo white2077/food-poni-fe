@@ -1,10 +1,10 @@
+import {
+  FileOutlined,
+  UserOutlined,
+  VideoCameraOutlined
+} from "@ant-design/icons";
 import { Menu } from "antd";
 import Sider, { SiderTheme } from "antd/es/layout/Sider";
-import {
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-} from "@ant-design/icons";
 import { ItemType, MenuItemType } from "antd/es/menu/interface";
 import { Link } from "react-router-dom";
 
@@ -47,9 +47,9 @@ const items: ItemType<MenuItemType>[] = [
     label: <Link to="/admin/dashboard">Dashboard</Link>,
   },
   {
-    key: "/admin/file-manager",
-    icon: <UploadOutlined />,
-    label: <Link to="/admin/file-manager">File Manager</Link>,
+    key: "/admin/file-management",
+    icon: <FileOutlined />,
+    label: <Link to="/admin/file-management">File Management</Link>,
   },
   {
     key: "/admin/order-management",

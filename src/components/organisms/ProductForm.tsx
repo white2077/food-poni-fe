@@ -1,15 +1,15 @@
-import { Button, Form, Input, InputNumber } from "antd";
+import { Button, Cascader, Form, Input, InputNumber } from "antd";
 
 const validateMessages = {
-    required: '${label} is required!',
-    types: {
-      email: '${label} is not a valid email!',
-      number: '${label} is not a valid number!',
-    },
-    number: {
-      range: '${label} must be between ${min} and ${max}',
-    },
-  };
+  required: "${label} is required!",
+  types: {
+    email: "${label} is not a valid email!",
+    number: "${label} is not a valid number!",
+  },
+  number: {
+    range: "${label} must be between ${min} and ${max}",
+  },
+};
 
 export const ProductForm = () => {
   return (
@@ -45,6 +45,28 @@ export const ProductForm = () => {
       <Form.Item name={["user", "introduction"]} label="Introduction">
         <Input.TextArea />
       </Form.Item>
+      <Cascader
+        style={{ width: "100%" }}
+        options={[
+          {
+            label: "Toy Fish",
+            value: "fish",
+          },
+          {
+            label: "Toy Cards",
+            value: "cards",
+          },
+          {
+            label: "Toy Bird",
+            value: "bird",
+          },
+        ]}
+        showAction={["focus"]}
+        multiple
+        maxTagCount="responsive"
+        onChange={(value: Array<string>) => console.log(value)
+        }
+      />
       <Form.Item>
         <Button type="primary" htmlType="submit">
           Submit

@@ -10,16 +10,16 @@ export default function MenuFilter() {
     <Menu
       className="block rounded-lg"
       onSelect={({ key }: { key: string }) => {
-        let sortOption = "";
+        let sortOption = [""];
         switch (key) {
           case "bestnews":
-            sortOption = "updatedDate,desc";
+            sortOption = ["updatedDate,desc"];
             break;
           case "bestsellers":
-            sortOption = "sales,desc";
+            sortOption = ["sales,desc"];
             break;
           case "toprates":
-            sortOption = "rate,desc";
+            sortOption = ["rate,desc"];
             break;
           default:
             return;

@@ -15,6 +15,7 @@ import { ProductDetailPage } from "./components/pages/ProductDetailPage";
 import { ProductTablePage } from "./components/pages/ProductTablePage";
 import { SignupPage } from "./components/pages/SignupPage";
 import { AdminProductDetailPage } from "./components/pages/AdminProductDetailPage";
+import { FileManagementPage } from "./components/pages/FileManagementPage";
 
 const router = createBrowserRouter([
   // Public routes
@@ -74,8 +75,8 @@ const router = createBrowserRouter([
         element: <OrderPage />,
       },
       {
-        path: "file-manager",
-        element: <div>File Manager</div>,
+        path: "file-management",
+        element: <FileManagementPage />,
       },
       {
         path: "orders-realtime",

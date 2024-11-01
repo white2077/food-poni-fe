@@ -23,7 +23,6 @@ import {
   Popconfirm,
   Table,
   TableColumnsType,
-  TableProps,
   Tag,
   theme,
 } from "antd";
@@ -96,50 +95,13 @@ export const ProductTablePage = () => {
     (state: RootState) => state.product
   );
 
-  const columns: TableColumnsType = [
-    {
-      title: "No.",
-      dataIndex: "no",
-    },
-    {
-      title: "__________Name",
-      dataIndex: "name",
-    },
-    {
-      title: "Categories",
-      dataIndex: "categories",
-    },
-    {
-      title: "Created At",
-      dataIndex: "createdAt",
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      filters: [
-        {
-          text: "Active",
-          value: true,
-        },
-        {
-          text: "Inactive",
-          value: false,
-        },
-      ],
-    },
-    {
-      title: "Actions",
-      dataIndex: "actions",
-    },
-  ];
-
   useEffect(() => {
     dispatch(
       fetchProductsAction({
         queryParams: {
           page: 0,
           pageSize: 10,
-          sort: "createdDate,desc",
+          sort: ["createdDate,desc"],
         },
       })
     );
@@ -152,7 +114,34 @@ export const ProductTablePage = () => {
         selectedRowKeys={selectedRowKeys}
       />
       <Table
-        onChange={onChange}
+        onChange={(pagination, filters, sorter) => {
+          console.log(sorter);
+
+          const sort =
+            sorter && Object.keys(sorter).length > 0 // Kiểm tra nếu sorter không phải là đối tượng rỗng
+              ? (Array.isArray(sorter) // Kiểm tra nếu sorter là một mảng
+                  ? sorter // Nếu là mảng, giữ nguyên
+                  : [sorter]
+                ).map(
+                  (it) =>
+                    `${it.field},${it.order === "ascend" ? "asc" : "desc"}`
+                )
+              : []; // Nếu là đối tượng, biến thành mảng rỗng
+
+          dispatch(
+            fetchProductsAction({
+              queryParams: {
+                page: pagination.current ? pagination.current - 1 : 0,
+                pageSize: pagination.pageSize,
+                sort,
+                status:
+                  filters && filters["status"]
+                    ? (filters["status"][0] as boolean)
+                    : undefined,
+              },
+            })
+          );
+        }}
         pagination={{
           total: page.totalElements,
           pageSize: page.size,
@@ -168,7 +157,7 @@ export const ProductTablePage = () => {
           onChange: (newSelectedRowKeys) =>
             setSelectedRowKeys(newSelectedRowKeys),
         }}
-        columns={columns}
+        columns={getColumns()}
         dataSource={page.content.map((it, index) => ({
           ...it,
           key: it.id,
@@ -181,7 +170,7 @@ export const ProductTablePage = () => {
             />
           ),
           categories: [""].join(", "),
-          createdAt: it.createdDate.toLocaleString(),
+          createdDate: it.createdDate.toLocaleString(),
           status: (
             <Tag
               icon={
@@ -260,11 +249,60 @@ const tableRowActions = [
   },
 ];
 
-const onChange: TableProps["onChange"] = (
-  pagination,
-  filters,
-  sorter,
-  extra
-) => {
-  console.log("params", pagination, filters, sorter, extra);
+const getColumns = () => {
+  return [
+    {
+      title: "No.",
+      dataIndex: "no",
+    },
+    {
+      title: "__________Name",
+      dataIndex: "name",
+      showSorterTooltip: { target: "full-header" },
+      sorter: {
+        multiple: 2,
+      },
+    },
+    {
+      title: "Categories",
+      dataIndex: "categories",
+      filters: [
+        {
+          text: "Active",
+          value: true,
+        },
+        {
+          text: "Inactive",
+          value: false,
+        },
+      ],
+    },
+    {
+      title: "Created Date",
+      dataIndex: "createdDate",
+      showSorterTooltip: { target: "full-header" },
+      sorter: {
+        multiple: 1,
+      },
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      filters: [
+        {
+          text: "Active",
+          value: true,
+        },
+        {
+          text: "Inactive",
+          value: false,
+        },
+      ],
+      filterMultiple: false,
+    },
+    {
+      title: "Actions",
+      dataIndex: "actions",
+    },
+  ] as TableColumnsType;
 };

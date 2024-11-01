@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
-import { Avatar, Badge, Button, Divider, Drawer, List, Popconfirm } from "antd";
-import { CloseOutlined, ShoppingCartOutlined } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
-import EmptyNotice from "../atoms/EmptyNotice.tsx";
-import { useNavigate } from "react-router-dom";
-import { RootState } from "@/redux/store.ts";
 import { QuantityInput } from "@/components/molecules/QuantityInput.tsx";
 import { deleteCartRequest, fetchCartsAction } from "@/redux/modules/cart.ts";
+import { RootState } from "@/redux/store.ts";
 import { currencyFormat, getThumbnail } from "@/utils/common.ts";
+import { CloseOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+import { Avatar, Badge, Button, Divider, Drawer, List, Popconfirm } from "antd";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import EmptyNotice from "../atoms/EmptyNotice.tsx";
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ export default function Cart() {
           page: 0,
           pageSize: 10,
           status: true,
-          sort: "createdDate,desc",
+          sort: ["createdDate,desc"],
         },
       }),
     );

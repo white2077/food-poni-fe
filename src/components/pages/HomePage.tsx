@@ -33,7 +33,7 @@ export const HomePage = () => {
             queryParams: {
               page: 0,
               pageSize: 10,
-              sort: "sales,desc",
+              sort: ["sales,desc"],
               status: true,
             },
           })}

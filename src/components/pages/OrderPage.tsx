@@ -30,7 +30,7 @@ export const OrderPage = () => {
       fetchOrdersAction({
         queryParams: {
           page: 0,
-          sort: "createdDate,desc",
+          sort: ["createdDate,desc"],
           pageSize: 10,
           orderStatus: status,
         },
@@ -118,7 +118,7 @@ export const OrderPage = () => {
                     fetchOrdersAction({
                       queryParams: {
                         page: page - 1,
-                        sort: "createdDate,desc",
+                        sort: ["createdDate,desc"],
                         pageSize: 10,
                         orderStatus: status,
                       },

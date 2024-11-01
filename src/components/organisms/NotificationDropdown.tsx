@@ -21,7 +21,7 @@ import {
   deleteCartGroupSuccess,
   deleteCartItemSuccess,
   leaveCartGroupSuccess,
-  updateCartItemQuantitySuccess
+  updateCartItemQuantitySuccess,
 } from "@/redux/modules/cartGroup";
 import {
   fetchNotificationsAction,
@@ -49,7 +49,7 @@ export default function NotificationDropdown() {
   useEffect(() => {
     dispatch(
       fetchNotificationsAction({
-        queryParams: { page: 0, pageSize: 10, sort: "createdDate,desc" },
+        queryParams: { page: 0, pageSize: 10, sort: ["createdDate,desc"] },
       })
     );
   }, [dispatch]);
@@ -168,7 +168,7 @@ export default function NotificationDropdown() {
                   deleteCartGroupSuccess({
                     roomId: cartGroupEvent.roomId,
                   })
-                );         
+                );
               }
 
               // console.log(message.body);
@@ -212,7 +212,7 @@ export default function NotificationDropdown() {
                           queryParams: {
                             page: 0,
                             pageSize: 10,
-                            sort: "createdDate,desc",
+                            sort: ["createdDate,desc"],
                           },
                         })
                       );
@@ -223,7 +223,7 @@ export default function NotificationDropdown() {
                           queryParams: {
                             page: 0,
                             pageSize: 10,
-                            sort: "createdDate,desc",
+                            sort: ["createdDate,desc"],
                             read: "false",
                           },
                         })
@@ -235,7 +235,7 @@ export default function NotificationDropdown() {
                           queryParams: {
                             page: 0,
                             pageSize: 10,
-                            sort: "createdDate,desc",
+                            sort: ["createdDate,desc"],
                             read: "true",
                           },
                         })
