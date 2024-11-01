@@ -5,6 +5,7 @@ import {
   getUserById,
   login,
   refreshToken,
+  registerUser,
   updateCurrentUserAddress,
 } from "@/utils/api/auth.ts";
 import { setAccessToken } from "@/utils/axiosConfig";
@@ -220,13 +221,20 @@ const authSlice = createSlice({
             errorMessage = "Username không hợp lệ";
             break;
           }
-          if (action.payload.value.length < 5) {
+          if (action.payload.value.length < 6) {
             errorMessage = "Username phải có ít nhất 6 ký tự";
+            break;
+          }
+          if (action.payload.value.length > 50) {
+            errorMessage = "Username không được vượt quá 50 ký tự";
             break;
           }
           break;
         case "email":
-          if (!/^[^\s@]+@[^\s@]+.[^\s@]+$/.test(action.payload.value)) {
+          if (
+            action.payload.value !== "" &&
+            !/^[^\s@]+@[^\s@]+.[^\s@]+$/.test(action.payload.value)
+          ) {
             errorMessage = "Email không hợp lệ";
             break;
           }
@@ -236,8 +244,16 @@ const authSlice = createSlice({
             errorMessage = "Password không được để trống";
             break;
           }
+          if (action.payload.value.includes(" ")) {
+            errorMessage = "Password không hợp lệ";
+            break;
+          }
           if (action.payload.value.length < 6) {
             errorMessage = "Password phải có ít nhất 6 ký tự";
+            break;
+          }
+          if (action.payload.value.length > 50) {
+            errorMessage = "Password không được vượt quá 50 ký tự";
             break;
           }
           break;
@@ -375,12 +391,41 @@ function* handleLogin() {
 function* handleRegisterUser() {
   while (true) {
     const {
-      payload: { navigate },
+      payload: { values },
     }: ReturnType<typeof registerUserAction> = yield take(
       registerUserAction.type,
     );
 
-    console.log(navigate);
+    try {
+      yield put(registerUserRequest());
+
+      yield call(registerUser, values);
+
+      const loginRes: AuthResponse = yield call(login, {
+        username: values.username,
+        password: values.password,
+      });
+
+      yield put(registerUserSuccess());
+
+      yield put(
+        updateCurrentUserSuccess(
+          jwtDecode(loginRes.refreshToken) as AuthState["currentUser"],
+        ),
+      );
+
+      Cookies.set(REFRESH_TOKEN, loginRes.refreshToken, { expires: 7 });
+
+      window.location.href = "/";
+    } catch (e) {
+      notification.open({
+        message: "Error",
+        description: e.message,
+        type: "error",
+      });
+
+      yield put(registerUserFailure(e.response?.data || {}));
+    }
   }
 }
 

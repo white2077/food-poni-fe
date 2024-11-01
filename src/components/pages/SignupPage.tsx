@@ -19,9 +19,7 @@ export const SignupPage = () => {
     return map;
   }, new Map<string, string>());
 
-  const isFormValid =
-    !formEditing.isDirty &&
-    formEditing.fields.every((field) => field.value !== "");
+  const isFormValid = formEditing.isDirty;
 
   return (
     <div className='font-medium bg-[url("/logo-bg.jpeg")] bg-cover bg-center bg-no-repeat h-screen flex justify-center  items-center'>
@@ -48,7 +46,9 @@ export const SignupPage = () => {
           <Form
             name="signup"
             onFinish={(values) => {
-              dispatch(registerUserAction({ values, navigate }));
+              const { email, ...restValues } = values;
+              const payload = email ? { ...restValues, email } : restValues;
+              dispatch(registerUserAction({ values: payload, navigate }));
             }}
           >
             <Form.Item
@@ -63,7 +63,7 @@ export const SignupPage = () => {
                     updateFormEditingSuccess({
                       field: "username",
                       value: e.target.value,
-                    })
+                    }),
                   )
                 }
               />
@@ -81,7 +81,7 @@ export const SignupPage = () => {
                     updateFormEditingSuccess({
                       field: "email",
                       value: e.target.value,
-                    })
+                    }),
                   )
                 }
               />
@@ -99,7 +99,7 @@ export const SignupPage = () => {
                     updateFormEditingSuccess({
                       field: "password",
                       value: e.target.value,
-                    })
+                    }),
                   )
                 }
               />
