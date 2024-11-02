@@ -198,6 +198,7 @@ export type Product = {
   readonly rateCount: number;
   readonly minPrice: number;
   readonly maxPrice: number;
+  readonly productCategories: Array<ProductCategory>;
   readonly toppings: Array<{
     readonly id: string;
     readonly name: string;
@@ -269,4 +270,10 @@ export type ShippingAddress = {
   readonly fullName: string;
   readonly phoneNumber: string;
   readonly address: string;
+};
+
+export type Topping = {
+  readonly id: string;
+  readonly name: string;
+  readonly price: number;
 };

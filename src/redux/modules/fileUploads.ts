@@ -4,6 +4,7 @@ import { notification } from "antd";
 import { FileUpload, Page } from "@/type/types";
 import { getFileUploads, uploadFile } from "@/utils/api/fileUploads";
 import { RootState } from "@/redux/store";
+import { QueryParams } from "@/utils/api/common";
 
 export type FileUploadsState = {
   readonly page: Page<FileUpload[]>;
@@ -43,11 +44,14 @@ const fileUploadsSlice = createSlice({
   name: SLICE_NAME,
   initialState,
   reducers: {
-    fetchFileUploadsRequest: (state) => ({
+    updateFetchLoadingSuccess: (state) => ({
       ...state,
       isFetchLoading: true,
     }),
-    fetchFileUploadsSuccess: (state, action: PayloadAction<{ page: Page<FileUpload[]> }>) => ({
+    fetchFileUploadsSuccess: (
+      state,
+      action: PayloadAction<{ page: Page<FileUpload[]> }>
+    ) => ({
       ...state,
       page: action.payload.page,
       isFetchLoading: false,
@@ -86,7 +90,10 @@ const fileUploadsSlice = createSlice({
       ...state,
       showModalFileUpload: action.payload,
     }),
-    updateFileUploadForm: (state, action: PayloadAction<Partial<FileUploadsState['form']>>) => ({
+    updateFileUploadForm: (
+      state,
+      action: PayloadAction<Partial<FileUploadsState["form"]>>
+    ) => ({
       ...state,
       form: { ...state.form, ...action.payload },
     }),
@@ -94,7 +101,7 @@ const fileUploadsSlice = createSlice({
 });
 
 export const {
-  fetchFileUploadsRequest,
+  updateFetchLoadingSuccess,
   fetchFileUploadsSuccess,
   fetchFileUploadsFailure,
   uploadFileRequest,
@@ -108,15 +115,17 @@ export const {
 
 export default fileUploadsSlice.reducer;
 
-export const fetchFileUploadsAction = createAction(`${SLICE_NAME}/fetchFileUploadsAction`);
+export const fetchFileUploadsAction = createAction<{
+  queryParams: QueryParams;
+}>(`${SLICE_NAME}/fetchFileUploadsAction`);
 export const uploadFileAction = createAction(`${SLICE_NAME}/uploadFileAction`);
 
 function* handleFetchFileUploads() {
   while (true) {
-    yield take(fetchFileUploadsAction);
+    const {payload: { queryParams }} : ReturnType<typeof fetchFileUploadsAction> =  yield take(fetchFileUploadsAction);
     try {
-      yield put(fetchFileUploadsRequest());
-      const page: Page<FileUpload[]> = yield call(getFileUploads);
+      yield put(updateFetchLoadingSuccess());
+      const page: Page<FileUpload[]> = yield call(getFileUploads, queryParams);
       yield put(fetchFileUploadsSuccess({ page }));
     } catch (e) {
       notification.open({

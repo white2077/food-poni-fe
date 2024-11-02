@@ -5,6 +5,7 @@ export type QueryParams = {
   orderStatus?: string | null;
   sort?: string[] | null;
   read?: string | null;
+  slug?: string | null;
   // body?: z.infer<typeof productSchema>;
 };
 
@@ -12,11 +13,11 @@ export default function generateQueryString(
   url: string,
   params?: QueryParams
 ): string {
-  const { page, pageSize, status, orderStatus, sort, read } =
+  const { page, pageSize, status, orderStatus, sort, read, slug } =
     params ?? ({} as QueryParams);
   let queryString = "";
 
-  if (page || pageSize || status || orderStatus || sort) {
+  if (page || pageSize || status || orderStatus || sort || read || slug) {
     queryString += "?";
 
     if (page) {
@@ -56,6 +57,13 @@ export default function generateQueryString(
         queryString += "&";
       }
       queryString += `read=${read}`;
+    }
+
+    if (slug) {
+      if (queryString.length > 1) {
+        queryString += "&";
+      }
+      queryString += `slug=${slug}`;
     }
   }
 

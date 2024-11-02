@@ -5,13 +5,12 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
   CopyOutlined,
+  DashOutlined,
   DeleteOutlined,
   DownloadOutlined,
   EditOutlined,
   EyeOutlined,
   ImportOutlined,
-  LoginOutlined,
-  PlusCircleOutlined,
 } from "@ant-design/icons";
 import {
   Badge,
@@ -28,8 +27,9 @@ import {
 } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import { AvatarInfo } from "../atoms/AvatarInfo";
+import { ProductModalCreate } from "../organisms/ProductModalCreate";
+import { ProductModalEdit } from "../organisms/ProductModalEdit";
 import { AdminLayout } from "../templates/AdminLayout";
 const { useToken } = theme;
 
@@ -76,13 +76,7 @@ const TableToolbar = ({
         Import
       </Button>
 
-      <Button
-        type="primary"
-        icon={<PlusCircleOutlined />}
-        style={{ marginRight: "10px" }}
-      >
-        Add New
-      </Button>
+      <ProductModalCreate />
     </Col>
   </Flex>
 );
@@ -187,14 +181,15 @@ export const ProductTablePage = () => {
               placement="bottomLeft"
               arrow={{ pointAtCenter: true }}
               menu={{
-                items: tableRowActions.map((item) => ({
-                  ...item,
-                  label: (
-                    <Link to={`/admin/product-details/${it.id}`}>
-                      {item.label}
-                    </Link>
-                  ),
-                })),
+                items: tableRowActions.map((item) => {
+                  if (item.key === "1") {
+                    return {
+                      ...item,
+                      label: <ProductModalEdit product={it} />,
+                    };
+                  }
+                  return item;
+                }),
               }}
               dropdownRender={(menu) => (
                 <div
@@ -221,7 +216,9 @@ export const ProductTablePage = () => {
                 </div>
               )}
             >
-              <LoginOutlined />
+              <div className="text-center">
+                <DashOutlined />
+              </div>
             </Dropdown>
           ),
         }))}

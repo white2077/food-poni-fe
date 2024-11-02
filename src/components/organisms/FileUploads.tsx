@@ -24,7 +24,7 @@ export default function FileUploads() {
   const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
-    dispatch(fetchFileUploadsAction());
+    dispatch(fetchFileUploadsAction({ queryParams: {} }));
   }, [dispatch]);
 
   return (

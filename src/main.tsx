@@ -5,7 +5,9 @@ import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "../styles/globals.scss";
 import { AuthProvider } from "./components/AuthProvider";
+import { AdminProductDetailPage } from "./components/pages/AdminProductDetailPage";
 import { CheckoutPage } from "./components/pages/CheckoutPage";
+import { FileManagementPage } from "./components/pages/FileManagementPage";
 import { HomePage } from "./components/pages/HomePage";
 import { LoginPage } from "./components/pages/LoginPage";
 import { OrderDetailPage } from "./components/pages/OrderDetailPage";
@@ -14,8 +16,6 @@ import { ProductCategoryPage } from "./components/pages/ProductCategoryPage";
 import { ProductDetailPage } from "./components/pages/ProductDetailPage";
 import { ProductTablePage } from "./components/pages/ProductTablePage";
 import { SignupPage } from "./components/pages/SignupPage";
-import { AdminProductDetailPage } from "./components/pages/AdminProductDetailPage";
-import { FileManagementPage } from "./components/pages/FileManagementPage";
 
 const router = createBrowserRouter([
   // Public routes

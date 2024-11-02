@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { ProductForm } from "../organisms/ProductForm";
+import { ProductForm } from "../molecules/ProductForm";
 import { AdminLayout } from "../templates/AdminLayout";
 import { useEffect } from "react";
 

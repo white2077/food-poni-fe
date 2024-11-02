@@ -1,17 +1,24 @@
-import {
-  AppstoreOutlined,
-  MailOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
-import { Checkbox, Col, Flex, Menu, Popover } from "antd";
+import { fetchFileUploadsAction } from "@/redux/modules/fileUploads";
+import { RootState } from "@/redux/store";
+import { FolderOutlined } from "@ant-design/icons";
+import { Col, Flex, Menu, Popover, Spin } from "antd";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { FileCard } from "../atoms/FileCard";
 import { AdminLayout } from "../templates/AdminLayout";
 
 export const FileManagementPage = () => {
+  const dispatch = useDispatch();
+
   return (
     <AdminLayout>
       <Flex gap="16px">
         <FileTree />
-        <FileContent files="FIXME" />
+        <FileContent
+          fetchFileUploads={() =>
+            dispatch(fetchFileUploadsAction({ queryParams: {} }))
+          }
+        />
       </Flex>
     </AdminLayout>
   );
@@ -19,81 +26,73 @@ export const FileManagementPage = () => {
 
 export const FileTree = () => (
   <Col flex="200px">
-    <Menu theme="light" mode="inline" defaultOpenKeys={["1"]} items={items} />
+    <Menu
+      theme="light"
+      mode="inline"
+      defaultOpenKeys={["1"]}
+      items={[
+        {
+          key: "1",
+          icon: <FolderOutlined />,
+          label: "/public",
+        },
+        {
+          key: "2",
+          icon: <FolderOutlined />,
+          label: "/folder-01",
+        },
+      ]}
+    />
   </Col>
 );
 
-export const FileContent = (files: { files: string }) => (
-  <Col flex="auto">
-    <Flex wrap="wrap">
-      <Popover content={"ehhehe"} placement="bottom">
-        <div className="relative p-2 rounded-lg w-fit">
-          <Checkbox
-            checked={true}
-            className="absolute top-0 right-0 z-50"
-            value="A"
-          />
-          <img
-            className="h-20 w-20 rounded-lg"
-            src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"
-            onClick={() => {
-              console.log(files);
-            }}
-          />
-        </div>
-      </Popover>
-    </Flex>
-  </Col>
-);
+export const FileContent = ({
+  fetchFileUploads,
+  onSelected,
+  multiple = false,
+}: {
+  fetchFileUploads: () => void;
+  onSelected?: (items: Array<string>) => void;
+  multiple?: boolean;
+}) => {
+  const { page, isFetchLoading } = useSelector(
+    (state: RootState) => state.fileUpload
+  );
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
-const items = [
-  {
-    key: "1",
-    icon: <MailOutlined />,
-    label: "Navigation One",
-    children: [
-      { key: "11", label: "Option 1" },
-      { key: "12", label: "Option 2" },
-      { key: "13", label: "Option 3" },
-      { key: "14", label: "Option 4" },
-    ],
-  },
-  {
-    key: "2",
-    icon: <AppstoreOutlined />,
-    label: "Navigation Two",
-    children: [
-      { key: "21", label: "Option 1" },
-      { key: "22", label: "Option 2" },
-      {
-        key: "23",
-        label: "Submenu",
-        children: [
-          { key: "231", label: "Option 1" },
-          { key: "232", label: "Option 2" },
-          { key: "233", label: "Option 3" },
-        ],
-      },
-      {
-        key: "24",
-        label: "Submenu 2",
-        children: [
-          { key: "241", label: "Option 1" },
-          { key: "242", label: "Option 2" },
-          { key: "243", label: "Option 3" },
-        ],
-      },
-    ],
-  },
-  {
-    key: "3",
-    icon: <SettingOutlined />,
-    label: "Navigation Three",
-    children: [
-      { key: "31", label: "Option 1" },
-      { key: "32", label: "Option 2" },
-      { key: "33", label: "Option 3" },
-      { key: "34", label: "Option 4" },
-    ],
-  },
-];
+  useEffect(() => {
+    fetchFileUploads();
+  }, []);
+
+  if (isFetchLoading) {
+    return <Spin />;
+  }
+
+  return (
+    <Col flex="auto">
+      <Flex wrap="wrap">
+        {page.content.map((it, index) => (
+          <Popover key={index} content={<div>{it.url}</div>} placement="bottom">
+            <FileCard
+              url={it.url}
+              isCheck={selectedItems.includes(it.url)}
+              handleOnSelected={() => {
+                if (!multiple && setSelectedItems) {
+                  if (!selectedItems.includes(it.url)) {
+                    setSelectedItems([it.url]);
+                    onSelected && onSelected([it.url]);
+                  } else {
+                    setSelectedItems(
+                      selectedItems.filter((url) => url !== it.url)
+                    );
+                    onSelected && onSelected([it.url]);
+                  }
+                }
+              }}
+            />
+          </Popover>
+        ))}
+      </Flex>
+    </Col>
+  );
+};

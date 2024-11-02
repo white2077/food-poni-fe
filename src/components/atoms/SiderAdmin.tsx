@@ -1,7 +1,10 @@
 import {
+  DashboardOutlined,
   FileOutlined,
-  UserOutlined,
-  VideoCameraOutlined
+  ShoppingCartOutlined,
+  ShoppingOutlined,
+  VideoCameraOutlined,
+  WifiOutlined
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import Sider, { SiderTheme } from "antd/es/layout/Sider";
@@ -43,7 +46,7 @@ export const SiderAdmin = ({ theme }: { theme: SiderTheme }) => (
 const items: ItemType<MenuItemType>[] = [
   {
     key: "/admin/dashboard",
-    icon: <UserOutlined />,
+    icon: <DashboardOutlined />,
     label: <Link to="/admin/dashboard">Dashboard</Link>,
   },
   {
@@ -53,17 +56,17 @@ const items: ItemType<MenuItemType>[] = [
   },
   {
     key: "/admin/order-management",
-    icon: <VideoCameraOutlined />,
+    icon: <ShoppingCartOutlined />,
     label: "Order Management",
     children: [
       {
         key: "/admin/orders-realtime",
-        icon: <VideoCameraOutlined />,
+        icon: <WifiOutlined />,
         label: <Link to="/admin/orders-realtime">Orders Realtime</Link>,
       },
       {
         key: "/admin/orders-table",
-        icon: <VideoCameraOutlined />,
+        icon: <ShoppingOutlined />,
         label: <Link to="/admin/orders-table">Orders</Link>,
       },
     ],
