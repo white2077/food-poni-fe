@@ -5,9 +5,9 @@ import { Order } from "@/type/types";
 import { Badge, List, Segmented, Space } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ProductLoading } from "../atoms/ProductLoading";
 import OrderCard from "../molecules/OrderCard";
 import { ManagementLayout } from "../templates/ManagementLayout";
+import { LoadingPage } from "./LoadingPage";
 
 const ORDER_STATUSES = [
   { label: "Chờ xác nhận", value: "PENDING" },
@@ -39,7 +39,7 @@ export const OrderPage = () => {
   }, [dispatch, status]);
 
   if (page.content.length < 1 && isFetchLoading) {
-    return <ProductLoading />;
+    return <LoadingPage />;
   }
 
   return (

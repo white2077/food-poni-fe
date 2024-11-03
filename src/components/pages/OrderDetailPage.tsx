@@ -17,7 +17,9 @@ import { ManagementLayout } from "../templates/ManagementLayout.tsx";
 export const OrderDetailPage = () => {
   const { orderId } = useParams<{ orderId: string }>();
   const dispatch = useDispatch();
-  const { selectedOrder } = useSelector((state: RootState) => state.order);
+  const { selectedOrder, isFetchLoading } = useSelector(
+    (state: RootState) => state.order
+  );
 
   useEffect(() => {
     if (orderId) {
@@ -25,10 +27,14 @@ export const OrderDetailPage = () => {
     }
   }, [orderId, dispatch]);
 
-  if (!selectedOrder) {
-    return <ProductLoading />;
+  if (!selectedOrder || isFetchLoading) {
+    return (
+      <ManagementLayout>
+        <ProductLoading />
+      </ManagementLayout>
+    );
   }
-
+  
   return (
     <ManagementLayout>
       <div className="container mx-auto px-4 py-8">

@@ -1,21 +1,21 @@
-import { useDispatch, useSelector } from "react-redux";
-import { Params, useParams } from "react-router-dom";
-import { RootState } from "@/redux/store.ts";
-import { useEffect } from "react";
-import ProductGallery from "@/components/molecules/ProductGallery";
-import { Card, Checkbox, Radio, Rate } from "antd";
 import ReadMore from "@/components/atoms/ReadMore";
-import { ProductLoading } from "@/components/atoms/ProductLoading";
+import ProductGallery from "@/components/molecules/ProductGallery";
 import ProductCart from "@/components/organisms/ProductCart";
-import ProductRate from "../organisms/ProductRate";
 import {
   fetchProductAction,
   updateProductDetailSelectedSuccess,
   updateToppingsSelectedSuccess,
   updateTypeSelectedSuccess,
 } from "@/redux/modules/product.ts";
+import { RootState } from "@/redux/store.ts";
 import { currencyFormat } from "@/utils/common.ts";
+import { Card, Checkbox, Radio, Rate } from "antd";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Params, useParams } from "react-router-dom";
+import ProductRate from "../organisms/ProductRate";
 import { DefaultLayout } from "../templates/DefaultLayout";
+import { LoadingPage } from "./LoadingPage";
 
 export const ProductDetailPage = () => {
   const { pathVariable } = useParams<Params<string>>();
@@ -34,7 +34,7 @@ export const ProductDetailPage = () => {
   }, [dispatch, pathVariable]);
 
   if (productDetails.length < 1) {
-    return <ProductLoading />;
+    return <LoadingPage />;
   }
 
   return (

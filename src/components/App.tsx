@@ -1,14 +1,14 @@
+import { router } from "@/main";
 import { fetchUserAction } from "@/redux/modules/auth";
 import { RootState } from "@/redux/store";
 import { REFRESH_TOKEN } from "@/utils/server";
+import { Button, Result } from "antd";
+import Cookies from "js-cookie";
 import jwtDecode from "jwt-decode";
 import { ReactNode, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ProductLoading } from "./atoms/ProductLoading";
-import Cookies from "js-cookie";
 import { Link, RouterProvider } from "react-router-dom";
-import { router } from "@/main";
-import { Button, Result } from "antd";
+import { LoadingPage } from "./pages/LoadingPage";
 
 export type CurrentUserNotNull = {
   readonly role: "RETAILER" | "CUSTOMER" | "VIP";
@@ -39,7 +39,7 @@ export const App = () => {
   }, [dispatch, refresh_token]);
 
   if (refresh_token && !currentUser) {
-    return <ProductLoading />;
+    return <LoadingPage  />;
   }
   return (
     <RouterProvider

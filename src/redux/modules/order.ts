@@ -96,11 +96,11 @@ const orderSlice = createSlice({
     fetchOrderSuccess: (state, action: PayloadAction<{ order: Order }>) => ({
       ...state,
       selectedOrder: action.payload.order,
-      isLoadingSelectedOrder: false,
+      isFetchLoading: false,
     }),
     fetchOrderFailure: (state) => ({
       ...state,
-      isLoadingSelectedOrder: false,
+      isFetchLoading: false,
     }),
     createOrderSuccess: (state) => ({
       ...state,
