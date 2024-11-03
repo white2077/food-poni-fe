@@ -11,7 +11,7 @@ import { useForm } from "antd/es/form/Form";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ScrollPane } from "../atoms/ScrollPane";
-import { ImagesSelector } from "./ImagesSelector";
+import { ImageSelector } from "./ImageSelector";
 
 const validateMessages = {
   required: "${label} is required!",
@@ -75,10 +75,10 @@ export const ProductForm = ({ product }: { product?: Product }) => {
           <Input disabled />
         </Form.Item>
         <Form.Item name="thumbnail" label="Thumbnail">
-          <ImagesSelector
+          <ImageSelector
             className="w-[120px] h-[120px]"
             value={form.getFieldValue("thumbnail")}
-            onOke={(values) => form.setFieldsValue({ thumbnail: values[0] })}
+            onOke={(value) => form.setFieldsValue({ thumbnail: value })}
           />
         </Form.Item>
         <div className="w-full">

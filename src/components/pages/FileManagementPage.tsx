@@ -47,21 +47,27 @@ export const FileTree = () => (
 );
 
 export const FileContent = ({
+  defaultSelectedValues,
+  multiple = false,
   fetchFileUploads,
   onSelected,
-  multiple = false,
 }: {
+  defaultSelectedValues?: Array<string>;
+  multiple?: boolean;
   fetchFileUploads: () => void;
   onSelected?: (items: Array<string>) => void;
-  multiple?: boolean;
 }) => {
   const { page, isFetchLoading } = useSelector(
     (state: RootState) => state.fileUpload
   );
+
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   useEffect(() => {
+    setSelectedItems(defaultSelectedValues || []);
     fetchFileUploads();
+    return () => {};
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (isFetchLoading) {
@@ -72,24 +78,38 @@ export const FileContent = ({
     <Col flex="auto">
       <Flex wrap="wrap">
         {page.content.map((it, index) => (
-          <Popover key={index} content={<div>{it.url}</div>} placement="bottom">
-            <FileCard
-              url={it.url}
-              isCheck={selectedItems.includes(it.url)}
-              handleOnSelected={() => {
-                if (!multiple && setSelectedItems) {
-                  if (!selectedItems.includes(it.url)) {
-                    setSelectedItems([it.url]);
-                    onSelected && onSelected([it.url]);
-                  } else {
-                    setSelectedItems(
-                      selectedItems.filter((url) => url !== it.url)
-                    );
-                    onSelected && onSelected([]);
-                  }
+          <Popover
+            key={index}
+            content={<div>{it.extension}</div>}
+            placement="bottom"
+          >
+            <>
+              <FileCard
+                url={it.url}
+                isCheck={
+                  selectedItems.length > 0
+                    ? selectedItems.includes(it.url)
+                    : (defaultSelectedValues &&
+                        defaultSelectedValues.includes(it.url)) ||
+                      false
                 }
-              }}
-            />
+                handleOnSelected={() => {
+                  if (onSelected) {
+                    if (!multiple && setSelectedItems) {
+                      if (!selectedItems.includes(it.url)) {
+                        setSelectedItems([it.url]);
+                        onSelected([it.url]);
+                      } else {
+                        setSelectedItems(
+                          selectedItems.filter((url) => url !== it.url)
+                        );
+                        onSelected([]);
+                      }
+                    }
+                  }
+                }}
+              />
+            </>
           </Popover>
         ))}
       </Flex>

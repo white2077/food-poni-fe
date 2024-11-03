@@ -190,6 +190,7 @@ export default function NotificationDropdown() {
         sock.close();
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
