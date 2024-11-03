@@ -28,7 +28,7 @@ import { ManagementLayout } from "../templates/ManagementLayout";
 
 const { confirm } = Modal;
 
-export default function AccountInformationPage() {
+export const AccountInformationPage = () => {
   const { currentUser } = useSelector((state: RootState) => state.auth);
   const [showAddAddress, setShowAddAddress] = useState<boolean>(false);
   const [openUpdate, setOpenUpdate] = useState(false);
@@ -195,7 +195,7 @@ export default function AccountInformationPage() {
                       />
                     </div>
                   </div>
-                  <div className="col-span-3 w-[100%] flex items-center">
+                  <div className="col-span-3 w-full flex items-center">
                     <div className="px-4 sm:grid sm:grid-cols-[1fr,2fr] sm:gap-4 sm:px-0 ">
                       <dt className="text-[15px] flex items-center font-sans">
                         Họ & Tên
@@ -205,7 +205,7 @@ export default function AccountInformationPage() {
                   </div>
                 </div>
                 <div className="grid lg:grid-cols-4 mt-4">
-                  <div className="col-span-1 w-[100%]">
+                  <div className="col-span-1 w-full">
                     <div className="flex justify-start items-center gap-5">
                       Ngày sinh
                     </div>
@@ -213,7 +213,7 @@ export default function AccountInformationPage() {
                   <ComboboxDate user={user} />
                 </div>
                 <div className="grid lg:grid-cols-4 mt-8">
-                  <div className="col-span-1 w-[100%]">
+                  <div className="col-span-1 w-full">
                     <div className="flex justify-start items-center gap-5">
                       Giới tính
                     </div>
@@ -247,8 +247,8 @@ export default function AccountInformationPage() {
                         Email
                       </h3>
                       <div className="p-4 grid gap-3">
-                        <div className="flex items-center gap-2 justify-between w-[100%]">
-                          <div className="flex items-center gap-2 w-[100%]">
+                        <div className="flex items-center gap-2 justify-between w-full">
+                          <div className="flex items-center gap-2 w-full">
                             <MailOutlined />
                             <div className="text-lg text-gray-600 ml-2 ">
                               <div className="text-[15px]">Địa chỉ email</div>
@@ -266,8 +266,8 @@ export default function AccountInformationPage() {
                         Bảo mật
                       </h3>
                       <div className="p-4 grid gap-3">
-                        <div className="flex items-center gap-2 justify-between w-[100%]">
-                          <div className="flex items-center gap-2 w-[100%]">
+                        <div className="flex items-center gap-2 justify-between w-full">
+                          <div className="flex items-center gap-2 w-full">
                             <LockOutlined />
                             <div className="text-lg text-gray-600 ml-2 ">
                               <div className="text-[15px]">Đổi mật khẩu</div>
@@ -279,8 +279,8 @@ export default function AccountInformationPage() {
                         </div>
                       </div>
                       <div className="p-4 grid gap-3">
-                        <div className="flex items-center gap-2 justify-between w-[100%]">
-                          <div className="flex items-center gap-2 w-[100%]">
+                        <div className="flex items-center gap-2 justify-between w-full">
+                          <div className="flex items-center gap-2 w-full">
                             <SafetyCertificateOutlined />
                             <div className="text-lg text-gray-600 ml-2 ">
                               <div className="text-[15px]">Bảo mật</div>
@@ -290,8 +290,8 @@ export default function AccountInformationPage() {
                         </div>
                       </div>
                       <div className="p-4 grid gap-3">
-                        <div className="flex items-center gap-2 justify-between w-[100%]">
-                          <div className="flex items-center gap-2 w-[100%]">
+                        <div className="flex items-center gap-2 justify-between w-full">
+                          <div className="flex items-center gap-2 w-full">
                             <DeleteOutlined />
                             <div className="text-lg text-gray-600 ml-2  w-full">
                               <div className="text-[15px] w-full ">
@@ -308,8 +308,8 @@ export default function AccountInformationPage() {
                         Liên kết mạng xã hội
                       </h3>
                       <div className="p-4 grid gap-3">
-                        <div className="flex items-center gap-2 justify-between w-[100%]">
-                          <div className="flex items-center gap-2 w-[100%]">
+                        <div className="flex items-center gap-2 justify-between w-full">
+                          <div className="flex items-center gap-2 w-full">
                             <img
                               src={"/public/facebook.png"}
                               className="w-7 h-7"
@@ -322,8 +322,8 @@ export default function AccountInformationPage() {
                         </div>
                       </div>
                       <div className="p-4 grid gap-3">
-                        <div className="flex items-center gap-2 justify-between w-[100%]">
-                          <div className="flex items-center gap-2 w-[100%]">
+                        <div className="flex items-center gap-2 justify-between w-full">
+                          <div className="flex items-center gap-2 w-full">
                             <img
                               src={"/public/google.png"}
                               className="w-7 h-7"
@@ -345,4 +345,4 @@ export default function AccountInformationPage() {
       )}
     </ManagementLayout>
   );
-}
+};

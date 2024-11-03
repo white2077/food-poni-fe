@@ -2,6 +2,7 @@ import { RootState } from "@/redux/store.ts";
 import { getThumbnail } from "@/utils/common";
 import { REFRESH_TOKEN } from "@/utils/server.ts";
 import {
+  DashboardOutlined,
   LogoutOutlined,
   QuestionCircleOutlined,
   ShoppingOutlined,
@@ -12,9 +13,8 @@ import Cookies from "js-cookie";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-export function UserDropdown() {
+export function UserDropdown({ isAdmin }: { isAdmin?: boolean }) {
   const { currentUser } = useSelector((state: RootState) => state.auth);
-
   const navigate = useNavigate();
 
   const items = [
@@ -51,6 +51,22 @@ export function UserDropdown() {
     {
       key: "3",
       label: (
+        <span
+          onClick={() => navigate(`${isAdmin ? "/" : "/admin"}`)}
+          className="flex w-full h-full"
+        >
+          <span style={{ marginRight: "5px" }}>
+            <DashboardOutlined />
+          </span>
+          <div className="w-full">
+            Tới trang {isAdmin ? "cửa hàng" : "quản lý"}
+          </div>
+        </span>
+      ),
+    },
+    {
+      key: "4",
+      label: (
         <span onClick={() => "/"} className="flex w-full h-full">
           <span style={{ marginRight: "5px" }}>
             <QuestionCircleOutlined />
@@ -60,17 +76,16 @@ export function UserDropdown() {
       ),
     },
     {
-      key: "4",
+      key: "5",
       label: (
         <span
           onClick={() => {
             Cookies.remove(REFRESH_TOKEN);
-            navigate("/");
-            window.location.reload();
+            window.location.href = "/";
           }}
           className="flex w-full h-full"
         >
-          <span className="mr-4">
+          <span style={{ marginRight: "5px" }}>
             <LogoutOutlined />
           </span>
           <div className="w-full">Đăng xuất</div>
@@ -85,18 +100,27 @@ export function UserDropdown() {
     <Dropdown
       menu={{
         items: items.map((it) => {
-          if (it.key === "2" && currentUser.role === "RETAILER") return null;
+          if (
+            (it.key === "1" || it.key === "2") &&
+            currentUser.role === "RETAILER"
+          )
+            return null;
+          if (
+            it.key === "3" &&
+            (currentUser.role === "CUSTOMER" || currentUser.role === "VIP")
+          )
+            return null;
           return it;
         }),
       }}
       placement="bottomRight"
       trigger={["click"]}
-      className="hover:bg-gray-200 rounded-lg p-1.5 cursor-pointer h-[100%] "
+      className="hover:bg-gray-200 rounded-lg p-1.5 cursor-pointer h-full"
     >
       <a className="gap-1 flex items-center">
         {currentUser.avatar ? (
           <Avatar
-            className="w-8 h-8 rounded-[100%] border-orange-400 border-2 p-0"
+            className="w-8 h-8 rounded-full border-orange-400 border-2 p-0"
             src={getThumbnail(currentUser.avatar)}
           />
         ) : (

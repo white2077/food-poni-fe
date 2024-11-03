@@ -1,47 +1,48 @@
 import {
   DashboardOutlined,
   FileOutlined,
+  FundProjectionScreenOutlined,
+  ShopOutlined,
   ShoppingCartOutlined,
   ShoppingOutlined,
-  VideoCameraOutlined,
-  WifiOutlined
+  TableOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import Sider, { SiderTheme } from "antd/es/layout/Sider";
 import { ItemType, MenuItemType } from "antd/es/menu/interface";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-export const SiderAdmin = ({ theme }: { theme: SiderTheme }) => (
-  <Sider
-    theme={theme}
-    breakpoint="lg"
-    collapsedWidth="0"
-    onBreakpoint={(broken) => {
-      console.log(broken);
-    }}
-    onCollapse={(collapsed, type) => {
-      console.log(collapsed, type);
-    }}
-  >
-    <div
-      onClick={() => (window.location.href = "/")}
-      className="flex items-center gap-1 nunito p-2 text-orange-400 cursor-pointer hover:text-orange-500"
-    >
-      <img
-        src="/logo-02.png"
-        className="w-10 h-10 md:w-14 md:h-14"
-        alt="FoodPoni Logo"
+export const SiderAdmin = ({ theme }: { theme: SiderTheme }) => {
+  const location = useLocation();
+  return (
+    <Sider theme={theme} width={235}>
+      <div
+        onClick={() => (window.location.href = "/")}
+        className="flex items-center gap-1 nunito p-2 text-orange-400 cursor-pointer hover:text-orange-500"
+      >
+        <img
+          src="/logo-02.png"
+          className="w-10 h-10 md:w-14 md:h-14"
+          alt="FoodPoni Logo"
+        />
+        <div className="text-2xl">FoodPoni</div>
+      </div>
+      <Menu
+        theme={theme}
+        mode="inline"
+        defaultSelectedKeys={[location.pathname]}
+        items={items}
+        defaultOpenKeys={
+          location.pathname.includes("/admin/product")
+            ? ["/admin/product"]
+            : location.pathname.includes("/admin/order")
+              ? ["/admin/order"]
+              : []
+        }
       />
-      <div className="text-2xl">FoodPoni</div>
-    </div>
-    <Menu
-      theme={theme}
-      mode="inline"
-      defaultSelectedKeys={["/admin/dashboard"]}
-      items={items}
-    />
-  </Sider>
-);
+    </Sider>
+  );
+};
 
 const items: ItemType<MenuItemType>[] = [
   {
@@ -55,13 +56,13 @@ const items: ItemType<MenuItemType>[] = [
     label: <Link to="/admin/file-management">File Management</Link>,
   },
   {
-    key: "/admin/order-management",
+    key: "/admin/order",
     icon: <ShoppingCartOutlined />,
     label: "Order Management",
     children: [
       {
         key: "/admin/orders-realtime",
-        icon: <WifiOutlined />,
+        icon: <FundProjectionScreenOutlined />,
         label: <Link to="/admin/orders-realtime">Orders Realtime</Link>,
       },
       {
@@ -72,23 +73,25 @@ const items: ItemType<MenuItemType>[] = [
     ],
   },
   {
-    key: "/admin/product-management",
-    icon: <VideoCameraOutlined />,
-    label: "Order Management",
+    key: "/admin/product",
+    icon: <ShopOutlined />,
+    label: "Product Management",
     children: [
       {
         key: "/admin/products-table",
-        icon: <VideoCameraOutlined />,
+        icon: <TableOutlined />,
         label: <Link to="/admin/products-table">Products</Link>,
       },
       {
         key: "/admin/product-categories-table",
-        icon: <VideoCameraOutlined />,
-        label: <Link to="/admin/product-categories-table">Product Categories</Link>,
+        icon: <TableOutlined />,
+        label: (
+          <Link to="/admin/product-categories-table">Product Categories</Link>
+        ),
       },
       {
-        key: "/admin/toppings-table",
-        icon: <VideoCameraOutlined />,
+        key: "/admin/product-toppings-table",
+        icon: <TableOutlined />,
         label: <Link to="/admin/toppings-table">Toppings</Link>,
       },
     ],

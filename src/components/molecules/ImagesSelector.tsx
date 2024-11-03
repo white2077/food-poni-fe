@@ -56,16 +56,25 @@ export const ImagesSelector = ({
       <Modal
         title="Choose thumbnail"
         open={openDialog}
-        onOk={() => {
-          if (selectedItems.length > 0) {
-            onOke(selectedItems);
-            setOpenDialog(false);
-          }
-        }}
-        onCancel={() => {
-          setOpenDialog(false);
-        }}
         width={800}
+        footer={[
+          <Button key="back" onClick={() => setOpenDialog(false)}>
+            Cancel
+          </Button>,
+          <Button
+            key="link"
+            type="primary"
+            disabled={selectedItems.length === 0}
+            onClick={() => {
+              if (selectedItems.length > 0) {
+                onOke(selectedItems);
+                setOpenDialog(false);
+              }
+            }}
+          >
+            Choose
+          </Button>,
+        ]}
       >
         <Flex>
           <FileTree />

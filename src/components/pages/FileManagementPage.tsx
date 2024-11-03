@@ -85,7 +85,7 @@ export const FileContent = ({
                     setSelectedItems(
                       selectedItems.filter((url) => url !== it.url)
                     );
-                    onSelected && onSelected([it.url]);
+                    onSelected && onSelected([]);
                   }
                 }
               }}

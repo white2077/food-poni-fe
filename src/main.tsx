@@ -2,9 +2,10 @@ import store from "@/redux/store.ts";
 import { ConfigProvider } from "antd";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import "../styles/globals.scss";
 import { App, SecuredRoute } from "./components/App";
+import { AccountInformationPage } from "./components/pages/AccountInformationPage";
 import { AdminProductDetailPage } from "./components/pages/AdminProductDetailPage";
 import { CheckoutPage } from "./components/pages/CheckoutPage";
 import { DashboardPage } from "./components/pages/Dashboard";
@@ -17,7 +18,6 @@ import { ProductCategoryPage } from "./components/pages/ProductCategoryPage";
 import { ProductDetailPage } from "./components/pages/ProductDetailPage";
 import { ProductTablePage } from "./components/pages/ProductTablePage";
 import { SignupPage } from "./components/pages/SignupPage";
-import AccountInformationPage from "./components/pages/AccountInformationPage";
 
 export const router = (currentRole: "RETAILER" | "CUSTOMER" | "VIP") =>
   createBrowserRouter([
@@ -87,6 +87,10 @@ export const router = (currentRole: "RETAILER" | "CUSTOMER" | "VIP") =>
     {
       path: "/admin",
       children: [
+        {
+          index: true,
+          element: <Navigate to="/admin/dashboard" replace />,
+        },
         {
           path: "dashboard",
           element: (
