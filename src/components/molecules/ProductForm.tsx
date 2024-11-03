@@ -12,6 +12,10 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ScrollPane } from "../atoms/ScrollPane";
 import { ImageSelector } from "./ImageSelector";
+import {
+  createProductAction,
+  updateProductAction,
+} from "@/redux/modules/product";
 
 const validateMessages = {
   required: "${label} is required!",
@@ -22,6 +26,17 @@ const validateMessages = {
   number: {
     range: "${label} must be between ${min} and ${max}",
   },
+};
+
+export type ProductFormState = {
+  id: string;
+  name: string;
+  slug: string;
+  shortDescription: string;
+  thumbnail: string;
+  productCategories: string[];
+  toppings: string[];
+  types: string[];
 };
 
 let timeout: NodeJS.Timeout | null = null;
@@ -41,24 +56,23 @@ export const ProductForm = ({ product }: { product?: Product }) => {
     dispatch(fetchToppingsAction({ queryParams: {} }));
   }, [dispatch]);
 
-  const [form] = useForm<{
-    id: string;
-    name: string;
-    slug: string;
-    shortDescription: string;
-    productCategories: string[];
-    toppings: string[];
-    thumbnail: string;
-    type: string;
-    status: boolean;
-  }>();
+  const [form] = useForm<ProductFormState>();
 
   return (
     <Form
       form={form}
       onFinish={(value) => {
-        console.log(value);
-        form.resetFields();
+        dispatch(
+          value.id
+            ? updateProductAction({
+                product: value,
+                resetForm: () => form.resetFields(),
+              })
+            : createProductAction({
+                product: value,
+                resetForm: () => form.resetFields(),
+              })
+        );
       }}
       validateMessages={validateMessages}
       layout="vertical"

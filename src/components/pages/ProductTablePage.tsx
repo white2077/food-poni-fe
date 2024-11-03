@@ -1,4 +1,7 @@
-import { fetchProductsAction } from "@/redux/modules/product";
+import {
+  fetchProductsAction,
+  updateProductStatusAction,
+} from "@/redux/modules/product";
 import { RootState } from "@/redux/store";
 import { getThumbnail } from "@/utils/common";
 import {
@@ -11,6 +14,7 @@ import {
   EditOutlined,
   EyeOutlined,
   ImportOutlined,
+  RollbackOutlined,
 } from "@ant-design/icons";
 import {
   Badge,
@@ -85,7 +89,7 @@ export const ProductTablePage = () => {
   const dispatch = useDispatch();
   const { token } = useToken();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const { page, isFetchLoading } = useSelector(
+  const { page, isFetchLoading, isUpdateLoading } = useSelector(
     (state: RootState) => state.product
   );
 
@@ -206,10 +210,31 @@ export const ProductTablePage = () => {
                   })}
                   <Divider style={{ margin: 0 }} />
                   <div style={{ padding: 8 }}>
-                    <Popconfirm title="Sure to delete?" onConfirm={() => {}}>
-                      <Button className="w-full justify-start" type="primary">
-                        <DeleteOutlined />
-                        Delete
+                    <Popconfirm
+                      title="Sure to delete?"
+                      onConfirm={() =>
+                        dispatch(
+                          updateProductStatusAction({
+                            pid: it.id,
+                            status: !it.status,
+                          })
+                        )
+                      }
+                    >
+                      <Button
+                        className="w-full justify-start"
+                        type={it.status ? "primary" : "default"}
+                        loading={isUpdateLoading}
+                      >
+                        {it.status ? (
+                          <>
+                            <DeleteOutlined /> Delete
+                          </>
+                        ) : (
+                          <>
+                            <RollbackOutlined /> Restore
+                          </>
+                        )}
                       </Button>
                     </Popconfirm>
                   </div>

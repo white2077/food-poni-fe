@@ -1,26 +1,33 @@
-import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ProductFormState } from "@/components/molecules/ProductForm";
 import {
   Page,
   Product,
   ProductDetail,
   ProductRatePercent,
 } from "@/type/types.ts";
-import { call, fork, put, race, take } from "redux-saga/effects";
+import { QueryParams } from "@/utils/api/common.ts";
 import {
+  createProduct,
   getProductByIdOrSlug,
   getProductsPage,
   getProductsPageByCategory,
+  updateProduct,
+  updateProductStatus
 } from "@/utils/api/product.ts";
-import { notification } from "antd";
-import { QueryParams } from "@/utils/api/common.ts";
 import {
   getProductDetailsByProductId,
   getProductRatePercent,
 } from "@/utils/api/productDetail.ts";
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { notification } from "antd";
+import { call, fork, put, race, select, take } from "redux-saga/effects";
+import { RootState } from "../store";
 
 export type ProductState = {
   readonly page: Page<Product[]>;
   readonly isFetchLoading: boolean;
+  readonly isCreateLoading: boolean;
+  readonly isUpdateLoading: boolean;
   readonly productSelected: {
     readonly product: Product;
     readonly productDetails: ProductDetail[];
@@ -51,6 +58,8 @@ const initialState: ProductState = {
     empty: true,
   },
   isFetchLoading: false,
+  isCreateLoading: false,
+  isUpdateLoading: false,
   productSelected: {
     product: {} as Product,
     productDetails: [],
@@ -190,6 +199,43 @@ const productSlide = createSlice({
       ...state,
       ratePercents: [],
     }),
+
+    updateLoadingForProductCreate: (state) => ({
+      ...state,
+      isCreateLoading: true,
+    }),
+    createProductSuccess: (state) => ({
+      ...state,
+      isCreateLoading: false,
+    }),
+    createProductFailure: (state) => ({
+      ...state,
+      isCreateLoading: false,
+    }),
+    updateLoadingForProductUpdate: (state) => ({
+      ...state,
+      isUpdateLoading: true,
+    }),
+    updateProductSuccess: (state) => ({
+      ...state,
+      isUpdateLoading: false,
+    }),
+    updateProductFailure: (state) => ({
+      ...state,
+      isUpdateLoading: false,
+    }),
+    updateLoadingForProductUpdateStatusSuccess: (state) => ({
+      ...state,
+      isUpdateLoading: true,
+    }),
+    updateProductStatusSuccess: (state) => ({
+      ...state,
+      isUpdateLoading: false,
+    }),
+    updateProductStatusFailure: (state) => ({
+      ...state,
+      isUpdateLoading: false,
+    }),
   },
 });
 export default productSlide.reducer;
@@ -207,21 +253,49 @@ export const {
   updateProductSelectedQuantitySuccess,
   fetchProductRatePercentSuccess,
   fetchProductRatePercentFailure,
+  updateLoadingForProductCreate,
+  createProductSuccess,
+  createProductFailure,
+  updateLoadingForProductUpdate,
+  updateProductSuccess,
+  updateProductFailure,
+  updateLoadingForProductUpdateStatusSuccess:
+    updateLoadingForProductUpdateStatus,
+  updateProductStatusSuccess,
+  updateProductStatusFailure,
 } = productSlide.actions;
 
 export const fetchProductAction = createAction<{ pathVariable: string }>(
   `${SLICE_NAME}/fetchProductRequest`
 );
+
 export const fetchProductsAction = createAction<{ queryParams: QueryParams }>(
   `${SLICE_NAME}/fetchProductsRequest`
 );
+
 export const fetchProductsByProductCategoryAction = createAction<{
   pathVariable: string;
   queryParams: QueryParams;
 }>(`${SLICE_NAME}/fetchProductsByCategoryProductRequest`);
+
 export const fetchProductRatePercentAction = createAction<{ pdid: string }>(
   `${SLICE_NAME}/fetchProductRatePercentRequest`
 );
+
+export const createProductAction = createAction<{
+  product: ProductFormState;
+  resetForm: () => void;
+}>(`${SLICE_NAME}/createProductRequest`);
+
+export const updateProductAction = createAction<{
+  product: ProductFormState;
+  resetForm: () => void;
+}>(`${SLICE_NAME}/updateProductRequest`);
+
+export const updateProductStatusAction = createAction<{
+  pid: string;
+  status: boolean;
+}>(`${SLICE_NAME}/updateProductStatusRequest`);
 
 function* handleFetchProducts() {
   while (true) {
@@ -335,8 +409,89 @@ function* handleFetchProductRatePercent() {
   }
 }
 
+function* handleCreateProduct() {
+  while (true) {
+    const {
+      startCreateProduct,
+      startUpdateProduct,
+    }: {
+      startCreateProduct: ReturnType<typeof createProductAction>;
+      startUpdateProduct: ReturnType<typeof updateProductAction>;
+    } = yield race({
+      startCreateProduct: take(createProductAction),
+      startUpdateProduct: take(updateProductAction),
+    });
+
+    try {
+      if (startCreateProduct) {
+        yield put(updateLoadingForProductCreate());
+        yield call(createProduct, startCreateProduct.payload.product);
+        yield put(createProductSuccess());
+        startCreateProduct.payload.resetForm();
+      }
+
+      if (startUpdateProduct) {
+        yield put(updateLoadingForProductUpdate());
+        yield call(updateProduct, startCreateProduct.payload.product);
+        yield put(updateProductSuccess());
+        startCreateProduct.payload.resetForm();
+      }
+
+      const { number, size }: ProductState["page"] = yield select(
+        (state: RootState) => state.product.page
+      );
+
+      yield put(
+        fetchProductsAction({ queryParams: { page: number, pageSize: size } })
+      );
+    } catch (e) {
+      notification.open({
+        message: "Error",
+        description: e.message,
+        type: "error",
+      });
+
+      yield put(createProductFailure());
+    }
+  }
+}
+
+function* handleUpdateProductStatus() {
+  while (true) {
+    const {
+      payload: { pid, status },
+    }: ReturnType<typeof updateProductStatusAction> = yield take(
+      updateProductStatusAction
+    );
+
+    try {
+      yield put(updateLoadingForProductUpdateStatus());
+      yield call(updateProductStatus, pid, status);
+      yield put(updateProductStatusSuccess());
+
+      const { number, size }: ProductState["page"] = yield select(
+        (state: RootState) => state.product.page
+      );
+
+      yield put(
+        fetchProductsAction({ queryParams: { page: number, pageSize: size, sort: ["createdDate,desc"] } })
+      );
+    } catch (e) {
+      notification.open({
+        message: "Error",
+        description: e.message,
+        type: "error",
+      });
+
+      yield put(updateProductStatusFailure());
+    }
+  }
+}
+
 export const productSagas = [
   fork(handleFetchProducts),
   fork(handleFetchProduct),
   fork(handleFetchProductRatePercent),
+  fork(handleCreateProduct),
+  fork(handleUpdateProductStatus),
 ];
