@@ -116,7 +116,8 @@ export type CartGroupEvent = {
     | "ADD_CART_ITEM"
     | "DELETE_CART_ITEM"
     | "LEAVE_GROUP"
-    | "DELETE_GROUP";
+    | "DELETE_GROUP"
+    | "KICK_USER";
   readonly roomId: string;
   readonly user: {
     readonly id: string;
@@ -149,7 +150,7 @@ export type CartGroupEvent = {
         readonly cartItemId: string;
         readonly note: string;
       }
-    | null;
+    | { readonly userId: string };
 };
 
 export type Notification = {

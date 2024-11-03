@@ -8,6 +8,7 @@ import {
   deleteCartItem,
   getCartGroups,
   joinCartGroup,
+  kickUser,
   leaveCartGroup,
   updateCartItemQuantity,
 } from "@/utils/api/cartGroup";
@@ -46,6 +47,7 @@ export type CartGroupState = {
       Cart & {
         readonly updatingQuantityLoading: boolean;
         readonly deletingCartItemLoading: boolean;
+        readonly kickingUserFromCartItemLoading: boolean;
       }
     >;
     readonly deletingCartGroupLoading: boolean;
@@ -308,6 +310,69 @@ const cartGroupSlide = createSlice({
             (it) => it.roomId !== action.payload.roomId
           ),
     }),
+    updateLoadingForKickUserSuccess: (
+      state,
+      action: PayloadAction<{ roomId: string; userId: string }>
+    ) => ({
+      ...state,
+      cartGroupJoined: state.cartGroupJoined.map((it) => {
+        if (it.roomId === action.payload.roomId) {
+          return {
+            ...it,
+            cartItems: it.cartItems.map((ci) => {
+              if (ci.user && ci.user.id === action.payload.userId) {
+                return {
+                  ...ci,
+                  kickingUserFromCartItemLoading: true,
+                };
+              }
+              return ci;
+            }),
+          };
+        }
+        return it;
+      }),
+    }),
+    kickUserSuccess: (
+      state,
+      action: PayloadAction<{ roomId: string; userId: string }>
+    ) => ({
+      ...state,
+      cartGroupJoined: state.cartGroupJoined.map((it) => {
+        if (it.roomId === action.payload.roomId) {
+          return {
+            ...it,
+            cartItems: it.cartItems.filter(
+              (ci) => ci.user && ci.user.id !== action.payload.userId
+            ),
+          };
+        }
+        return it;
+      }),
+    }),
+    kickUserFailure: (
+      state,
+      action: PayloadAction<{ roomId: string; userId: string }>
+    ) => ({
+      ...state,
+      cartGroupJoined: state.cartGroupJoined.map((it) => {
+        if (it.roomId === action.payload.roomId) {
+          return {
+            ...it,
+            cartItems: it.cartItems.map((ci) => {
+              if (ci.user && ci.user.id === action.payload.userId) {
+                return {
+                  ...ci,
+                  kickingUserFromCartItemLoading: false,
+                };
+              }
+              return ci;
+            }),
+          };
+        }
+        return it;
+      }),
+    }),
   },
 });
 export default cartGroupSlide.reducer;
@@ -337,6 +402,9 @@ export const {
   deleteCartGroupSuccess,
   deleteCartGroupFailure,
   leaveCartGroupSuccess,
+  updateLoadingForKickUserSuccess,
+  kickUserSuccess,
+  kickUserFailure,
 } = cartGroupSlide.actions;
 
 export const joinCartGroupAction = createAction<{ roomId: string }>(
@@ -369,6 +437,11 @@ export const createOrderGroupAction = createAction<{
   totalAmount: number;
 }>(`${SLICE_NAME}/createOrderGroupAction`);
 
+export const kickUserAction = createAction<{
+  roomId: string;
+  userId: string;
+}>(`${SLICE_NAME}/kickUserRequest`);
+
 function* handleJoiningCartGroup() {
   while (true) {
     const {
@@ -387,6 +460,7 @@ function* handleJoiningCartGroup() {
               ...it,
               updatingQuantityLoading: false,
               deletingCartItemLoading: false,
+              kickingUserFromCartItemLoading: false,
             })),
             deletingCartGroupLoading: false,
           },
@@ -419,6 +493,7 @@ function* handleFetchingCartGroups() {
             ...ci,
             updatingQuantityLoading: false,
             deletingCartItemLoading: false,
+            kickingUserFromCartItemLoading: false,
           })),
           deletingCartGroupLoading: false,
         })),
@@ -562,6 +637,7 @@ function* handleCreatingCartGroup() {
               ...it,
               updatingQuantityLoading: false,
               deletingCartItemLoading: false,
+              kickingUserFromCartItemLoading: false,
             })),
             deletingCartGroupLoading: false,
           },
@@ -682,6 +758,27 @@ function* handleCreateOrderGroup() {
   }
 }
 
+function* handleKickingUser() {
+  while (true) {
+    const {
+      payload: { roomId, userId },
+    }: ReturnType<typeof kickUserAction> = yield take(kickUserAction);
+    try {
+      yield put(updateLoadingForKickUserSuccess({ roomId, userId }));
+      yield call(kickUser, roomId, userId);
+      yield put(kickUserSuccess({ roomId, userId }));
+    } catch (e) {
+      notification.open({
+        message: "Error",
+        description: e.message,
+        type: "error",
+      });
+
+      yield put(kickUserFailure({ roomId, userId }));
+    }
+  }
+}
+
 export const cartGroupSagas = [
   fork(handleJoiningCartGroup),
   fork(handleFetchingCartGroups),
@@ -692,4 +789,5 @@ export const cartGroupSagas = [
   fork(handleDeletingCartGroup),
   fork(handleLeavingCartGroup),
   fork(handleCreateOrderGroup),
+  fork(handleKickingUser),
 ];

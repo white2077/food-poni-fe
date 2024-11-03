@@ -74,7 +74,12 @@ export const groupByUser = (
   const userMap = new Map<
     string,
     {
-      user: { id: string; username: string; avatar: string };
+      user: {
+        id: string;
+        username: string;
+        avatar: string;
+      };
+      kickingUserFromCartItemLoading: boolean;
       items: Cart[];
     }
   >();
@@ -84,7 +89,13 @@ export const groupByUser = (
       const userId = ci.user.id;
 
       if (!userMap.has(userId)) {
-        userMap.set(userId, { user: ci.user, items: [] });
+        userMap.set(userId, {
+          user: {
+            ...ci.user,
+          },
+          kickingUserFromCartItemLoading: ci.kickingUserFromCartItemLoading,
+          items: [],
+        });
       }
       userMap.get(userId)?.items.push(ci);
     }

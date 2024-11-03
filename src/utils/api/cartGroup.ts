@@ -116,3 +116,12 @@ export const leaveCartGroup = (
       uid: res.data,
     }));
 };
+
+export const kickUser = (roomId: string, userId: string): Promise<void> => {
+  return apiWithToken().delete(generateQueryString("/cart-group/kick-user"), {
+    data: { roomId, userId },
+    headers: {
+      Authorization: "Bearer " + accessToken,
+    },
+  });
+};

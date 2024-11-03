@@ -7,6 +7,7 @@ import {
   createCartGroupRequest,
   createOrderGroupAction,
   deleteCartGroupAction,
+  kickUserAction,
   leaveCartGroupAction,
   updateCartGroupSelected,
   updateRoomTimeOutInputting,
@@ -15,6 +16,7 @@ import {
 import { currencyFormat, groupByUser, totalAmount } from "@/utils/common.ts";
 import {
   ClockCircleOutlined,
+  CloseOutlined,
   DeleteOutlined,
   LeftOutlined,
   LogoutOutlined,
@@ -118,12 +120,41 @@ export function CartGroupDetail({
                           <Card
                             size="small"
                             title={
-                              <AvatarInfo
-                                fullName={ci.user.username}
-                                avatar={ci.user.avatar}
-                                info={`${ci.items.length} sản phẩm`}
-                                padding={"py-1"}
-                              />
+                              <div className="flex justify-between items-center">
+                                <AvatarInfo
+                                  fullName={ci.user.username}
+                                  avatar={ci.user.avatar}
+                                  info={`${ci.items.length} sản phẩm`}
+                                  padding={"py-1"}
+                                />
+                                {it.user.id === currentUserId &&
+                                  ci.user.id !== currentUserId && (
+                                    <Popconfirm
+                                      title="Bạn có chắc muốn kick người này?"
+                                      onConfirm={() => {
+                                        dispatch(
+                                          kickUserAction({
+                                            roomId: it.roomId,
+                                            userId: ci.user.id,
+                                          })
+                                        );
+                                      }}
+                                      okText="Đồng ý"
+                                      cancelText="Hủy"
+                                    >
+                                      <Button
+                                        danger
+                                        type="text"
+                                        icon={<CloseOutlined />}
+                                        loading={
+                                          ci.kickingUserFromCartItemLoading
+                                        }
+                                      >
+                                        Kick
+                                      </Button>
+                                    </Popconfirm>
+                                  )}
+                              </div>
                             }
                           >
                             <CartHeader enableCartGroup={true} />

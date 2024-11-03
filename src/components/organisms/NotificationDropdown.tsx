@@ -21,6 +21,7 @@ import {
   addToCartItemsSuccess,
   deleteCartGroupSuccess,
   deleteCartItemSuccess,
+  kickUserSuccess,
   leaveCartGroupSuccess,
   updateCartItemQuantitySuccess,
 } from "@/redux/modules/cartGroup";
@@ -129,12 +130,13 @@ export default function NotificationDropdown() {
                     type,
                     updatingQuantityLoading: false,
                     deletingCartItemLoading: false,
+                    kickingUserFromCartItemLoading: false,
                   },
                   roomId: cartGroupEvent.roomId,
                 })
               );
             }
-
+            
             if (cartGroupEvent.user.id !== currentUser.id) {
               if (
                 cartGroupEvent.type === "UPDATE_CART_ITEM_QUANTITY" &&
@@ -174,7 +176,25 @@ export default function NotificationDropdown() {
                 );
               }
 
-              // console.log(message.body);
+              if (
+                cartGroupEvent.type === "KICK_USER" &&
+                "userId" in cartGroupEvent.attributes
+              ) {
+                if (cartGroupEvent.attributes.userId === currentUser.id) {
+                  dispatch(
+                    deleteCartGroupSuccess({
+                      roomId: cartGroupEvent.roomId,
+                    })
+                  );
+                } else {
+                  dispatch(
+                    kickUserSuccess({
+                      roomId: cartGroupEvent.roomId,
+                      userId: cartGroupEvent.attributes.userId,
+                    })
+                  );
+                }
+              }
             }
           });
         },
@@ -190,7 +210,7 @@ export default function NotificationDropdown() {
         sock.close();
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
