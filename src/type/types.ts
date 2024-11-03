@@ -260,6 +260,12 @@ export type Rate = {
   readonly avatar: string;
 };
 
+export type ProductRatePercent = {
+  readonly star: number;
+  readonly total: number;
+  readonly percent: number;
+};
+
 export type SearchResult = {
   readonly display_name: string | null;
   readonly lon: number;

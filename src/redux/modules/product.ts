@@ -1,5 +1,10 @@
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Page, Product, ProductDetail } from "@/type/types.ts";
+import {
+  Page,
+  Product,
+  ProductDetail,
+  ProductRatePercent,
+} from "@/type/types.ts";
 import { call, fork, put, race, take } from "redux-saga/effects";
 import {
   getProductByIdOrSlug,
@@ -8,7 +13,10 @@ import {
 } from "@/utils/api/product.ts";
 import { notification } from "antd";
 import { QueryParams } from "@/utils/api/common.ts";
-import { getProductDetailsByProductId } from "@/utils/api/productDetail.ts";
+import {
+  getProductDetailsByProductId,
+  getProductRatePercent,
+} from "@/utils/api/productDetail.ts";
 
 export type ProductState = {
   readonly page: Page<Product[]>;
@@ -27,6 +35,7 @@ export type ProductState = {
     readonly type: string | null;
     readonly quantity: number;
   };
+  readonly ratePercents: ProductRatePercent[];
 };
 
 const initialState: ProductState = {
@@ -52,6 +61,7 @@ const initialState: ProductState = {
     type: null,
     quantity: 1,
   },
+  ratePercents: [],
 };
 
 const SLICE_NAME = "product";
@@ -66,7 +76,7 @@ const productSlide = createSlice({
     }),
     fetchProductsSuccess: (
       state,
-      action: PayloadAction<{ page: Page<Product[]> }>,
+      action: PayloadAction<{ page: Page<Product[]> }>
     ) => ({
       ...state,
       page: action.payload.page,
@@ -78,7 +88,7 @@ const productSlide = createSlice({
     }),
     fetchProductSuccess: (
       state,
-      action: PayloadAction<{ product: Product }>,
+      action: PayloadAction<{ product: Product }>
     ) => ({
       ...state,
       productSelected: {
@@ -99,7 +109,7 @@ const productSlide = createSlice({
     }),
     fetchProductDetailsSuccess: (
       state,
-      { payload }: { payload: ProductDetail[] },
+      { payload }: { payload: ProductDetail[] }
     ) => ({
       ...state,
       productSelected: {
@@ -109,7 +119,7 @@ const productSlide = createSlice({
     }),
     updateProductDetailSelectedSuccess: (
       state,
-      action: PayloadAction<{ productDetail: ProductDetail }>,
+      action: PayloadAction<{ productDetail: ProductDetail }>
     ) => ({
       ...state,
       itemsSelected: {
@@ -119,7 +129,7 @@ const productSlide = createSlice({
     }),
     updateTypeSelectedSuccess: (
       state,
-      action: PayloadAction<{ type: string }>,
+      action: PayloadAction<{ type: string }>
     ) => ({
       ...state,
       itemsSelected: {
@@ -131,10 +141,10 @@ const productSlide = createSlice({
       state,
       action: PayloadAction<{
         topping: ProductState["itemsSelected"]["toppingsSelected"][0];
-      }>,
+      }>
     ) => {
       const check = state.itemsSelected.toppingsSelected.some(
-        (it) => it.id === action.payload.topping.id,
+        (it) => it.id === action.payload.topping.id
       );
       if (check) {
         return {
@@ -161,13 +171,24 @@ const productSlide = createSlice({
     },
     updateProductSelectedQuantitySuccess: (
       state,
-      action: PayloadAction<{ quantity: number }>,
+      action: PayloadAction<{ quantity: number }>
     ) => ({
       ...state,
       itemsSelected: {
         ...state.itemsSelected,
         quantity: action.payload.quantity,
       },
+    }),
+    fetchProductRatePercentSuccess: (
+      state,
+      action: PayloadAction<{ ratePercents: ProductRatePercent[] }>
+    ) => ({
+      ...state,
+      ratePercents: action.payload.ratePercents,
+    }),
+    fetchProductRatePercentFailure: (state) => ({
+      ...state,
+      ratePercents: [],
     }),
   },
 });
@@ -184,18 +205,23 @@ export const {
   updateTypeSelectedSuccess,
   updateToppingsSelectedSuccess,
   updateProductSelectedQuantitySuccess,
+  fetchProductRatePercentSuccess,
+  fetchProductRatePercentFailure,
 } = productSlide.actions;
 
 export const fetchProductAction = createAction<{ pathVariable: string }>(
-  `${SLICE_NAME}/fetchProductRequest`,
+  `${SLICE_NAME}/fetchProductRequest`
 );
 export const fetchProductsAction = createAction<{ queryParams: QueryParams }>(
-  `${SLICE_NAME}/fetchProductsRequest`,
+  `${SLICE_NAME}/fetchProductsRequest`
 );
 export const fetchProductsByProductCategoryAction = createAction<{
   pathVariable: string;
   queryParams: QueryParams;
 }>(`${SLICE_NAME}/fetchProductsByCategoryProductRequest`);
+export const fetchProductRatePercentAction = createAction<{ pdid: string }>(
+  `${SLICE_NAME}/fetchProductRatePercentRequest`
+);
 
 function* handleFetchProducts() {
   while (true) {
@@ -210,7 +236,7 @@ function* handleFetchProducts() {
     } = yield race({
       fetchProducts: take(fetchProductsAction),
       fetchProductsByProductCategory: take(
-        fetchProductsByProductCategoryAction,
+        fetchProductsByProductCategoryAction
       ),
     });
     try {
@@ -218,7 +244,7 @@ function* handleFetchProducts() {
       if (fetchProducts) {
         const page: Page<Product[]> = yield call(
           getProductsPage,
-          fetchProducts.payload.queryParams,
+          fetchProducts.payload.queryParams
         );
         yield put(fetchProductsSuccess({ page }));
       }
@@ -227,7 +253,7 @@ function* handleFetchProducts() {
         const page: Page<Product[]> = yield call(
           getProductsPageByCategory,
           fetchProductsByProductCategory.payload.pathVariable,
-          fetchProductsByProductCategory.payload.queryParams,
+          fetchProductsByProductCategory.payload.queryParams
         );
         yield put(fetchProductsSuccess({ page }));
       }
@@ -268,11 +294,11 @@ function* handleFetchProductDetails(pid: string) {
   try {
     const { content }: Page<ProductDetail[]> = yield call(
       getProductDetailsByProductId,
-      pid,
+      pid
     );
     yield put(fetchProductDetailsSuccess(content));
     yield put(
-      updateProductDetailSelectedSuccess({ productDetail: content[0] }),
+      updateProductDetailSelectedSuccess({ productDetail: content[0] })
     );
   } catch (e) {
     notification.open({
@@ -285,7 +311,32 @@ function* handleFetchProductDetails(pid: string) {
   }
 }
 
+function* handleFetchProductRatePercent() {
+  while (true) {
+    const {
+      payload: { pdid },
+    }: ReturnType<typeof fetchProductRatePercentAction> = yield take(
+      fetchProductRatePercentAction
+    );
+    try {
+      const ratePercents: ProductRatePercent[] = yield call(
+        getProductRatePercent,
+        pdid
+      );
+      yield put(fetchProductRatePercentSuccess({ ratePercents }));
+    } catch (e) {
+      notification.open({
+        message: "Error",
+        description: e.message,
+        type: "error",
+      });
+      yield put(fetchProductRatePercentFailure());
+    }
+  }
+}
+
 export const productSagas = [
   fork(handleFetchProducts),
   fork(handleFetchProduct),
+  fork(handleFetchProductRatePercent),
 ];

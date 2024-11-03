@@ -8,6 +8,7 @@ import { getRatesAction } from "@/redux/modules/rate";
 import { ProductDetail } from "@/type/types";
 import { server } from "@/utils/server";
 import EmptyNotice from "../atoms/EmptyNotice.tsx";
+import { fetchProductRatePercentAction } from "@/redux/modules/product.ts";
 
 const REVIEW_TEXTS = [
   "Rất không hài lòng",
@@ -32,9 +33,16 @@ export default function ProductRate({ productDetail }: Props) {
       getRatesAction({
         productId: productDetail.id,
         queryParams: { page: 0, pageSize: 5 },
-      }),
+      })
     );
   }, [dispatch, productDetail]);
+
+  useEffect(() => {
+    dispatch(fetchProductRatePercentAction({ pdid: productDetail.id }));
+  }, [dispatch, productDetail.id]);
+
+  const { ratePercents } = useSelector((state: RootState) => state.product);
+  console.log("ratePercents:", ratePercents);
 
   return (
     <Card size="small">
@@ -52,21 +60,25 @@ export default function ProductRate({ productDetail }: Props) {
       <div className="my-2 text-gray-400">
         ({productDetail.rateCount} đánh giá)
       </div>
-      {[5, 4, 3, 2, 1].map((rt) => (
-        <div key={rt} className="flex flex-wrap gap-1 text-gray-400">
-          <Rate disabled value={rt} />
-          <Progress
-            style={{ maxWidth: "100%", width: "13%" }}
-            percent={
-              (page.content.filter((it) => it.rate === rt).length /
-                page.content.length) *
-              100
-            }
-            showInfo={false}
-          />
-          <div>{page.content.filter((it) => it.rate === rt).length}</div>
-        </div>
-      ))}
+      {[5, 4, 3, 2, 1].map((rt) => {
+        const rateData = ratePercents.find((item) => item.star === rt) || {
+          star: rt,
+          total: 0,
+          percent: 0,
+        };
+
+        return (
+          <div key={rt} className="flex flex-wrap gap-1 text-gray-400">
+            <Rate disabled value={rt} />
+            <Progress
+              style={{ maxWidth: "100%", width: "13%" }}
+              percent={Number(rateData.percent)}
+              showInfo={false}
+            />
+            <div>{rateData.total}</div>
+          </div>
+        );
+      })}
       <hr className="my-6" />
       <List
         loading={isLoading}
@@ -93,7 +105,7 @@ export default function ProductRate({ productDetail }: Props) {
                     getRatesAction({
                       productId: productDetail.id,
                       queryParams: { page: page - 1, pageSize: 5 },
-                    }),
+                    })
                   );
                 },
                 pageSize: 5,
