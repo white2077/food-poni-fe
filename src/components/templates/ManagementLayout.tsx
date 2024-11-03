@@ -80,27 +80,27 @@ export const ManagementLayout = ({ children }: { children: ReactNode }) => {
                     items={[
                       getItem(
                         "Thông tin tài khoản",
-                        "/quan-ly/thong-tin-tai-khoan",
+                        "/thong-tin-tai-khoan",
                         <UserOutlined />
                       ),
                       getItem(
                         "Sổ địa chỉ",
-                        "/quan-ly/so-dia-chi",
+                        "/so-dia-chi",
                         <EnvironmentOutlined />
                       ),
                       getItem(
                         "Quản lý đơn hàng",
-                        "/quan-ly/don-hang",
+                        "/don-hang",
                         <ProfileOutlined />
                       ),
                       getItem(
                         "Sản phẩm yêu thích",
-                        "/quan-ly/san-pham-yeu-thich",
+                        "/san-pham-yeu-thich",
                         <LikeOutlined />
                       ),
                       getItem(
                         "Hỗ trợ khách hàng",
-                        "/quan-ly/ho-tro-khach-hang",
+                        "/ho-tro-khach-hang",
                         <CustomerServiceOutlined />
                       ),
                     ]}

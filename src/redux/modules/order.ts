@@ -274,7 +274,7 @@ function* handleCreateOrder() {
         window.location.href = vnpayUrl;
       } else {
         yield put(createOrderSuccess());
-        navigate("/quan-ly/don-hang/" + orderId);
+        navigate("/don-hang/" + orderId);
         notification.open({
           message: "Đơn hàng",
           description: "Bạn vừa đặt hàng.",

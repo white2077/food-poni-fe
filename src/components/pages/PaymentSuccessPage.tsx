@@ -27,7 +27,7 @@ export const PaymentSuccessPage = () => {
         isSuccess && (
           <Button
             key="orders"
-            onClick={() => navigate(`/quan-ly/don-hang/${id}`)}
+            onClick={() => navigate(`/don-hang/${id}`)}
           >
             Xem đơn hàng
           </Button>

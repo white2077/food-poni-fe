@@ -7,7 +7,7 @@ import {
   ShoppingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Avatar, Dropdown, MenuProps } from "antd";
+import { Avatar, Dropdown } from "antd";
 import Cookies from "js-cookie";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -17,14 +17,13 @@ export function UserDropdown() {
 
   const navigate = useNavigate();
 
-  const items: MenuProps["items"] = [
+  const items = [
     {
       key: "1",
       label: (
         <span
-          id="account-information"
           onClick={(): void => {
-            navigate("/quan-ly/thong-tin-tai-khoan");
+            navigate("/thong-tin-tai-khoan");
           }}
           className="flex w-full h-full"
         >
@@ -39,8 +38,7 @@ export function UserDropdown() {
       key: "2",
       label: (
         <span
-          id="your-orders"
-          onClick={() => navigate("/quan-ly/don-hang")}
+          onClick={() => navigate("/don-hang")}
           className="flex w-full h-full"
         >
           <span style={{ marginRight: "5px" }}>
@@ -53,7 +51,7 @@ export function UserDropdown() {
     {
       key: "3",
       label: (
-        <span id="aaa" onClick={() => "/"} className="flex w-full h-full">
+        <span onClick={() => "/"} className="flex w-full h-full">
           <span style={{ marginRight: "5px" }}>
             <QuestionCircleOutlined />
           </span>
@@ -65,7 +63,6 @@ export function UserDropdown() {
       key: "4",
       label: (
         <span
-          id="logout"
           onClick={() => {
             Cookies.remove(REFRESH_TOKEN);
             navigate("/");
@@ -86,7 +83,12 @@ export function UserDropdown() {
 
   return (
     <Dropdown
-      menu={{ items }}
+      menu={{
+        items: items.map((it) => {
+          if (it.key === "2" && currentUser.role === "RETAILER") return null;
+          return it;
+        }),
+      }}
       placement="bottomRight"
       trigger={["click"]}
       className="hover:bg-gray-200 rounded-lg p-1.5 cursor-pointer h-[100%] "

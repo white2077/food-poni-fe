@@ -1,13 +1,13 @@
-import { Badge, Card, Skeleton } from "antd";
+import { Order } from "@/type/types";
+import { currencyFormat } from "@/utils/common.ts";
 import {
   EnvironmentOutlined,
   ShoppingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+import { Badge, Card, Skeleton } from "antd";
 import { format } from "date-fns";
-import { Order } from "@/type/types";
 import { Link } from "react-router-dom";
-import { currencyFormat } from "@/utils/common.ts";
 
 const statusText: Record<string, string> = {
   PENDING: "Chờ xác nhận",
@@ -36,7 +36,7 @@ const OrderCard = ({
 }) => {
   return (
     <div>
-      <Link to={`/quan-ly/don-hang/${order.id}`}>
+      <Link to={`/don-hang/${order.id}`}>
         <Badge.Ribbon
           text={
             !isFetchLoading ? (

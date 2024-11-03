@@ -24,6 +24,7 @@ import { ProductLoading } from "@/components/atoms/ProductLoading";
 import { api } from "@/utils/axiosConfig.ts";
 import { server } from "@/utils/server.ts";
 import ComboboxDate from "@/components/atoms/ComboboxDate";
+import { ManagementLayout } from "../templates/ManagementLayout";
 
 const { confirm } = Modal;
 
@@ -38,7 +39,7 @@ export default function AccountInformationPage() {
     email: "",
     addressId: "",
     avatar: "",
-    role: ""
+    role: "",
   });
 
   const [isLoading, setLoading] = useState<boolean>(false);
@@ -113,7 +114,7 @@ export default function AccountInformationPage() {
   ];
 
   return (
-    <div>
+    <ManagementLayout>
       {showAddAddress ? (
         <div className="w-[600px] mx-auto">
           <div className="flex items-center">
@@ -323,7 +324,10 @@ export default function AccountInformationPage() {
                       <div className="p-4 grid gap-3">
                         <div className="flex items-center gap-2 justify-between w-[100%]">
                           <div className="flex items-center gap-2 w-[100%]">
-                            <img src={"/public/google.png"} className="w-7 h-7"></img>
+                            <img
+                              src={"/public/google.png"}
+                              className="w-7 h-7"
+                            ></img>
                             <div className="text-lg text-gray-600 ml-2 ">
                               <div className="text-[15px]">Google</div>
                             </div>
@@ -339,6 +343,6 @@ export default function AccountInformationPage() {
           )}
         </div>
       )}
-    </div>
+    </ManagementLayout>
   );
 }
