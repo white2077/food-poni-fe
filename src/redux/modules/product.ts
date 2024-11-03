@@ -12,7 +12,7 @@ import {
   getProductsPage,
   getProductsPageByCategory,
   updateProduct,
-  updateProductStatus
+  updateProductStatus,
 } from "@/utils/api/product.ts";
 import {
   getProductDetailsByProductId,
@@ -432,9 +432,9 @@ function* handleCreateProduct() {
 
       if (startUpdateProduct) {
         yield put(updateLoadingForProductUpdate());
-        yield call(updateProduct, startCreateProduct.payload.product);
+        yield call(updateProduct, startUpdateProduct.payload.product);
         yield put(updateProductSuccess());
-        startCreateProduct.payload.resetForm();
+        startUpdateProduct.payload.resetForm();
       }
 
       const { number, size }: ProductState["page"] = yield select(
@@ -442,7 +442,13 @@ function* handleCreateProduct() {
       );
 
       yield put(
-        fetchProductsAction({ queryParams: { page: number, pageSize: size } })
+        fetchProductsAction({
+          queryParams: {
+            page: number,
+            pageSize: size,
+            sort: ["createdDate,desc"],
+          },
+        })
       );
     } catch (e) {
       notification.open({
@@ -474,7 +480,13 @@ function* handleUpdateProductStatus() {
       );
 
       yield put(
-        fetchProductsAction({ queryParams: { page: number, pageSize: size, sort: ["createdDate,desc"] } })
+        fetchProductsAction({
+          queryParams: {
+            page: number,
+            pageSize: size,
+            sort: ["createdDate,desc"],
+          },
+        })
       );
     } catch (e) {
       notification.open({

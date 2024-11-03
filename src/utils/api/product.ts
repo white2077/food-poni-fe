@@ -65,7 +65,7 @@ export const createProduct = (product: ProductFormState): Promise<void> => {
 
 export const updateProduct = (product: ProductFormState): Promise<void> => {
   return apiWithToken()
-    .put(`/retailer/products/update-info/`, product, {
+    .put(`/retailer/products/update-info`, product, {
       headers: {
         Authorization: "Bearer " + accessToken,
       },
