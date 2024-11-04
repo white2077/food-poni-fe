@@ -83,7 +83,7 @@ const orderSlice = createSlice({
   reducers: {
     fetchOrdersSuccess: (
       state,
-      action: PayloadAction<{ page: Page<Order[]> }>,
+      action: PayloadAction<{ page: Page<Order[]> }>
     ) => ({
       ...state,
       page: action.payload.page,
@@ -114,7 +114,7 @@ const orderSlice = createSlice({
       state,
       action: PayloadAction<{
         orderItems: OrderState["form"]["orderItems"];
-      }>,
+      }>
     ) => ({
       ...state,
       form: {
@@ -126,7 +126,7 @@ const orderSlice = createSlice({
       state,
       action: PayloadAction<{
         shippingAddress: OrderState["form"]["shippingAddress"] | null;
-      }>,
+      }>
     ) => ({
       ...state,
       form: {
@@ -140,7 +140,7 @@ const orderSlice = createSlice({
         payload: {
           readonly method: string;
         };
-      },
+      }
     ) => ({
       ...state,
       form: {
@@ -183,22 +183,22 @@ export const {
   updateShippingAddressSuccess,
 } = orderSlice.actions;
 export const updateOrderItemsAction = createAction<void>(
-  `${SLICE_NAME}/updateOrderItemsRequest`,
+  `${SLICE_NAME}/updateOrderItemsRequest`
 );
 export const updateShippingAddressAction = createAction<{ sid: string | null }>(
-  `${SLICE_NAME}/updateShippingAddressRequest`,
+  `${SLICE_NAME}/updateShippingAddressRequest`
 );
 export const checkCartItemsAction = createAction<void>(
-  `${SLICE_NAME}/checkCartItemsRequest`,
+  `${SLICE_NAME}/checkCartItemsRequest`
 );
 export const fetchOrdersAction = createAction<{ queryParams: QueryParams }>(
-  `${SLICE_NAME}/fetchOrdersRequest`,
+  `${SLICE_NAME}/fetchOrdersRequest`
 );
 export const fetchOrderAction = createAction<{ orderId: string }>(
-  `${SLICE_NAME}/fetchOrderRequest`,
+  `${SLICE_NAME}/fetchOrderRequest`
 );
 export const createOrderAction = createAction<{ navigate: NavigateFunction }>(
-  `${SLICE_NAME}/createOrderRequest`,
+  `${SLICE_NAME}/createOrderRequest`
 );
 
 function* handleFetchOrders() {
@@ -257,7 +257,7 @@ function* handleCreateOrder() {
         payment,
         totalAmount,
       }: OrderState["form"] = yield select(
-        (state: RootState) => state.order.form,
+        (state: RootState) => state.order.form
       );
       const orderId: string = yield call(createOrder, {
         orderItems,
@@ -269,7 +269,7 @@ function* handleCreateOrder() {
         const vnpayUrl: string = yield call(
           createVNPayOrder,
           orderId,
-          totalAmount,
+          totalAmount
         );
         window.location.href = vnpayUrl;
       } else {
@@ -297,7 +297,7 @@ function* handleUpdateOrderItems() {
   while (true) {
     yield take(updateOrderItemsAction);
     const carts: CartState["page"]["content"] = yield select(
-      (state: RootState) => state.cart.page.content,
+      (state: RootState) => state.cart.page.content
     );
     const selectedCarts = carts.filter((it) => it.checked);
 
@@ -311,7 +311,7 @@ function* handleUpdateOrderItems() {
             type: it.type,
           };
         }),
-      }),
+      })
     );
   }
 }
@@ -321,7 +321,7 @@ function* handleUpdateShippingAddress() {
     const {
       payload: { sid },
     }: ReturnType<typeof updateShippingAddressAction> = yield take(
-      updateShippingAddressAction,
+      updateShippingAddressAction
     );
 
     if (sid === null) {

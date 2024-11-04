@@ -6,7 +6,7 @@ import { OrderState } from "@/redux/modules/order";
 import { server } from "@/utils/server.ts";
 
 export const getOrdersPage = (
-  queryParams: QueryParams,
+  queryParams: QueryParams
 ): Promise<Page<Order[]>> => {
   return apiWithToken()
     .get(generateQueryString("/customer/orders", queryParams), {
@@ -29,7 +29,7 @@ export const getOrderById = (oid: string): Promise<Order> => {
 
 export const getOrdersPageByStatus = (
   status: string,
-  queryParams: QueryParams,
+  queryParams: QueryParams
 ): Promise<Page<Order[]>> => {
   return apiWithToken()
     .get(
@@ -38,7 +38,7 @@ export const getOrdersPageByStatus = (
         headers: {
           Authorization: "Bearer " + accessToken,
         },
-      },
+      }
     )
     .then((res: AxiosResponse<Page<Order[]>>) => res.data);
 };
@@ -56,7 +56,7 @@ export const createOrder = ({
         headers: {
           Authorization: "Bearer " + accessToken,
         },
-      },
+      }
     )
     .then((res: AxiosResponse<string>) => res.data);
 };
@@ -64,6 +64,7 @@ export const createOrder = ({
 export const createVNPayOrder = (
   orderId: string,
   totalAmount: number,
+  roomId?: string
 ): Promise<string> => {
   return apiWithToken()
     .get("/vn-pay", {
@@ -71,6 +72,7 @@ export const createVNPayOrder = (
         amount: totalAmount,
         bankCode: "NCB",
         vnp_OrderInfo: orderId,
+        roomId,
         vnp_ReturnUrl: `${server}/api/v1/vn-pay/ipn`,
       },
       headers: {

@@ -738,7 +738,8 @@ function* handleCreateOrderGroup() {
           const vnpayUrl: string = yield call(
             createVNPayOrder,
             orderId,
-            totalAmount
+            totalAmount,
+            roomId,
           );
           window.open(vnpayUrl, "_blank");
         } else {
