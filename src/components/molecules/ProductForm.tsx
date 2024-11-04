@@ -48,6 +48,9 @@ export const ProductForm = ({ product }: { product?: Product }) => {
   } = useSelector((state: RootState) => state.productCategory);
   const { page: toppingPage, isFetchLoading: isToppingFetchLoading } =
     useSelector((state: RootState) => state.topping);
+  const { isCreateLoading, isUpdateLoading } = useSelector(
+    (state: RootState) => state.product
+  );
 
   const [error, setError] = useState<boolean | null>(true);
 
@@ -135,6 +138,7 @@ export const ProductForm = ({ product }: { product?: Product }) => {
                     try {
                       const res = await checkProductSlugIsExisted({
                         slug: value,
+                        pid: form.getFieldValue("id"),
                       });
                       if (res) {
                         setError(true);
@@ -245,7 +249,9 @@ export const ProductForm = ({ product }: { product?: Product }) => {
       </Form.List>
       <Form.Item className="mb-0 text-end">
         <Popconfirm title="Are you sure to save?" onConfirm={form.submit}>
-          <Button type="primary">Save</Button>
+          <Button loading={isCreateLoading || isUpdateLoading} type="primary">
+            Save
+          </Button>
         </Popconfirm>
       </Form.Item>
     </Form>
