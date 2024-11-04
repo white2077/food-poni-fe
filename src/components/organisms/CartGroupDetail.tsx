@@ -7,6 +7,7 @@ import {
   createCartGroupRequest,
   createOrderGroupAction,
   deleteCartGroupAction,
+  deleteCartGroupSuccess,
   kickUserAction,
   leaveCartGroupAction,
   updateCartGroupSelected,
@@ -29,6 +30,7 @@ import {
   Divider,
   Form,
   Input,
+  notification,
   Popconfirm,
   Row,
   Tabs,
@@ -103,6 +105,14 @@ export function CartGroupDetail({
               info={`#${it.roomId}`}
               isVisibleCapital={true}
               timeout={it.timeout}
+              roomId={it.roomId}
+              deleteCartGroup={() => {
+                dispatch(deleteCartGroupSuccess({ roomId: it.roomId }));
+                notification.info({
+                  message: "Thông báo!",
+                  description: `Đơn nhóm ${it.roomId} của ${it.user.username} đã bị hết hạn!`,
+                });
+              }}
             />
           ),
           children: (

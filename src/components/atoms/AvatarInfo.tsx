@@ -1,5 +1,5 @@
 import { getThumbnail } from "@/utils/common.ts";
-import Countdown from "antd/es/statistic/Countdown";
+import { Countdown } from "./Countdown";
 
 export const AvatarInfo = ({
   fullName,
@@ -8,6 +8,8 @@ export const AvatarInfo = ({
   padding,
   isVisibleCapital,
   timeout,
+  roomId,
+  deleteCartGroup,
 }: {
   fullName: string;
   avatar: string;
@@ -15,6 +17,8 @@ export const AvatarInfo = ({
   padding?: string;
   isVisibleCapital?: boolean;
   timeout?: number;
+  roomId?: string;
+  deleteCartGroup?: () => void;
 }) => (
   <div className={`flex items-center gap-4 ${padding}`}>
     <div className="relative">
@@ -33,6 +37,12 @@ export const AvatarInfo = ({
       <div>{fullName}</div>
       <div className="text-sm text-gray-500 dark:text-gray-400">{info}</div>
     </div>
-    {timeout && <Countdown value={Date.now() + timeout} />}
+    {timeout && roomId && (
+      <Countdown
+        roomId={roomId}
+        value={timeout}
+        deleteCartGroup={deleteCartGroup}
+      />
+    )}
   </div>
 );

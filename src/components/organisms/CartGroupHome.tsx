@@ -3,6 +3,7 @@ import { CodeInput } from "@/components/atoms/CodeInput";
 import {
   createCartGroupRequest,
   deleteCartGroupAction,
+  deleteCartGroupSuccess,
   joinCartGroupAction,
   updateCartGroupSelected,
   updateRoomTimeOutInputting,
@@ -12,7 +13,16 @@ import { RootState } from "@/redux/store.ts";
 import { getThumbnail, groupByUser } from "@/utils/common.ts";
 import { DeleteOutlined } from "@ant-design/icons";
 import ClockCircleOutlined from "@ant-design/icons/ClockCircleOutlined";
-import { Avatar, Button, Card, Divider, Input, Popconfirm, Spin } from "antd";
+import {
+  Avatar,
+  Button,
+  Card,
+  Divider,
+  Input,
+  notification,
+  Popconfirm,
+  Spin,
+} from "antd";
 import { useDispatch, useSelector } from "react-redux";
 
 export function CartGroupHome({ currentUserId }: { currentUserId: string }) {
@@ -108,6 +118,14 @@ export function CartGroupHome({ currentUserId }: { currentUserId: string }) {
                   padding={"py-1"}
                   isVisibleCapital={currentUserId === it.user.id}
                   timeout={it.timeout}
+                  roomId={it.roomId}
+                  deleteCartGroup={() => {
+                    dispatch(deleteCartGroupSuccess({ roomId: it.roomId }));
+                    notification.info({
+                      message: "Thông báo!",
+                      description: `Đơn nhóm ${it.roomId} của ${it.user.username} đã bị hết hạn!`,
+                    });
+                  }}
                 />
               }
               actions={[

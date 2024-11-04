@@ -1,9 +1,8 @@
 import { ProductRowsFilter } from "@/components/organisms/ProductRowsFilter";
 import { fetchProductsAction } from "@/redux/modules/product.ts";
-import ProductCategory from "../molecules/ProductCategory";
 import { server } from "@/utils/server";
+import ProductCategory from "../molecules/ProductCategory";
 import { SidebarLayout } from "../templates/SidebarLayout";
-import { CarouselBanner } from "../molecules/CarouselBanner";
 
 export const HomePage = () => {
   return (
@@ -20,12 +19,12 @@ export const HomePage = () => {
     >
       <div className="grid gap-4 h-fit">
         <div className="overflow-auto relative">
-          <CarouselBanner
+          {/* <CarouselBanner
             images={[
               "/public/7.webp",
               "/public/Fast-Food-Banner-Background-for-Wall-1.jpg",
             ]}
-          />
+          /> */}
           {/*<SearchPosition />*/}
         </div>
         <ProductRowsFilter

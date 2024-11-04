@@ -144,6 +144,7 @@ export const ProductDetailPage = () => {
           </div>
           <div className="lg:sticky top-5 lg:order-2 order-1">
             <ProductCart />
+            {/* <SlideBanner /> */}
           </div>
         </div>
         <ProductRate productDetail={productDetail} />
