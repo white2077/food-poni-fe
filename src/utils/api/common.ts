@@ -7,6 +7,7 @@ export type QueryParams = {
   read?: string | null;
   slug?: string | null;
   pid?: string | null;
+  orderGroup?: boolean | null;
   // body?: z.infer<typeof productSchema>;
 };
 
@@ -14,11 +15,30 @@ export default function generateQueryString(
   url: string,
   params?: QueryParams
 ): string {
-  const { page, pageSize, status, orderStatus, sort, read, slug, pid } =
-    params ?? ({} as QueryParams);
+  const {
+    page,
+    pageSize,
+    status,
+    orderStatus,
+    sort,
+    read,
+    slug,
+    pid,
+    orderGroup,
+  } = params ?? ({} as QueryParams);
   let queryString = "";
 
-  if (page || pageSize || status || orderStatus || sort || read || slug || pid) {
+  if (
+    page ||
+    pageSize ||
+    status ||
+    orderStatus ||
+    sort ||
+    read ||
+    slug ||
+    pid ||
+    orderGroup
+  ) {
     queryString += "?";
 
     if (page) {
@@ -73,6 +93,13 @@ export default function generateQueryString(
       }
       queryString += `pid=${pid}`;
     }
+  }
+
+  if (orderGroup !== undefined) {
+    if (queryString.length > 1) {
+      queryString += "&";
+    }
+    queryString += `orderGroup=${orderGroup}`;
   }
 
   return url + queryString;

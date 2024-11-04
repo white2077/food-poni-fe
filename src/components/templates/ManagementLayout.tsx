@@ -12,6 +12,7 @@ import {
   SettingFilled,
   UserOutlined,
   WalletFilled,
+  MoneyCollectOutlined,
 } from "@ant-design/icons";
 import { Col, Flex, Image, Menu, MenuProps } from "antd";
 import React, { ReactNode } from "react";
@@ -93,6 +94,19 @@ export const ManagementLayout = ({ children }: { children: ReactNode }) => {
                         "/don-hang",
                         <ProfileOutlined />
                       ),
+                      getItem(
+                        "Quản lý đơn hàng nhóm",
+                        "/don-hang-nhom",
+                        <ProfileOutlined />
+                      ),
+                      ...(currentUser.role === "VIP" 
+                        ? [getItem(
+                            "Quản lý ghi nợ",
+                            "/ghi-no",
+                            <MoneyCollectOutlined />
+                          )]
+                        : []),
+
                       getItem(
                         "Sản phẩm yêu thích",
                         "/san-pham-yeu-thich",

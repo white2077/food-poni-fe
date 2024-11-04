@@ -22,8 +22,6 @@ export default function Cart() {
     dispatch(
       fetchCartsAction({
         queryParams: {
-          page: 0,
-          pageSize: 10,
           status: true,
           sort: ["createdDate,desc"],
         },

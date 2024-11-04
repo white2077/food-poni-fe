@@ -14,7 +14,7 @@ import {
   updateRoomTimeOutInputting,
   updateWindowSelected,
 } from "@/redux/modules/cartGroup.ts";
-import { currencyFormat, groupByUser, totalAmount } from "@/utils/common.ts";
+import { currencyFormat, groupCartByUser, totalAmount } from "@/utils/common.ts";
 import {
   ClockCircleOutlined,
   CloseOutlined,
@@ -120,7 +120,7 @@ export function CartGroupDetail({
               <Col flex="700">
                 <ScrollPane maxHeight="h-[600px]">
                   <TransitionGroup>
-                    {groupByUser(it.cartItems).map((ci) => (
+                    {groupCartByUser(it.cartItems).map((ci) => (
                       <CSSTransition
                         key={ci.user.id}
                         timeout={200}

@@ -33,12 +33,13 @@ export const OrderPage = () => {
           sort: ["createdDate,desc"],
           pageSize: 10,
           orderStatus: status,
+          orderGroup: false,
         },
       })
     );
   }, [dispatch, status]);
 
-  if (page.content.length < 1 && isFetchLoading) {
+  if (page.content.length < 1 || isFetchLoading) {
     return <LoadingPage />;
   }
 
@@ -92,6 +93,7 @@ export const OrderPage = () => {
               order={order}
               index={(currentPage - 1) * 10 + index + 1}
               isFetchLoading={isFetchLoading}
+              orderGroup={false}
             />
           </List.Item>
         )}
@@ -121,6 +123,7 @@ export const OrderPage = () => {
                         sort: ["createdDate,desc"],
                         pageSize: 10,
                         orderStatus: status,
+                        orderGroup: false,
                       },
                     })
                   );

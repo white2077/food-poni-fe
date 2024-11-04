@@ -15,6 +15,7 @@ const statusText: Record<string, string> = {
   CANCELLED: "Đã hủy",
   REJECTED: "Bị từ chối",
   COMPLETED: "Hoàn thành",
+  POST_PAID: "Ghi nợ",
 };
 
 const statusColors: Record<string, string> = {
@@ -23,20 +24,31 @@ const statusColors: Record<string, string> = {
   CANCELLED: "red",
   REJECTED: "red",
   COMPLETED: "green",
+  POST_PAID: "gray",
 };
 
 const OrderCard = ({
   order,
   index,
   isFetchLoading,
+  orderGroup,
 }: {
   order: Order;
   index: number;
   isFetchLoading: boolean;
+  orderGroup: boolean;
 }) => {
   return (
     <div>
-      <Link to={`/don-hang/${order.id}`}>
+      <Link
+        to={
+          order.status === "POST_PAID"
+            ? `/ghi-no/${order.id}`
+            : orderGroup
+              ? `/don-hang-nhom/${order.id}`
+              : `/don-hang/${order.id}`
+        }
+      >
         <Badge.Ribbon
           text={
             !isFetchLoading ? (

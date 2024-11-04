@@ -41,6 +41,7 @@ export type CartState = {
   readonly isUpdateAllLoading: boolean;
   readonly isDeleteAllLoading: boolean;
   readonly isAllChecked: boolean;
+  readonly isBuyAgainLoading: boolean;
 };
 
 const initialState: CartState = {
@@ -60,6 +61,7 @@ const initialState: CartState = {
   isUpdateAllLoading: false,
   isDeleteAllLoading: false,
   isAllChecked: false,
+  isBuyAgainLoading: false,
 };
 
 const SLICE_NAME = "cart";
@@ -303,6 +305,18 @@ const cartListSlide = createSlice({
       ...state,
       isDeleteAllLoading: false,
     }),
+    updateBuyAgainLoading: (state) => ({
+      ...state,
+      isBuyAgainLoading: true,
+    }),
+    buyAgainSuccess: (state) => ({
+      ...state,
+      isBuyAgainLoading: false,
+    }),
+    buyAgainFailure: (state) => ({
+      ...state,
+      isBuyAgainLoading: false,
+    }),
   },
 });
 export default cartListSlide.reducer;
@@ -323,6 +337,9 @@ export const {
   updateAllCheckedRequest,
   updateAllCheckedSuccess,
   updateAllCheckedFailure,
+  updateBuyAgainLoading,
+  buyAgainSuccess,
+  buyAgainFailure,
   deleteCartRequest,
   deleteCartSuccess,
   deleteCartFailure,
@@ -352,6 +369,9 @@ export const updateCheckedAction = createAction<{
   id: string;
   checked: boolean;
 }>(`${SLICE_NAME}/updateCheckedRequest`);
+export const buyAgainOrderAction = createAction<{ orderItems: OrderItem[] }>(
+  `${SLICE_NAME}/buyAgainOrderRequest`
+);
 
 function* handleFetchCart() {
   while (true) {
@@ -685,6 +705,35 @@ function* handleDeleteAllCart() {
   }
 }
 
+function* handleBuyAgainOrder() {
+  while (true) {
+    const {
+      payload: { orderItems },
+    }: ReturnType<typeof buyAgainOrderAction> = yield take(buyAgainOrderAction);
+    try {
+      yield put(updateBuyAgainLoading());
+
+      const cartItemsToAdd = orderItems.map((item) => ({
+        productDetailId: item.productDetail.id,
+        quantity: item.quantity,
+        toppings: item.toppings || [],
+        type: item.type,
+      }));
+
+      console.log("danh sach don hàng này:", cartItemsToAdd);
+
+      yield put(buyAgainSuccess());
+    } catch (e) {
+      notification.open({
+        message: "Error",
+        description: e.message,
+        type: "error",
+      });
+      yield put(buyAgainFailure());
+    }
+  }
+}
+
 export const cartSagas = [
   fork(handleFetchCart),
   fork(handleCreateCart),
@@ -694,4 +743,5 @@ export const cartSagas = [
   fork(handleUpdateAllCheckedCart),
   fork(handleDeleteCart),
   fork(handleDeleteAllCart),
+  fork(handleBuyAgainOrder),
 ];

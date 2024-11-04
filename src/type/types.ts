@@ -85,6 +85,7 @@ export type Order = {
 
 export type OrderItem = {
   readonly id: string;
+  readonly user: User;
   readonly quantity: number;
   readonly price: number;
   readonly productDetail: ProductDetail;

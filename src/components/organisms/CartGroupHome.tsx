@@ -10,7 +10,7 @@ import {
   updateWindowSelected,
 } from "@/redux/modules/cartGroup.ts";
 import { RootState } from "@/redux/store.ts";
-import { getThumbnail, groupByUser } from "@/utils/common.ts";
+import { getThumbnail, groupCartByUser } from "@/utils/common.ts";
 import { DeleteOutlined } from "@ant-design/icons";
 import ClockCircleOutlined from "@ant-design/icons/ClockCircleOutlined";
 import {
@@ -141,7 +141,7 @@ export function CartGroupHome({ currentUserId }: { currentUserId: string }) {
               ]}
             >
               <Avatar.Group>
-                {groupByUser(it.cartItems).map((ci, index) => (
+              {groupCartByUser(it.cartItems).map((ci, index) => (
                   <Avatar key={index} src={getThumbnail(ci.user.avatar)} />
                 ))}
               </Avatar.Group>

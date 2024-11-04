@@ -81,3 +81,21 @@ export const createVNPayOrder = (
     })
     .then((res: AxiosResponse<string>) => res.data);
 };
+
+export const createOrderPostPaid = ({
+  orderItems,
+  shippingAddress,
+  payment,
+}: OrderState["form"]): Promise<string> => {
+  return apiWithToken()
+    .post(
+      "/orders/post-paid",
+      { orderItems, shippingAddress, payment },
+      {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+        },
+      }
+    )
+    .then((res: AxiosResponse<string>) => res.data);
+};

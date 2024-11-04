@@ -21,8 +21,11 @@ export const OrderHeader: React.FC<OrderHeaderProps> = ({
           ? "Chờ xác nhận"
           : status === "APPROVED"
             ? "Chờ giao hàng"
+            : status === "POST_PAID"
+            ? "Ghi nợ"
             : "Đơn hoàn tất"}
       </Text>
+
     </div>
   </>
 );

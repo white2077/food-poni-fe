@@ -18,6 +18,10 @@ import { ProductCategoryPage } from "./components/pages/ProductCategoryPage";
 import { ProductDetailPage } from "./components/pages/ProductDetailPage";
 import { ProductTablePage } from "./components/pages/ProductTablePage";
 import { SignupPage } from "./components/pages/SignupPage";
+import { OrderGroupPage } from "./components/pages/OrderGroupPage";
+import { OrderGroupDetailPage } from "./components/pages/OrderGroupDetailPage";
+import { PostPaidPage } from "./components/pages/PostPaidPage";
+import { OrderPostPaidDetailPage } from "./components/pages/PostPaidDetailPage";
 
 export const router = (currentRole: "RETAILER" | "CUSTOMER" | "VIP") =>
   createBrowserRouter([
@@ -79,6 +83,39 @@ export const router = (currentRole: "RETAILER" | "CUSTOMER" | "VIP") =>
       element: (
         <SecuredRoute currentRole={currentRole} role={["CUSTOMER", "VIP"]}>
           <AccountInformationPage />
+        </SecuredRoute>
+      ),
+    },
+    {
+      path: "/don-hang-nhom",
+      element: (
+        <SecuredRoute currentRole={currentRole} role={["CUSTOMER", "VIP"]}>
+          <OrderGroupPage />
+        </SecuredRoute>
+      ),
+    },
+
+    {
+      path: "don-hang-nhom/:orderId",
+      element: (
+        <SecuredRoute currentRole={currentRole} role={["CUSTOMER", "VIP"]}>
+          <OrderGroupDetailPage />
+        </SecuredRoute>
+      ),
+    },
+    {
+      path: "/ghi-no",
+      element: (
+        <SecuredRoute currentRole={currentRole} role={["VIP"]}>
+          <PostPaidPage />
+        </SecuredRoute>
+      ),
+    },
+    {
+      path: "ghi-no/:orderId",
+      element: (
+        <SecuredRoute currentRole={currentRole} role={["VIP"]}>
+          <OrderPostPaidDetailPage />
         </SecuredRoute>
       ),
     },

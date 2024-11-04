@@ -1,5 +1,5 @@
 import { server } from "@/utils/server.ts";
-import { Cart, User } from "@/type/types.ts";
+import { Cart, OrderItem, User } from "@/type/types.ts";
 import { CartGroupState } from "@/redux/modules/cartGroup.ts";
 
 export const formatCurrency = (amount: number) => {
@@ -68,7 +68,7 @@ export const currencyFormat = (amount: number) => {
   }).format(amount);
 };
 
-export const groupByUser = (
+export const groupCartByUser = (
   cartItems: CartGroupState["cartGroupJoined"][number]["cartItems"]
 ) => {
   const userMap = new Map<
@@ -145,3 +145,26 @@ export const toSlug = (str: string) => {
   // return
   return str;
 };
+
+export const groupOrderByUser = (
+  orderItems: OrderItem[]) => {
+  const userMap = new Map<
+    string,
+    {
+      user: { id: string; username: string; avatar: string };
+      items: OrderItem[];
+    }
+  >();
+
+  orderItems.forEach((item) => {
+    if (item.user) {
+      const userId = item.user.id;
+      if (!userMap.has(userId)) {
+        userMap.set(userId, { user: item.user, items: [] });
+      }
+      userMap.get(userId)?.items.push(item);
+    }
+  });
+
+  return Array.from(userMap.values());
+  }

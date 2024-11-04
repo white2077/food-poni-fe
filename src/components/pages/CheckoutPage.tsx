@@ -1,7 +1,7 @@
 import OrderItems from "@/components/organisms/OrderItems";
 import PaymentInfo from "@/components/organisms/PaymentInfo";
 import { fetchCartsAction } from "@/redux/modules/cart.ts";
-import { createOrderAction } from "@/redux/modules/order.ts";
+import { createOrderAction, createOrderPostPaidAction } from "@/redux/modules/order.ts";
 import { RootState } from "@/redux/store.ts";
 import { currencyFormat, totalAmount } from "@/utils/common.ts";
 import { Button, Card, Col, Divider, Form, Input, Popconfirm, Row } from "antd";
@@ -20,7 +20,7 @@ export const CheckoutPage = () => {
   const { form, isCreateLoading } = useSelector(
     (state: RootState) => state.order
   );
-
+  const { currentUser } = useSelector((state: RootState) => state.auth);
   useEffect(() => {
     dispatch(
       fetchCartsAction({
@@ -99,6 +99,32 @@ export const CheckoutPage = () => {
                   </Button>
                 </Popconfirm>
               </Form.Item>
+              {currentUser?.role === "VIP" && (
+                <Form.Item>
+                  <Popconfirm
+                    title="Bạn có chắc chắn muốn ghi nợ không?"
+                    onConfirm={() =>
+                      dispatch(createOrderPostPaidAction({ navigate }))
+                    }
+                    okText="Đồng ý"
+                    cancelText="Hủy"
+                  >
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      danger
+                      block
+                      loading={isCreateLoading}
+                      disabled={
+                        carts.content.filter((it) => it.checked).length < 1 ||
+                        form.shippingAddress === null
+                      }
+                    >
+                      Ghi nợ
+                    </Button>
+                  </Popconfirm>
+                </Form.Item>
+              )}
             </Form>
           </Col>
         </Row>

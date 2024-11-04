@@ -18,7 +18,7 @@ export function OrderItemDetail({ orderItem, orderStatus }: Props) {
 
   const { page } = useSelector((state: RootState) => state.cart);
   const ratedOrderItems = useSelector(
-    (state: RootState) => state.rate.ratedOrderItems,
+    (state: RootState) => state.rate.ratedOrderItems
   );
 
   useEffect(() => {
@@ -27,12 +27,18 @@ export function OrderItemDetail({ orderItem, orderStatus }: Props) {
     }
   }, [orderItem, ratedOrderItems, dispatch]);
 
-  const isInCart = page.content.some(
-    (item) =>
-      item.productDetail.id === orderItem.productDetail.id &&
-      JSON.stringify(item.toppings) === JSON.stringify(orderItem.toppings) &&
-      item.type === orderItem.type,
-  );
+  const isInCart = page.content.some((item) => {
+    let isMatch = item.productDetail?.id === orderItem.productDetail?.id;
+    if (orderItem.type) {
+      isMatch = isMatch && item.type === orderItem.type;
+    }
+    if (orderItem.toppings?.length) {
+      isMatch =
+        isMatch &&
+        JSON.stringify(item.toppings) === JSON.stringify(orderItem.toppings);
+    }
+    return isMatch;
+  });
 
   return (
     <div className="font-sans text-[17px] text-gray-600">

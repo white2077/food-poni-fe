@@ -4,6 +4,7 @@ import { notification } from "antd";
 import { Order, Page } from "@/type/types";
 import {
   createOrder,
+  createOrderPostPaid,
   createVNPayOrder,
   getOrderById,
   getOrdersPage,
@@ -110,6 +111,14 @@ const orderSlice = createSlice({
       ...state,
       isCreateLoading: false,
     }),
+    createOrderPostPaidSuccess: (state) => ({
+      ...state,
+      isCreateLoading: false,
+    }),
+    createOrderPostPaidFailure: (state) => ({
+      ...state,
+      isCreateLoading: false,
+    }),
     updateOrderItemsSuccess: (
       state,
       action: PayloadAction<{
@@ -176,6 +185,8 @@ export const {
   fetchOrderFailure,
   createOrderFailure,
   createOrderSuccess,
+  createOrderPostPaidFailure,
+  createOrderPostPaidSuccess,
   updateOrderItemsSuccess,
   updateCreateLoading,
   updateFetchLoading,
@@ -200,6 +211,9 @@ export const fetchOrderAction = createAction<{ orderId: string }>(
 export const createOrderAction = createAction<{ navigate: NavigateFunction }>(
   `${SLICE_NAME}/createOrderRequest`
 );
+export const createOrderPostPaidAction = createAction<{
+  navigate: NavigateFunction;
+}>(`${SLICE_NAME}/createOrderPostPaidRequest`);
 
 function* handleFetchOrders() {
   while (true) {
@@ -293,6 +307,51 @@ function* handleCreateOrder() {
   }
 }
 
+function* handleCreateOrderPostPaid() {
+  while (true) {
+    const {
+      payload: { navigate },
+    }: ReturnType<typeof createOrderPostPaidAction> = yield take(
+      createOrderPostPaidAction
+    );
+    try {
+      yield put(updateCreateLoading());
+      const {
+        orderItems,
+        shippingAddress,
+        payment,
+        totalAmount,
+      }: OrderState["form"] = yield select(
+        (state: RootState) => state.order.form
+      );
+      const orderId: string = yield call(createOrderPostPaid, {
+        orderItems,
+        shippingAddress,
+        payment,
+        totalAmount,
+      });
+      console.log(orderId);
+
+      yield put(createOrderPostPaidSuccess());
+      navigate("/don-hang/" + orderId);
+      notification.open({
+        message: "Đơn hàng",
+        description: "Bạn vừa đặt hàng.",
+        type: "success",
+      });
+    } catch (e) {
+      notification.open({
+        message: "Error",
+        description: e.message,
+        type: "error",
+      });
+
+      yield put(createOrderFailure());
+    }
+  }
+}
+
+
 function* handleUpdateOrderItems() {
   while (true) {
     yield take(updateOrderItemsAction);
@@ -341,6 +400,7 @@ function* handleUpdateShippingAddress() {
 export const orderSagas = [
   fork(handleFetchOrders),
   fork(handleFetchOrder),
+  fork(handleCreateOrderPostPaid),
   fork(handleCreateOrder),
   fork(handleUpdateOrderItems),
   fork(handleUpdateShippingAddress),
