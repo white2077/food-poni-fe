@@ -1,5 +1,5 @@
 import EmptyNotice from "@/components/atoms/EmptyNotice";
-import { fetchOrdersAction } from "@/redux/modules/order";
+import { fetchOrdersByCustomerAction } from "@/redux/modules/order";
 import { RootState } from "@/redux/store";
 import { Order } from "@/type/types";
 import { Badge, List, Segmented, Space } from "antd";
@@ -27,7 +27,7 @@ export const OrderGroupPage = () => {
 
   useEffect(() => {
     dispatch(
-      fetchOrdersAction({
+      fetchOrdersByCustomerAction({
         queryParams: {
           page: 0,
           pageSize: 10,
@@ -121,7 +121,7 @@ export const OrderGroupPage = () => {
                 onChange: (page: number) => {
                   setCurrentPage(page);
                   dispatch(
-                    fetchOrdersAction({
+                    fetchOrdersByCustomerAction({
                       queryParams: {
                         page: page - 1,
 

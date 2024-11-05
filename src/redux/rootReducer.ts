@@ -6,6 +6,7 @@ import fileUploadsReducer from "@/redux/modules/fileUploads.ts";
 import mainMenuReducer from "@/redux/modules/mainMenu.ts";
 import notificationReducer from "@/redux/modules/notification.ts";
 import orderReducer from "@/redux/modules/order.ts";
+import orderItemReducer from "@/redux/modules/orderItem.ts";
 import productReducer from "@/redux/modules/product.ts";
 import productCategoryReducer from "@/redux/modules/productCategory.ts";
 import rateReducer from "@/redux/modules/rate.ts";
@@ -18,6 +19,7 @@ export const rootReducer = combineReducers({
   cart: cartReducer,
   fileUpload: fileUploadsReducer,
   order: orderReducer,
+  orderItem: orderItemReducer,
   cartGroup: cartGroupReducer,
   mainMenu: mainMenuReducer,
   notification: notificationReducer,

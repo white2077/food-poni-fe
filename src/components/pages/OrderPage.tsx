@@ -1,5 +1,5 @@
 import EmptyNotice from "@/components/atoms/EmptyNotice";
-import { fetchOrdersAction } from "@/redux/modules/order";
+import { fetchOrdersByCustomerAction } from "@/redux/modules/order";
 import { RootState } from "@/redux/store";
 import { Order } from "@/type/types";
 import { Badge, List, Segmented, Space } from "antd";
@@ -27,7 +27,7 @@ export const OrderPage = () => {
 
   useEffect(() => {
     dispatch(
-      fetchOrdersAction({
+      fetchOrdersByCustomerAction({
         queryParams: {
           page: 0,
           sort: ["createdDate,desc"],
@@ -39,7 +39,7 @@ export const OrderPage = () => {
     );
   }, [dispatch, status]);
 
-  if (page.content.length < 1 || isFetchLoading) {
+  if (page.content.length < 0 || isFetchLoading) {
     return <LoadingPage />;
   }
 
@@ -117,7 +117,7 @@ export const OrderPage = () => {
                 onChange: (page: number) => {
                   setCurrentPage(page);
                   dispatch(
-                    fetchOrdersAction({
+                    fetchOrdersByCustomerAction({
                       queryParams: {
                         page: page - 1,
                         sort: ["createdDate,desc"],

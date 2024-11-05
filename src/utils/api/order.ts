@@ -5,11 +5,23 @@ import { Order, Page } from "@/type/types.ts";
 import { OrderState } from "@/redux/modules/order";
 import { server } from "@/utils/server.ts";
 
-export const getOrdersPage = (
+export const getOrdersPageByCustomer = (
   queryParams: QueryParams
 ): Promise<Page<Order[]>> => {
   return apiWithToken()
     .get(generateQueryString("/customer/orders", queryParams), {
+      headers: {
+        Authorization: "Bearer " + accessToken,
+      },
+    })
+    .then((res: AxiosResponse<Page<Order[]>>) => res.data);
+};
+
+export const getOrdersPageByRetailer = (
+  queryParams: QueryParams
+): Promise<Page<Order[]>> => {
+  return apiWithToken()
+    .get(generateQueryString("/retailer/orders", queryParams), {
       headers: {
         Authorization: "Bearer " + accessToken,
       },

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import OrderCard from "../molecules/OrderCard";
 import { ManagementLayout } from "../templates/ManagementLayout";
 import { LoadingPage } from "./LoadingPage";
-import { fetchOrdersAction } from "@/redux/modules/order";
+import { fetchOrdersByCustomerAction } from "@/redux/modules/order";
 import EmptyNotice from "../atoms/EmptyNotice";
 import { Order } from "@/type/types";
 import { RootState } from "@/redux/store";
@@ -24,7 +24,7 @@ export const PostPaidPage = () => {
 
   useEffect(() => {
     dispatch(
-      fetchOrdersAction({
+      fetchOrdersByCustomerAction({
         queryParams: {
           page: 0,
           sort: ["createdDate,desc"],
@@ -114,7 +114,7 @@ export const PostPaidPage = () => {
                 onChange: (page: number) => {
                   setCurrentPage(page);
                   dispatch(
-                    fetchOrdersAction({
+                    fetchOrdersByCustomerAction({
                       queryParams: {
                         page: page - 1,
                         sort: ["createdDate,desc"],

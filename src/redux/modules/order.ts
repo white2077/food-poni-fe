@@ -1,19 +1,20 @@
-import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { call, fork, put, select, take } from "redux-saga/effects";
-import { notification } from "antd";
+import { AddressState } from "@/redux/modules/address.ts";
+import { CartState } from "@/redux/modules/cart.ts";
+import { RootState } from "@/redux/store.ts";
 import { Order, Page } from "@/type/types";
+import { QueryParams } from "@/utils/api/common";
 import {
   createOrder,
   createOrderPostPaid,
   createVNPayOrder,
   getOrderById,
-  getOrdersPage,
+  getOrdersPageByCustomer,
+  getOrdersPageByRetailer,
 } from "@/utils/api/order";
-import { QueryParams } from "@/utils/api/common";
-import { RootState } from "@/redux/store.ts";
-import { CartState } from "@/redux/modules/cart.ts";
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { notification } from "antd";
 import { NavigateFunction } from "react-router-dom";
-import { AddressState } from "@/redux/modules/address.ts";
+import { call, fork, put, race, select, take } from "redux-saga/effects";
 
 export type OrderState = {
   readonly page: Page<Order[]>;
@@ -47,6 +48,7 @@ export type OrderState = {
   };
   readonly isFetchLoading: boolean;
   readonly isCreateLoading: boolean;
+  readonly isUpdateLoading: boolean;
 };
 
 const initialState: OrderState = {
@@ -74,6 +76,7 @@ const initialState: OrderState = {
   },
   isFetchLoading: false,
   isCreateLoading: false,
+  isUpdateLoading: false,
 };
 
 const SLICE_NAME = "order";
@@ -202,9 +205,12 @@ export const updateShippingAddressAction = createAction<{ sid: string | null }>(
 export const checkCartItemsAction = createAction<void>(
   `${SLICE_NAME}/checkCartItemsRequest`
 );
-export const fetchOrdersAction = createAction<{ queryParams: QueryParams }>(
-  `${SLICE_NAME}/fetchOrdersRequest`
-);
+export const fetchOrdersByCustomerAction = createAction<{
+  queryParams: QueryParams;
+}>(`${SLICE_NAME}/fetchOrdersByCustomerRequest`);
+export const fetchOrdersByRetailerAction = createAction<{
+  queryParams: QueryParams;
+}>(`${SLICE_NAME}/fetchOrdersByRetailerRequest`);
 export const fetchOrderAction = createAction<{ orderId: string }>(
   `${SLICE_NAME}/fetchOrderRequest`
 );
@@ -218,13 +224,34 @@ export const createOrderPostPaidAction = createAction<{
 function* handleFetchOrders() {
   while (true) {
     const {
-      payload: { queryParams },
-    }: ReturnType<typeof fetchOrdersAction> = yield take(fetchOrdersAction);
+      fetchOrdersByCustomer,
+      fetOrdersByRetailer,
+    }: {
+      fetchOrdersByCustomer: ReturnType<typeof fetchOrdersByCustomerAction>;
+      fetOrdersByRetailer: ReturnType<typeof fetchOrdersByRetailerAction>;
+    } = yield race({
+      fetchOrdersByCustomer: take(fetchOrdersByCustomerAction),
+      fetOrdersByRetailer: take(fetchOrdersByRetailerAction),
+    });
 
     try {
-      yield put(updateFetchLoading());
-      const page: Page<Order[]> = yield call(getOrdersPage, queryParams);
-      yield put(fetchOrdersSuccess({ page }));
+      if (fetchOrdersByCustomer) {
+        yield put(updateFetchLoading());
+        const page: Page<Order[]> = yield call(
+          getOrdersPageByCustomer,
+          fetchOrdersByCustomer.payload.queryParams
+        );
+        yield put(fetchOrdersSuccess({ page }));
+      }
+
+      if (fetOrdersByRetailer) {
+        yield put(updateFetchLoading());
+        const page: Page<Order[]> = yield call(
+          getOrdersPageByRetailer,
+          fetOrdersByRetailer.payload.queryParams
+        );
+        yield put(fetchOrdersSuccess({ page }));
+      }
     } catch (e) {
       notification.open({
         message: "Error",
@@ -244,6 +271,7 @@ function* handleFetchOrder() {
     }: ReturnType<typeof fetchOrderAction> = yield take(fetchOrderAction);
 
     try {
+      yield put(updateFetchLoading());
       const order: Order = yield call(getOrderById, orderId);
       yield put(fetchOrderSuccess({ order }));
     } catch (e) {
@@ -350,7 +378,6 @@ function* handleCreateOrderPostPaid() {
     }
   }
 }
-
 
 function* handleUpdateOrderItems() {
   while (true) {

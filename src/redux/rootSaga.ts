@@ -10,6 +10,7 @@ import { all } from "redux-saga/effects";
 import { fileUploadsSagas } from "./modules/fileUploads.ts";
 import { orderSagas } from "./modules/order";
 import { rateSagas } from "./modules/rate.ts";
+import { orderItemSagas } from "./modules/orderItem.ts";
 
 export default function* rootSaga() {
   yield all([
@@ -21,6 +22,7 @@ export default function* rootSaga() {
     ...productCategorySagas,
     ...cartGroupSagas,
     ...orderSagas,
+    ...orderItemSagas,
     ...shippingAddressSagas,
     ...toppingSagas,
     ...rateSagas,

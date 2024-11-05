@@ -22,6 +22,7 @@ import { OrderGroupPage } from "./components/pages/OrderGroupPage";
 import { OrderGroupDetailPage } from "./components/pages/OrderGroupDetailPage";
 import { PostPaidPage } from "./components/pages/PostPaidPage";
 import { OrderPostPaidDetailPage } from "./components/pages/PostPaidDetailPage";
+import { AdminOrderTablePage } from "./components/pages/AdminOrderTablePage";
 
 export const router = (currentRole: "RETAILER" | "CUSTOMER" | "VIP") =>
   createBrowserRouter([
@@ -156,7 +157,7 @@ export const router = (currentRole: "RETAILER" | "CUSTOMER" | "VIP") =>
           path: "orders-table",
           element: (
             <SecuredRoute currentRole={currentRole} role={["RETAILER"]}>
-              <div>Orders</div>
+              <AdminOrderTablePage />
             </SecuredRoute>
           ),
         },

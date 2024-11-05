@@ -71,16 +71,15 @@ export type FileUpload = {
 
 export type Order = {
   readonly id: string;
+  readonly postPaidOrderId: string;
   readonly totalAmount: number;
   readonly user: User;
-  readonly orderItems: OrderItem[];
   readonly shippingAddress: ShippingAddress;
   readonly status: string;
   readonly note: string;
   readonly payment: PaymentInfo;
   readonly createdDate: Date;
   readonly shippingFee: number;
-  readonly retailer: User;
 };
 
 export type OrderItem = {

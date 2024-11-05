@@ -1,30 +1,35 @@
 import { buyAgainOrderAction } from "@/redux/modules/cart";
 import { RootState } from "@/redux/store";
+import { OrderItem } from "@/type/types";
 import { currencyFormat } from "@/utils/common";
 import { Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 
-interface OrderSummaryProps {
+export const OrderSummary = ({
+  totalAmount,
+  shippingFee,
+  orderItems,
+  orderStatus,
+}: {
   totalAmount: number;
   shippingFee: number;
-}
-
-export function OrderSummary({ totalAmount, shippingFee }: OrderSummaryProps) {
+  orderItems: Array<OrderItem>;
+  orderStatus: string;
+}) => {
   const dispatch = useDispatch();
-  const { selectedOrder } = useSelector((state: RootState) => state.order);
   const { page } = useSelector((state: RootState) => state.cart);
   const { isBuyAgainLoading } = useSelector((state: RootState) => state.cart);
 
-  const isAllItemsInCart = selectedOrder?.orderItems.every((orderItem) =>
+  const isAllItemsInCart = orderItems.every((it) =>
     page.content.some((item) => {
-      let isMatch = item.productDetail?.id === orderItem.productDetail?.id;
-      if (orderItem.type) {
-        isMatch = isMatch && item.type === orderItem.type;
+      let isMatch = item.productDetail?.id === it.productDetail?.id;
+      if (it.type) {
+        isMatch = isMatch && item.type === it.type;
       }
-      if (orderItem.toppings?.length) {
+      if (it.toppings?.length) {
         isMatch =
           isMatch &&
-          JSON.stringify(item.toppings) === JSON.stringify(orderItem.toppings);
+          JSON.stringify(item.toppings) === JSON.stringify(it.toppings);
       }
       return isMatch;
     })
@@ -35,21 +40,17 @@ export function OrderSummary({ totalAmount, shippingFee }: OrderSummaryProps) {
       <Button
         loading={isBuyAgainLoading}
         className="text-primary"
-        disabled={isAllItemsInCart || selectedOrder?.status !== "COMPLETED"}
+        disabled={isAllItemsInCart || orderStatus !== "COMPLETED"}
         onClick={() => {
-          if (selectedOrder) {
-            const cartItemsToAdd = selectedOrder.orderItems.map((item) => ({
-              productDetailId: item.productDetail.id,
-              quantity: item.quantity,
-              toppings: item.toppings || [],
-              type: item.type,
-            }));
-            console.log(cartItemsToAdd);
-            
-            dispatch(
-              buyAgainOrderAction({ orderItems: selectedOrder.orderItems })
-            );
-          }
+          const cartItemsToAdd = orderItems.map((item) => ({
+            productDetailId: item.productDetail.id,
+            quantity: item.quantity,
+            toppings: item.toppings || [],
+            type: item.type,
+          }));
+          console.log(cartItemsToAdd);
+
+          dispatch(buyAgainOrderAction({ orderItems }));
         }}
       >
         {isAllItemsInCart
@@ -76,4 +77,4 @@ export function OrderSummary({ totalAmount, shippingFee }: OrderSummaryProps) {
       </div>
     </div>
   );
-}
+};
