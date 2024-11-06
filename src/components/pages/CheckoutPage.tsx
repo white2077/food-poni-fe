@@ -37,7 +37,7 @@ export const CheckoutPage = () => {
   return (
     <DefaultLayout>
       <div style={{ color: "black", textAlign: "left" }}>
-        <h1 className="text-2xl mb-2">GIỎ HÀNG</h1>
+        <p className="text-2xl mb-2">GIỎ HÀNG</p>
         <Row gutter={16}>
           <Col flex="auto">
             <OrderItems />
