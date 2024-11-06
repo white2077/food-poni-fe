@@ -91,7 +91,7 @@ export const AdminOrderTablePage = () => {
         queryParams: {
           page: 0,
           pageSize: 10,
-          sort: ["createdDate,desc"],
+          sort: ["createdAt,desc"],
         },
       })
     );
@@ -169,7 +169,7 @@ export const AdminOrderTablePage = () => {
               </div>
             </div>
           ),
-          createdDate: format(new Date(it.createdDate), "HH:mm:ss - dd/MM/yyyy"),
+          createdAt: format(new Date(it.createdAt), "HH:mm:ss - dd/MM/yyyy"),
           status: (
             <>
               <Dropdown
@@ -303,7 +303,7 @@ const getColumns = () => {
     },
     {
       title: "Ngày tạo",
-      dataIndex: "createdDate",
+      dataIndex: "createdAt",
       showSorterTooltip: { target: "full-header" },
       sorter: true,
     },

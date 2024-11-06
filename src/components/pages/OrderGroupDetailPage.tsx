@@ -31,7 +31,7 @@ export const OrderGroupDetailPage = () => {
           queryParams: {
             page: 0,
             pageSize: 10,
-            sort: ["createdDate,desc"],
+            sort: ["createdAt,desc"],
             orderGroup: true,
           },
         })

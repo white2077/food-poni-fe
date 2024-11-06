@@ -23,7 +23,7 @@ export default function Cart() {
       fetchCartsAction({
         queryParams: {
           status: true,
-          sort: ["createdDate,desc"],
+          sort: ["createdAt,desc"],
         },
       }),
     );

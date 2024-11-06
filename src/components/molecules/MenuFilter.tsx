@@ -13,7 +13,7 @@ export default function MenuFilter() {
         let sortOption = [""];
         switch (key) {
           case "bestnews":
-            sortOption = ["updatedDate,desc"];
+            sortOption = ["updatedAt,desc"];
             break;
           case "bestsellers":
             sortOption = ["sales,desc"];

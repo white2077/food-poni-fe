@@ -31,7 +31,7 @@ export const OrderGroupPage = () => {
         queryParams: {
           page: 0,
           pageSize: 10,
-          sort: ["createdDate,desc"],
+          sort: ["createdAt,desc"],
           orderStatus: status,
           orderGroup: true,
         },
@@ -126,7 +126,7 @@ export const OrderGroupPage = () => {
                         page: page - 1,
 
                         pageSize: 10,
-                        sort: ["createdDate,desc"],
+                        sort: ["createdAt,desc"],
                         orderStatus: status,
                         orderGroup: true,
                       },

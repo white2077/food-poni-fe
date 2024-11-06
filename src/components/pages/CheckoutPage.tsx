@@ -28,7 +28,7 @@ export const CheckoutPage = () => {
           page: 0,
           pageSize: 10,
           status: true,
-          sort: ["createdDate,desc"],
+          sort: ["createdAt,desc"],
         },
       })
     );

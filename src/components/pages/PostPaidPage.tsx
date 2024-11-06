@@ -27,7 +27,7 @@ export const PostPaidPage = () => {
       fetchOrdersByCustomerAction({
         queryParams: {
           page: 0,
-          sort: ["createdDate,desc"],
+          sort: ["createdAt,desc"],
           pageSize: 10,
           orderStatus: status,
           orderGroup: false,
@@ -117,7 +117,7 @@ export const PostPaidPage = () => {
                     fetchOrdersByCustomerAction({
                       queryParams: {
                         page: page - 1,
-                        sort: ["createdDate,desc"],
+                        sort: ["createdAt,desc"],
                         pageSize: 10,
                         orderStatus: status,
                         orderGroup: false,

@@ -446,7 +446,7 @@ function* handleCreateProduct() {
           queryParams: {
             page: number,
             pageSize: size,
-            sort: ["createdDate,desc"],
+            sort: ["createdAt,desc"],
           },
         })
       );
@@ -484,7 +484,7 @@ function* handleUpdateProductStatus() {
           queryParams: {
             page: number,
             pageSize: size,
-            sort: ["createdDate,desc"],
+            sort: ["createdAt,desc"],
           },
         })
       );

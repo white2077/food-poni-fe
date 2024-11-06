@@ -99,7 +99,7 @@ export const ProductTablePage = () => {
         queryParams: {
           page: 0,
           pageSize: 10,
-          sort: ["createdDate,desc"],
+          sort: ["createdAt,desc"],
         },
       })
     );
@@ -168,7 +168,7 @@ export const ProductTablePage = () => {
             />
           ),
           categories: [""].join(", "),
-          createdDate: it.createdDate.toLocaleString(),
+          createdAt: it.createdAt.toLocaleString(),
           status: (
             <Tag
               icon={
@@ -301,7 +301,7 @@ const getColumns = () => {
     },
     {
       title: "Created Date",
-      dataIndex: "createdDate",
+      dataIndex: "createdAt",
       showSorterTooltip: { target: "full-header" },
       sorter: {
         multiple: 1,

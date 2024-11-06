@@ -70,7 +70,7 @@ const OrderCard = ({
                   <span className="text-primary font-bold">/</span>
                   <span>
                     {format(
-                      new Date(order.createdDate ?? ""),
+                      new Date(order.createdAt ?? ""),
                       "dd-MM-yyyy - HH:mm"
                     )}
                   </span>

@@ -6,7 +6,7 @@ const { Text } = Typography;
 interface OrderItemListProps {
     orderItems: any[];
     username: string;
-    createdDate: Date;
+    createdAt: Date;
     status: string;
     onBuyAgain?: (item: any) => void;
     cartItems: any[];
@@ -15,7 +15,7 @@ const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 };
 
-export const OrderItemList: React.FC<OrderItemListProps> = ({ orderItems, username, createdDate, status, onBuyAgain, cartItems }) => {
+export const OrderItemList: React.FC<OrderItemListProps> = ({ orderItems, username, createdAt, status, onBuyAgain, cartItems }) => {
     return (
         <List
             dataSource={orderItems}
@@ -47,7 +47,7 @@ export const OrderItemList: React.FC<OrderItemListProps> = ({ orderItems, userna
                                                         Người bán: <Text style={{ color: 'rgb(243, 111, 36)' }}>{username}</Text>
                                                     </div>
                                                     <div className="text-[14px]">
-                                                        Ngày bán: {format(new Date(createdDate ?? ""), "yyyy-MM-dd HH:mm:ss")}
+                                                        Ngày bán: {format(new Date(createdAt ?? ""), "yyyy-MM-dd HH:mm:ss")}
                                                     </div>
                                                     <div className="flex gap-2">
                                                         <Button

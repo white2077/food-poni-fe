@@ -139,7 +139,7 @@ const authSlice = createSlice({
     }),
     updateCurrentUserSuccess: (
       state,
-      action: PayloadAction<AuthState["currentUser"]>,
+      action: PayloadAction<AuthState["currentUser"]>
     ) => ({
       ...state,
       currentUser: action.payload,
@@ -151,7 +151,7 @@ const authSlice = createSlice({
     }),
     updateCurrentUserAddressSuccess: (
       state,
-      action: PayloadAction<{ aid: string }>,
+      action: PayloadAction<{ aid: string }>
     ) => ({
       ...state,
       currentUser: state.currentUser
@@ -181,7 +181,7 @@ const authSlice = createSlice({
     }),
     registerUserFailure: (
       state,
-      action: PayloadAction<Record<string, string>>,
+      action: PayloadAction<Record<string, string>>
     ) => ({
       ...state,
       register: {
@@ -194,7 +194,7 @@ const authSlice = createSlice({
       state,
       action: PayloadAction<{
         fields: Array<{ field: string; value: string }>;
-      }>,
+      }>
     ) => ({
       ...state,
       formSaved: {
@@ -207,7 +207,7 @@ const authSlice = createSlice({
       action: PayloadAction<{
         field: string;
         value: string;
-      }>,
+      }>
     ) => {
       let errorMessage: string | null = null;
 
@@ -281,7 +281,7 @@ const authSlice = createSlice({
       }
 
       const isDirty = updatedFields.every(
-        (field) => field.errorMessage === null,
+        (field) => field.errorMessage === null
       );
 
       return {
@@ -328,15 +328,15 @@ export const registerUserAction = createAction<{
 }>(`${SLICE_NAME}/registerUserAction`);
 
 export const updateCurrentUserAddressAction = createAction<{ aid: string }>(
-  `${SLICE_NAME}/updateCurrentUserAddressRequest`,
+  `${SLICE_NAME}/updateCurrentUserAddressRequest`
 );
 
 export const loginAction = createAction<{ navigate: NavigateFunction }>(
-  `${SLICE_NAME}/loginRequest`,
+  `${SLICE_NAME}/loginRequest`
 );
 
 export const fetchUserAction = createAction<{ uid: string }>(
-  `${SLICE_NAME}/fetchUserRequest`,
+  `${SLICE_NAME}/fetchUserRequest`
 );
 
 function* handleLogin() {
@@ -345,7 +345,7 @@ function* handleLogin() {
     try {
       yield put(updatePendingSuccess());
       const { username, password, remember }: FieldLoginType = yield select(
-        (state: RootState) => state.auth.login,
+        (state: RootState) => state.auth.login
       );
       const user: AuthRequest = {
         username,
@@ -356,8 +356,8 @@ function* handleLogin() {
       yield put(loginSuccess());
       yield put(
         updateCurrentUserSuccess(
-          jwtDecode(res.refreshToken) as AuthState["currentUser"],
-        ),
+          jwtDecode(res.refreshToken) as AuthState["currentUser"]
+        )
       );
 
       Cookies.set(REFRESH_TOKEN, res.refreshToken, { expires: 7 });
@@ -393,7 +393,7 @@ function* handleRegisterUser() {
     const {
       payload: { values },
     }: ReturnType<typeof registerUserAction> = yield take(
-      registerUserAction.type,
+      registerUserAction.type
     );
 
     try {
@@ -410,8 +410,8 @@ function* handleRegisterUser() {
 
       yield put(
         updateCurrentUserSuccess(
-          jwtDecode(loginRes.refreshToken) as AuthState["currentUser"],
-        ),
+          jwtDecode(loginRes.refreshToken) as AuthState["currentUser"]
+        )
       );
 
       Cookies.set(REFRESH_TOKEN, loginRes.refreshToken, { expires: 7 });
@@ -434,7 +434,7 @@ function* handleUpdateCurrentUserAddress() {
     const {
       payload: { aid },
     }: ReturnType<typeof updateCurrentUserAddressAction> = yield take(
-      updateCurrentUserAddressAction,
+      updateCurrentUserAddressAction
     );
     try {
       yield call(updateCurrentUserAddress, aid);
@@ -460,7 +460,9 @@ function* handleFetchUser() {
       const auth: AuthResponse = yield call(refreshToken);
       setAccessToken(auth.accessToken);
 
-      yield put(fetchCartGroupsRequest());
+      if (!(user.role === "RETAILER")) {
+        yield put(fetchCartGroupsRequest());
+      }
 
       yield put(
         updateCurrentUserSuccess({
@@ -470,7 +472,7 @@ function* handleFetchUser() {
           email: user.email,
           addressId: user.address && user.address.id,
           username: user.username,
-        }),
+        })
       );
     } catch (e) {
       notification.open({

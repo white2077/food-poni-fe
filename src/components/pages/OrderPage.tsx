@@ -30,7 +30,7 @@ export const OrderPage = () => {
       fetchOrdersByCustomerAction({
         queryParams: {
           page: 0,
-          sort: ["createdDate,desc"],
+          sort: ["createdAt,desc"],
           pageSize: 10,
           orderStatus: status,
           orderGroup: false,
@@ -120,7 +120,7 @@ export const OrderPage = () => {
                     fetchOrdersByCustomerAction({
                       queryParams: {
                         page: page - 1,
-                        sort: ["createdDate,desc"],
+                        sort: ["createdAt,desc"],
                         pageSize: 10,
                         orderStatus: status,
                         orderGroup: false,

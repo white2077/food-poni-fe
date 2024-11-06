@@ -78,7 +78,7 @@ export type Order = {
   readonly status: string;
   readonly note: string;
   readonly payment: PaymentInfo;
-  readonly createdDate: Date;
+  readonly createdAt: Date;
   readonly shippingFee: number;
 };
 
@@ -161,7 +161,7 @@ export type Notification = {
   readonly status: boolean;
   readonly attributes: string;
   readonly type: "ORDER" | "PROMOTION" | "VOUCHER" | "RATE";
-  readonly createdDate: Date;
+  readonly createdAt: Date;
 };
 
 export type NotificationAttributes = {
@@ -206,8 +206,8 @@ export type Product = {
     readonly price: number;
   }>;
   readonly types: Array<string>;
-  readonly createdDate: Date;
-  readonly updatedDate: Date;
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
 };
 
 export type ProductCategory = {

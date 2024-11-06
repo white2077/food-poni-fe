@@ -53,7 +53,7 @@ export default function NotificationDropdown() {
   useEffect(() => {
     dispatch(
       fetchNotificationsAction({
-        queryParams: { page: 0, pageSize: 10, sort: ["createdDate,desc"] },
+        queryParams: { page: 0, pageSize: 10, sort: ["createdAt,desc"] },
       })
     );
   }, [dispatch]);
@@ -85,7 +85,7 @@ export default function NotificationDropdown() {
                   ? "success"
                   : "error",
                 placement: "bottomRight",
-                message: notificationEvent.createdDate.toString(),
+                message: notificationEvent.createdAt.toString(),
                 description: getNotificationOrderMessage(
                   attributes.id,
                   attributes.orderStatus
@@ -237,7 +237,7 @@ export default function NotificationDropdown() {
                           queryParams: {
                             page: 0,
                             pageSize: 10,
-                            sort: ["createdDate,desc"],
+                            sort: ["createdAt,desc"],
                           },
                         })
                       );
@@ -248,7 +248,7 @@ export default function NotificationDropdown() {
                           queryParams: {
                             page: 0,
                             pageSize: 10,
-                            sort: ["createdDate,desc"],
+                            sort: ["createdAt,desc"],
                             read: "false",
                           },
                         })
@@ -260,7 +260,7 @@ export default function NotificationDropdown() {
                           queryParams: {
                             page: 0,
                             pageSize: 10,
-                            sort: ["createdDate,desc"],
+                            sort: ["createdAt,desc"],
                             read: "true",
                           },
                         })
@@ -316,14 +316,14 @@ export default function NotificationDropdown() {
                                   const hoursDiff =
                                     Math.abs(
                                       new Date().getTime() -
-                                        new Date(it.createdDate).getTime()
+                                        new Date(it.createdAt).getTime()
                                     ) / 36e5;
 
                                   if (hoursDiff > 48) {
                                     return (
                                       <span>
                                         {format(
-                                          it.createdDate,
+                                          it.createdAt,
                                           "hh:mm dd-MM-yyyy"
                                         )}
                                       </span>
@@ -332,13 +332,13 @@ export default function NotificationDropdown() {
                                     return (
                                       <span>
                                         Hôm qua{" "}
-                                        {format(it.createdDate, "hh:mm")}
+                                        {format(it.createdAt, "hh:mm")}
                                       </span>
                                     );
                                   } else {
                                     return (
                                       <span>
-                                        {formatDistanceToNow(it.createdDate, {
+                                        {formatDistanceToNow(it.createdAt, {
                                           addSuffix: true,
                                           locale: vi,
                                         })}
