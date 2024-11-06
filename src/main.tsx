@@ -21,7 +21,7 @@ import { SignupPage } from "./components/pages/SignupPage";
 import { OrderGroupPage } from "./components/pages/OrderGroupPage";
 import { OrderGroupDetailPage } from "./components/pages/OrderGroupDetailPage";
 import { PostPaidPage } from "./components/pages/PostPaidPage";
-import { OrderPostPaidDetailPage } from "./components/pages/PostPaidDetailPage";
+import { OrderPostPaidDetailPage } from "./components/pages/OrderPostPaidDetailPage";
 import { AdminOrderTablePage } from "./components/pages/AdminOrderTablePage";
 
 export const router = (currentRole: "RETAILER" | "CUSTOMER" | "VIP") =>

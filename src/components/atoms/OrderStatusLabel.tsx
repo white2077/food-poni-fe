@@ -1,4 +1,3 @@
-
 export const OrderStatusLabel = ({ status }: { status: string }) => (
   <div className="flex justify-between items-center mb-4">
     <h3>
@@ -12,7 +11,7 @@ export const OrderStatusLabel = ({ status }: { status: string }) => (
               ? "Đáng nghi"
               : status === "CANCELLED"
                 ? "Đã hủy"
-                : "Đơn hoàn tất"}
+                : status === "COMPLETED" && "Đơn hoàn tất"}
     </h3>
   </div>
 );

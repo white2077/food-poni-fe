@@ -28,7 +28,12 @@ export const OrderGroupDetailPage = () => {
       dispatch(
         fetchOrderItemsByOrderIdAction({
           oid: orderId,
-          queryParams: { page: 0, pageSize: 10, orderGroup: true },
+          queryParams: {
+            page: 0,
+            pageSize: 10,
+            sort: ["createdDate,desc"],
+            orderGroup: true,
+          },
         })
       );
       dispatch(fetchOrderAction({ orderId }));

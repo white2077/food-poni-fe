@@ -1,5 +1,5 @@
 import { ProductLoading } from "@/components/atoms/ProductLoading.tsx";
-import { fetchOrderAction } from "@/redux/modules/order";
+import { fetchOrderItemsByOrderIdAction } from "@/redux/modules/orderItem.ts";
 import { RootState } from "@/redux/store";
 import { LeftOutlined } from "@ant-design/icons";
 import { Button, Card, Divider } from "antd";
@@ -23,7 +23,9 @@ export const OrderPostPaidDetailPage = () => {
 
   useEffect(() => {
     if (orderId) {
-      dispatch(fetchOrderAction({ orderId }));
+      dispatch(
+        fetchOrderItemsByOrderIdAction({ oid: orderId, queryParams: {} })
+      );
     }
   }, [orderId, dispatch]);
 
