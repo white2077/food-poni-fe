@@ -12,6 +12,7 @@ import {
   leaveCartGroup,
   updateCartItemQuantity,
 } from "@/utils/api/cartGroup";
+import { createOrder, createVNPayOrder } from "@/utils/api/order";
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { notification } from "antd";
 import { Task } from "redux-saga";
@@ -30,7 +31,6 @@ import {
   OrderState,
   updateCreateLoading,
 } from "./order";
-import { createOrder, createVNPayOrder } from "@/utils/api/order";
 
 export type CartGroupState = {
   readonly isVisible: boolean;
@@ -739,12 +739,16 @@ function* handleCreateOrderGroup() {
             createVNPayOrder,
             orderId,
             totalAmount,
-            roomId,
+            roomId
           );
           window.open(vnpayUrl, "_blank");
-        } else {
-          yield put(createOrderSuccess());
-          yield put(deleteCartGroupAction({ roomId }));
+        }
+
+        yield put(deleteCartGroupAction({ roomId }));
+        yield put(createOrderSuccess());
+
+        if (payment.method === "CASH") {
+          window.location.href = `/don-hang/${orderId}`;
         }
       }
     } catch (e) {
