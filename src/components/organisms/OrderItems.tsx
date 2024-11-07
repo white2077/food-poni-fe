@@ -17,6 +17,7 @@ export default function OrderItems() {
     <div>
       <CartHeader
         enableCartGroup={false}
+        enableDeleteAll={page.content.length > 0}
         isAllChecked={isAllChecked}
         isDeleteAllLoading={isDeleteAllLoading}
         isDisableCheckbox={page.content.length < 1}

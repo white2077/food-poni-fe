@@ -3,6 +3,7 @@ import { DeleteOutlined } from "@ant-design/icons";
 
 export const CartHeader = ({
   enableCartGroup,
+  enableDeleteAll,
   isAllChecked,
   isDeleteAllLoading,
   isDisableCheckbox,
@@ -10,6 +11,7 @@ export const CartHeader = ({
   deleteAllCartRequest,
 }: {
   enableCartGroup: boolean;
+  enableDeleteAll?: boolean;
   isDeleteAllLoading?: boolean;
   isAllChecked?: boolean;
   isDisableCheckbox?: boolean;
@@ -33,7 +35,7 @@ export const CartHeader = ({
       <Col flex="14%">Thành tiền</Col>
       <Col flex="19%">Ghi chú</Col>
       <Col flex="3%" className="text-center">
-        {!enableCartGroup && (
+        {!enableCartGroup && enableDeleteAll && (
           <Popconfirm
             title="Bạn có chắc chắn muốn xóa không?"
             onConfirm={deleteAllCartRequest}
