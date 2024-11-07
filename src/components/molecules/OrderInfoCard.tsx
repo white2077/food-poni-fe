@@ -69,9 +69,6 @@ export function OrderInfoCard() {
                 ? "Tiền mặt"
                 : "VNPAY"}
             </Text>
-            {selectedOrder.status === "POST_PAID" && (
-              <span className="text-red-500 px-1 ">/ chưa thanh toán</span>
-            )}
             {!selectedOrder.payment.method?.includes("CASH") && (
               <>
                 <span className="mx-2">/</span>

@@ -75,7 +75,7 @@ export type Order = {
   readonly totalAmount: number;
   readonly user: User;
   readonly shippingAddress: ShippingAddress;
-  readonly status: string;
+  readonly status: OrderStatus;
   readonly note: string;
   readonly payment: PaymentInfo;
   readonly createdAt: Date;
@@ -97,6 +97,8 @@ export type OrderItem = {
   readonly note: string;
   readonly rate: Rate;
 };
+
+export type OrderStatus = "PENDING" | "APPROVED" | "REJECTED" | "COMPLETED" | "DELIVERING" | "CANCELLED";
 
 export type CartGroup = {
   readonly roomId: string;

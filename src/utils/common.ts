@@ -146,8 +146,7 @@ export const toSlug = (str: string) => {
   return str;
 };
 
-export const groupOrderByUser = (
-  orderItems: OrderItem[]) => {
+export const groupOrderByUser = (orderItems: OrderItem[]) => {
   const userMap = new Map<
     string,
     {
@@ -167,4 +166,14 @@ export const groupOrderByUser = (
   });
 
   return Array.from(userMap.values());
-  }
+};
+
+
+export const ORDER_STATUSES = [
+  { label: "Chờ xác nhận", key: "PENDING" },
+  { label: "Bị từ chối", key: "REJECTED" },
+  { label: "Đang chế biến", key: "APPROVED" },
+  { label: "Đang giao", key: "DELIVERING" },
+  { label: "Đã nhận hàng", key: "COMPLETED" },
+  { label: "Đã hủy", key: "CANCELLED" },
+];

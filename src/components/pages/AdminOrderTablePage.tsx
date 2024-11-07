@@ -1,17 +1,16 @@
-import {
-  fetchOrdersByRetailerAction
-} from "@/redux/modules/order";
+import { fetchOrdersByRetailerAction } from "@/redux/modules/order";
 import { RootState } from "@/redux/store";
-import { currencyFormat, getThumbnail } from "@/utils/common";
+import { currencyFormat, getThumbnail, ORDER_STATUSES } from "@/utils/common";
 import {
   CheckCircleOutlined,
+  ClockCircleOutlined,
   CloseCircleOutlined,
   CopyOutlined,
   DashOutlined,
   DownloadOutlined,
   ImportOutlined,
   LineOutlined,
-  UserOutlined,
+  SyncOutlined,
 } from "@ant-design/icons";
 import {
   Badge,
@@ -24,13 +23,14 @@ import {
   TableColumnsType,
   Tag,
 } from "antd";
+import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AvatarInfo } from "../atoms/AvatarInfo";
 import { SalesLabel } from "../atoms/SalesLabel";
 import { AdminLayout } from "../templates/AdminLayout";
 import "./AdminOrderTablePage.scss";
-import { format } from "date-fns";
+import { OrderStatus } from "@/type/types";
 
 const TableToolbar = ({
   isFetchLoading,
@@ -174,29 +174,40 @@ export const AdminOrderTablePage = () => {
             <>
               <Dropdown
                 menu={{
-                  items: [
-                    {
-                      label: "1st menu item",
-                      key: "1",
-                      icon: <UserOutlined />,
-                    },
-                    {
-                      label: "2nd menu item",
-                      key: "2",
-                      icon: <UserOutlined />,
-                    },
-                  ],
+                  items: ORDER_STATUSES.map((it) => ({
+                    ...it,
+                    icon:
+                      it.key === "PENDING" ? (
+                        <ClockCircleOutlined />
+                      ) : it.key === "REJECTED" ? (
+                        <CheckCircleOutlined />
+                      ) : it.key === "APPROVED" ? (
+                        <CloseCircleOutlined />
+                      ) : it.key === "DELIVERING" ? (
+                        <CloseCircleOutlined />
+                      ) : it.key === "COMPLETED" ? (
+                        <CheckCircleOutlined />
+                      ) : (
+                        <CloseCircleOutlined />
+                      ),
+                  })),
                 }}
               >
                 <Tag
-                  icon={
-                    it.status ? (
-                      <CheckCircleOutlined />
-                    ) : (
-                      <CloseCircleOutlined />
-                    )
+                  icon={<OrderStatusIcon status={it.status} />}
+                  color={
+                    it.status === "PENDING"
+                      ? "processing"
+                      : it.status === "REJECTED"
+                        ? "gold"
+                        : it.status === "APPROVED"
+                          ? "success"
+                          : it.status === "DELIVERING"
+                            ? "warning"
+                            : it.status === "COMPLETED"
+                              ? "success"
+                              : "error"
                   }
-                  color={"success"}
                 >
                   {it.status}
                 </Tag>
@@ -279,16 +290,10 @@ const getColumns = () => {
     {
       title: "Trạng thái",
       dataIndex: "status",
-      filters: [
-        {
-          text: "Chờ xác nhận",
-          value: "PENDING",
-        },
-        {
-          text: "Hoàn thành",
-          value: "COMPLETED",
-        },
-      ],
+      filters: ORDER_STATUSES.map((it) => ({
+        text: it.label,
+        value: it.key,
+      })),
       filterMultiple: true,
     },
     {
@@ -312,4 +317,20 @@ const getColumns = () => {
       dataIndex: "actions",
     },
   ] as TableColumnsType;
+};
+
+const OrderStatusIcon = ({ status }: { status: OrderStatus }) => {
+  return status === "PENDING" ? (
+    <ClockCircleOutlined />
+  ) : status === "REJECTED" ? (
+    <CloseCircleOutlined />
+  ) : status === "APPROVED" ? (
+    <CheckCircleOutlined />
+  ) : status === "DELIVERING" ? (
+    <SyncOutlined spin />
+  ) : status === "COMPLETED" ? (
+    <CheckCircleOutlined />
+  ) : (
+    <CloseCircleOutlined />
+  );
 };

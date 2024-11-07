@@ -1,9 +1,6 @@
 import { Order } from "@/type/types";
 import { currencyFormat } from "@/utils/common.ts";
-import {
-  EnvironmentOutlined,
-  UserOutlined
-} from "@ant-design/icons";
+import { EnvironmentOutlined, UserOutlined } from "@ant-design/icons";
 import { Badge, Card, Skeleton } from "antd";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
@@ -41,7 +38,7 @@ const OrderCard = ({
     <div>
       <Link
         to={
-          order.status === "POST_PAID"
+          order.postPaidOrderId
             ? `/ghi-no/${order.id}`
             : orderGroup
               ? `/don-hang-nhom/${order.id}`
