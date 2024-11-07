@@ -11,9 +11,11 @@ import { LoadingPage } from "./LoadingPage";
 
 const ORDER_STATUSES = [
   { label: "Chờ xác nhận", value: "PENDING" },
-  { label: "Chờ lấy hàng", value: "APPROVED" },
-  { label: "Đã giao", value: "COMPLETED" },
   { label: "Bị từ chối", value: "REJECTED" },
+  { label: "Đang chế biến", value: "APPROVED" },
+  { label: "Đang giao", value: "DELIVERING" },
+  { label: "Đã nhận hàng", value: "COMPLETED" },
+  { label: "Đã hủy", value: "CANCELLED" },
 ];
 
 export const OrderPage = () => {
@@ -55,23 +57,23 @@ export const OrderPage = () => {
             }
           }}
           disabled={isFetchLoading}
-          options={ORDER_STATUSES.map((item) => ({
+          options={ORDER_STATUSES.map((it) => ({
             label: (
               <Badge
                 className="px-1"
                 count={
-                  item.value === "PENDING" &&
-                  item.value === status &&
+                  it.value === "PENDING" &&
+                  it.value === status &&
                   !isFetchLoading
                     ? page.totalElements
                     : 0
                 }
                 overflowCount={999}
               >
-                {item.label}
+                {it.label}
               </Badge>
             ),
-            value: item.value,
+            value: it.value,
           }))}
         />
       </Space>
