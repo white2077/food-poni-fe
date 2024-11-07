@@ -26,7 +26,7 @@ export default function MenuFilter() {
         }
         dispatch(
           fetchProductsAction({
-            queryParams: { page: 0, pageSize: 10, sort: sortOption },
+            queryParams: { page: 0, pageSize: 10, sort: sortOption, status: true },
           }),
         );
       }}
