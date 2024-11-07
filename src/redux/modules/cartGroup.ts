@@ -748,7 +748,7 @@ function* handleCreateOrderGroup() {
         yield put(createOrderSuccess());
 
         if (payment.method === "CASH") {
-          window.location.href = `/don-hang/${orderId}`;
+          window.location.href = `/don-hang-nhom/${orderId}`;
         }
       }
     } catch (e) {
