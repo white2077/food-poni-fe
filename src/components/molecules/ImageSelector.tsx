@@ -1,11 +1,12 @@
 import { fetchFileUploadsAction } from "@/redux/modules/fileUploads";
 import { getThumbnail } from "@/utils/common";
+import { DeleteOutlined } from "@ant-design/icons";
 import { Button, Flex, Modal, Popconfirm, Tooltip } from "antd";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { ScrollPane } from "../atoms/ScrollPane";
-import { FileContent, FileTree } from "../pages/FileManagementPage";
-import { DeleteOutlined } from "@ant-design/icons";
+import { FileContent } from "../organisms/FileContent";
+import { FileTree } from "../organisms/FileTree";
 
 export const ImageSelector = ({
   value,

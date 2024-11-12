@@ -6,7 +6,6 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import "../styles/globals.scss";
 import { App, SecuredRoute } from "./components/App";
 import { AccountInformationPage } from "./components/pages/AccountInformationPage";
-import { AdminProductDetailPage } from "./components/pages/AdminProductDetailPage";
 import { CheckoutPage } from "./components/pages/CheckoutPage";
 import { DashboardPage } from "./components/pages/Dashboard";
 import { FileManagementPage } from "./components/pages/FileManagementPage";
@@ -16,13 +15,14 @@ import { OrderDetailPage } from "./components/pages/OrderDetailPage";
 import { OrderPage } from "./components/pages/OrderPage";
 import { ProductCategoryPage } from "./components/pages/ProductCategoryPage";
 import { ProductDetailPage } from "./components/pages/ProductDetailPage";
-import { ProductTablePage } from "./components/pages/ProductTablePage";
 import { SignupPage } from "./components/pages/SignupPage";
 import { OrderGroupPage } from "./components/pages/OrderGroupPage";
 import { OrderGroupDetailPage } from "./components/pages/OrderGroupDetailPage";
 import { PostPaidPage } from "./components/pages/PostPaidPage";
 import { OrderPostPaidDetailPage } from "./components/pages/OrderPostPaidDetailPage";
 import { AdminOrderTablePage } from "./components/pages/AdminOrderTablePage";
+import { AdminProductTablePage } from "./components/pages/AdminProductTablePage";
+import { AdminProductDetailTablePage } from "./components/pages/AdminProductDetailTablePage";
 
 export const router = (currentRole: "RETAILER" | "CUSTOMER" | "VIP") =>
   createBrowserRouter([
@@ -165,7 +165,7 @@ export const router = (currentRole: "RETAILER" | "CUSTOMER" | "VIP") =>
           path: "products-table",
           element: (
             <SecuredRoute currentRole={currentRole} role={["RETAILER"]}>
-              <ProductTablePage />
+              <AdminProductTablePage />
             </SecuredRoute>
           ),
         },
@@ -173,7 +173,7 @@ export const router = (currentRole: "RETAILER" | "CUSTOMER" | "VIP") =>
           path: "product-details/:pid",
           element: (
             <SecuredRoute currentRole={currentRole} role={["RETAILER"]}>
-              <AdminProductDetailPage />
+              <AdminProductDetailTablePage />
             </SecuredRoute>
           ),
         },

@@ -1,10 +1,12 @@
 import { fetchFileUploadsAction } from "@/redux/modules/fileUploads";
-import { Button, Flex, Modal } from "antd";
-import { useState } from "react";
+import { DeleteOutlined } from "@ant-design/icons";
+import { Button, Flex, Modal, Popconfirm, Tooltip } from "antd";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { FileCard } from "../atoms/FileCard";
 import { ScrollPane } from "../atoms/ScrollPane";
-import { FileContent, FileTree } from "../pages/FileManagementPage";
+import { FileContent } from "../organisms/FileContent";
+import { FileTree } from "../organisms/FileTree";
 
 export const ImagesSelector = ({
   value,
@@ -19,27 +21,58 @@ export const ImagesSelector = ({
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedItems, setSelectedItems] = useState<Array<string>>([]);
 
+  useEffect(() => {
+    setSelectedItems(value || []);
+  }, [value]);
+
   return (
     <>
-      {value &&
-        (value as Array<string>).map((it) => (
-          <FileCard key={it} url={it} isCheck={selectedItems.includes(it)} />
-        ))}
-      <Button
-        type="dashed"
-        className={`${className} p-1`}
-        onClick={() => setOpenDialog(true)}
-      >
-        Choose
-      </Button>
+      <div className="flex gap-2 items-center flex-wrap">
+        {value &&
+          value.map((it, index) => (
+            <div key={`${it}-${index}`} className="relative ">
+              <FileCard key={index} url={it} isCheck={false} />
+              <Tooltip title="Nhấp để xóa hình ảnh">
+                <Popconfirm
+                  title="Bạn có chắc chắn muốn xóa hình này không?"
+                  onConfirm={() => onOke(value.filter((prev) => prev !== it))}
+                >
+                  <Button
+                    className="absolute -top-2 -right-2"
+                    size="small"
+                    type="primary"
+                    shape="circle"
+                    icon={<DeleteOutlined />}
+                  />
+                </Popconfirm>
+              </Tooltip>
+            </div>
+          ))}
+        <Button
+          type="dashed"
+          className={`${className} p-1`}
+          onClick={() => setOpenDialog(true)}
+        >
+          Choose
+        </Button>
+      </div>
 
       <Modal
         title="Choose thumbnail"
         open={openDialog}
         width={800}
-        onCancel={() => setOpenDialog(false)}
+        onCancel={() => {
+          setSelectedItems(value || []);
+          setOpenDialog(false);
+        }}
         footer={[
-          <Button key="back" onClick={() => setOpenDialog(false)}>
+          <Button
+            key="back"
+            onClick={() => {
+              setSelectedItems(value || []);
+              setOpenDialog(false);
+            }}
+          >
             Cancel
           </Button>,
           <Button

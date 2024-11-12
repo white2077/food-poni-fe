@@ -11,6 +11,7 @@ import { fileUploadsSagas } from "./modules/fileUploads.ts";
 import { orderSagas } from "./modules/order";
 import { rateSagas } from "./modules/rate.ts";
 import { orderItemSagas } from "./modules/orderItem.ts";
+import { productDetailSagas } from "./modules/productDetail.ts";
 
 export default function* rootSaga() {
   yield all([
@@ -19,6 +20,7 @@ export default function* rootSaga() {
     ...fileUploadsSagas,
     ...notificationSagas,
     ...productSagas,
+    ...productDetailSagas,
     ...productCategorySagas,
     ...cartGroupSagas,
     ...orderSagas,

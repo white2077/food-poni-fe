@@ -7,6 +7,7 @@ import notificationReducer from "@/redux/modules/notification.ts";
 import orderReducer from "@/redux/modules/order.ts";
 import orderItemReducer from "@/redux/modules/orderItem.ts";
 import productReducer from "@/redux/modules/product.ts";
+import productDetailReducer from "@/redux/modules/productDetail.ts";
 import productCategoryReducer from "@/redux/modules/productCategory.ts";
 import rateReducer from "@/redux/modules/rate.ts";
 import toppingReducer from "@/redux/modules/topping.ts";
@@ -22,6 +23,7 @@ export const rootReducer = combineReducers({
   cartGroup: cartGroupReducer,
   notification: notificationReducer,
   product: productReducer,
+  productDetail: productDetailReducer,
   productCategory: productCategoryReducer,
   rate: rateReducer,
   topping: toppingReducer,

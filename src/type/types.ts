@@ -239,6 +239,7 @@ export type ProductDetail = {
   readonly sales: number;
   readonly rateCount: number;
   readonly product: Product;
+  readonly createdAt: Date;
 };
 
 export type User = {

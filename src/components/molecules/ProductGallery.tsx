@@ -1,6 +1,6 @@
 import { Avatar, Card, Image, Segmented } from "antd";
 import { useEffect, useState } from "react";
-import { server } from "../../utils/server";
+import { getThumbnail } from "@/utils/common";
 
 const ProductGallery = ({ images }: { images: string[] }) => {
   const [selectedImage, setSelectedImage] = useState<string>();
@@ -17,10 +17,10 @@ const ProductGallery = ({ images }: { images: string[] }) => {
           width="100%"
           src={
             selectedImage
-              ? server + selectedImage
+              ? getThumbnail(selectedImage)
               : images[0]
-                ? server + images[0]
-                : ""
+                ? getThumbnail(images[0])
+                : getThumbnail("")
           }
         />
         <div className="overflow-x-scroll scrollbar-rounded">
@@ -32,7 +32,7 @@ const ProductGallery = ({ images }: { images: string[] }) => {
                   <Avatar
                     className="my-2 rounded-lg"
                     size={75}
-                    src={server + image}
+                    src={getThumbnail(image)}
                   />
                 ),
                 value: image,
