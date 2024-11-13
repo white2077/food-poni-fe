@@ -66,18 +66,7 @@ export const LoginPage = () => {
     const getMessage = (event: MessageEvent<string>) => {
       if (server.startsWith(event.origin)) {
         if (event.data) {
-          dispatch(
-            updateCurrentUserSuccess(
-              jwtDecode(event.data) as {
-                readonly role: string;
-                readonly id: string;
-                readonly avatar: string;
-                readonly email: string;
-                readonly addressId: string;
-                readonly username: string;
-              }
-            )
-          );
+          dispatch(updateCurrentUserSuccess(jwtDecode(event.data)));
           Cookies.set("refreshToken", event.data, { expires: 7 });
           window.location.href = "/";
         }
@@ -103,10 +92,7 @@ export const LoginPage = () => {
             </div>
             <div className="flex justify-center gap-1 font-medium text-gray-500">
               Cần một tài khoản?
-              <a
-                className="float-right"
-                onClick={() => navigate("/signup")}
-              >
+              <a className="float-right" onClick={() => navigate("/signup")}>
                 Đăng ký ngay
               </a>
             </div>

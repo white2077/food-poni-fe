@@ -12,7 +12,6 @@ import {
   leaveCartGroup,
   updateCartItemQuantity,
 } from "@/utils/api/cartGroup";
-import { createOrder, createVNPayOrder } from "@/utils/api/order";
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { notification } from "antd";
 import { Task } from "redux-saga";
@@ -25,12 +24,6 @@ import {
   select,
   take,
 } from "redux-saga/effects";
-import {
-  createOrderFailure,
-  createOrderSuccess,
-  OrderState,
-  updateCreateLoading,
-} from "./order";
 
 export type CartGroupState = {
   readonly isVisible: boolean;
@@ -701,67 +694,67 @@ function* handleLeavingCartGroup() {
   }
 }
 
-function* handleCreateOrderGroup() {
-  while (true) {
-    const {
-      payload: { roomId, totalAmount },
-    }: ReturnType<typeof createOrderGroupAction> = yield take(
-      createOrderGroupAction
-    );
-    try {
-      yield put(updateCreateLoading());
+// function* handleCreateOrderGroup() {
+//   while (true) {
+//     const {
+//       payload: { roomId, totalAmount },
+//     }: ReturnType<typeof createOrderGroupAction> = yield take(
+//       createOrderGroupAction
+//     );
+//     try {
+//       yield put(updateCreateLoading());
 
-      const cartGroup: CartGroupState["cartGroupJoined"][number] = yield select(
-        (state: RootState) =>
-          state.cartGroup.cartGroupJoined.find((it) => it.roomId === roomId)
-      );
-      if (cartGroup) {
-        const { shippingAddress, payment }: OrderState["form"] = yield select(
-          (state: RootState) => state.order.form
-        );
-        const orderId: string = yield call(createOrder, {
-          orderItems: cartGroup.cartItems.map((it) => ({
-            user: { id: it.user && it.user.id },
-            quantity: it.quantity,
-            productDetail: {
-              id: it.productDetail.id,
-            },
-            toppings: it.toppings,
-            type: it.type,
-          })),
-          shippingAddress,
-          payment,
-          totalAmount,
-        });
+//       const cartGroup: CartGroupState["cartGroupJoined"][number] = yield select(
+//         (state: RootState) =>
+//           state.cartGroup.cartGroupJoined.find((it) => it.roomId === roomId)
+//       );
+//       if (cartGroup) {
+//         const { shippingAddress, payment }: OrderState["form"] = yield select(
+//           (state: RootState) => state.order.form
+//         );
+//         const orderId: string = yield call(createOrder, {
+//           orderItems: cartGroup.cartItems.map((it) => ({
+//             user: { id: it.user && it.user.id },
+//             quantity: it.quantity,
+//             productDetail: {
+//               id: it.productDetail.id,
+//             },
+//             toppings: it.toppings,
+//             type: it.type,
+//           })),
+//           shippingAddress,
+//           payment,
+//           totalAmount,
+//         });
 
-        if (payment.method === "VNPAY") {
-          const vnpayUrl: string = yield call(
-            createVNPayOrder,
-            orderId,
-            totalAmount,
-            roomId
-          );
-          window.open(vnpayUrl, "_blank");
-        }
+//         if (payment.method === "VNPAY") {
+//           const vnpayUrl: string = yield call(
+//             createVNPayOrder,
+//             orderId,
+//             totalAmount,
+//             roomId
+//           );
+//           window.open(vnpayUrl, "_blank");
+//         }
 
-        yield put(deleteCartGroupAction({ roomId }));
-        yield put(createOrderSuccess());
+//         yield put(deleteCartGroupAction({ roomId }));
+//         yield put(createOrderSuccess());
 
-        if (payment.method === "CASH") {
-          window.location.href = `/don-hang-nhom/${orderId}`;
-        }
-      }
-    } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+//         if (payment.method === "CASH") {
+//           window.location.href = `/don-hang-nhom/${orderId}`;
+//         }
+//       }
+//     } catch (e) {
+//       notification.open({
+//         message: "Error",
+//         description: e.message,
+//         type: "error",
+//       });
 
-      yield put(createOrderFailure());
-    }
-  }
-}
+//       yield put(createOrderFailure());
+//     }
+//   }
+// }
 
 function* handleKickingUser() {
   while (true) {
@@ -793,6 +786,6 @@ export const cartGroupSagas = [
   fork(handleCreatingCartGroup),
   fork(handleDeletingCartGroup),
   fork(handleLeavingCartGroup),
-  fork(handleCreateOrderGroup),
+  // fork(handleCreateOrderGroup),
   fork(handleKickingUser),
 ];

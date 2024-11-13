@@ -45,9 +45,9 @@ export type Cart = {
 
 export type CurrentUser = {
   readonly id: string;
-  readonly role: string;
+  readonly role: "VIP" | "RETAILER" | "CUSTOMER";
   readonly avatar: string | null;
-  readonly addressId: string | null;
+  readonly addressId: string;
   readonly username: string;
   readonly email: string;
 };
@@ -247,7 +247,7 @@ export type User = {
   readonly birthday: string;
   readonly gender: boolean;
   readonly username: string;
-  readonly role: string;
+  readonly role: "VIP" | "RETAILER" | "CUSTOMER";
   readonly status: boolean;
   readonly address: Address;
 };

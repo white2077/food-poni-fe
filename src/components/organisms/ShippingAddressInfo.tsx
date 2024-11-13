@@ -1,18 +1,15 @@
-import { useDispatch, useSelector } from "react-redux";
-import { Alert, AutoComplete, Button, Form, Input } from "antd";
 import {
-  createAddressAction,
+  saveAddressAction,
   startSearchAddressAction,
-  updateAddressAction,
-  updateFormEditingSuccess,
-  updateFormSavedSuccess,
 } from "@/redux/modules/address.ts";
 import { RootState } from "@/redux/store.ts";
 import { Address, SearchResult } from "@/type/types.ts";
-import { useEffect } from "react";
-import { checkDirty } from "@/utils/common.ts";
+import { AutoComplete, Button, Form, Input, Popconfirm } from "antd";
+import { useForm } from "antd/es/form/Form";
+import { useDispatch, useSelector } from "react-redux";
 
-export type FormRule = {
+export type AddressRequest = {
+  id?: string;
   fullName: string;
   phoneNumber: string;
   address: string;
@@ -26,143 +23,37 @@ export default function ShippingAddressInfo({
   address?: Address;
 }) {
   const dispatch = useDispatch();
-  const { isUpdateLoading, addressesSearched, formEditing, formSaved } =
-    useSelector((state: RootState) => state.address);
+  const { isUpdateLoading, addressesSearched } = useSelector(
+    (state: RootState) => state.address
+  );
 
-  useEffect(() => {
-    if (address) {
-      dispatch(
-        updateFormSavedSuccess({
-          fields: [
-            { field: "fullName", value: address.fullName },
-            { field: "phoneNumber", value: address.phoneNumber },
-            { field: "address", value: address.address },
-            { field: "lon", value: address.lon.toString() },
-            { field: "lat", value: address.lat.toString() },
-          ],
-        })
-      );
-      dispatch(
-        updateFormEditingSuccess({
-          field: "fullName",
-          value: address.fullName,
-        })
-      );
-      dispatch(
-        updateFormEditingSuccess({
-          field: "phoneNumber",
-          value: address.phoneNumber,
-        })
-      );
-      dispatch(
-        updateFormEditingSuccess({ field: "address", value: address.address })
-      );
-      dispatch(
-        updateFormEditingSuccess({
-          field: "lon",
-          value: address.lon.toString(),
-        })
-      );
-      dispatch(
-        updateFormEditingSuccess({
-          field: "lat",
-          value: address.lat.toString(),
-        })
-      );
-    }
-  }, [dispatch, address]);
-
-  if (address && !formSaved.fields) {
-    return null;
-  }
+  const [form] = useForm<AddressRequest>();
 
   return (
     <Form
-      name={
-        address && address.id
-          ? `update-address-form-${address.id}`
-          : "add-address-form"
+      form={form}
+      className="mt-4"
+      initialValues={
+        address && {
+          id: address.id,
+          fullName: address.fullName,
+          phoneNumber: address.phoneNumber,
+          address: address.address,
+          lon: address.lon,
+          lat: address.lat,
+        }
       }
-      className="add-address-form my-[16px]"
-      clearOnDestroy={true}
-      initialValues={{
-        fullName: address && address.fullName,
-        phoneNumber: address && address.phoneNumber,
-        address: address && address.address,
-        lon: address && address.lon.toString(),
-        lat: address && address.lat.toString(),
-      }}
-      onFinish={() =>
-        dispatch(
-          address
-            ? updateAddressAction({ id: address.id })
-            : createAddressAction()
-        )
-      }
+      onFinish={(values) => dispatch(saveAddressAction({ values }))}
     >
       {/*Full name*/}
-      {formEditing.fields[0].errorMessage && (
-        <Alert
-          className="py-1"
-          message={formEditing.fields[0].errorMessage}
-          type="error"
-          showIcon
-        />
-      )}
       <Form.Item name="fullName">
-        <Input
-          placeholder="Họ tên"
-          onChange={(e) =>
-            dispatch(
-              updateFormEditingSuccess({
-                type: "TYPING",
-                field: "fullName",
-                value: e.target.value,
-              })
-            )
-          }
-        />
+        <Input placeholder="Họ tên" />
       </Form.Item>
       {/*Phone number*/}
-      {formEditing.fields[1].errorMessage && (
-        <Alert
-          className="py-1"
-          message={formEditing.fields[1].errorMessage}
-          type="error"
-          showIcon
-        />
-      )}
       <Form.Item name="phoneNumber">
-        <Input
-          placeholder="Số điện thoại"
-          onChange={(e) =>
-            dispatch(
-              updateFormEditingSuccess({
-                type: "TYPING",
-                field: "phoneNumber",
-                value: e.target.value,
-              })
-            )
-          }
-        />
+        <Input placeholder="Số điện thoại" />
       </Form.Item>
       {/*Address*/}
-      {formEditing.fields[2].errorMessage && (
-        <Alert
-          className="py-1"
-          message={formEditing.fields[2].errorMessage}
-          type="error"
-          showIcon
-        />
-      )}
-      {formEditing.fields[3].errorMessage && (
-        <Alert
-          className="py-1"
-          message={formEditing.fields[3].errorMessage}
-          type="error"
-          showIcon
-        />
-      )}
       <Form.Item name="address">
         <AutoComplete
           options={addressesSearched.map(
@@ -175,57 +66,34 @@ export default function ShippingAddressInfo({
           )}
           onSelect={(_: string, option: { data: SearchResult }): void => {
             if (option.data.display_name) {
-              dispatch(
-                updateFormEditingSuccess({
-                  type: "SELECT",
-                  field: "address",
-                  value: option.data.display_name,
-                })
-              );
-              dispatch(
-                updateFormEditingSuccess({
-                  type: "SELECT",
-                  field: "lon",
-                  value: option.data.lon + "",
-                })
-              );
-              dispatch(
-                updateFormEditingSuccess({
-                  type: "SELECT",
-                  field: "lat",
-                  value: option.data.lat + "",
-                })
-              );
+              form.setFieldValue("address", option.data.display_name);
+              form.setFieldValue("lon", option.data.lon);
+              form.setFieldValue("lat", option.data.lat);
             }
           }}
           onSearch={(value: string): void => {
             dispatch(startSearchAddressAction({ value }));
-            dispatch(
-              updateFormEditingSuccess({
-                type: "TYPING",
-                field: "address",
-                value: value,
-              })
-            );
           }}
           placeholder="Tìm kiếm địa chỉ tại đây"
           style={{ width: "100%" }}
         />
       </Form.Item>
-      <Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
-          className="add-address-form-button"
-          loading={isUpdateLoading}
-          disabled={
-            formEditing.isDirty ||
-            checkDirty(formEditing.fields, formSaved.fields)
-          }
-          block
+      <Form.Item name="lon" hidden={true} noStyle />
+      <Form.Item name="lat" hidden={true} noStyle />
+      <Form.Item className="mb-0">
+        <Popconfirm
+          title="Bạn có muốn lưu địa chỉ này không?"
+          onConfirm={() => form.submit()}
         >
-          Lưu địa chỉ
-        </Button>
+          <Button
+            type="primary"
+            htmlType="button"
+            loading={isUpdateLoading}
+            block
+          >
+            Lưu địa chỉ
+          </Button>
+        </Popconfirm>
       </Form.Item>
     </Form>
   );

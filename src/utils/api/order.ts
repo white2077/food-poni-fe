@@ -1,9 +1,8 @@
+import { OrderRequest } from "@/components/pages/CheckoutPage.tsx";
+import { Order, Page } from "@/type/types.ts";
+import { accessToken, apiWithToken } from "@/utils/axiosConfig.ts";
 import { AxiosResponse } from "axios";
 import generateQueryString, { QueryParams } from "./common";
-import { accessToken, apiWithToken } from "@/utils/axiosConfig.ts";
-import { Order, Page } from "@/type/types.ts";
-import { OrderState } from "@/redux/modules/order";
-import { server } from "@/utils/server.ts";
 
 export const getOrdersPageByCustomer = (
   queryParams: QueryParams
@@ -55,38 +54,9 @@ export const getOrdersPageByStatus = (
     .then((res: AxiosResponse<Page<Order[]>>) => res.data);
 };
 
-export const createOrder = ({
-  orderItems,
-  shippingAddress,
-  payment,
-}: OrderState["form"]): Promise<string> => {
+export const createOrder = (values: OrderRequest): Promise<string> => {
   return apiWithToken()
-    .post(
-      "/orders",
-      { orderItems, shippingAddress, payment },
-      {
-        headers: {
-          Authorization: "Bearer " + accessToken,
-        },
-      }
-    )
-    .then((res: AxiosResponse<string>) => res.data);
-};
-
-export const createVNPayOrder = (
-  orderId: string,
-  totalAmount: number,
-  roomId?: string
-): Promise<string> => {
-  return apiWithToken()
-    .get("/vn-pay", {
-      params: {
-        amount: totalAmount,
-        bankCode: "NCB",
-        vnp_OrderInfo: orderId,
-        roomId,
-        vnp_ReturnUrl: `${server}/api/v1/vn-pay/ipn`,
-      },
+    .post("/orders", values, {
       headers: {
         Authorization: "Bearer " + accessToken,
       },
@@ -94,15 +64,14 @@ export const createVNPayOrder = (
     .then((res: AxiosResponse<string>) => res.data);
 };
 
-export const createOrderPostPaid = ({
-  orderItems,
-  shippingAddress,
-  payment,
-}: OrderState["form"]): Promise<string> => {
+export const createVNPayOrder = (
+  addressId: string,
+  note: string
+): Promise<string> => {
   return apiWithToken()
     .post(
-      "/orders/post-paid",
-      { orderItems, shippingAddress, payment },
+      "/orders/vnpay",
+      { addressId, note },
       {
         headers: {
           Authorization: "Bearer " + accessToken,
@@ -110,4 +79,43 @@ export const createOrderPostPaid = ({
       }
     )
     .then((res: AxiosResponse<string>) => res.data);
+};
+
+export const createOrderPostPaid = (values: OrderRequest): Promise<string> => {
+  return apiWithToken()
+    .post("/orders/post-paid", values, {
+      headers: {
+        Authorization: "Bearer " + accessToken,
+      },
+    })
+    .then((res: AxiosResponse<string>) => res.data);
+};
+
+export const calculateShippingFee = (addressId: string): Promise<number> => {
+  return apiWithToken()
+    .get(`/shipping-fee/${addressId}`, {
+      headers: {
+        Authorization: "Bearer " + accessToken,
+      },
+    })
+    .then((res: AxiosResponse<number>) => res.data);
+};
+
+export const updateStatus = (
+  oid: string,
+  orderStatus: string
+): Promise<void> => {
+  return apiWithToken()
+    .patch(
+      generateQueryString(`/retailer/orders/${oid}`, {
+        orderStatus,
+      }),
+      {},
+      {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+        },
+      }
+    )
+    .then((res: AxiosResponse<void>) => res.data);
 };

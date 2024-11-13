@@ -1,12 +1,12 @@
 import SearchKeyword from "@/components/molecules/SearchKeyword";
 import { UserDropdown } from "@/components/molecules/UserDropdown";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store.ts";
 import Cart from "@/components/organisms/Cart";
+import NotificationDropdown from "@/components/organisms/NotificationDropdown";
+import { RootState } from "@/redux/store.ts";
 import { UserOutlined } from "@ant-design/icons";
 import { Button } from "antd";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import NotificationDropdown from "@/components/organisms/NotificationDropdown";
 
 export default function HeaderMain() {
   const { currentUser } = useSelector((state: RootState) => state.auth);
@@ -36,15 +36,14 @@ export default function HeaderMain() {
           <span className=" md:inline">Đăng nhập</span>
         </Button>
       </div>
-      <div className="grid grid-cols-1 grid-cols-[2fr_1fr] items-center gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr] items-center gap-4">
         <div className="order-1 md:order-2 mt-4 md:mt-0">
           <SearchKeyword />
         </div>
         <div className="order-2 hidden md:block text-end">
           {currentUser ? (
             <div className="flex items-center justify-end gap-4 order-2 md:order-3">
-              {currentUser.role !== "ADMIN" &&
-                currentUser.role !== "RETAILER" && <Cart />}{" "}
+              {currentUser.role !== "RETAILER" && <Cart />}{" "}
               <NotificationDropdown />
               <UserDropdown />
             </div>

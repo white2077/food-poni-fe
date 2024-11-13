@@ -2,7 +2,13 @@ export type QueryParams = {
   page?: number | null;
   pageSize?: number | null;
   status?: boolean | null;
-  orderStatus?: string | null;
+  orderStatus?:
+    | string
+    | "APPROVED"
+    | "REJECTED"
+    | "DELIVERING"
+    | "COMPLETED"
+    | null;
   sort?: string[] | null;
   read?: string | null;
   slug?: string | null;

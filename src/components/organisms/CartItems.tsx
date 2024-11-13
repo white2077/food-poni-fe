@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { CartBody } from "../molecules/CartBody.tsx";
 import { CartHeader } from "../molecules/CartHeader.tsx";
 
-export default function OrderItems() {
+export const CartItems = () => {
   const dispatch = useDispatch();
 
   const { page, isFetchLoading, isAllChecked, isDeleteAllLoading } =
@@ -31,4 +31,4 @@ export default function OrderItems() {
       />
     </div>
   );
-}
+};

@@ -1,3 +1,4 @@
+import { AddressRequest } from "@/components/organisms/ShippingAddressInfo.tsx";
 import { updateShippingAddressAction } from "@/redux/modules/order.ts";
 import { RootState } from "@/redux/store.ts";
 import { Address, Page, SearchResult } from "@/type/types.ts";
@@ -18,7 +19,6 @@ import {
   delay,
   fork,
   put,
-  race,
   select,
   take,
 } from "redux-saga/effects";
@@ -26,34 +26,17 @@ import { AuthState } from "./auth";
 
 export type AddressState = {
   readonly page: Page<
-    Array<{
-      readonly id: string;
-      readonly fullName: string;
-      readonly phoneNumber: string;
-      readonly address: string;
-      readonly lon: number;
-      readonly lat: number;
-      readonly isDeleteLoading: boolean;
-    }>
+    Array<
+      Address & {
+        readonly isDeleteLoading: boolean;
+      }
+    >
   >;
-  readonly formSaved: {
-    readonly fields: Array<{
-      readonly field: string;
-      readonly value: string;
-    }> | null;
-  };
-  readonly formEditing: {
-    readonly fields: Array<{
-      readonly field: string;
-      readonly value: string;
-      readonly errorMessage: string | null;
-    }>;
-    readonly isDirty: boolean;
-  };
   readonly addressesSearched: Array<SearchResult>;
   readonly isShowAddForm: boolean;
   readonly isFetchLoading: boolean;
   readonly isUpdateLoading: boolean;
+  readonly isDeleteLoading: boolean;
 };
 
 const initialState: AddressState = {
@@ -68,43 +51,11 @@ const initialState: AddressState = {
     numberOfElements: 0,
     empty: true,
   },
-  formSaved: {
-    fields: null,
-  },
-  formEditing: {
-    fields: [
-      {
-        field: "fullName",
-        value: "",
-        errorMessage: null,
-      },
-      {
-        field: "phoneNumber",
-        value: "",
-        errorMessage: null,
-      },
-      {
-        field: "address",
-        value: "",
-        errorMessage: null,
-      },
-      {
-        field: "lon",
-        value: "",
-        errorMessage: null,
-      },
-      {
-        field: "lat",
-        value: "",
-        errorMessage: null,
-      },
-    ],
-    isDirty: false,
-  },
   addressesSearched: [],
   isShowAddForm: false,
   isFetchLoading: false,
   isUpdateLoading: false,
+  isDeleteLoading: false,
 };
 
 const SLICE_NAME = "address";
@@ -113,11 +64,15 @@ const addressSlide = createSlice({
   name: SLICE_NAME,
   initialState,
   reducers: {
+    updateFetchLoadingSuccess: (state) => ({
+      ...state,
+      isFetchLoading: true,
+    }),
     fetchAddressesSuccess: (
       state,
       action: PayloadAction<{
         page: AddressState["page"];
-      }>,
+      }>
     ) => ({
       ...state,
       page: {
@@ -134,20 +89,16 @@ const addressSlide = createSlice({
       ...state,
       isFetchLoading: false,
     }),
-    updateAddressSuccess: (
+    updateLoadingForSavingSuccess: (state) => ({
+      ...state,
+      isUpdateLoading: true,
+    }),
+    saveAddressSuccess: (
       state,
-      action: PayloadAction<{
-        readonly id: string;
-        readonly fullName: string;
-        readonly phoneNumber: string;
-        readonly address: string;
-        readonly lon: number;
-        readonly lat: number;
-        readonly isDeleteLoading: boolean;
-      }>,
+      action: PayloadAction<AddressState["page"]["content"][0]>
     ) => {
       const address = state.page.content.find(
-        (it) => it.id === action.payload.id,
+        (it) => it.id === action.payload.id
       );
 
       if (address) {
@@ -193,9 +144,27 @@ const addressSlide = createSlice({
 
       return state;
     },
-    createAddressFailure: (state) => ({
+    saveAddressFailure: (state) => ({
       ...state,
       isUpdateLoading: false,
+    }),
+    updateLoadingForAddressDeleteSuccess: (
+      state,
+      action: PayloadAction<{ aid: string }>
+    ) => ({
+      ...state,
+      page: {
+        ...state.page,
+        content: state.page.content.map((it) => {
+          if (it.id === action.payload.aid) {
+            return {
+              ...it,
+              isDeleteLoading: true,
+            };
+          }
+          return it;
+        }),
+      },
     }),
     deleteAddressSuccess: (state, action: PayloadAction<{ aid: string }>) => ({
       ...state,
@@ -206,7 +175,7 @@ const addressSlide = createSlice({
             if (it.id === action.payload.aid) {
               return {
                 ...it,
-                isDeleteLoading: true,
+                isDeleteLoading: false,
               };
             }
             return it;
@@ -223,166 +192,43 @@ const addressSlide = createSlice({
           if (it.id === action.payload.aid) {
             return {
               ...it,
-              isDeleteLoading: true,
+              isDeleteLoading: false,
             };
           }
           return it;
         }),
       },
     }),
-    updateFormSavedSuccess: (
-      state,
-      action: PayloadAction<{
-        fields: Array<{ field: string; value: string }>;
-      }>,
-    ) => ({
-      ...state,
-      formSaved: {
-        ...state.formSaved,
-        fields: action.payload.fields,
-      },
-    }),
-    updateFormEditingSuccess: (
-      state,
-      action: PayloadAction<{
-        type?: "TYPING" | "SELECT";
-        field: string;
-        value: string;
-      }>,
-    ) => {
-      let errorMessage: string | null = null;
-      if (action.payload.type === "TYPING") {
-        switch (action.payload.field) {
-          case "fullName":
-            if (action.payload.value === "") {
-              errorMessage = "Tên người nhận không được để trống";
-              break;
-            }
-            if (action.payload.value.length < 5) {
-              errorMessage = "Tên người nhận phải có ít nhất 5 ký tự";
-              break;
-            }
-            break;
-          case "phoneNumber":
-            if (action.payload.value === "") {
-              errorMessage = "Số điện thoại không được để trống";
-              break;
-            }
-            if (isNaN(parseInt(action.payload.value))) {
-              errorMessage = "Số điện thoại phải là số";
-              break;
-            }
-            if (
-              action.payload.value.startsWith("00") ||
-              !action.payload.value.startsWith("0") ||
-              action.payload.value.length > 12
-            ) {
-              errorMessage = "Số điện thoại không hợp lệ";
-              break;
-            }
-            if (action.payload.value.length < 10) {
-              errorMessage = "Số điện thoại phải có ít nhất 10 ký tự";
-              break;
-            }
-            break;
-          case "address":
-            if (action.payload.value === "") {
-              errorMessage = "Địa chỉ không được để trống";
-              break;
-            }
-            if (action.payload.value) {
-              errorMessage = "Vui lòng chọn một địa chỉ";
-              break;
-            }
-            break;
-        }
-      }
-      if (action.payload.type === "SELECT") {
-        switch (action.payload.field) {
-          case "address":
-            if (action.payload.value) {
-              errorMessage = null;
-              break;
-            }
-        }
-      }
-
-      const updatedFields = state.formEditing.fields.map((field) => {
-        if (field.field === action.payload.field) {
-          return {
-            ...field,
-            value: action.payload.value,
-            errorMessage,
-          };
-        }
-        return field;
-      });
-
-      const isDirty = updatedFields.some(
-        (field) => field.errorMessage !== null,
-      );
-
-      return {
-        ...state,
-        formEditing: {
-          fields: updatedFields,
-          isDirty,
-        },
-      };
-    },
     updateAddressesSearchedSuccess: (
       state,
-      action: PayloadAction<{ addresses: Array<SearchResult> }>,
+      action: PayloadAction<{ addresses: Array<SearchResult> }>
     ) => ({
       ...state,
       addressesSearched: action.payload.addresses,
-    }),
-    clearFormSuccess: (state) => ({
-      ...state,
-      formEditing: initialState.formEditing,
-    }),
-    updateShowAddForm: (state) => ({
-      ...state,
-      formSaved: initialState.formSaved,
-      formEditing: initialState.formEditing,
-      isShowAddForm: !state.isShowAddForm,
-    }),
-    updateFetchLoading: (state) => ({
-      ...state,
-      isFetchLoading: true,
-    }),
-    updateCreateLoading: (state) => ({
-      ...state,
-      isUpdateLoading: true,
     }),
   },
 });
 export default addressSlide.reducer;
 
 export const {
+  updateFetchLoadingSuccess,
   fetchAddressesSuccess,
   fetchAddressesFailure,
-  updateAddressSuccess,
-  createAddressFailure,
+  updateLoadingForSavingSuccess,
+  saveAddressSuccess,
+  saveAddressFailure,
+  updateLoadingForAddressDeleteSuccess,
   deleteAddressSuccess,
   deleteAddressFailure,
-  updateFormSavedSuccess,
-  updateFormEditingSuccess,
+
   updateAddressesSearchedSuccess,
-  clearFormSuccess,
-  updateShowAddForm,
-  updateFetchLoading,
-  updateCreateLoading,
 } = addressSlide.actions;
 
 export const fetchAddressesAction = createAction<{ queryParams: QueryParams }>(
-  `${SLICE_NAME}/fetchAddressesRequest`,
+  `${SLICE_NAME}/fetchAddressesRequest`
 );
-export const createAddressAction = createAction<void>(
-  `${SLICE_NAME}/createAddressRequest`,
-);
-export const updateAddressAction = createAction<{ id: string }>(
-  `${SLICE_NAME}/updateAddressRequest`,
+export const saveAddressAction = createAction<{ values: AddressRequest }>(
+  `${SLICE_NAME}/createAddressRequest`
 );
 export const deleteAddressAction = createAction<{
   aid: string;
@@ -398,11 +244,11 @@ function* handleFetchAddresses() {
     }: ReturnType<typeof fetchAddressesAction> =
       yield take(fetchAddressesAction);
     try {
-      yield put(updateFetchLoading());
+      yield put(updateFetchLoadingSuccess());
 
       const page: Page<Array<Address>> = yield call(
         getAddressesPage,
-        queryParams,
+        queryParams
       );
       yield put(
         fetchAddressesSuccess({
@@ -419,7 +265,7 @@ function* handleFetchAddresses() {
             first: page.first,
             last: page.last,
           },
-        }),
+        })
       );
 
       const { currentUser }: { currentUser: AuthState["currentUser"] } =
@@ -442,70 +288,23 @@ function* handleFetchAddresses() {
 function* handleCreateAddress() {
   while (true) {
     const {
-      startCreateAddress,
-      startUpdateAddress,
-    }: {
-      startCreateAddress: ReturnType<typeof createAddressAction>;
-      startUpdateAddress: ReturnType<typeof updateAddressAction>;
-    } = yield race({
-      startCreateAddress: take(createAddressAction),
-      startUpdateAddress: take(updateAddressAction),
-    });
+      payload: { values },
+    }: ReturnType<typeof saveAddressAction> = yield take(saveAddressAction);
 
     try {
-      yield put(updateCreateLoading());
-      const fields: Array<{
-        readonly field: string;
-        readonly value: string;
-        readonly errorMessage: string | null;
-      }> = yield select((state: RootState) => state.address.formEditing.fields);
-      if (startCreateAddress) {
-        const { id }: { id: string } = yield call(createAddress, {
-          fullName: fields[0].value,
-          phoneNumber: fields[1].value,
-          address: fields[2].value,
-          lon: Number.parseInt(fields[3].value),
-          lat: Number.parseInt(fields[4].value),
-        });
-        yield put(
-          updateAddressSuccess({
-            id: id,
-            fullName: fields[0].value,
-            phoneNumber: fields[1].value,
-            address: fields[2].value,
-            lon: Number.parseInt(fields[3].value),
-            lat: Number.parseInt(fields[4].value),
-            isDeleteLoading: false,
-          }),
-        );
-        yield put(clearFormSuccess());
-        yield put(updateShowAddForm());
+      yield put(updateLoadingForSavingSuccess());
+      if (values.id) {
+        yield call(updateAddress, values);
+      } else {
+        yield call(createAddress, values);
       }
-
-      if (startUpdateAddress) {
-        yield call(updateAddress, {
-          id: startUpdateAddress.payload.id,
-          fullName: fields[0].value,
-          phoneNumber: fields[1].value,
-          address: fields[2].value,
-          lon: Number.parseInt(fields[3].value),
-          lat: Number.parseInt(fields[4].value),
-        });
-        yield put(
-          updateAddressSuccess({
-            id: startUpdateAddress.payload.id,
-            fullName: fields[0].value,
-            phoneNumber: fields[1].value,
-            address: fields[2].value,
-            lon: Number.parseInt(fields[3].value),
-            lat: Number.parseInt(fields[4].value),
-            isDeleteLoading: false,
-          }),
-        );
-        yield put(
-          updateShippingAddressAction({ sid: startUpdateAddress.payload.id }),
-        );
-      }
+      yield put(
+        saveAddressSuccess({
+          ...values,
+          id: values.id ?? "",
+          isDeleteLoading: false,
+        })
+      );
     } catch (e) {
       notification.open({
         message: "Error",
@@ -513,7 +312,7 @@ function* handleCreateAddress() {
         type: "error",
       });
 
-      yield put(createAddressFailure());
+      yield put(saveAddressFailure());
     }
   }
 }
@@ -524,7 +323,8 @@ function* handleDeleteAddress() {
       payload: { aid },
     }: ReturnType<typeof deleteAddressAction> = yield take(deleteAddressAction);
     try {
-      yield call(deleteAddressById, aid);
+      yield put(updateLoadingForAddressDeleteSuccess({ aid }));
+      yield fork(deleteAddressById, aid);
       yield put(deleteAddressSuccess({ aid }));
       yield put(updateShippingAddressAction({ sid: null }));
     } catch (e) {
@@ -545,7 +345,7 @@ function* handleStartSearchAddress() {
     const {
       payload: { value },
     }: ReturnType<typeof startSearchAddressAction> = yield take(
-      startSearchAddressAction,
+      startSearchAddressAction
     );
 
     if (searchTask) {

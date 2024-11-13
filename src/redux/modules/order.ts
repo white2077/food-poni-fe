@@ -1,54 +1,28 @@
-import { AddressState } from "@/redux/modules/address.ts";
-import { CartState } from "@/redux/modules/cart.ts";
-import { RootState } from "@/redux/store.ts";
-import { Order, Page } from "@/type/types";
+import { OrderRequest } from "@/components/pages/CheckoutPage.tsx";
+import { Order, OrderStatus, Page } from "@/type/types";
 import { QueryParams } from "@/utils/api/common";
 import {
+  calculateShippingFee,
   createOrder,
-  createOrderPostPaid,
   createVNPayOrder,
   getOrderById,
   getOrdersPageByCustomer,
   getOrdersPageByRetailer,
+  updateStatus,
 } from "@/utils/api/order";
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { notification } from "antd";
 import { NavigateFunction } from "react-router-dom";
-import { call, fork, put, race, select, take } from "redux-saga/effects";
+import { call, fork, put, race, take } from "redux-saga/effects";
 
 export type OrderState = {
   readonly page: Page<Order[]>;
   readonly selectedOrder: Order | null;
-  readonly form: {
-    readonly orderItems: Array<{
-      readonly quantity: number;
-      readonly productDetail: {
-        readonly id: string;
-      };
-      readonly toppings: Array<{
-        readonly id: string;
-        readonly name: string;
-        readonly price: number;
-      }>;
-      readonly type: string | null;
-    }>;
-    readonly shippingAddress: {
-      readonly fullName: string;
-      readonly phoneNumber: string;
-      readonly address: string;
-      readonly lon: number;
-      readonly lat: number;
-    } | null;
-    readonly totalAmount: number;
-    readonly payment: {
-      readonly method: string;
-      readonly status: "PAYING" | "PAID" | "FAILED";
-      readonly paymentUrl: string;
-    };
-  };
+  readonly shippingFee: number;
   readonly isFetchLoading: boolean;
   readonly isCreateLoading: boolean;
   readonly isUpdateLoading: boolean;
+  readonly isCalculateShippingFeeLoading: boolean;
 };
 
 const initialState: OrderState = {
@@ -64,19 +38,11 @@ const initialState: OrderState = {
     empty: true,
   },
   selectedOrder: null,
-  form: {
-    orderItems: [],
-    totalAmount: 0,
-    shippingAddress: null,
-    payment: {
-      method: "CASH",
-      status: "PAYING",
-      paymentUrl: "",
-    },
-  },
+  shippingFee: 0,
   isFetchLoading: false,
   isCreateLoading: false,
   isUpdateLoading: false,
+  isCalculateShippingFeeLoading: false,
 };
 
 const SLICE_NAME = "order";
@@ -114,59 +80,6 @@ const orderSlice = createSlice({
       ...state,
       isCreateLoading: false,
     }),
-    createOrderPostPaidSuccess: (state) => ({
-      ...state,
-      isCreateLoading: false,
-    }),
-    createOrderPostPaidFailure: (state) => ({
-      ...state,
-      isCreateLoading: false,
-    }),
-    updateOrderItemsSuccess: (
-      state,
-      action: PayloadAction<{
-        orderItems: OrderState["form"]["orderItems"];
-      }>
-    ) => ({
-      ...state,
-      form: {
-        ...state.form,
-        orderItems: action.payload.orderItems,
-      },
-    }),
-    updateShippingAddressSuccess: (
-      state,
-      action: PayloadAction<{
-        shippingAddress: OrderState["form"]["shippingAddress"] | null;
-      }>
-    ) => ({
-      ...state,
-      form: {
-        ...state.form,
-        shippingAddress: action.payload.shippingAddress,
-      },
-    }),
-    updatePaymentSuccess: (
-      state,
-      action: {
-        payload: {
-          readonly method: string;
-        };
-      }
-    ) => ({
-      ...state,
-      form: {
-        ...state.form,
-        payment: {
-          ...state.form.payment,
-          method: action.payload.method,
-        },
-      },
-    }),
-    checkCartItemsSuccess: (state, action: PayloadAction<string[]>) => ({
-      ...state,
-      cartItemIds: action.payload,
-    }),
     updateCreateLoading: (state) => ({
       ...state,
       isCreateLoading: true,
@@ -175,26 +88,54 @@ const orderSlice = createSlice({
       ...state,
       isFetchLoading: true,
     }),
+    updateLoadingForCalculatingShippingFeeSuccess: (state) => ({
+      ...state,
+      isCalculateShippingFeeLoading: true,
+    }),
+    updateShippingFeeSuccess: (
+      state,
+      action: PayloadAction<{ shippingFee: number }>
+    ) => ({
+      ...state,
+      shippingFee: action.payload.shippingFee,
+      isCalculateShippingFeeLoading: false,
+    }),
+    updateShippingFeeFailure: (state) => ({
+      ...state,
+      isCalculateShippingFeeLoading: false,
+    }),
+    updateLoadingForUpdatingStatus: (state) => ({
+      ...state,
+      isUpdateLoading: true,
+    }),
+    updateOrderStatusSuccess: (state) => ({
+      ...state,
+      isUpdateLoading: false,
+    }),
+    updateOrderStatusFailure: (state) => ({
+      ...state,
+      isUpdateLoading: false,
+    }),
   },
 });
 
 export default orderSlice.reducer;
 
 export const {
-  checkCartItemsSuccess,
   fetchOrdersSuccess,
   fetchOrdersFailure,
   fetchOrderSuccess,
   fetchOrderFailure,
   createOrderFailure,
   createOrderSuccess,
-  createOrderPostPaidFailure,
-  createOrderPostPaidSuccess,
-  updateOrderItemsSuccess,
   updateCreateLoading,
   updateFetchLoading,
-  updatePaymentSuccess,
-  updateShippingAddressSuccess,
+  updateLoadingForCalculatingShippingFeeSuccess,
+  updateShippingFeeSuccess,
+  updateShippingFeeFailure,
+  updateLoadingForUpdatingStatus,
+  updateOrderStatusSuccess,
+  updateOrderStatusFailure,
 } = orderSlice.actions;
 export const updateOrderItemsAction = createAction<void>(
   `${SLICE_NAME}/updateOrderItemsRequest`
@@ -214,12 +155,17 @@ export const fetchOrdersByRetailerAction = createAction<{
 export const fetchOrderAction = createAction<{ orderId: string }>(
   `${SLICE_NAME}/fetchOrderRequest`
 );
-export const createOrderAction = createAction<{ navigate: NavigateFunction }>(
-  `${SLICE_NAME}/createOrderRequest`
-);
-export const createOrderPostPaidAction = createAction<{
+export const createOrderAction = createAction<{
   navigate: NavigateFunction;
-}>(`${SLICE_NAME}/createOrderPostPaidRequest`);
+  values: OrderRequest;
+}>(`${SLICE_NAME}/createOrderRequest`);
+export const calculateShippingFeeAction = createAction<{
+  addressId: string;
+}>(`${SLICE_NAME}/calculateShippingFeeRequest`);
+export const updateOrderStatusAction = createAction<{
+  oid: string;
+  orderStatus: OrderStatus;
+}>(`${SLICE_NAME}/updateOrderStatusRequest`);
 
 function* handleFetchOrders() {
   while (true) {
@@ -289,32 +235,21 @@ function* handleFetchOrder() {
 function* handleCreateOrder() {
   while (true) {
     const {
-      payload: { navigate },
+      payload: { values, navigate },
     }: ReturnType<typeof createOrderAction> = yield take(createOrderAction);
+
     try {
       yield put(updateCreateLoading());
-      const {
-        orderItems,
-        shippingAddress,
-        payment,
-        totalAmount,
-      }: OrderState["form"] = yield select(
-        (state: RootState) => state.order.form
-      );
-      const orderId: string = yield call(createOrder, {
-        orderItems,
-        shippingAddress,
-        payment,
-        totalAmount,
-      });
-      if (payment.method === "VNPAY") {
+
+      if (values.paymentMethod === "VNPAY") {
         const vnpayUrl: string = yield call(
           createVNPayOrder,
-          orderId,
-          totalAmount
+          values.addressId,
+          values.note
         );
         window.location.href = vnpayUrl;
       } else {
+        const orderId: string = yield call(createOrder, values);
         yield put(createOrderSuccess());
         navigate("/don-hang/" + orderId);
         notification.open({
@@ -335,38 +270,17 @@ function* handleCreateOrder() {
   }
 }
 
-function* handleCreateOrderPostPaid() {
+function* handleCalculateShippingFee() {
   while (true) {
     const {
-      payload: { navigate },
-    }: ReturnType<typeof createOrderPostPaidAction> = yield take(
-      createOrderPostPaidAction
+      payload: { addressId },
+    }: ReturnType<typeof calculateShippingFeeAction> = yield take(
+      calculateShippingFeeAction
     );
     try {
-      yield put(updateCreateLoading());
-      const {
-        orderItems,
-        shippingAddress,
-        payment,
-        totalAmount,
-      }: OrderState["form"] = yield select(
-        (state: RootState) => state.order.form
-      );
-      const orderId: string = yield call(createOrderPostPaid, {
-        orderItems,
-        shippingAddress,
-        payment,
-        totalAmount,
-      });
-      console.log(orderId);
-
-      yield put(createOrderPostPaidSuccess());
-      navigate("/don-hang/" + orderId);
-      notification.open({
-        message: "Đơn hàng",
-        description: "Bạn vừa đặt hàng.",
-        type: "success",
-      });
+      yield put(updateLoadingForCalculatingShippingFeeSuccess());
+      const shippingFee: number = yield call(calculateShippingFee, addressId);
+      yield put(updateShippingFeeSuccess({ shippingFee }));
     } catch (e) {
       notification.open({
         message: "Error",
@@ -374,52 +288,30 @@ function* handleCreateOrderPostPaid() {
         type: "error",
       });
 
-      yield put(createOrderFailure());
+      yield put(updateShippingFeeFailure());
     }
   }
 }
 
-function* handleUpdateOrderItems() {
-  while (true) {
-    yield take(updateOrderItemsAction);
-    const carts: CartState["page"]["content"] = yield select(
-      (state: RootState) => state.cart.page.content
-    );
-    const selectedCarts = carts.filter((it) => it.checked);
-
-    yield put(
-      updateOrderItemsSuccess({
-        orderItems: selectedCarts.map((it) => {
-          return {
-            quantity: it.quantity,
-            productDetail: { id: it.productDetail.id },
-            toppings: it.toppings,
-            type: it.type,
-          };
-        }),
-      })
-    );
-  }
-}
-
-function* handleUpdateShippingAddress() {
+function* handleUpdateOrderStatus() {
   while (true) {
     const {
-      payload: { sid },
-    }: ReturnType<typeof updateShippingAddressAction> = yield take(
-      updateShippingAddressAction
+      payload: { oid, orderStatus },
+    }: ReturnType<typeof updateOrderStatusAction> = yield take(
+      updateOrderStatusAction
     );
+    try {
+      yield put(updateLoadingForUpdatingStatus());
+      yield call(updateStatus, oid, orderStatus);
+      yield put(updateOrderStatusSuccess());
+    } catch (e) {
+      notification.open({
+        message: "Error",
+        description: e.message,
+        type: "error",
+      });
 
-    if (sid === null) {
-      yield put(updateShippingAddressSuccess({ shippingAddress: null }));
-    }
-
-    const { content }: { content: AddressState["page"]["content"] } =
-      yield select((state: RootState) => state.address.page);
-    const address = content.find((it) => it.id === sid);
-
-    if (address) {
-      yield put(updateShippingAddressSuccess({ shippingAddress: address }));
+      yield put(updateOrderStatusFailure());
     }
   }
 }
@@ -427,8 +319,7 @@ function* handleUpdateShippingAddress() {
 export const orderSagas = [
   fork(handleFetchOrders),
   fork(handleFetchOrder),
-  fork(handleCreateOrderPostPaid),
   fork(handleCreateOrder),
-  fork(handleUpdateOrderItems),
-  fork(handleUpdateShippingAddress),
+  fork(handleCalculateShippingFee),
+  fork(handleUpdateOrderStatus),
 ];

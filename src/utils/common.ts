@@ -104,7 +104,7 @@ export const groupCartByUser = (
   return Array.from(userMap.values());
 };
 
-export const totalAmount = (
+export const calculateTotalAmount = (
   content: Array<Cart>,
   skipCheck?: boolean
 ): number => {
@@ -168,10 +168,9 @@ export const groupOrderByUser = (orderItems: OrderItem[]) => {
   return Array.from(userMap.values());
 };
 
-
 export const ORDER_STATUSES = [
   { label: "Chờ xác nhận", key: "PENDING" },
-  { label: "Bị từ chối", key: "REJECTED" },
+  { label: "Từ chối", key: "REJECTED" },
   { label: "Đang chế biến", key: "APPROVED" },
   { label: "Đang giao", key: "DELIVERING" },
   { label: "Đã nhận hàng", key: "COMPLETED" },

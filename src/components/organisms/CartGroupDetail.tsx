@@ -14,7 +14,11 @@ import {
   updateRoomTimeOutInputting,
   updateWindowSelected,
 } from "@/redux/modules/cartGroup.ts";
-import { currencyFormat, groupCartByUser, totalAmount } from "@/utils/common.ts";
+import {
+  calculateTotalAmount,
+  currencyFormat,
+  groupCartByUser,
+} from "@/utils/common.ts";
 import {
   ClockCircleOutlined,
   CloseOutlined,
@@ -35,11 +39,9 @@ import {
   Row,
   Tabs,
 } from "antd";
-import { useDispatch } from "react-redux";
-import ShippingAddress from "./ShippingAddress";
-import PaymentInfo from "./PaymentInfo";
 import TextArea from "antd/es/input/TextArea";
-import { TransitionGroup, CSSTransition } from "react-transition-group";
+import { useDispatch } from "react-redux";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 export function CartGroupDetail({
   cartGroupJoined,
@@ -176,7 +178,9 @@ export function CartGroupDetail({
                             />
                           </Card>
                           <div>
-                            {currencyFormat(totalAmount(ci.items, true))}
+                            {currencyFormat(
+                              calculateTotalAmount(ci.items, true)
+                            )}
                           </div>
                           <Divider />
                         </div>
@@ -190,7 +194,7 @@ export function CartGroupDetail({
                   <div className="flex justify-between">
                     <div className="text-gray-500">Tạm tính</div>
                     <span style={{ float: "right" }}>
-                      {currencyFormat(totalAmount(it.cartItems, true))}
+                      {currencyFormat(calculateTotalAmount(it.cartItems, true))}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -202,7 +206,9 @@ export function CartGroupDetail({
                     <div className="text-gray-500">Tổng tiền</div>
                     <div className="grid">
                       <div className="text-2xl text-red-500 text-right float-right">
-                        {currencyFormat(totalAmount(it.cartItems, true))}
+                        {currencyFormat(
+                          calculateTotalAmount(it.cartItems, true)
+                        )}
                       </div>
                       <div className="right-0 text-gray-400">
                         (Đã bao gồm VAT nếu có)
@@ -212,8 +218,6 @@ export function CartGroupDetail({
                 </Card>
                 {it.user.id === currentUserId && (
                   <>
-                    <ShippingAddress />
-                    <PaymentInfo />
                     <Form
                       name="normal_login"
                       className="login-form"
@@ -229,7 +233,10 @@ export function CartGroupDetail({
                             dispatch(
                               createOrderGroupAction({
                                 roomId: it.roomId,
-                                totalAmount: totalAmount(it.cartItems, true),
+                                totalAmount: calculateTotalAmount(
+                                  it.cartItems,
+                                  true
+                                ),
                               })
                             )
                           }
