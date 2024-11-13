@@ -447,7 +447,7 @@ function* handleCreateCart() {
         createCart,
         quantity,
         productDetail.id,
-        toppingsSelected,
+        toppingsSelected.map((it) => it.id),
         type
       );
       const cart = {
@@ -495,7 +495,7 @@ function* handleBuyBackCart() {
         createCart,
         quantity,
         productDetail.id,
-        toppings,
+        toppings.map((it) => it.id),
         type
       );
       const cart = {
@@ -644,8 +644,9 @@ function* handleUpdateAllCheckedCart() {
     yield take(updateAllCheckedRequest);
     try {
       yield call(updateCartAllChecked);
-      const isAnyChecked: boolean = yield select((state: RootState) =>
-        state.cart.page.content.every((cart) => cart.checked)
+      const isAnyChecked: CartState["isAllChecked"] = yield select(
+        (state: RootState) =>
+          state.cart.page.content.every((cart) => cart.checked)
       );
       yield put(updateAllCheckedSuccess({ checked: isAnyChecked }));
       yield put(updateOrderItemsAction());
@@ -669,8 +670,9 @@ function* handleDeleteCart() {
       yield call(deleteCart, id);
       yield put(deleteCartSuccess({ id }));
 
-      const isAnyChecked: boolean = yield select((state: RootState) =>
-        state.cart.page.content.every((cart) => cart.checked)
+      const isAnyChecked: CartState["isAllChecked"] = yield select(
+        (state: RootState) =>
+          state.cart.page.content.every((cart) => cart.checked)
       );
       yield put(updateAllCheckedSuccess({ checked: !isAnyChecked }));
 
