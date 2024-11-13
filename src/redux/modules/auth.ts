@@ -1,6 +1,13 @@
 import { FieldLoginType } from "@/components/pages/LoginPage";
+import { fetchCartGroupsRequest } from "@/redux/modules/cartGroup.ts";
 import { RootState } from "@/redux/store.ts";
-import { AuthRequest, AuthResponse, User, UserRemember } from "@/type/types.ts";
+import {
+  AuthRequest,
+  AuthResponse,
+  CurrentUser,
+  User,
+  UserRemember,
+} from "@/type/types.ts";
 import {
   getUserById,
   login,
@@ -16,7 +23,6 @@ import Cookies from "js-cookie";
 import jwtDecode from "jwt-decode";
 import { NavigateFunction } from "react-router-dom";
 import { call, fork, put, select, take } from "redux-saga/effects";
-import { fetchCartGroupsRequest } from "@/redux/modules/cartGroup.ts";
 
 export type AuthState = {
   readonly login: {
@@ -26,14 +32,7 @@ export type AuthState = {
     readonly rememberMe: UserRemember;
     readonly isPending: boolean;
   };
-  readonly currentUser: {
-    readonly role: string;
-    readonly id: string;
-    readonly avatar: string;
-    readonly email: string;
-    readonly addressId: string;
-    readonly username: string;
-  } | null;
+  readonly currentUser: CurrentUser | null;
   readonly isFetchingUser: boolean;
   readonly register: {
     readonly isLoading: boolean;

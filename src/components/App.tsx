@@ -1,23 +1,16 @@
 import { router } from "@/main";
-import { fetchUserAction } from "@/redux/modules/auth";
+import { updateCurrentUserSuccess } from "@/redux/modules/auth";
 import { RootState } from "@/redux/store";
+import { AuthResponse } from "@/type/types";
+import { refreshToken } from "@/utils/api/auth";
+import { persistToken } from "@/utils/axiosConfig";
 import { REFRESH_TOKEN } from "@/utils/server";
 import { Button, Result } from "antd";
 import Cookies from "js-cookie";
-import jwtDecode from "jwt-decode";
 import { ReactNode, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, RouterProvider } from "react-router-dom";
 import { LoadingPage } from "./pages/LoadingPage";
-
-export type CurrentUserNotNull = {
-  readonly role: "RETAILER" | "CUSTOMER" | "VIP";
-  readonly id: string;
-  readonly avatar: string;
-  readonly email: string;
-  readonly addressId: string;
-  readonly username: string;
-};
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -26,20 +19,16 @@ export const App = () => {
 
   useEffect(() => {
     if (refresh_token) {
-      const payload: {
-        readonly role: string;
-        readonly id: string;
-        readonly avatar: string;
-        readonly email: string;
-        readonly addressId: string;
-        readonly username: string;
-      } = jwtDecode(refresh_token);
-      dispatch(fetchUserAction({ uid: payload.id }));
+      refreshToken().then((res: AuthResponse) => {
+        dispatch(updateCurrentUserSuccess(persistToken(res)));
+      });
     }
-  }, [dispatch, refresh_token]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (refresh_token && !currentUser) {
-    return <LoadingPage  />;
+    return <LoadingPage />;
   }
   return (
     <RouterProvider

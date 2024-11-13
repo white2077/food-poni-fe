@@ -8,7 +8,7 @@ export type Address = {
 };
 
 export type AuthResponse = {
-  readonly accessToken: string | null;
+  readonly accessToken: string;
   readonly refreshToken: string;
 };
 
@@ -45,12 +45,11 @@ export type Cart = {
 
 export type CurrentUser = {
   readonly id: string;
-  readonly sub: string | null | undefined;
   readonly role: string;
-  readonly avatar: string | null | undefined;
-  readonly addressId: string | null | undefined;
+  readonly avatar: string | null;
+  readonly addressId: string | null;
   readonly username: string;
-  readonly email: string | null | undefined;
+  readonly email: string;
 };
 
 export type Error = {
@@ -98,7 +97,13 @@ export type OrderItem = {
   readonly rate: Rate;
 };
 
-export type OrderStatus = "PENDING" | "APPROVED" | "REJECTED" | "COMPLETED" | "DELIVERING" | "CANCELLED";
+export type OrderStatus =
+  | "PENDING"
+  | "APPROVED"
+  | "REJECTED"
+  | "COMPLETED"
+  | "DELIVERING"
+  | "CANCELLED";
 
 export type CartGroup = {
   readonly roomId: string;

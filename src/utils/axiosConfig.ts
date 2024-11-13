@@ -1,10 +1,18 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { REFRESH_TOKEN, server } from "./server";
 import Cookies from "js-cookie";
-import { AuthResponse, Error } from "@/type/types.ts";
+import { AuthResponse, CurrentUser, Error } from "@/type/types.ts";
 import { refreshToken } from "./api/auth";
+import jwtDecode from "jwt-decode";
 
 export let accessToken: string | null;
+
+export const persistToken = (tokens: AuthResponse) => {
+  accessToken = tokens.accessToken;
+  Cookies.set(REFRESH_TOKEN, tokens.refreshToken, { expires: 7 });
+
+  return jwtDecode(tokens.accessToken) as CurrentUser;
+};
 
 export const setAccessToken = (token: string | null) => {
   accessToken = token;
@@ -29,12 +37,13 @@ export const apiWithToken = () => {
       if (error.response && error.response.status === 401) {
         const refresh = refreshToken()
           .then((res: AuthResponse) => {
-            accessToken = res.accessToken;
+            persistToken(res);
+
             if (error.config) {
               error.config.headers.Authorization = `Bearer ${accessToken}`;
-
               return api(error.config);
             }
+            
             return Promise.reject(error);
           })
           .catch((res: AxiosError<Error>) => {
