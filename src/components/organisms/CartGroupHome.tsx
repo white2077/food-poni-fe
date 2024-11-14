@@ -5,9 +5,9 @@ import {
   deleteCartGroupAction,
   deleteCartGroupSuccess,
   joinCartGroupAction,
-  updateCartGroupSelected,
-  updateRoomTimeOutInputting,
-  updateWindowSelected,
+  updateCartGroupSelectedSuccess,
+  updateRoomTimeOutInputtingSuccess,
+  updateWindowSelectedSuccess,
 } from "@/redux/modules/cartGroup.ts";
 import { RootState } from "@/redux/store.ts";
 import { getThumbnail, groupCartByUser } from "@/utils/common.ts";
@@ -25,14 +25,34 @@ import {
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 
+const useDispatchProp = () => {
+  const dispatch = useDispatch();
+
+  const updateRoomTimeOutInputting = (roomTimeOutInputting: string) =>
+    dispatch(
+      updateRoomTimeOutInputtingSuccess({ value: roomTimeOutInputting })
+    );
+
+  const updateWindowSelected = (window: "HOME" | "CART_GROUP") =>
+    dispatch(updateWindowSelectedSuccess({ window }));
+
+  return {
+    updateRoomTimeOutInputting,
+    updateWindowSelected,
+  };
+};
+
 export function CartGroupHome({ currentUserId }: { currentUserId: string }) {
   const dispatch = useDispatch();
   const {
     creatingCartGroupLoading,
     joiningCartGroupLoading,
     roomCodeInputting,
-    cartGroupJoined,
+    cartGroupsJoined: cartGroupsJoined,
   } = useSelector((state: RootState) => state.cartGroup);
+
+  const { updateRoomTimeOutInputting, updateWindowSelected } =
+    useDispatchProp();
 
   return (
     <div className="flex justify-center">
@@ -69,9 +89,7 @@ export function CartGroupHome({ currentUserId }: { currentUserId: string }) {
                 suffix={"phút"}
                 placeholder="Thời lượng"
                 onChange={(e) =>
-                  dispatch(
-                    updateRoomTimeOutInputting({ value: e.target.value })
-                  )
+                  dispatch(updateRoomTimeOutInputting(e.target.value))
                 }
               />
             }
@@ -88,7 +106,7 @@ export function CartGroupHome({ currentUserId }: { currentUserId: string }) {
         <Divider />
         <div className="text-xl mb-4">Đơn nhóm bạn đang tham gia</div>
 
-        {cartGroupJoined.map((it, index) => {
+        {cartGroupsJoined.map((it, index) => {
           return (
             <Card
               extra={
@@ -132,8 +150,10 @@ export function CartGroupHome({ currentUserId }: { currentUserId: string }) {
                 <a
                   type="link"
                   onClick={() => {
-                    dispatch(updateCartGroupSelected({ roomId: it.roomId }));
-                    dispatch(updateWindowSelected({ window: "CART_GROUP" }));
+                    dispatch(
+                      updateCartGroupSelectedSuccess({ roomId: it.roomId })
+                    );
+                    dispatch(updateWindowSelected("CART_GROUP"));
                   }}
                 >
                   Xem chi tiết
@@ -141,7 +161,7 @@ export function CartGroupHome({ currentUserId }: { currentUserId: string }) {
               ]}
             >
               <Avatar.Group>
-              {groupCartByUser(it.cartItems).map((ci, index) => (
+                {groupCartByUser(it.cartItems).map((ci, index) => (
                   <Avatar key={index} src={getThumbnail(ci.user.avatar)} />
                 ))}
               </Avatar.Group>

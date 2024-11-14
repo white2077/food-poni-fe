@@ -57,7 +57,7 @@ export const OrderGroupDetailPage = () => {
             status={selectedOrder.status}
           />
           <Divider className="my-4" />
-          <OrderInfoCard />
+          <OrderInfoCard selectedOrder={selectedOrder} />
           <OrderGroupDetailCard
             isFetchOrderItemsLoading={isFetchOrderItemsLoading}
             page={page}

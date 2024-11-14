@@ -1,27 +1,24 @@
 import { AvatarInfo } from "@/components/atoms/AvatarInfo";
-import { ScrollPane } from "@/components/atoms/ScrollPane";
-import { CartBody } from "@/components/molecules/CartBody";
-import { CartHeader } from "@/components/molecules/CartHeader";
+import {
+  calculateShippingFeeAction,
+  fetchAddressesAction,
+} from "@/redux/modules/address";
+import { fetchCartsAction } from "@/redux/modules/cart";
 import {
   CartGroupState,
   createCartGroupRequest,
-  createOrderGroupAction,
   deleteCartGroupAction,
-  deleteCartGroupSuccess,
-  kickUserAction,
   leaveCartGroupAction,
-  updateCartGroupSelected,
-  updateRoomTimeOutInputting,
-  updateWindowSelected,
+  updateCartGroupSelectedSuccess,
+  updateRoomTimeOutInputtingSuccess,
+  updateWindowSelectedSuccess
 } from "@/redux/modules/cartGroup.ts";
-import {
-  calculateTotalAmount,
-  currencyFormat,
-  groupCartByUser,
-} from "@/utils/common.ts";
+import { createOrderGroupAction } from "@/redux/modules/order";
+import { RootState } from "@/redux/store";
+import { CurrentUser } from "@/type/types";
+import { calculateTotalAmount, currencyFormat } from "@/utils/common.ts";
 import {
   ClockCircleOutlined,
-  CloseOutlined,
   DeleteOutlined,
   LeftOutlined,
   LogoutOutlined,
@@ -32,38 +29,131 @@ import {
   Card,
   Col,
   Divider,
-  Form,
   Input,
-  notification,
   Popconfirm,
   Row,
+  Spin,
   Tabs,
 } from "antd";
-import TextArea from "antd/es/input/TextArea";
-import { useDispatch } from "react-redux";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { OrderForm, OrderRequest } from "../molecules/OrderForm";
+import { CartGroupItems } from "./CartGroupItems";
+
+const useDispatchProp = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const fetchCarts = () =>
+    dispatch(
+      fetchCartsAction({
+        queryParams: {
+          page: 0,
+          pageSize: 10,
+          status: true,
+          sort: ["createdAt,desc"],
+        },
+      })
+    );
+
+  const fetchAddresses = () =>
+    dispatch(
+      fetchAddressesAction({
+        queryParams: {
+          page: 0,
+          pageSize: 10,
+          status: true,
+        },
+      })
+    );
+
+  const calculateShippingFee = (addressId: string) =>
+    dispatch(calculateShippingFeeAction({ addressId }));
+
+  const createOrderGroup = (values: OrderRequest, roomId: string) =>
+    dispatch(
+      createOrderGroupAction({
+        values,
+        navigate,
+        roomId,
+      })
+    );
+
+  const deleteCartGroup = (roomId: string) =>
+    dispatch(deleteCartGroupAction({ roomId }));
+
+  const leaveCartGroup = (roomId: string) =>
+    dispatch(leaveCartGroupAction({ roomId }));
+
+  const updateCartGroupSelected = (roomId: string) =>
+    dispatch(updateCartGroupSelectedSuccess({ roomId }));
+
+  const createCartGroup = () => dispatch(createCartGroupRequest());
+
+  const updateRoomTimeOutInputting = (roomTimeOutInputting: string) =>
+    dispatch(
+      updateRoomTimeOutInputtingSuccess({ value: roomTimeOutInputting })
+    );
+
+  const updateWindowSelected = (window: "HOME" | "CART_GROUP") =>
+    dispatch(updateWindowSelectedSuccess({ window }));
+
+  return {
+    fetchCarts,
+    fetchAddresses,
+    calculateShippingFee,
+    createOrderGroup,
+    deleteCartGroup,
+    leaveCartGroup,
+    updateCartGroupSelected,
+    createCartGroup,
+    updateRoomTimeOutInputting,
+    updateWindowSelected,
+  };
+};
 
 export function CartGroupDetail({
-  cartGroupJoined,
+  cartGroupsJoined,
   cartGroupSelected,
   creatingCartGroupLoading,
-  currentUserId,
+  currentUser,
   isCreateLoading,
 }: {
-  cartGroupJoined: CartGroupState["cartGroupJoined"];
+  cartGroupsJoined: CartGroupState["cartGroupsJoined"];
   cartGroupSelected: string;
   creatingCartGroupLoading: boolean;
-  currentUserId: string;
+  currentUser: CurrentUser;
   isCreateLoading: boolean;
 }) {
-  const dispatch = useDispatch();
+  const { shippingFee, isCalculateShippingFeeLoading } = useSelector(
+    (state: RootState) => state.address
+  );
+
+  const {
+    fetchCarts,
+    fetchAddresses,
+    calculateShippingFee,
+    createOrderGroup,
+    deleteCartGroup,
+    leaveCartGroup,
+    updateCartGroupSelected,
+    createCartGroup,
+    updateRoomTimeOutInputting,
+    updateWindowSelected,
+  } = useDispatchProp();
+
+  useEffect(() => {
+    fetchCarts();
+    fetchAddresses();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
       <div className="flex justify-between mb-4">
-        <Button
-          onClick={() => dispatch(updateWindowSelected({ window: "HOME" }))}
-        >
+        <Button onClick={() => updateWindowSelected("HOME")}>
           <LeftOutlined /> Quay lai
         </Button>
         <Popconfirm
@@ -74,14 +164,10 @@ export function CartGroupDetail({
               prefix={<ClockCircleOutlined />}
               suffix={"phút"}
               placeholder="Thời lượng"
-              onChange={(e) =>
-                dispatch(updateRoomTimeOutInputting({ value: e.target.value }))
-              }
+              onChange={(e) => updateRoomTimeOutInputting(e.target.value)}
             />
           }
-          onConfirm={() => {
-            dispatch(createCartGroupRequest());
-          }}
+          onConfirm={() => createCartGroup()}
         >
           <Button
             loading={creatingCartGroupLoading}
@@ -96,9 +182,9 @@ export function CartGroupDetail({
       <Tabs
         hideAdd
         type="editable-card"
-        onChange={(roomId) => dispatch(updateCartGroupSelected({ roomId }))}
+        onChange={(roomId) => updateCartGroupSelected(roomId)}
         defaultActiveKey={cartGroupSelected}
-        items={cartGroupJoined.map((it) => ({
+        items={cartGroupsJoined.map((it) => ({
           key: it.roomId,
           label: (
             <AvatarInfo
@@ -108,93 +194,35 @@ export function CartGroupDetail({
               isVisibleCapital={true}
               timeout={it.timeout}
               roomId={it.roomId}
-              deleteCartGroup={() => {
-                dispatch(deleteCartGroupSuccess({ roomId: it.roomId }));
-                notification.info({
-                  message: "Thông báo!",
-                  description: `Đơn nhóm ${it.roomId} của ${it.user.username} đã bị hết hạn!`,
-                });
-              }}
+              deleteCartGroup={() => deleteCartGroup(it.roomId)}
             />
           ),
           children: (
             <Row gutter={16}>
-              <Col flex="700">
-                <ScrollPane maxHeight="h-[600px]">
-                  <TransitionGroup>
-                    {groupCartByUser(it.cartItems).map((ci) => (
-                      <CSSTransition
-                        key={ci.user.id}
-                        timeout={200}
-                        classNames="fade"
-                      >
-                        <div>
-                          <Card
-                            size="small"
-                            title={
-                              <div className="flex justify-between items-center">
-                                <AvatarInfo
-                                  fullName={ci.user.username}
-                                  avatar={ci.user.avatar}
-                                  info={`${ci.items.length} sản phẩm`}
-                                  padding={"py-1"}
-                                />
-                                {it.user.id === currentUserId &&
-                                  ci.user.id !== currentUserId && (
-                                    <Popconfirm
-                                      title="Bạn có chắc muốn kick người này?"
-                                      onConfirm={() => {
-                                        dispatch(
-                                          kickUserAction({
-                                            roomId: it.roomId,
-                                            userId: ci.user.id,
-                                          })
-                                        );
-                                      }}
-                                      okText="Đồng ý"
-                                      cancelText="Hủy"
-                                    >
-                                      <Button
-                                        danger
-                                        type="text"
-                                        icon={<CloseOutlined />}
-                                        loading={
-                                          ci.kickingUserFromCartItemLoading
-                                        }
-                                      >
-                                        Kick
-                                      </Button>
-                                    </Popconfirm>
-                                  )}
-                              </div>
-                            }
-                          >
-                            <CartHeader enableCartGroup={true} />
-                            <CartBody
-                              isFetchLoading={false}
-                              enableCartGroup={true}
-                              carts={ci.items}
-                              currentUserId={currentUserId}
-                            />
-                          </Card>
-                          <div>
-                            {currencyFormat(
-                              calculateTotalAmount(ci.items, true)
-                            )}
-                          </div>
-                          <Divider />
-                        </div>
-                      </CSSTransition>
-                    ))}
-                  </TransitionGroup>
-                </ScrollPane>
-              </Col>
+              <CartGroupItems
+                currentUser={currentUser}
+                calculateShippingFee={calculateShippingFee}
+                currentUserId={currentUser.id}
+                it={it}
+              />
               <Col flex="300">
                 <Card style={{ marginBottom: "16px" }}>
                   <div className="flex justify-between">
                     <div className="text-gray-500">Tạm tính</div>
                     <span style={{ float: "right" }}>
                       {currencyFormat(calculateTotalAmount(it.cartItems, true))}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <div className="text-gray-500">Phí vận chuyển</div>
+                    <span className="float-right">
+                      {isCalculateShippingFeeLoading ? (
+                        <Spin />
+                      ) : (
+                        currencyFormat(
+                          currentUser.id === it.user.id ? shippingFee : 0
+                        )
+                      )}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -207,7 +235,10 @@ export function CartGroupDetail({
                     <div className="grid">
                       <div className="text-2xl text-red-500 text-right float-right">
                         {currencyFormat(
-                          calculateTotalAmount(it.cartItems, true)
+                          currentUser.id === it.user.id
+                            ? calculateTotalAmount(it.cartItems, true) +
+                                shippingFee
+                            : calculateTotalAmount(it.cartItems, true)
                         )}
                       </div>
                       <div className="right-0 text-gray-400">
@@ -216,60 +247,27 @@ export function CartGroupDetail({
                     </div>
                   </div>
                 </Card>
-                {it.user.id === currentUserId && (
-                  <>
-                    <Form
-                      name="normal_login"
-                      className="login-form"
-                      initialValues={{ remember: true }}
-                    >
-                      <Form.Item name="note">
-                        <TextArea placeholder="Ghi chú" allowClear />
-                      </Form.Item>
-                      <Form.Item>
-                        <Popconfirm
-                          title="Bạn có chắc chắn muốn đặt hàng không?"
-                          onConfirm={() =>
-                            dispatch(
-                              createOrderGroupAction({
-                                roomId: it.roomId,
-                                totalAmount: calculateTotalAmount(
-                                  it.cartItems,
-                                  true
-                                ),
-                              })
-                            )
-                          }
-                          okText="Đồng ý"
-                          cancelText="Hủy"
-                        >
-                          <Button
-                            type="primary"
-                            htmlType="submit"
-                            danger
-                            block
-                            loading={isCreateLoading}
-                            disabled={false}
-                          >
-                            Thanh toán
-                          </Button>
-                        </Popconfirm>
-                      </Form.Item>
-                    </Form>
-                  </>
-                )}
+                {currentUser &&
+                  it.user.id === currentUser.id &&
+                  it.cartItems.length > 0 && (
+                    <OrderForm
+                      currentUserRole={currentUser.role}
+                      currentUserAddressId={currentUser.addressId}
+                      isCreateLoading={isCreateLoading}
+                      calculateShippingFee={(addressId: string) =>
+                        calculateShippingFee(addressId)
+                      }
+                      onSubmit={(values: OrderRequest) =>
+                        createOrderGroup(values, it.roomId)
+                      }
+                    />
+                  )}
               </Col>
               <div className="absolute bottom-0 left-0">
-                {it.user.id !== currentUserId && (
+                {it.user.id !== currentUser.id && (
                   <Popconfirm
                     title="Bạn có chắc chắn muốn thoát đơn nhóm không?"
-                    onConfirm={() =>
-                      dispatch(
-                        leaveCartGroupAction({
-                          roomId: it.roomId,
-                        })
-                      )
-                    }
+                    onConfirm={() => leaveCartGroup(it.roomId)}
                     okText="Đồng ý"
                     cancelText="Hủy"
                   >
@@ -279,12 +277,10 @@ export function CartGroupDetail({
                     </Button>
                   </Popconfirm>
                 )}
-                {it.user.id === currentUserId && (
+                {it.user.id === currentUser.id && (
                   <Popconfirm
                     title="Bạn có chắc chắn muốn xóa đơn nhóm không?"
-                    onConfirm={() =>
-                      dispatch(deleteCartGroupAction({ roomId: it.roomId }))
-                    }
+                    onConfirm={() => deleteCartGroup(it.roomId)}
                     okText="Đồng ý"
                     cancelText="Hủy"
                   >

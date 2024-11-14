@@ -1,4 +1,3 @@
-import { OrderRequest } from "@/components/pages/CheckoutPage.tsx";
 import { Order, Page } from "@/type/types.ts";
 import { accessToken, apiWithToken } from "@/utils/axiosConfig.ts";
 import { AxiosResponse } from "axios";
@@ -54,24 +53,23 @@ export const getOrdersPageByStatus = (
     .then((res: AxiosResponse<Page<Order[]>>) => res.data);
 };
 
-export const createOrder = (values: OrderRequest): Promise<string> => {
-  return apiWithToken()
-    .post("/orders", values, {
-      headers: {
-        Authorization: "Bearer " + accessToken,
-      },
-    })
-    .then((res: AxiosResponse<string>) => res.data);
-};
-
-export const createVNPayOrder = (
+export const createOrderByCashOrPostPaid = (
   addressId: string,
-  note: string
+  note: string,
+  postPaid?: boolean,
+  roomId?: string
 ): Promise<string> => {
+  let url;
+  if (postPaid) {
+    url = roomId ? "/orders-group/post-paid" : "/orders/post-paid";
+  } else {
+    url = roomId ? "/orders-group" : "/orders";
+  }
+
   return apiWithToken()
     .post(
-      "/orders/vnpay",
-      { addressId, note },
+      url,
+      { addressId, note, roomId },
       {
         headers: {
           Authorization: "Bearer " + accessToken,
@@ -81,24 +79,44 @@ export const createVNPayOrder = (
     .then((res: AxiosResponse<string>) => res.data);
 };
 
-export const createOrderPostPaid = (values: OrderRequest): Promise<string> => {
+export const createOrderByVNPay = (
+  addressId: string,
+  note: string,
+  roomId?: string
+): Promise<string> => {
+  const url = roomId ? "/orders-group/vnpay" : "/orders/vnpay";
+
   return apiWithToken()
-    .post("/orders/post-paid", values, {
-      headers: {
-        Authorization: "Bearer " + accessToken,
-      },
-    })
+    .post(
+      url,
+      { addressId, note, roomId },
+      {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+        },
+      }
+    )
     .then((res: AxiosResponse<string>) => res.data);
 };
 
-export const calculateShippingFee = (addressId: string): Promise<number> => {
+export const createOrderByPostPaid = (
+  addressId: string,
+  note: string,
+  orderGroup: boolean
+): Promise<string> => {
+  const url = orderGroup ? "/orders-group/post-paid" : "/orders/post-paid";
+
   return apiWithToken()
-    .get(`/shipping-fee/${addressId}`, {
-      headers: {
-        Authorization: "Bearer " + accessToken,
-      },
-    })
-    .then((res: AxiosResponse<number>) => res.data);
+    .post(
+      url,
+      { addressId, note },
+      {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+        },
+      }
+    )
+    .then((res: AxiosResponse<string>) => res.data);
 };
 
 export const updateStatus = (

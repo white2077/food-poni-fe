@@ -1,16 +1,20 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store.ts";
 import { Button, Modal } from "antd";
-import { updateVisible } from "@/redux/modules/cartGroup.ts";
+import {
+  fetchCartGroupsRequest,
+  updateVisible,
+} from "@/redux/modules/cartGroup.ts";
 import { CartGroupHome } from "@/components/organisms/CartGroupHome";
 import { CartGroupDetail } from "@/components/organisms/CartGroupDetail";
+import { useEffect } from "react";
 
 export function CartGroup() {
   const dispatch = useDispatch();
   const {
     isVisible,
     windowSelected,
-    cartGroupJoined,
+    cartGroupsJoined,
     cartGroupSelected,
     fetchingCartGroupsLoading,
     creatingCartGroupLoading,
@@ -18,13 +22,21 @@ export function CartGroup() {
   const { isCreateLoading } = useSelector((state: RootState) => state.order);
   const { currentUser } = useSelector((state: RootState) => state.auth);
 
+  useEffect(() => {
+    if (currentUser && currentUser.role !== "RETAILER") {
+      dispatch(fetchCartGroupsRequest());
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (!currentUser) return null;
 
   return (
     <>
       <Button
         loading={fetchingCartGroupsLoading}
-        onClick={() => dispatch(updateVisible())}
+        onClick={() => dispatch(updateVisible({ isVisible: true }))}
         className="fixed bottom-10 right-10 text-[18px] inline-flex h-12 animate-shimmer items-center justify-center rounded-full border border-white bg-[linear-gradient(110deg,#F36F24,45%,#ff9f5a,55%,#F36F24)] bg-[length:200%_100%] px-8 font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300 focus:ring-offset-2 focus:ring-offset-orange-50"
       >
         <span className="text-[35px]">✨</span>Tạo đơn hàng nhóm
@@ -33,7 +45,7 @@ export function CartGroup() {
         className="relative"
         title="Group Order"
         open={isVisible}
-        onCancel={() => dispatch(updateVisible())}
+        onCancel={() => dispatch(updateVisible({ isVisible: false }))}
         footer={null}
         centered
         width={1000}
@@ -41,12 +53,12 @@ export function CartGroup() {
         {windowSelected === "HOME" && (
           <CartGroupHome currentUserId={currentUser.id} />
         )}
-        {cartGroupJoined.length > 0 && windowSelected === "CART_GROUP" && (
+        {cartGroupsJoined.length > 0 && windowSelected === "CART_GROUP" && (
           <CartGroupDetail
-            cartGroupJoined={cartGroupJoined}
+            cartGroupsJoined={cartGroupsJoined}
             cartGroupSelected={cartGroupSelected}
             creatingCartGroupLoading={creatingCartGroupLoading}
-            currentUserId={currentUser.id}
+            currentUser={currentUser}
             isCreateLoading={isCreateLoading}
           />
         )}

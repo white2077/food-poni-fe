@@ -28,7 +28,7 @@ import {
 export type CartGroupState = {
   readonly isVisible: boolean;
   readonly windowSelected: "HOME" | "CART_GROUP";
-  readonly cartGroupJoined: Array<{
+  readonly cartGroupsJoined: Array<{
     readonly roomId: string;
     readonly timeout: number;
     readonly user: {
@@ -58,7 +58,7 @@ export type CartGroupState = {
 const initialState: CartGroupState = {
   isVisible: false,
   windowSelected: "HOME",
-  cartGroupJoined: [],
+  cartGroupsJoined: [],
   cartGroupSelected: "",
   roomCodeInputting: "",
   roomTimeOutInputting: "",
@@ -75,18 +75,18 @@ const cartGroupSlide = createSlice({
   name: SLICE_NAME,
   initialState,
   reducers: {
-    updateVisible: (state) => ({
+    updateVisible: (state, action: PayloadAction<{ isVisible: boolean }>) => ({
       ...state,
-      isVisible: !state.isVisible,
+      isVisible: action.payload.isVisible,
     }),
-    updateWindowSelected: (
+    updateWindowSelectedSuccess: (
       state,
       action: PayloadAction<{ window: "CART_GROUP" | "HOME" }>
     ) => ({
       ...state,
       windowSelected: action.payload.window,
     }),
-    updateCartGroupSelected: (
+    updateCartGroupSelectedSuccess: (
       state,
       action: PayloadAction<{ roomId: string }>
     ) => ({
@@ -100,11 +100,11 @@ const cartGroupSlide = createSlice({
     joinCartGroupSuccess: (
       state,
       action: PayloadAction<{
-        cartGroup: CartGroupState["cartGroupJoined"][number];
+        cartGroup: CartGroupState["cartGroupsJoined"][number];
       }>
     ) => ({
       ...state,
-      cartGroupJoined: [...state.cartGroupJoined, action.payload.cartGroup],
+      cartGroupsJoined: [...state.cartGroupsJoined, action.payload.cartGroup],
       creatingCartGroupLoading: false,
       joiningCartGroupLoading: false,
     }),
@@ -119,7 +119,7 @@ const cartGroupSlide = createSlice({
       ...state,
       roomCodeInputting: action.payload.value,
     }),
-    updateRoomTimeOutInputting: (
+    updateRoomTimeOutInputtingSuccess: (
       state,
       action: PayloadAction<{ value: string }>
     ) => ({
@@ -133,12 +133,12 @@ const cartGroupSlide = createSlice({
     addToCartItemsSuccess: (
       state,
       action: PayloadAction<{
-        cartItem: CartGroupState["cartGroupJoined"][number]["cartItems"][number];
+        cartItem: CartGroupState["cartGroupsJoined"][number]["cartItems"][number];
         roomId: string;
       }>
     ) => ({
       ...state,
-      cartGroupJoined: state.cartGroupJoined.map((it) => {
+      cartGroupsJoined: state.cartGroupsJoined.map((it) => {
         if (it.roomId === action.payload.roomId) {
           return {
             ...it,
@@ -158,7 +158,7 @@ const cartGroupSlide = createSlice({
       action: PayloadAction<{ id: string }>
     ) => ({
       ...state,
-      cartGroupJoined: state.cartGroupJoined.map((group) => ({
+      cartGroupsJoined: state.cartGroupsJoined.map((group) => ({
         ...group,
         cartItems: group.cartItems.map((ci) => {
           if (ci.id === action.payload.id) {
@@ -179,7 +179,7 @@ const cartGroupSlide = createSlice({
       }>
     ) => ({
       ...state,
-      cartGroupJoined: state.cartGroupJoined.map((group) => ({
+      cartGroupsJoined: state.cartGroupsJoined.map((group) => ({
         ...group,
         cartItems: group.cartItems.map((ci) => {
           if (ci.id === action.payload.id) {
@@ -198,7 +198,7 @@ const cartGroupSlide = createSlice({
       action: PayloadAction<{ id: string }>
     ) => ({
       ...state,
-      cartGroupJoined: state.cartGroupJoined.map((group) => ({
+      cartGroupsJoined: state.cartGroupsJoined.map((group) => ({
         ...group,
         cartItems: group.cartItems.map((ci) => {
           if (ci.id === action.payload.id) {
@@ -213,23 +213,23 @@ const cartGroupSlide = createSlice({
     }),
     fetchCartGroupsRequest: (state) => ({
       ...state,
-      fetchCartGroupsLoading: true,
+      fetchingCartGroupsLoading: true,
     }),
     fetchCartGroupsSuccess: (
       state,
-      action: PayloadAction<{ cartGroups: CartGroupState["cartGroupJoined"] }>
+      action: PayloadAction<{ cartGroups: CartGroupState["cartGroupsJoined"] }>
     ) => ({
       ...state,
-      cartGroupJoined: action.payload.cartGroups,
-      fetchCartGroupsLoading: false,
+      cartGroupsJoined: action.payload.cartGroups,
+      fetchingCartGroupsLoading: false,
     }),
     fetchCartGroupsFailure: (state) => ({
       ...state,
-      fetchCartGroupsLoading: false,
+      fetchingCartGroupsLoading: false,
     }),
     deleteCartItemSuccess: (state, action: PayloadAction<{ id: string }>) => ({
       ...state,
-      cartGroupJoined: state.cartGroupJoined.map((group) => ({
+      cartGroupsJoined: state.cartGroupsJoined.map((group) => ({
         ...group,
         cartItems: group.cartItems.filter((ci) => ci.id !== action.payload.id),
       })),
@@ -247,7 +247,7 @@ const cartGroupSlide = createSlice({
       action: PayloadAction<{ roomId: string }>
     ) => ({
       ...state,
-      cartGroupJoined: state.cartGroupJoined.map((it) => {
+      cartGroupsJoined: state.cartGroupsJoined.map((it) => {
         if (it.roomId === action.payload.roomId) {
           return {
             ...it,
@@ -262,7 +262,7 @@ const cartGroupSlide = createSlice({
       action: PayloadAction<{ roomId: string }>
     ) => ({
       ...state,
-      cartGroupJoined: state.cartGroupJoined.filter(
+      cartGroupsJoined: state.cartGroupsJoined.filter(
         (it) => it.roomId !== action.payload.roomId
       ),
       windowSelected: "HOME",
@@ -272,7 +272,7 @@ const cartGroupSlide = createSlice({
       action: PayloadAction<{ roomId: string }>
     ) => ({
       ...state,
-      cartGroupJoined: state.cartGroupJoined.map((it) => {
+      cartGroupsJoined: state.cartGroupsJoined.map((it) => {
         if (it.roomId === action.payload.roomId) {
           return {
             ...it,
@@ -287,8 +287,8 @@ const cartGroupSlide = createSlice({
       action: PayloadAction<{ roomId: string; userId?: string }>
     ) => ({
       ...state,
-      cartGroupJoined: action.payload.userId
-        ? state.cartGroupJoined.map((it) => {
+      cartGroupsJoined: action.payload.userId
+        ? state.cartGroupsJoined.map((it) => {
             if (it.roomId === action.payload.roomId) {
               return {
                 ...it,
@@ -299,7 +299,7 @@ const cartGroupSlide = createSlice({
             }
             return it;
           })
-        : state.cartGroupJoined.filter(
+        : state.cartGroupsJoined.filter(
             (it) => it.roomId !== action.payload.roomId
           ),
     }),
@@ -308,7 +308,7 @@ const cartGroupSlide = createSlice({
       action: PayloadAction<{ roomId: string; userId: string }>
     ) => ({
       ...state,
-      cartGroupJoined: state.cartGroupJoined.map((it) => {
+      cartGroupsJoined: state.cartGroupsJoined.map((it) => {
         if (it.roomId === action.payload.roomId) {
           return {
             ...it,
@@ -331,7 +331,7 @@ const cartGroupSlide = createSlice({
       action: PayloadAction<{ roomId: string; userId: string }>
     ) => ({
       ...state,
-      cartGroupJoined: state.cartGroupJoined.map((it) => {
+      cartGroupsJoined: state.cartGroupsJoined.map((it) => {
         if (it.roomId === action.payload.roomId) {
           return {
             ...it,
@@ -348,7 +348,7 @@ const cartGroupSlide = createSlice({
       action: PayloadAction<{ roomId: string; userId: string }>
     ) => ({
       ...state,
-      cartGroupJoined: state.cartGroupJoined.map((it) => {
+      cartGroupsJoined: state.cartGroupsJoined.map((it) => {
         if (it.roomId === action.payload.roomId) {
           return {
             ...it,
@@ -372,13 +372,13 @@ export default cartGroupSlide.reducer;
 
 export const {
   updateVisible,
-  updateWindowSelected,
-  updateCartGroupSelected,
+  updateWindowSelectedSuccess,
+  updateCartGroupSelectedSuccess,
   updateJoiningCartGroupLoading,
   joinCartGroupSuccess,
   joinCartGroupFailure,
   updateRoomCodeInputting,
-  updateRoomTimeOutInputting,
+  updateRoomTimeOutInputtingSuccess,
   updateAddingToCartItemsLoadingSuccess,
   addToCartItemsSuccess,
   addToCartItemsFailure,
@@ -460,8 +460,8 @@ function* handleJoiningCartGroup() {
         })
       );
 
-      yield put(updateCartGroupSelected({ roomId: cartGroup.roomId }));
-      yield put(updateWindowSelected({ window: "CART_GROUP" }));
+      yield put(updateCartGroupSelectedSuccess({ roomId: cartGroup.roomId }));
+      yield put(updateWindowSelectedSuccess({ window: "CART_GROUP" }));
     } catch (e) {
       notification.open({
         message: "Error",
@@ -637,8 +637,8 @@ function* handleCreatingCartGroup() {
         })
       );
 
-      yield put(updateCartGroupSelected({ roomId: cartGroup.roomId }));
-      yield put(updateWindowSelected({ window: "CART_GROUP" }));
+      yield put(updateCartGroupSelectedSuccess({ roomId: cartGroup.roomId }));
+      yield put(updateWindowSelectedSuccess({ window: "CART_GROUP" }));
     } catch (e) {
       notification.open({
         message: "Error",
@@ -683,7 +683,7 @@ function* handleLeavingCartGroup() {
     try {
       yield call(leaveCartGroup, roomId);
       yield put(leaveCartGroupSuccess({ roomId }));
-      yield put(updateWindowSelected({ window: "HOME" }));
+      yield put(updateWindowSelectedSuccess({ window: "HOME" }));
     } catch (e) {
       notification.open({
         message: "Error",
@@ -704,9 +704,9 @@ function* handleLeavingCartGroup() {
 //     try {
 //       yield put(updateCreateLoading());
 
-//       const cartGroup: CartGroupState["cartGroupJoined"][number] = yield select(
+//       const cartGroup: CartGroupState["cartGroupsJoined"][number] = yield select(
 //         (state: RootState) =>
-//           state.cartGroup.cartGroupJoined.find((it) => it.roomId === roomId)
+//           state.cartGroup.cartGroupsJoined.find((it) => it.roomId === roomId)
 //       );
 //       if (cartGroup) {
 //         const { shippingAddress, payment }: OrderState["form"] = yield select(

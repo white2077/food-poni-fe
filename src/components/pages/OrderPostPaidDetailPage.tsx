@@ -46,7 +46,7 @@ export const OrderPostPaidDetailPage = () => {
             status={selectedOrder.status}
           />
           <Divider />
-          <OrderInfoCard />
+          <OrderInfoCard selectedOrder={selectedOrder} />
           <OrderPostPaidDetailCard
             isFetchOrderItemsLoading={isFetchOrderItemsLoading}
             page={page}

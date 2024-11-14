@@ -69,7 +69,7 @@ export const currencyFormat = (amount: number) => {
 };
 
 export const groupCartByUser = (
-  cartItems: CartGroupState["cartGroupJoined"][number]["cartItems"]
+  cartItems: CartGroupState["cartGroupsJoined"][number]["cartItems"]
 ) => {
   const userMap = new Map<
     string,

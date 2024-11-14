@@ -1,8 +1,8 @@
-import { AxiosResponse } from "axios";
-import generateQueryString, { QueryParams } from "./common";
+import { AddressRequest } from "@/components/organisms/ShippingAddressInfo.tsx";
 import { Address, Page, SearchResult } from "@/type/types.ts";
 import { accessToken, api, apiWithToken } from "@/utils/axiosConfig.ts";
-import { AddressRequest } from "@/components/organisms/ShippingAddressInfo.tsx";
+import { AxiosResponse } from "axios";
+import generateQueryString, { QueryParams } from "./common";
 
 export const getAddressesPage = (
   queryParams: QueryParams
@@ -87,4 +87,14 @@ export const searchAddresses = (
       `https://nominatim.openstreetmap.org/search?q=${value}&format=json&addressdetails=1&countrycodes=vn`
     )
     .then((res: AxiosResponse<Array<SearchResult>>) => res.data);
+};
+
+export const calculateShippingFee = (addressId: string): Promise<number> => {
+  return apiWithToken()
+    .get(`/shipping-fee/${addressId}`, {
+      headers: {
+        Authorization: "Bearer " + accessToken,
+      },
+    })
+    .then((res: AxiosResponse<number>) => res.data);
 };

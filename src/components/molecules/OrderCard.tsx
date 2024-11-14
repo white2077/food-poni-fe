@@ -97,7 +97,7 @@ const OrderCard = ({
               <div className="flex justify-end mt-4 text-xl gap-2 font-sans">
                 <div className="text-gray-400">Tổng tiền:</div>
                 <div className="nunito text-green-600">
-                  {currencyFormat(order.totalAmount)}
+                  {currencyFormat(order.totalAmount + order.shippingFee)}
                 </div>
               </div>
             </div>

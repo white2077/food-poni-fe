@@ -1,10 +1,9 @@
-import { OrderRequest } from "@/components/pages/CheckoutPage.tsx";
+import { OrderRequest } from "@/components/molecules/OrderForm";
 import { Order, OrderStatus, Page } from "@/type/types";
 import { QueryParams } from "@/utils/api/common";
 import {
-  calculateShippingFee,
-  createOrder,
-  createVNPayOrder,
+  createOrderByCashOrPostPaid,
+  createOrderByVNPay,
   getOrderById,
   getOrdersPageByCustomer,
   getOrdersPageByRetailer,
@@ -14,15 +13,14 @@ import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { notification } from "antd";
 import { NavigateFunction } from "react-router-dom";
 import { call, fork, put, race, take } from "redux-saga/effects";
+import { deleteCartGroupSuccess, updateVisible } from "./cartGroup";
 
 export type OrderState = {
   readonly page: Page<Order[]>;
   readonly selectedOrder: Order | null;
-  readonly shippingFee: number;
   readonly isFetchLoading: boolean;
   readonly isCreateLoading: boolean;
   readonly isUpdateLoading: boolean;
-  readonly isCalculateShippingFeeLoading: boolean;
 };
 
 const initialState: OrderState = {
@@ -38,11 +36,9 @@ const initialState: OrderState = {
     empty: true,
   },
   selectedOrder: null,
-  shippingFee: 0,
   isFetchLoading: false,
   isCreateLoading: false,
   isUpdateLoading: false,
-  isCalculateShippingFeeLoading: false,
 };
 
 const SLICE_NAME = "order";
@@ -88,22 +84,6 @@ const orderSlice = createSlice({
       ...state,
       isFetchLoading: true,
     }),
-    updateLoadingForCalculatingShippingFeeSuccess: (state) => ({
-      ...state,
-      isCalculateShippingFeeLoading: true,
-    }),
-    updateShippingFeeSuccess: (
-      state,
-      action: PayloadAction<{ shippingFee: number }>
-    ) => ({
-      ...state,
-      shippingFee: action.payload.shippingFee,
-      isCalculateShippingFeeLoading: false,
-    }),
-    updateShippingFeeFailure: (state) => ({
-      ...state,
-      isCalculateShippingFeeLoading: false,
-    }),
     updateLoadingForUpdatingStatus: (state) => ({
       ...state,
       isUpdateLoading: true,
@@ -130,9 +110,6 @@ export const {
   createOrderSuccess,
   updateCreateLoading,
   updateFetchLoading,
-  updateLoadingForCalculatingShippingFeeSuccess,
-  updateShippingFeeSuccess,
-  updateShippingFeeFailure,
   updateLoadingForUpdatingStatus,
   updateOrderStatusSuccess,
   updateOrderStatusFailure,
@@ -159,9 +136,11 @@ export const createOrderAction = createAction<{
   navigate: NavigateFunction;
   values: OrderRequest;
 }>(`${SLICE_NAME}/createOrderRequest`);
-export const calculateShippingFeeAction = createAction<{
-  addressId: string;
-}>(`${SLICE_NAME}/calculateShippingFeeRequest`);
+export const createOrderGroupAction = createAction<{
+  navigate: NavigateFunction;
+  values: OrderRequest;
+  roomId: string;
+}>(`${SLICE_NAME}/createOrderGroupRequest`);
 export const updateOrderStatusAction = createAction<{
   oid: string;
   orderStatus: OrderStatus;
@@ -235,28 +214,81 @@ function* handleFetchOrder() {
 function* handleCreateOrder() {
   while (true) {
     const {
-      payload: { values, navigate },
-    }: ReturnType<typeof createOrderAction> = yield take(createOrderAction);
+      startCreateOrder,
+      startCreateOrderGroup,
+    }: {
+      startCreateOrder: ReturnType<typeof createOrderAction>;
+      startCreateOrderGroup: ReturnType<typeof createOrderGroupAction>;
+    } = yield race({
+      startCreateOrder: take(createOrderAction),
+      startCreateOrderGroup: take(createOrderGroupAction),
+    });
 
     try {
       yield put(updateCreateLoading());
 
-      if (values.paymentMethod === "VNPAY") {
-        const vnpayUrl: string = yield call(
-          createVNPayOrder,
-          values.addressId,
-          values.note
-        );
-        window.location.href = vnpayUrl;
-      } else {
-        const orderId: string = yield call(createOrder, values);
-        yield put(createOrderSuccess());
-        navigate("/don-hang/" + orderId);
-        notification.open({
-          message: "Đơn hàng",
-          description: "Bạn vừa đặt hàng.",
-          type: "success",
-        });
+      if (startCreateOrder) {
+        const { navigate, values } = startCreateOrder.payload;
+
+        if (values.paymentMethod === "VNPAY") {
+          const vnpayUrl: string = yield call(
+            createOrderByVNPay,
+            values.addressId,
+            values.note
+          );
+          window.location.href = vnpayUrl;
+        } else {
+          const orderId: string = yield call(
+            createOrderByCashOrPostPaid,
+            values.addressId,
+            values.note,
+            values.paymentMethod === "POSTPAID"
+          );
+
+          yield put(createOrderSuccess());
+
+          navigate("/don-hang/" + orderId);
+
+          notification.open({
+            message: "Đơn hàng",
+            description: "Bạn vừa đặt hàng thành công.",
+            type: "success",
+          });
+        }
+      }
+
+      if (startCreateOrderGroup) {
+        const { navigate, values, roomId } = startCreateOrderGroup.payload;
+
+        if (values.paymentMethod === "VNPAY") {
+          const { values } = startCreateOrderGroup.payload;
+          const vnpayUrl: string = yield call(
+            createOrderByVNPay,
+            values.addressId,
+            values.note,
+            roomId
+          );
+          window.open(vnpayUrl, "_blank");
+        } else {
+          const orderId: string = yield call(
+            createOrderByCashOrPostPaid,
+            values.addressId,
+            values.note,
+            values.paymentMethod === "POSTPAID",
+            roomId
+          );
+
+          yield put(createOrderSuccess());
+
+          navigate("/don-hang-nhom/" + orderId);
+          notification.open({
+            message: "Đơn hàng",
+            description: "Bạn vừa đặt hàng thành công.",
+            type: "success",
+          });
+        }
+        yield put(updateVisible({ isVisible: false }));
+        yield put(deleteCartGroupSuccess({ roomId }));
       }
     } catch (e) {
       notification.open({
@@ -266,29 +298,6 @@ function* handleCreateOrder() {
       });
 
       yield put(createOrderFailure());
-    }
-  }
-}
-
-function* handleCalculateShippingFee() {
-  while (true) {
-    const {
-      payload: { addressId },
-    }: ReturnType<typeof calculateShippingFeeAction> = yield take(
-      calculateShippingFeeAction
-    );
-    try {
-      yield put(updateLoadingForCalculatingShippingFeeSuccess());
-      const shippingFee: number = yield call(calculateShippingFee, addressId);
-      yield put(updateShippingFeeSuccess({ shippingFee }));
-    } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
-      yield put(updateShippingFeeFailure());
     }
   }
 }
@@ -320,6 +329,5 @@ export const orderSagas = [
   fork(handleFetchOrders),
   fork(handleFetchOrder),
   fork(handleCreateOrder),
-  fork(handleCalculateShippingFee),
   fork(handleUpdateOrderStatus),
 ];

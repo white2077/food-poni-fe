@@ -189,8 +189,8 @@ export type Page<T> = {
 };
 
 export type PaymentInfo = {
-  readonly method: string;
-  readonly status: string;
+  readonly method: "CASH" | "VNPAY" | "POSTPAID";
+  readonly status: "PAYING" | "PAID" | "FAILED";
   readonly paymentUrl: string;
 };
 
@@ -284,6 +284,7 @@ export type ShippingAddress = {
   readonly fullName: string;
   readonly phoneNumber: string;
   readonly address: string;
+  readonly distance: number;
 };
 
 export type Topping = {

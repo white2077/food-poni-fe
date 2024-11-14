@@ -4,6 +4,7 @@ import { OrderSummary } from "../atoms/OrderSummaryProps";
 import { OrderItemDetail } from "../organisms/OrderItemDetail";
 import HeadTable from "./TableHead";
 import { OrderItemPricing } from "./OrderItemPricing";
+import { ScrollPane } from "../atoms/ScrollPane";
 
 export const OrderDetailCard = ({
   isFetchOrderItemsLoading,
@@ -17,24 +18,26 @@ export const OrderDetailCard = ({
   <Card size="small" loading={isFetchOrderItemsLoading}>
     <HeadTable />
     <Divider />
-    <List
-      dataSource={page.content}
-      renderItem={(it) => (
-        <List.Item className="flex justify-between items-center">
-          <div className="grid grid-cols-10 px-5 cursor-pointer w-full">
-            <div className="col-span-5">
-              <OrderItemDetail
-                orderItem={it}
-                orderStatus={selectedOrder.status}
-              />
+    <ScrollPane maxHeight="max-h-[510px]">
+      <List
+        dataSource={page.content}
+        renderItem={(it) => (
+          <List.Item className="flex justify-between items-center">
+            <div className="grid grid-cols-10 px-5 cursor-pointer w-full">
+              <div className="col-span-5">
+                <OrderItemDetail
+                  orderItem={it}
+                  orderStatus={selectedOrder.status}
+                />
+              </div>
+              <div className="col-span-5">
+                <OrderItemPricing orderItem={it} />
+              </div>
             </div>
-            <div className="col-span-5">
-              <OrderItemPricing orderItem={it} />
-            </div>
-          </div>
-        </List.Item>
-      )}
-    />
+          </List.Item>
+        )}
+      />
+    </ScrollPane>
     <Divider />
     <OrderSummary
       totalAmount={selectedOrder.totalAmount}

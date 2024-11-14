@@ -51,7 +51,7 @@ export const OrderDetailPage = () => {
             status={selectedOrder.status}
           />
           <Divider />
-          <OrderInfoCard />
+          <OrderInfoCard selectedOrder={selectedOrder} />
           <Divider />
           <OrderDetailCard
             isFetchOrderItemsLoading={isFetchOrderItemsLoading}

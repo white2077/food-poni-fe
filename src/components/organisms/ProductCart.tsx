@@ -18,7 +18,7 @@ export default function ProductCart() {
   const { page, isCreateLoading } = useSelector(
     (state: RootState) => state.cart
   );
-  const { cartGroupJoined, addingToCartItemLoading } = useSelector(
+  const { cartGroupsJoined: cartGroupsJoined, addingToCartItemLoading } = useSelector(
     (state: RootState) => state.cartGroup
   );
   const { currentUser } = useSelector((state: RootState) => state.auth);
@@ -89,11 +89,11 @@ export default function ProductCart() {
                 ? "Sản phẩm đã có trong giỏ hàng"
                 : "Thêm vào giỏ hàng"}
             </Button>
-            {cartGroupJoined.length > 0 && (
+            {cartGroupsJoined.length > 0 && (
               <Dropdown
                 trigger={["click"]}
                 menu={{
-                  items: cartGroupJoined.map((it, index) => ({
+                  items: cartGroupsJoined.map((it, index) => ({
                     key: index,
                     label: (
                       <span

@@ -3,6 +3,7 @@ import { updateShippingAddressAction } from "@/redux/modules/order.ts";
 import { RootState } from "@/redux/store.ts";
 import { Address, Page, SearchResult } from "@/type/types.ts";
 import {
+  calculateShippingFee,
   createAddress,
   deleteAddressById,
   getAddressesPage,
@@ -33,10 +34,12 @@ export type AddressState = {
     >
   >;
   readonly addressesSearched: Array<SearchResult>;
+  readonly shippingFee: number;
   readonly isShowAddForm: boolean;
   readonly isFetchLoading: boolean;
   readonly isUpdateLoading: boolean;
   readonly isDeleteLoading: boolean;
+  readonly isCalculateShippingFeeLoading: boolean;
 };
 
 const initialState: AddressState = {
@@ -52,10 +55,12 @@ const initialState: AddressState = {
     empty: true,
   },
   addressesSearched: [],
+  shippingFee: 0,
   isShowAddForm: false,
   isFetchLoading: false,
   isUpdateLoading: false,
   isDeleteLoading: false,
+  isCalculateShippingFeeLoading: false,
 };
 
 const SLICE_NAME = "address";
@@ -206,6 +211,22 @@ const addressSlide = createSlice({
       ...state,
       addressesSearched: action.payload.addresses,
     }),
+    updateLoadingForCalculatingShippingFeeSuccess: (state) => ({
+      ...state,
+      isCalculateShippingFeeLoading: true,
+    }),
+    updateShippingFeeSuccess: (
+      state,
+      action: PayloadAction<{ shippingFee: number }>
+    ) => ({
+      ...state,
+      shippingFee: action.payload.shippingFee,
+      isCalculateShippingFeeLoading: false,
+    }),
+    updateShippingFeeFailure: (state) => ({
+      ...state,
+      isCalculateShippingFeeLoading: false,
+    }),
   },
 });
 export default addressSlide.reducer;
@@ -220,8 +241,10 @@ export const {
   updateLoadingForAddressDeleteSuccess,
   deleteAddressSuccess,
   deleteAddressFailure,
-
   updateAddressesSearchedSuccess,
+  updateLoadingForCalculatingShippingFeeSuccess,
+  updateShippingFeeSuccess,
+  updateShippingFeeFailure,
 } = addressSlide.actions;
 
 export const fetchAddressesAction = createAction<{ queryParams: QueryParams }>(
@@ -236,6 +259,9 @@ export const deleteAddressAction = createAction<{
 export const startSearchAddressAction = createAction<{
   value: string;
 }>(`${SLICE_NAME}/startSearchAddressRequest`);
+export const calculateShippingFeeAction = createAction<{
+  addressId: string;
+}>(`${SLICE_NAME}/calculateShippingFeeRequest`);
 
 function* handleFetchAddresses() {
   while (true) {
@@ -363,9 +389,33 @@ function* searchAddress(value: string) {
   yield put(updateAddressesSearchedSuccess({ addresses: result }));
 }
 
+function* handleCalculateShippingFee() {
+  while (true) {
+    const {
+      payload: { addressId },
+    }: ReturnType<typeof calculateShippingFeeAction> = yield take(
+      calculateShippingFeeAction
+    );
+    try {
+      yield put(updateLoadingForCalculatingShippingFeeSuccess());
+      const shippingFee: number = yield call(calculateShippingFee, addressId);
+      yield put(updateShippingFeeSuccess({ shippingFee }));
+    } catch (e) {
+      notification.open({
+        message: "Error",
+        description: e.message,
+        type: "error",
+      });
+
+      yield put(updateShippingFeeFailure());
+    }
+  }
+}
+
 export const shippingAddressSagas = [
   fork(handleFetchAddresses),
   fork(handleCreateAddress),
   fork(handleDeleteAddress),
   fork(handleStartSearchAddress),
+  fork(handleCalculateShippingFee),
 ];

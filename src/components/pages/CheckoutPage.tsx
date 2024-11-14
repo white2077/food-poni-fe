@@ -1,32 +1,18 @@
 import { CartItems } from "@/components/organisms/CartItems.tsx";
-import { PaymentSelector } from "@/components/organisms/PaymentSelector.tsx";
-import { ShippingAddressSelector } from "@/components/organisms/ShippingAddressSelector.tsx";
-import { fetchAddressesAction } from "@/redux/modules/address.ts";
-import { fetchCartsAction } from "@/redux/modules/cart.ts";
 import {
   calculateShippingFeeAction,
-  createOrderAction,
-} from "@/redux/modules/order.ts";
+  fetchAddressesAction,
+} from "@/redux/modules/address.ts";
+import { fetchCartsAction } from "@/redux/modules/cart.ts";
+import { createOrderAction } from "@/redux/modules/order.ts";
 import { RootState } from "@/redux/store.ts";
 import { calculateTotalAmount, currencyFormat } from "@/utils/common.ts";
-import {
-  Button,
-  Card,
-  Col,
-  Divider,
-  Form,
-  Input,
-  Popconfirm,
-  Row,
-  Spin,
-} from "antd";
-import { useForm } from "antd/es/form/Form";
+import { Card, Col, Divider, Row, Spin } from "antd";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { OrderForm, OrderRequest } from "../molecules/OrderForm";
 import { DefaultLayout } from "../templates/DefaultLayout";
-
-const { TextArea } = Input;
 
 const useDispatchProp = () => {
   const dispatch = useDispatch();
@@ -63,8 +49,10 @@ export const CheckoutPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { page } = useSelector((state: RootState) => state.cart);
-  const { isCreateLoading, shippingFee, isCalculateShippingFeeLoading } =
-    useSelector((state: RootState) => state.order);
+  const { isCreateLoading } = useSelector((state: RootState) => state.order);
+  const { shippingFee, isCalculateShippingFeeLoading } = useSelector(
+    (state: RootState) => state.address
+  );
   const { currentUser } = useSelector((state: RootState) => state.auth);
 
   const { fetchCarts, fetchAddresses, calculateShippingFee } =
@@ -145,76 +133,5 @@ export const CheckoutPage = () => {
         </Row>
       </div>
     </DefaultLayout>
-  );
-};
-
-export type OrderRequest = {
-  addressId: string;
-  note: string;
-  paymentMethod: "CASH" | "VNPAY" | "MOMO" | "POSTPAID";
-};
-
-const OrderForm = ({
-  currentUserRole,
-  currentUserAddressId,
-  isCreateLoading,
-  calculateShippingFee,
-  onSubmit,
-}: {
-  currentUserRole: "VIP" | "CUSTOMER" | "RETAILER";
-  currentUserAddressId: string;
-  isCreateLoading: boolean;
-  calculateShippingFee: (addressId: string) => void;
-  onSubmit: (values: OrderRequest) => void;
-}) => {
-  const [form] = useForm<OrderRequest>();
-  return (
-    <Form
-      form={form}
-      onFinish={(values) => onSubmit(values)}
-      initialValues={{
-        addressId: currentUserAddressId,
-        paymentMethod: "CASH",
-        shippingMethod: "FREE",
-      }}
-    >
-      <Form.Item name="addressId">
-        <ShippingAddressSelector
-          value={form.getFieldValue("addressId")}
-          onOk={(value) => {
-            form.setFieldValue("addressId", value);
-            calculateShippingFee(value);
-          }}
-        />
-      </Form.Item>
-      <Form.Item name="paymentMethod">
-        <PaymentSelector
-          value={form.getFieldValue("paymentMethod")}
-          currentUserRole={currentUserRole}
-          onSelected={(value) => form.setFieldValue("paymentMethod", value)}
-        />
-      </Form.Item>
-      <Form.Item name="note">
-        <TextArea placeholder="Ghi chú" />
-      </Form.Item>
-      <Form.Item>
-        <Popconfirm
-          title="Bạn có chắc chắn muốn đặt hàng không?"
-          onConfirm={() => form.submit()}
-          okText="Đồng ý"
-          cancelText="Hủy"
-        >
-          <Button
-            type="primary"
-            htmlType="button"
-            danger
-            block
-            loading={isCreateLoading}
-          >
-            Thanh toán
-          </Button>
-        </Popconfirm>
-      </Form.Item>
-    </Form>
   );
 };
