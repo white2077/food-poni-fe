@@ -4,7 +4,7 @@ import { Cart, Page } from "@/type/types.ts";
 import { accessToken, apiWithToken } from "@/utils/axiosConfig.ts";
 
 export const getCartsPage = (
-  queryParams: QueryParams
+  queryParams: QueryParams,
 ): Promise<Page<Cart[]>> => {
   return apiWithToken()
     .get(generateQueryString("/carts", queryParams), {
@@ -19,7 +19,7 @@ export const createCart = (
   quantity: number,
   productDetailId: string,
   toppings: Array<string>,
-  type: string | null
+  type: string | null,
 ): Promise<{ id: string }> => {
   return apiWithToken()
     .post(
@@ -29,7 +29,7 @@ export const createCart = (
         headers: {
           Authorization: "Bearer " + accessToken,
         },
-      }
+      },
     )
     .then((res: AxiosResponse<string>) => {
       return { id: res.data };
@@ -38,7 +38,7 @@ export const createCart = (
 
 export const updateCartQuantity = (
   id: string,
-  quantity: number
+  quantity: number,
 ): Promise<void> => {
   return apiWithToken().patch(
     "/carts/update-quantity",
@@ -47,7 +47,19 @@ export const updateCartQuantity = (
       headers: {
         Authorization: "Bearer " + accessToken,
       },
-    }
+    },
+  );
+};
+
+export const updateCartNote = (id: string, note: string): Promise<void> => {
+  return apiWithToken().patch(
+    "/carts/update-note",
+    { id, note },
+    {
+      headers: {
+        Authorization: "Bearer " + accessToken,
+      },
+    },
   );
 };
 
@@ -65,7 +77,7 @@ export const updateCartChecked = ({
       headers: {
         Authorization: "Bearer " + accessToken,
       },
-    }
+    },
   );
 };
 
@@ -77,7 +89,7 @@ export const updateCartAllChecked = (): Promise<void> => {
       headers: {
         Authorization: "Bearer " + accessToken,
       },
-    }
+    },
   );
 };
 

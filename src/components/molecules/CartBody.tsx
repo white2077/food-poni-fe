@@ -2,10 +2,11 @@ import {
   CartState,
   deleteCartRequest,
   updateCheckedAction,
+  updateNoteAction,
 } from "@/redux/modules/cart";
 import { currencyFormat, getThumbnail } from "@/utils/common";
 import { DeleteOutlined } from "@ant-design/icons";
-import { Card, Checkbox, Col, Popconfirm, Row } from "antd";
+import { Card, Checkbox, Col, Popconfirm, Row, Spin } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useDispatch } from "react-redux";
 import { ProductLoading } from "../atoms/ProductLoading";
@@ -44,7 +45,7 @@ export const CartBody = ({
                             updateCheckedAction({
                               id: it.id,
                               checked: !it.checked,
-                            })
+                            }),
                           )
                         }
                         checked={it.checked}
@@ -105,18 +106,29 @@ export const CartBody = ({
                     {currencyFormat(
                       (it.productDetail.price +
                         it.toppings.reduce((sum, tp) => sum + tp.price, 0)) *
-                        it.quantity
+                        it.quantity,
                     )}
                   </Col>
                   <Col flex="20%">
                     {!it.user || it.user.id === currentUserId ? (
-                      <TextArea
-                        placeholder="Ghi chú"
-                        // value={cart.note}
-                        className="h-[35px]"
-                        // onChange={(e) => onChangeNote(item.id, item.retailer.id ?? '', e.target.value)}
-                        allowClear
-                      />
+                      <div className="relative">
+                        <TextArea
+                          defaultValue={it.note}
+                          onChange={(e) =>
+                            dispatch(
+                              updateNoteAction({
+                                id: it.id,
+                                note: e.target.value,
+                              }),
+                            )
+                          }
+                          placeholder="Ghi chú"
+                          className="h-[35px]"
+                        />
+                        <span className="absolute right-1 top-1">
+                          {it.isUpdateNoteLoading && <Spin />}
+                        </span>
+                      </div>
                     ) : (
                       <span>{it.note}</span>
                     )}
@@ -132,14 +144,14 @@ export const CartBody = ({
                           dispatch(
                             !enableCartGroup
                               ? deleteCartRequest({ id: it.id })
-                              : deleteCartItemAction({ id: it.id })
+                              : deleteCartItemAction({ id: it.id }),
                           )
                         }
                         okText="Đồng ý"
                         cancelText="Hủy"
                         okButtonProps={{ loading: it.isDeleteLoading }}
                       >
-                        <DeleteOutlined />
+                        {it.isDeleteLoading ? <Spin /> : <DeleteOutlined />}
                       </Popconfirm>
                     </Col>
                   ) : (
