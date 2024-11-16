@@ -1,13 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store.ts";
 import { Button, Modal } from "antd";
-import {
-  fetchCartGroupsRequest,
-  updateVisible,
-} from "@/redux/modules/cartGroup.ts";
+import { updateVisible } from "@/redux/modules/cartGroup.ts";
 import { CartGroupHome } from "@/components/organisms/CartGroupHome";
 import { CartGroupDetail } from "@/components/organisms/CartGroupDetail";
-import { useEffect } from "react";
 
 export function CartGroup() {
   const dispatch = useDispatch();
@@ -21,14 +17,6 @@ export function CartGroup() {
   } = useSelector((state: RootState) => state.cartGroup);
   const { isCreateLoading } = useSelector((state: RootState) => state.order);
   const { currentUser } = useSelector((state: RootState) => state.auth);
-
-  useEffect(() => {
-    if (currentUser && currentUser.role !== "RETAILER") {
-      dispatch(fetchCartGroupsRequest());
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   if (!currentUser) return null;
 
