@@ -11,6 +11,7 @@ import productDetailReducer from "@/redux/modules/productDetail.ts";
 import productCategoryReducer from "@/redux/modules/productCategory.ts";
 import rateReducer from "@/redux/modules/rate.ts";
 import toppingReducer from "@/redux/modules/topping.ts";
+import invoiceReducer from "@/redux/modules/invoice.ts";
 import { combineReducers } from "@reduxjs/toolkit";
 
 export const rootReducer = combineReducers({
@@ -18,6 +19,7 @@ export const rootReducer = combineReducers({
   auth: authReducer,
   cart: cartReducer,
   fileUpload: fileUploadsReducer,
+  invoice: invoiceReducer,
   order: orderReducer,
   orderItem: orderItemReducer,
   cartGroup: cartGroupReducer,

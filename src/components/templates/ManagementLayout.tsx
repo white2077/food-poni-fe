@@ -8,13 +8,13 @@ import {
   EnvironmentOutlined,
   HomeFilled,
   LikeOutlined,
+  MoneyCollectOutlined,
   ProfileOutlined,
   SettingFilled,
   UserOutlined,
   WalletFilled,
-  MoneyCollectOutlined,
 } from "@ant-design/icons";
-import { Col, Flex, Image, Menu, MenuProps } from "antd";
+import { Image, Menu, MenuProps } from "antd";
 import React, { ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
@@ -52,7 +52,7 @@ export const ManagementLayout = ({ children }: { children: ReactNode }) => {
       <HeaderMain />
       <div className="bg-[#F5F5FA]">
         <div className="px-2 max-w-screen-xl mx-auto py-4">
-          <Flex gap={16}>
+          <div className="flex gap-4">
             <div className="p-4 bg-white rounded-lg h-fit">
               <div className="flex">
                 <Image
@@ -71,59 +71,59 @@ export const ManagementLayout = ({ children }: { children: ReactNode }) => {
                   </div>
                 </div>
               </div>
-              <Col>
-                <div className="mt-[16px]">
-                  <Menu
-                    onClick={(e) => navigate(`${e.key}`)}
-                    className="min-w-[256px] rounded-[8px] !border-none"
-                    selectedKeys={[location.pathname]}
-                    mode="inline"
-                    items={[
-                      getItem(
-                        "Thông tin tài khoản",
-                        "/thong-tin-tai-khoan",
-                        <UserOutlined />
-                      ),
-                      getItem(
-                        "Sổ địa chỉ",
-                        "/so-dia-chi",
-                        <EnvironmentOutlined />
-                      ),
-                      getItem(
-                        "Quản lý đơn hàng",
-                        "/don-hang",
-                        <ProfileOutlined />
-                      ),
-                      getItem(
-                        "Quản lý đơn hàng nhóm",
-                        "/don-hang-nhom",
-                        <ProfileOutlined />
-                      ),
-                      ...(currentUser.role === "VIP" 
-                        ? [getItem(
+              <div className="mt-[16px]">
+                <Menu
+                  onClick={(e) => navigate(`${e.key}`)}
+                  className="min-w-[256px] rounded-[8px] !border-none"
+                  selectedKeys={[location.pathname]}
+                  mode="inline"
+                  items={[
+                    getItem(
+                      "Thông tin tài khoản",
+                      "/thong-tin-tai-khoan",
+                      <UserOutlined />
+                    ),
+                    getItem(
+                      "Sổ địa chỉ",
+                      "/so-dia-chi",
+                      <EnvironmentOutlined />
+                    ),
+                    getItem(
+                      "Quản lý đơn hàng",
+                      "/don-hang",
+                      <ProfileOutlined />
+                    ),
+                    getItem(
+                      "Quản lý đơn hàng nhóm",
+                      "/don-hang-nhom",
+                      <ProfileOutlined />
+                    ),
+                    ...(currentUser.role === "VIP"
+                      ? [
+                          getItem(
                             "Quản lý ghi nợ",
                             "/ghi-no",
                             <MoneyCollectOutlined />
-                          )]
-                        : []),
+                          ),
+                        ]
+                      : []),
 
-                      getItem(
-                        "Sản phẩm yêu thích",
-                        "/san-pham-yeu-thich",
-                        <LikeOutlined />
-                      ),
-                      getItem(
-                        "Hỗ trợ khách hàng",
-                        "/ho-tro-khach-hang",
-                        <CustomerServiceOutlined />
-                      ),
-                    ]}
-                  />
-                </div>
-              </Col>
+                    getItem(
+                      "Sản phẩm yêu thích",
+                      "/san-pham-yeu-thich",
+                      <LikeOutlined />
+                    ),
+                    getItem(
+                      "Hỗ trợ khách hàng",
+                      "/ho-tro-khach-hang",
+                      <CustomerServiceOutlined />
+                    ),
+                  ]}
+                />
+              </div>
             </div>
-            <Col>{children}</Col>
-          </Flex>
+            <div className="w-full">{children}</div>
+          </div>
         </div>
       </div>
       <div className="text-center">

@@ -18,11 +18,11 @@ import { ProductDetailPage } from "./components/pages/ProductDetailPage";
 import { SignupPage } from "./components/pages/SignupPage";
 import { OrderGroupPage } from "./components/pages/OrderGroupPage";
 import { OrderGroupDetailPage } from "./components/pages/OrderGroupDetailPage";
-import { PostPaidPage } from "./components/pages/PostPaidPage";
 import { OrderPostPaidDetailPage } from "./components/pages/OrderPostPaidDetailPage";
 import { AdminOrderTablePage } from "./components/pages/AdminOrderTablePage";
 import { AdminProductTablePage } from "./components/pages/AdminProductTablePage";
 import { AdminProductDetailTablePage } from "./components/pages/AdminProductDetailTablePage";
+import { ConsolidatedInvoicePage } from "./components/pages/ConsolidatedInvoicePage";
 
 export const router = (currentRole: "RETAILER" | "CUSTOMER" | "VIP") =>
   createBrowserRouter([
@@ -108,7 +108,7 @@ export const router = (currentRole: "RETAILER" | "CUSTOMER" | "VIP") =>
       path: "/ghi-no",
       element: (
         <SecuredRoute currentRole={currentRole} role={["VIP"]}>
-          <PostPaidPage />
+          <ConsolidatedInvoicePage />
         </SecuredRoute>
       ),
     },
@@ -204,6 +204,6 @@ if (container) {
       <ConfigProvider theme={{ token: { colorPrimary: "#F36F24" } }}>
         <App />
       </ConfigProvider>
-    </Provider>
+    </Provider>,
   );
 }

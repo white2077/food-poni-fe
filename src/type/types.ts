@@ -68,6 +68,15 @@ export type FileUpload = {
   readonly dimension: string;
 };
 
+export type Invoice = {
+  readonly id: string;
+  readonly user: User;
+  readonly totalAmount: number;
+  readonly payment: PaymentInfo;
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
+};
+
 export type Order = {
   readonly id: string;
   readonly postPaidOrderId: string;
@@ -78,6 +87,7 @@ export type Order = {
   readonly note: string;
   readonly payment: PaymentInfo;
   readonly createdAt: Date;
+  readonly paymentStatus: PaymentInfo;
   readonly shippingFee: number;
 };
 

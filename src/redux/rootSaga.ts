@@ -12,12 +12,14 @@ import { orderSagas } from "./modules/order";
 import { rateSagas } from "./modules/rate.ts";
 import { orderItemSagas } from "./modules/orderItem.ts";
 import { productDetailSagas } from "./modules/productDetail.ts";
+import { invoiceSagas } from "./modules/invoice.ts";
 
 export default function* rootSaga() {
   yield all([
     ...authSagas,
     ...cartSagas,
     ...fileUploadsSagas,
+    ...invoiceSagas,
     ...notificationSagas,
     ...productSagas,
     ...productDetailSagas,
