@@ -103,7 +103,8 @@ export type OrderStatus =
   | "REJECTED"
   | "COMPLETED"
   | "DELIVERING"
-  | "CANCELLED";
+  | "CANCELLED"
+  | "FAILED";
 
 export type CartGroup = {
   readonly roomId: string;

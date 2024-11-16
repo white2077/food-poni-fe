@@ -1,20 +1,23 @@
-import { fetchOrdersByRetailerAction } from "@/redux/modules/order";
+import "antd-button-color/dist/css/style.css";
+import {
+  fetchOrdersByRetailerAction,
+  updateOrderStatusAction,
+} from "@/redux/modules/order";
 import { RootState } from "@/redux/store";
 import { currencyFormat, getThumbnail, ORDER_STATUSES } from "@/utils/common";
 import {
   CheckCircleOutlined,
-  ClockCircleOutlined,
   CloseCircleOutlined,
   CopyOutlined,
   DashOutlined,
   DownloadOutlined,
-  ImportOutlined,
+  FrownOutlined,
   LineOutlined,
+  SendOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
 import {
   Badge,
-  Button,
   Col,
   Dropdown,
   Flex,
@@ -22,15 +25,16 @@ import {
   Table,
   TableColumnsType,
   Tag,
+  Tooltip,
 } from "antd";
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AvatarInfo } from "../atoms/AvatarInfo";
-import { SalesLabel } from "../atoms/SalesLabel";
 import { AdminLayout } from "../templates/AdminLayout";
 import "./AdminOrderTablePage.scss";
-import { OrderStatus } from "@/type/types";
+import { SalesLabel } from "@/components/atoms/SalesLabel.tsx";
+import Button from "antd-button-color";
 
 const TableToolbar = ({
   isFetchLoading,
@@ -67,13 +71,6 @@ const TableToolbar = ({
       >
         Download
       </Button>
-      <Button
-        type="default"
-        icon={<ImportOutlined />}
-        style={{ marginRight: "10px" }}
-      >
-        Import
-      </Button>
     </Col>
   </Flex>
 );
@@ -81,8 +78,8 @@ const TableToolbar = ({
 export const AdminOrderTablePage = () => {
   const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const { page, isFetchLoading, isUpdateLoading } = useSelector(
-    (state: RootState) => state.order
+  const { page, isFetchLoading } = useSelector(
+    (state: RootState) => state.order,
   );
 
   useEffect(() => {
@@ -93,14 +90,14 @@ export const AdminOrderTablePage = () => {
           pageSize: 10,
           sort: ["createdAt,desc"],
         },
-      })
+      }),
     );
   }, [dispatch]);
 
   return (
     <AdminLayout>
       <TableToolbar
-        isFetchLoading={isFetchLoading || isUpdateLoading}
+        isFetchLoading={isFetchLoading}
         selectedRowKeys={selectedRowKeys}
       />
       <Table
@@ -112,7 +109,7 @@ export const AdminOrderTablePage = () => {
                   : [sorter]
                 ).map(
                   (it) =>
-                    `${it.field},${it.order === "ascend" ? "asc" : "desc"}`
+                    `${it.field},${it.order === "ascend" ? "asc" : "desc"}`,
                 )
               : []; // Nếu là đối tượng, biến thành mảng rỗng
 
@@ -127,7 +124,7 @@ export const AdminOrderTablePage = () => {
                     ? (filters["status"][0] as boolean)
                     : undefined,
               },
-            })
+            }),
           );
         }}
         pagination={{
@@ -139,7 +136,7 @@ export const AdminOrderTablePage = () => {
           showTotal: (total) => `Total ${total} items`,
           size: "default",
         }}
-        loading={isFetchLoading || isUpdateLoading}
+        loading={isFetchLoading}
         rowSelection={{
           selectedRowKeys,
           onChange: (newSelectedRowKeys) =>
@@ -150,7 +147,7 @@ export const AdminOrderTablePage = () => {
           ...it,
           key: it.id,
           no: page.number * page.size + index + 1,
-          code: it.id.toUpperCase(),
+          code: it.id.toUpperCase().substring(0, 6),
           name: (
             <AvatarInfo
               fullName={it.shippingAddress.fullName}
@@ -162,80 +159,158 @@ export const AdminOrderTablePage = () => {
             <div className="font-medium dark:text-white">
               <div>{currencyFormat(it.totalAmount + it.shippingFee)}</div>
               <div className="text-xs text-gray-500 dark:text-gray-400">
-                Total amount: {currencyFormat(it.totalAmount)}
+                Tổng tiền: {currencyFormat(it.totalAmount)}
               </div>
               <div className="text-xs text-gray-500 dark:text-gray-400">
-                Shipping fee: {currencyFormat(it.shippingFee)}
+                Phí giao hàng: {currencyFormat(it.shippingFee)}
               </div>
             </div>
           ),
           createdAt: format(new Date(it.createdAt), "HH:mm:ss - dd/MM/yyyy"),
           status: (
             <>
-              <Dropdown
-                menu={{
-                  items: ORDER_STATUSES.map((it) => ({
-                    ...it,
-                    icon:
-                      it.key === "PENDING" ? (
-                        <ClockCircleOutlined />
-                      ) : it.key === "REJECTED" ? (
-                        <CheckCircleOutlined />
-                      ) : it.key === "APPROVED" ? (
-                        <CloseCircleOutlined />
-                      ) : it.key === "DELIVERING" ? (
-                        <CloseCircleOutlined />
-                      ) : it.key === "COMPLETED" ? (
+              {["CANCELLED", "COMPLETED", "REJECTED"].includes(it.status) && (
+                <div className="text-center italic">
+                  <Tag
+                    color={it.status === "COMPLETED" ? "success" : "error"}
+                    icon={
+                      it.status === "COMPLETED" ? (
                         <CheckCircleOutlined />
                       ) : (
                         <CloseCircleOutlined />
-                      ),
-                  })),
-                }}
-              >
-                <Tag
-                  icon={<OrderStatusIcon status={it.status} />}
-                  color={
-                    it.status === "PENDING"
-                      ? "processing"
-                      : it.status === "REJECTED"
-                        ? "gold"
-                        : it.status === "APPROVED"
-                          ? "success"
-                          : it.status === "DELIVERING"
-                            ? "warning"
-                            : it.status === "COMPLETED"
-                              ? "success"
-                              : "error"
-                  }
-                >
-                  {it.status}
-                </Tag>
-              </Dropdown>
-              {/* <Popconfirm
-                title="Sure to delete?"
-                onConfirm={() =>
-                  dispatch(
-                    updateOrderStatusAction({
-                      pid: it.id,
-                      status: !it.status,
-                    })
-                  )
-                }
-              >
-                <Tag
-                  icon={
-                    it.status ? (
-                      <CheckCircleOutlined />
+                      )
+                    }
+                  >
+                    {it.status === "COMPLETED" ? (
+                      "Đã hoàn thành"
+                    ) : it.status === "CANCELLED" ? (
+                      "Khách huỷ"
+                    ) : it.status === "REJECTED" ? (
+                      <Tooltip title="Phía cửa hàng đã từ chối tiếp nhận đơn hàng.">
+                        Đã từ chối
+                      </Tooltip>
                     ) : (
-                      <CloseCircleOutlined />
-                    )
-                  }
-                  color={"success"}
-                >
-                  {it.status}
-                </Tag>
-              </Popconfirm> */}
+                      it.status === "FAILED" && (
+                        <Tooltip title="Vì lý do không mong muốn nên đơn hàng đã bị hủy.">
+                          Gặp sự cố
+                        </Tooltip>
+                      )
+                    )}
+                  </Tag>
+                </div>
+              )}
+              <Tooltip title="Nhấn vào nút trạng thái để có thể cập nhật lại trạng thái đơn hàng.">
+                <div className="flex justify-center gap-2">
+                  {it.status === "PENDING" && (
+                    <>
+                      <Popconfirm
+                        title="Bạn chắc chắn xác nhận đơn hàng này?"
+                        onConfirm={() =>
+                          dispatch(
+                            updateOrderStatusAction({
+                              oid: it.id,
+                              orderStatus: "APPROVED",
+                            }),
+                          )
+                        }
+                      >
+                        <Button
+                          type="info"
+                          size="small"
+                          loading={it.isUpdateStatusLoading}
+                        >
+                          <SyncOutlined spin /> Xác nhận
+                        </Button>
+                      </Popconfirm>
+                      <Popconfirm
+                        title="Bạn chắc chắn từ chối đơn hàng này?"
+                        onConfirm={() =>
+                          dispatch(
+                            updateOrderStatusAction({
+                              oid: it.id,
+                              orderStatus: "REJECTED",
+                            }),
+                          )
+                        }
+                      >
+                        <Button
+                          type="primary"
+                          danger
+                          size="small"
+                          loading={it.isUpdateStatusLoading}
+                        >
+                          <CloseCircleOutlined /> Từ chối
+                        </Button>
+                      </Popconfirm>
+                    </>
+                  )}
+                  {["APPROVED", "DELIVERING"].includes(it.status) && (
+                    <>
+                      {it.status === "APPROVED" && (
+                        <Popconfirm
+                          title="Bạn chắc chắn sẽ giao đơn hàng này?"
+                          onConfirm={() =>
+                            dispatch(
+                              updateOrderStatusAction({
+                                oid: it.id,
+                                orderStatus: "DELIVERING",
+                              }),
+                            )
+                          }
+                        >
+                          <Button
+                            type="warning"
+                            size="small"
+                            loading={it.isUpdateStatusLoading}
+                          >
+                            <SendOutlined /> Gửi giao hàng
+                          </Button>
+                        </Popconfirm>
+                      )}
+                      {it.status === "DELIVERING" && (
+                        <Popconfirm
+                          title="Bạn chắc chắn đơn hàng này đã được giao thành công?"
+                          onConfirm={() =>
+                            dispatch(
+                              updateOrderStatusAction({
+                                oid: it.id,
+                                orderStatus: "COMPLETED",
+                              }),
+                            )
+                          }
+                        >
+                          <Button
+                            type="success"
+                            size="small"
+                            loading={it.isUpdateStatusLoading}
+                          >
+                            <CheckCircleOutlined /> Đã giao
+                          </Button>
+                        </Popconfirm>
+                      )}
+                      <Popconfirm
+                        title="Bạn chắc chắn sẽ hủy đơn hàng này?"
+                        onConfirm={() =>
+                          dispatch(
+                            updateOrderStatusAction({
+                              oid: it.id,
+                              orderStatus: "FAILED",
+                            }),
+                          )
+                        }
+                      >
+                        <Button
+                          size="small"
+                          danger
+                          loading={it.isUpdateStatusLoading}
+                        >
+                          <FrownOutlined /> Gặp sự cố
+                        </Button>
+                      </Popconfirm>
+                    </>
+                  )}
+                </div>
+              </Tooltip>
             </>
           ),
           actions: (
@@ -317,20 +392,4 @@ const getColumns = () => {
       dataIndex: "actions",
     },
   ] as TableColumnsType;
-};
-
-const OrderStatusIcon = ({ status }: { status: OrderStatus }) => {
-  return status === "PENDING" ? (
-    <ClockCircleOutlined />
-  ) : status === "REJECTED" ? (
-    <CloseCircleOutlined />
-  ) : status === "APPROVED" ? (
-    <CheckCircleOutlined />
-  ) : status === "DELIVERING" ? (
-    <SyncOutlined spin />
-  ) : status === "COMPLETED" ? (
-    <CheckCircleOutlined />
-  ) : (
-    <CloseCircleOutlined />
-  );
 };

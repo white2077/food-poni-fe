@@ -16,11 +16,12 @@ import { call, fork, put, race, take } from "redux-saga/effects";
 import { deleteCartGroupSuccess, updateVisible } from "./cartGroup";
 
 export type OrderState = {
-  readonly page: Page<Order[]>;
+  readonly page: Page<
+    Array<Order & { readonly isUpdateStatusLoading: boolean }>
+  >;
   readonly selectedOrder: Order | null;
   readonly isFetchLoading: boolean;
   readonly isCreateLoading: boolean;
-  readonly isUpdateLoading: boolean;
 };
 
 const initialState: OrderState = {
@@ -38,7 +39,6 @@ const initialState: OrderState = {
   selectedOrder: null,
   isFetchLoading: false,
   isCreateLoading: false,
-  isUpdateLoading: false,
 };
 
 const SLICE_NAME = "order";
@@ -47,9 +47,13 @@ const orderSlice = createSlice({
   name: SLICE_NAME,
   initialState,
   reducers: {
+    updateLoadingForFetchingSuccess: (state) => ({
+      ...state,
+      isFetchLoading: true,
+    }),
     fetchOrdersSuccess: (
       state,
-      action: PayloadAction<{ page: Page<Order[]> }>
+      action: PayloadAction<{ page: OrderState["page"] }>,
     ) => ({
       ...state,
       page: action.payload.page,
@@ -76,7 +80,7 @@ const orderSlice = createSlice({
       ...state,
       isCreateLoading: false,
     }),
-    updateCreateLoading: (state) => ({
+    updateLoadingForCreatingSuccess: (state) => ({
       ...state,
       isCreateLoading: true,
     }),
@@ -84,17 +88,60 @@ const orderSlice = createSlice({
       ...state,
       isFetchLoading: true,
     }),
-    updateLoadingForUpdatingStatus: (state) => ({
+    updateLoadingForUpdatingStatus: (
+      state,
+      action: PayloadAction<{ oid: string }>,
+    ) => ({
       ...state,
-      isUpdateLoading: true,
+      page: {
+        ...state.page,
+        content: state.page.content.map((order) => {
+          if (order.id === action.payload.oid) {
+            return {
+              ...order,
+              isUpdateStatusLoading: true,
+            };
+          }
+          return order;
+        }),
+      },
     }),
-    updateOrderStatusSuccess: (state) => ({
+    updateOrderStatusSuccess: (
+      state,
+      action: PayloadAction<{ oid: string; orderStatus: OrderStatus }>,
+    ) => ({
       ...state,
-      isUpdateLoading: false,
+      page: {
+        ...state.page,
+        content: state.page.content.map((it) => {
+          if (it.id === action.payload.oid) {
+            return {
+              ...it,
+              status: action.payload.orderStatus,
+              isUpdateStatusLoading: false,
+            };
+          }
+          return it;
+        }),
+      },
     }),
-    updateOrderStatusFailure: (state) => ({
+    updateOrderStatusFailure: (
+      state,
+      action: PayloadAction<{ oid: string }>,
+    ) => ({
       ...state,
-      isUpdateLoading: false,
+      page: {
+        ...state.page,
+        content: state.page.content.map((order) => {
+          if (order.id === action.payload.oid) {
+            return {
+              ...order,
+              isUpdateStatusLoading: false,
+            };
+          }
+          return order;
+        }),
+      },
     }),
   },
 });
@@ -108,20 +155,20 @@ export const {
   fetchOrderFailure,
   createOrderFailure,
   createOrderSuccess,
-  updateCreateLoading,
+  updateLoadingForCreatingSuccess,
   updateFetchLoading,
   updateLoadingForUpdatingStatus,
   updateOrderStatusSuccess,
   updateOrderStatusFailure,
 } = orderSlice.actions;
 export const updateOrderItemsAction = createAction<void>(
-  `${SLICE_NAME}/updateOrderItemsRequest`
+  `${SLICE_NAME}/updateOrderItemsRequest`,
 );
 export const updateShippingAddressAction = createAction<{ sid: string | null }>(
-  `${SLICE_NAME}/updateShippingAddressRequest`
+  `${SLICE_NAME}/updateShippingAddressRequest`,
 );
 export const checkCartItemsAction = createAction<void>(
-  `${SLICE_NAME}/checkCartItemsRequest`
+  `${SLICE_NAME}/checkCartItemsRequest`,
 );
 export const fetchOrdersByCustomerAction = createAction<{
   queryParams: QueryParams;
@@ -130,7 +177,7 @@ export const fetchOrdersByRetailerAction = createAction<{
   queryParams: QueryParams;
 }>(`${SLICE_NAME}/fetchOrdersByRetailerRequest`);
 export const fetchOrderAction = createAction<{ orderId: string }>(
-  `${SLICE_NAME}/fetchOrderRequest`
+  `${SLICE_NAME}/fetchOrderRequest`,
 );
 export const createOrderAction = createAction<{
   navigate: NavigateFunction;
@@ -164,18 +211,38 @@ function* handleFetchOrders() {
         yield put(updateFetchLoading());
         const page: Page<Order[]> = yield call(
           getOrdersPageByCustomer,
-          fetchOrdersByCustomer.payload.queryParams
+          fetchOrdersByCustomer.payload.queryParams,
         );
-        yield put(fetchOrdersSuccess({ page }));
+        yield put(
+          fetchOrdersSuccess({
+            page: {
+              ...page,
+              content: page.content.map((order) => ({
+                ...order,
+                isUpdateStatusLoading: false,
+              })),
+            },
+          }),
+        );
       }
 
       if (fetOrdersByRetailer) {
         yield put(updateFetchLoading());
         const page: Page<Order[]> = yield call(
           getOrdersPageByRetailer,
-          fetOrdersByRetailer.payload.queryParams
+          fetOrdersByRetailer.payload.queryParams,
         );
-        yield put(fetchOrdersSuccess({ page }));
+        yield put(
+          fetchOrdersSuccess({
+            page: {
+              ...page,
+              content: page.content.map((order) => ({
+                ...order,
+                isUpdateStatusLoading: false,
+              })),
+            },
+          }),
+        );
       }
     } catch (e) {
       notification.open({
@@ -225,7 +292,7 @@ function* handleCreateOrder() {
     });
 
     try {
-      yield put(updateCreateLoading());
+      yield put(updateLoadingForCreatingSuccess());
 
       if (startCreateOrder) {
         const { navigate, values } = startCreateOrder.payload;
@@ -234,7 +301,7 @@ function* handleCreateOrder() {
           const vnpayUrl: string = yield call(
             createOrderByVNPay,
             values.addressId,
-            values.note
+            values.note,
           );
           window.location.href = vnpayUrl;
         } else {
@@ -242,7 +309,7 @@ function* handleCreateOrder() {
             createOrderByCashOrPostPaid,
             values.addressId,
             values.note,
-            values.paymentMethod === "POSTPAID"
+            values.paymentMethod === "POSTPAID",
           );
 
           yield put(createOrderSuccess());
@@ -266,7 +333,7 @@ function* handleCreateOrder() {
             createOrderByVNPay,
             values.addressId,
             values.note,
-            roomId
+            roomId,
           );
           window.open(vnpayUrl, "_blank");
         } else {
@@ -275,7 +342,7 @@ function* handleCreateOrder() {
             values.addressId,
             values.note,
             values.paymentMethod === "POSTPAID",
-            roomId
+            roomId,
           );
 
           yield put(createOrderSuccess());
@@ -307,12 +374,11 @@ function* handleUpdateOrderStatus() {
     const {
       payload: { oid, orderStatus },
     }: ReturnType<typeof updateOrderStatusAction> = yield take(
-      updateOrderStatusAction
+      updateOrderStatusAction,
     );
     try {
-      yield put(updateLoadingForUpdatingStatus());
-      yield call(updateStatus, oid, orderStatus);
-      yield put(updateOrderStatusSuccess());
+      yield put(updateLoadingForUpdatingStatus({ oid }));
+      yield fork(updateOrderStatus, oid, orderStatus);
     } catch (e) {
       notification.open({
         message: "Error",
@@ -320,9 +386,14 @@ function* handleUpdateOrderStatus() {
         type: "error",
       });
 
-      yield put(updateOrderStatusFailure());
+      yield put(updateOrderStatusFailure({ oid }));
     }
   }
+}
+
+function* updateOrderStatus(oid: string, orderStatus: OrderStatus) {
+  yield call(updateStatus, oid, orderStatus);
+  yield put(updateOrderStatusSuccess({ oid, orderStatus }));
 }
 
 export const orderSagas = [

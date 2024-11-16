@@ -1087,6 +1087,11 @@ ansi-styles@^6.1.0:
   resolved "https://registry.npmjs.org/ansi-styles/-/ansi-styles-6.2.1.tgz"
   integrity sha512-bN798gFfQX+viw3R7yrGWRqnrN2oRkEkUjjl4JNn4E8GxxbjtG3FbrEIIY3l8/hrwUwIeCZvi4QuOTP4MErVug==
 
+antd-button-color@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/antd-button-color/-/antd-button-color-1.0.4.tgz#1746bf5b14ef1692929cb0332d076f7fd7b3faf6"
+  integrity sha512-KDzsvs0myFF5HLg8Kj4UW1icuw/vffXW0wwBOUWqVITrLXnrzkRpnOh6DEDmvsjxC8pwM4OCciouqfUlt5+7NA==
+
 antd-img-crop@^4.22.0:
   version "4.22.0"
   resolved "https://registry.npmjs.org/antd-img-crop/-/antd-img-crop-4.22.0.tgz"

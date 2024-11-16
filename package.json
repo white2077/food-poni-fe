@@ -14,6 +14,7 @@
     "@reduxjs/toolkit": "^2.2.2",
     "@stomp/stompjs": "^7.0.0",
     "antd": "^5.19.1",
+    "antd-button-color": "^1.0.4",
     "antd-img-crop": "^4.22.0",
     "axios": "^1.7.2",
     "clsx": "^2.1.1",
