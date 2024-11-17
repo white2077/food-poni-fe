@@ -524,8 +524,14 @@ function* handleJoiningCartGroup() {
 function* handleFetchingCartGroups() {
   yield take(fetchCartGroupsRequest);
   try {
-    const cartGroups: Array<CartGroup> = yield call(getCartGroups);
-    yield put(fetchCartGroupsSuccess({ cartGroups }));
+    const { currentUser }: { currentUser: RootState["auth"]["currentUser"] } =
+      yield select((state: RootState) => state.auth);
+    if (currentUser && !(currentUser.role === "RETAILER")) {
+      const cartGroups: Array<CartGroup> = yield call(getCartGroups);
+      yield put(fetchCartGroupsSuccess({ cartGroups }));
+    } else {
+      yield put(fetchCartGroupsFailure());
+    }
   } catch (e) {
     notification.open({
       message: "Error",

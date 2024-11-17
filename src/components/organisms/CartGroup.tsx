@@ -18,7 +18,7 @@ export function CartGroup() {
   const { isCreateLoading } = useSelector((state: RootState) => state.order);
   const { currentUser } = useSelector((state: RootState) => state.auth);
 
-  if (!currentUser) return null;
+  if (!currentUser || currentUser.role === "RETAILER") return null;
 
   return (
     <>
