@@ -7,6 +7,7 @@ import {
   getOrderById,
   getOrdersPageByCustomer,
   getOrdersPageByRetailer,
+  getPostPaidOrders,
   updateStatus,
 } from "@/utils/api/order";
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
@@ -53,7 +54,7 @@ const orderSlice = createSlice({
     }),
     fetchOrdersSuccess: (
       state,
-      action: PayloadAction<{ page: OrderState["page"] }>,
+      action: PayloadAction<{ page: OrderState["page"] }>
     ) => ({
       ...state,
       page: action.payload.page,
@@ -90,7 +91,7 @@ const orderSlice = createSlice({
     }),
     updateLoadingForUpdatingStatus: (
       state,
-      action: PayloadAction<{ oid: string }>,
+      action: PayloadAction<{ oid: string }>
     ) => ({
       ...state,
       page: {
@@ -108,7 +109,7 @@ const orderSlice = createSlice({
     }),
     updateOrderStatusSuccess: (
       state,
-      action: PayloadAction<{ oid: string; orderStatus: OrderStatus }>,
+      action: PayloadAction<{ oid: string; orderStatus: OrderStatus }>
     ) => ({
       ...state,
       page: {
@@ -127,7 +128,7 @@ const orderSlice = createSlice({
     }),
     updateOrderStatusFailure: (
       state,
-      action: PayloadAction<{ oid: string }>,
+      action: PayloadAction<{ oid: string }>
     ) => ({
       ...state,
       page: {
@@ -162,13 +163,13 @@ export const {
   updateOrderStatusFailure,
 } = orderSlice.actions;
 export const updateOrderItemsAction = createAction<void>(
-  `${SLICE_NAME}/updateOrderItemsRequest`,
+  `${SLICE_NAME}/updateOrderItemsRequest`
 );
 export const updateShippingAddressAction = createAction<{ sid: string | null }>(
-  `${SLICE_NAME}/updateShippingAddressRequest`,
+  `${SLICE_NAME}/updateShippingAddressRequest`
 );
 export const checkCartItemsAction = createAction<void>(
-  `${SLICE_NAME}/checkCartItemsRequest`,
+  `${SLICE_NAME}/checkCartItemsRequest`
 );
 export const fetchOrdersByCustomerAction = createAction<{
   queryParams: QueryParams;
@@ -177,8 +178,12 @@ export const fetchOrdersByRetailerAction = createAction<{
   queryParams: QueryParams;
 }>(`${SLICE_NAME}/fetchOrdersByRetailerRequest`);
 export const fetchOrderAction = createAction<{ orderId: string }>(
-  `${SLICE_NAME}/fetchOrderRequest`,
+  `${SLICE_NAME}/fetchOrderRequest`
 );
+export const fetchPostPaidOrdersAction = createAction<{
+  ppid: string;
+  queryParams: QueryParams;
+}>(`${SLICE_NAME}/fetchPostPaidOrdersRequest`);
 export const createOrderAction = createAction<{
   navigate: NavigateFunction;
   values: OrderRequest;
@@ -198,12 +203,15 @@ function* handleFetchOrders() {
     const {
       fetchOrdersByCustomer,
       fetOrdersByRetailer,
+      fetPostPaidOrders,
     }: {
       fetchOrdersByCustomer: ReturnType<typeof fetchOrdersByCustomerAction>;
       fetOrdersByRetailer: ReturnType<typeof fetchOrdersByRetailerAction>;
+      fetPostPaidOrders: ReturnType<typeof fetchPostPaidOrdersAction>;
     } = yield race({
       fetchOrdersByCustomer: take(fetchOrdersByCustomerAction),
       fetOrdersByRetailer: take(fetchOrdersByRetailerAction),
+      fetPostPaidOrders: take(fetchPostPaidOrdersAction),
     });
 
     try {
@@ -211,7 +219,7 @@ function* handleFetchOrders() {
         yield put(updateFetchLoading());
         const page: Page<Order[]> = yield call(
           getOrdersPageByCustomer,
-          fetchOrdersByCustomer.payload.queryParams,
+          fetchOrdersByCustomer.payload.queryParams
         );
         yield put(
           fetchOrdersSuccess({
@@ -222,7 +230,7 @@ function* handleFetchOrders() {
                 isUpdateStatusLoading: false,
               })),
             },
-          }),
+          })
         );
       }
 
@@ -230,7 +238,7 @@ function* handleFetchOrders() {
         yield put(updateFetchLoading());
         const page: Page<Order[]> = yield call(
           getOrdersPageByRetailer,
-          fetOrdersByRetailer.payload.queryParams,
+          fetOrdersByRetailer.payload.queryParams
         );
         yield put(
           fetchOrdersSuccess({
@@ -241,7 +249,26 @@ function* handleFetchOrders() {
                 isUpdateStatusLoading: false,
               })),
             },
-          }),
+          })
+        );
+      }
+      if (fetPostPaidOrders) {
+        yield put(updateFetchLoading());
+        const page: Page<Order[]> = yield call(
+          getPostPaidOrders,
+          fetPostPaidOrders.payload.ppid,
+          fetPostPaidOrders.payload.queryParams
+        );
+        yield put(
+          fetchOrdersSuccess({
+            page: {
+              ...page,
+              content: page.content.map((order) => ({
+                ...order,
+                isUpdateStatusLoading: false,
+              })),
+            },
+          })
         );
       }
     } catch (e) {
@@ -301,7 +328,7 @@ function* handleCreateOrder() {
           const vnpayUrl: string = yield call(
             createOrderByVNPay,
             values.addressId,
-            values.note,
+            values.note
           );
           window.location.href = vnpayUrl;
         } else {
@@ -309,7 +336,7 @@ function* handleCreateOrder() {
             createOrderByCashOrPostPaid,
             values.addressId,
             values.note,
-            values.paymentMethod === "POSTPAID",
+            values.paymentMethod === "POSTPAID"
           );
 
           yield put(createOrderSuccess());
@@ -333,7 +360,7 @@ function* handleCreateOrder() {
             createOrderByVNPay,
             values.addressId,
             values.note,
-            roomId,
+            roomId
           );
           window.open(vnpayUrl, "_blank");
         } else {
@@ -342,7 +369,7 @@ function* handleCreateOrder() {
             values.addressId,
             values.note,
             values.paymentMethod === "POSTPAID",
-            roomId,
+            roomId
           );
 
           yield put(createOrderSuccess());
@@ -374,7 +401,7 @@ function* handleUpdateOrderStatus() {
     const {
       payload: { oid, orderStatus },
     }: ReturnType<typeof updateOrderStatusAction> = yield take(
-      updateOrderStatusAction,
+      updateOrderStatusAction
     );
     try {
       yield put(updateLoadingForUpdatingStatus({ oid }));

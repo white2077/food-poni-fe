@@ -23,6 +23,7 @@ import { AdminOrderTablePage } from "./components/pages/AdminOrderTablePage";
 import { AdminProductTablePage } from "./components/pages/AdminProductTablePage";
 import { AdminProductDetailTablePage } from "./components/pages/AdminProductDetailTablePage";
 import { ConsolidatedInvoicePage } from "./components/pages/ConsolidatedInvoicePage";
+import { PostPaidDetailPage } from "./components/pages/PostPaidDetailPage";
 
 export const router = (currentRole: "RETAILER" | "CUSTOMER" | "VIP") =>
   createBrowserRouter([
@@ -114,6 +115,14 @@ export const router = (currentRole: "RETAILER" | "CUSTOMER" | "VIP") =>
     },
     {
       path: "ghi-no/:orderId",
+      element: (
+        <SecuredRoute currentRole={currentRole} role={["VIP"]}>
+          <PostPaidDetailPage />
+        </SecuredRoute>
+      ),
+    },
+    {
+      path: "ghi-no/don-hang/:orderId",
       element: (
         <SecuredRoute currentRole={currentRole} role={["VIP"]}>
           <OrderPostPaidDetailPage />

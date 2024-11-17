@@ -8,8 +8,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { OrderHeader } from "../molecules/OrderHeader.tsx";
 import { OrderInfoCard } from "../molecules/OrderInfoCard.tsx";
-import { OrderPostPaidDetailCard } from "../molecules/OrderPostPaidDetailCard.tsx";
 import { ManagementLayout } from "../templates/ManagementLayout.tsx";
+import { fetchOrderAction } from "@/redux/modules/order.ts";
+import { OrderPostPaidDetailCard } from "../molecules/OrderPostPaidDetailCard.tsx";
 
 export const OrderPostPaidDetailPage = () => {
   const { orderId } = useParams<{ orderId: string }>();
@@ -24,8 +25,17 @@ export const OrderPostPaidDetailPage = () => {
   useEffect(() => {
     if (orderId) {
       dispatch(
-        fetchOrderItemsByOrderIdAction({ oid: orderId, queryParams: {} })
+        fetchOrderItemsByOrderIdAction({
+          oid: orderId,
+          queryParams: {
+            page: 0,
+            pageSize: 10,
+            sort: ["createdAt,desc"],
+            orderGroup: true,
+          },
+        })
       );
+      dispatch(fetchOrderAction({ orderId }));
     }
   }, [orderId, dispatch]);
 
@@ -39,13 +49,13 @@ export const OrderPostPaidDetailPage = () => {
 
   return (
     <ManagementLayout>
-      <div className="container mx-auto px-4 py-8">
-        <Card className="shadow-lg">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <Card className="shadow-lg rounded-lg border-0">
           <OrderHeader
             orderId={selectedOrder.id}
             status={selectedOrder.status}
           />
-          <Divider />
+          <Divider className="my-4" />
           <OrderInfoCard selectedOrder={selectedOrder} />
           <OrderPostPaidDetailCard
             isFetchOrderItemsLoading={isFetchOrderItemsLoading}
@@ -53,11 +63,11 @@ export const OrderPostPaidDetailPage = () => {
             selectedOrder={selectedOrder}
           />
         </Card>
-        <Link to="/ghi-no" className="inline-block mt-6">
+        <Link to="/ghi-no" className="inline-block mt-8">
           <Button
             type="link"
             icon={<LeftOutlined />}
-            className="text-orange-600 hover:text-orange-400"
+            className="text-orange-600 hover:text-primary transition-colors duration-300 flex items-center"
           >
             Quay lại đơn hàng của tôi
           </Button>

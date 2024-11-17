@@ -42,8 +42,8 @@ const OrderCard = ({
     <div>
       <Link
         to={
-          order.postPaidOrderId
-            ? `/ghi-no/${order.id}`
+          order.payment.method === "POSTPAID"
+            ? `/ghi-no/don-hang/${order.id}`
             : orderGroup
               ? `/don-hang-nhom/${order.id}`
               : `/don-hang/${order.id}`
@@ -72,7 +72,7 @@ const OrderCard = ({
                   <span>
                     {format(
                       new Date(order.createdAt ?? ""),
-                      "dd-MM-yyyy - HH:mm",
+                      "dd-MM-yyyy - HH:mm"
                     )}
                   </span>
                 </div>

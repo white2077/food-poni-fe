@@ -16,6 +16,7 @@ import { AvatarInfo } from "../atoms/AvatarInfo";
 import { SalesLabel } from "../atoms/SalesLabel";
 import { ManagementLayout } from "../templates/ManagementLayout";
 import "./AdminOrderTablePage.scss";
+import { Link } from "react-router-dom";
 
 const TableToolbar = () => (
   <Flex className="mb-4" justify="space-between">
@@ -95,7 +96,11 @@ export const ConsolidatedInvoicePage = () => {
           ...it,
           key: it.id,
           no: page.number * page.size + index + 1,
-          code: it.id.toUpperCase().substring(0, 6),
+          code: (
+            <Link to={`/ghi-no/${it.id}`}>
+              {it.id.toUpperCase().substring(0, 6)}
+            </Link>
+          ),
           name: (
             <AvatarInfo
               fullName={it.user.username}

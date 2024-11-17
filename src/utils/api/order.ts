@@ -53,6 +53,22 @@ export const getOrdersPageByStatus = (
     .then((res: AxiosResponse<Page<Order[]>>) => res.data);
 };
 
+export const getPostPaidOrders = (
+  ppid: string,
+  queryParams: QueryParams
+): Promise<Page<Order[]>> => {
+  return apiWithToken()
+    .get(
+      generateQueryString(`/customer/orders-post-paid/${ppid}`, queryParams),
+      {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+        },
+      }
+    )
+    .then((res: AxiosResponse<Page<Order[]>>) => res.data);
+};
+
 export const createOrderByCashOrPostPaid = (
   addressId: string,
   note: string,
