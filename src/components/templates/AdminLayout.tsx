@@ -3,6 +3,7 @@ import { Content, Footer, Header } from "antd/es/layout/layout";
 import { ReactNode } from "react";
 import { SiderAdmin } from "../atoms/SiderAdmin";
 import { UserDropdown } from "../molecules/UserDropdown";
+import NotificationDropdown from "@/components/organisms/NotificationDropdown.tsx";
 
 export const AdminLayout = ({ children }: { children: ReactNode }) => {
   const {
@@ -13,8 +14,11 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
     <Layout hasSider={true}>
       <SiderAdmin theme="light" />
       <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }}>
-          <UserDropdown isAdmin={true} />
+        <Header style={{ padding: "10px 0px", background: colorBgContainer, height: "fit-content" }}>
+          <div className="flex items-center justify-end gap-4">
+            <NotificationDropdown />
+            <UserDropdown isAdmin={true} />
+          </div>
         </Header>
         <Content style={{ margin: "24px 16px 0" }}>{children}</Content>
         <Footer style={{ textAlign: "center" }}>

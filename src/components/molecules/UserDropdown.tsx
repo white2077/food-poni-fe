@@ -126,7 +126,7 @@ export function UserDropdown({ isAdmin }: { isAdmin?: boolean }) {
         ) : (
           <Avatar icon={<UserOutlined />} />
         )}
-        <span className="text-gray-500 text-[15px] hidden md:block">
+        <span className="text-gray-500 text-[15px] hidden md:block leading-normal">
           {currentUser.username}
         </span>
       </a>

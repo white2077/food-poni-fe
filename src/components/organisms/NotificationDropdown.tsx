@@ -22,7 +22,8 @@ import {
   deleteCartGroupSuccess,
   deleteCartItemSuccess,
   kickUserSuccess,
-  leaveCartGroupSuccess, updateCartItemNoteSuccess,
+  leaveCartGroupSuccess,
+  updateCartItemNoteSuccess,
   updateCartItemQuantitySuccess,
 } from "@/redux/modules/cartGroup";
 import {
@@ -45,7 +46,7 @@ import SockJS from "sockjs-client/dist/sockjs";
 export default function NotificationDropdown() {
   const dispatch = useDispatch();
   const { page, isFetchLoading } = useSelector(
-    (state: RootState) => state.notification
+    (state: RootState) => state.notification,
   );
   const { currentUser } = useSelector((state: RootState) => state.auth);
   const [tab, setTab] = useState<string>("all");
@@ -54,7 +55,7 @@ export default function NotificationDropdown() {
     dispatch(
       fetchNotificationsAction({
         queryParams: { page: 0, pageSize: 10, sort: ["createdAt,desc"] },
-      })
+      }),
     );
   }, [dispatch]);
 
@@ -71,24 +72,27 @@ export default function NotificationDropdown() {
             const notificationEvent: Notification = JSON.parse(message.body);
 
             const attributes = JSON.parse(
-              notificationEvent.attributes
+              notificationEvent.attributes,
             ) as NotificationAttributes;
 
             if (notificationEvent.toUser.id === currentUser.id) {
               dispatch(
-                pushNotificationSuccess({ notification: notificationEvent })
+                pushNotificationSuccess({ notification: notificationEvent }),
               );
               notification.open({
-                type: ["COMPLETED", "APPROVED", "PENDING"].includes(
-                  attributes.orderStatus
-                )
+                type: [
+                  "COMPLETED",
+                  "APPROVED",
+                  "PENDING",
+                  "DELIVERING",
+                ].includes(attributes.orderStatus)
                   ? "success"
                   : "error",
                 placement: "bottomRight",
                 message: notificationEvent.createdAt.toString(),
                 description: getNotificationOrderMessage(
                   attributes.id,
-                  attributes.orderStatus
+                  attributes.orderStatus,
                 ),
                 duration: 10,
                 btn: (
@@ -103,112 +107,112 @@ export default function NotificationDropdown() {
             }
           });
 
-          client.subscribe("/user/topic/room", (message) => {
-            const cartGroupEvent: CartGroupEvent = JSON.parse(message.body);
-            if (
-              cartGroupEvent.type === "ADD_CART_ITEM" &&
-              cartGroupEvent.attributes &&
-              "productDetail" in cartGroupEvent.attributes
-            ) {
-              const {
-                cartItemId,
-                quantity,
-                productDetail,
-                productName,
-                toppings,
-                type,
-              } = cartGroupEvent.attributes;
-              dispatch(
-                addToCartItemsSuccess({
-                  cartItem: {
-                    id: cartItemId,
-                    quantity,
-                    productDetail,
-                    productName,
-                    user: cartGroupEvent.user,
-                    toppings,
-                    type,
-                    updatingQuantityLoading: false,
-                    deletingCartItemLoading: false,
-                    kickingUserFromCartItemLoading: false,
-                  },
-                  roomId: cartGroupEvent.roomId,
-                })
-              );
-            }
-            
-            if (cartGroupEvent.user.id !== currentUser.id) {
+          if (currentUser.role !== "RETAILER") {
+            client.subscribe("/user/topic/room", (message) => {
+              const cartGroupEvent: CartGroupEvent = JSON.parse(message.body);
               if (
-                cartGroupEvent.type === "UPDATE_CART_ITEM_QUANTITY" &&
+                cartGroupEvent.type === "ADD_CART_ITEM" &&
                 cartGroupEvent.attributes &&
-                "cartItemId" in cartGroupEvent.attributes &&
-                "quantity" in cartGroupEvent.attributes
+                "productDetail" in cartGroupEvent.attributes
               ) {
-                const { cartItemId, quantity } = cartGroupEvent.attributes;
+                const {
+                  cartItemId,
+                  quantity,
+                  productDetail,
+                  productName,
+                  toppings,
+                  type,
+                } = cartGroupEvent.attributes;
                 dispatch(
-                  updateCartItemQuantitySuccess({ id: cartItemId, quantity })
+                  addToCartItemsSuccess({
+                    cartItem: {
+                      id: cartItemId,
+                      quantity,
+                      productDetail,
+                      productName,
+                      user: cartGroupEvent.user,
+                      toppings,
+                      type,
+                      updatingQuantityLoading: false,
+                      deletingCartItemLoading: false,
+                      kickingUserFromCartItemLoading: false,
+                    },
+                    roomId: cartGroupEvent.roomId,
+                  }),
                 );
               }
 
-              if (
+              if (cartGroupEvent.user.id !== currentUser.id) {
+                if (
+                  cartGroupEvent.type === "UPDATE_CART_ITEM_QUANTITY" &&
+                  cartGroupEvent.attributes &&
+                  "cartItemId" in cartGroupEvent.attributes &&
+                  "quantity" in cartGroupEvent.attributes
+                ) {
+                  const { cartItemId, quantity } = cartGroupEvent.attributes;
+                  dispatch(
+                    updateCartItemQuantitySuccess({ id: cartItemId, quantity }),
+                  );
+                }
+
+                if (
                   cartGroupEvent.type === "UPDATE_CART_ITEM_NOTE" &&
                   cartGroupEvent.attributes &&
                   "cartItemId" in cartGroupEvent.attributes &&
                   "note" in cartGroupEvent.attributes
-              ) {
-                const { cartItemId, note } = cartGroupEvent.attributes;
-                dispatch(
-                    updateCartItemNoteSuccess({ id: cartItemId, note })
-                );
-              }
+                ) {
+                  const { cartItemId, note } = cartGroupEvent.attributes;
+                  dispatch(updateCartItemNoteSuccess({ id: cartItemId, note }));
+                }
 
-              if (
-                cartGroupEvent.type === "DELETE_CART_ITEM" &&
-                cartGroupEvent.attributes &&
-                "cartItemId" in cartGroupEvent.attributes
-              ) {
-                const { cartItemId } = cartGroupEvent.attributes;
-                dispatch(deleteCartItemSuccess({ id: cartItemId }));
-              }
+                if (
+                  cartGroupEvent.type === "DELETE_CART_ITEM" &&
+                  cartGroupEvent.attributes &&
+                  "cartItemId" in cartGroupEvent.attributes
+                ) {
+                  const { cartItemId } = cartGroupEvent.attributes;
+                  dispatch(deleteCartItemSuccess({ id: cartItemId }));
+                }
 
-              if (cartGroupEvent.type === "LEAVE_GROUP") {
-                dispatch(
-                  leaveCartGroupSuccess({
-                    roomId: cartGroupEvent.roomId,
-                    userId: cartGroupEvent.user.id,
-                  })
-                );
-              }
+                if (cartGroupEvent.type === "LEAVE_GROUP") {
+                  dispatch(
+                    leaveCartGroupSuccess({
+                      roomId: cartGroupEvent.roomId,
+                      userId: cartGroupEvent.user.id,
+                    }),
+                  );
+                }
 
-              if (cartGroupEvent.type === "DELETE_GROUP") {
-                dispatch(
-                  deleteCartGroupSuccess({
-                    roomId: cartGroupEvent.roomId,
-                  })
-                );
-              }
-
-              if (
-                cartGroupEvent.type === "KICK_USER" &&
-                "userId" in cartGroupEvent.attributes
-              ) {
-                if (cartGroupEvent.attributes.userId === currentUser.id) {
+                if (cartGroupEvent.type === "DELETE_GROUP") {
                   dispatch(
                     deleteCartGroupSuccess({
                       roomId: cartGroupEvent.roomId,
-                    })
-                  );
-                } else {
-                  dispatch(
-                    kickUserSuccess({
-                      roomId: cartGroupEvent.roomId,
-                      userId: cartGroupEvent.attributes.userId,
-                    })
+                    }),
                   );
                 }
+
+                if (
+                  cartGroupEvent.type === "KICK_USER" &&
+                  "userId" in cartGroupEvent.attributes
+                ) {
+                  if (cartGroupEvent.attributes.userId === currentUser.id) {
+                    dispatch(
+                      deleteCartGroupSuccess({
+                        roomId: cartGroupEvent.roomId,
+                      }),
+                    );
+                  } else {
+                    dispatch(
+                      kickUserSuccess({
+                        roomId: cartGroupEvent.roomId,
+                        userId: cartGroupEvent.attributes.userId,
+                      }),
+                    );
+                  }
+                }
               }
-            }
-          });
+            });
+          }
         },
         onStompError: (frame) => {
           console.log("Error connecting to Websocket server", frame);
@@ -251,7 +255,7 @@ export default function NotificationDropdown() {
                             pageSize: 10,
                             sort: ["createdAt,desc"],
                           },
-                        })
+                        }),
                       );
                     }
                     if (e.target.value === "unread") {
@@ -263,7 +267,7 @@ export default function NotificationDropdown() {
                             sort: ["createdAt,desc"],
                             read: "false",
                           },
-                        })
+                        }),
                       );
                     }
                     if (e.target.value === "read") {
@@ -275,7 +279,7 @@ export default function NotificationDropdown() {
                             sort: ["createdAt,desc"],
                             read: "true",
                           },
-                        })
+                        }),
                       );
                     }
                   }}
@@ -290,7 +294,7 @@ export default function NotificationDropdown() {
                   <div className="flex flex-col gap-1">
                     {page.content.map((it, index) => {
                       const attributes = JSON.parse(
-                        it.attributes
+                        it.attributes,
                       ) as NotificationAttributes;
                       return (
                         <div
@@ -300,7 +304,7 @@ export default function NotificationDropdown() {
                               dispatch(
                                 markIsReadNotificationsAction({
                                   id: it.id,
-                                })
+                                }),
                               );
                             }
                           }}
@@ -320,7 +324,7 @@ export default function NotificationDropdown() {
                               <div className="text-2sm font-medium">
                                 {getNotificationOrderMessage(
                                   attributes.id,
-                                  attributes.orderStatus
+                                  attributes.orderStatus,
                                 )}
                               </div>
                               <span className="flex items-center text-2xs font-medium text-gray-500">
@@ -328,7 +332,7 @@ export default function NotificationDropdown() {
                                   const hoursDiff =
                                     Math.abs(
                                       new Date().getTime() -
-                                        new Date(it.createdAt).getTime()
+                                        new Date(it.createdAt).getTime(),
                                     ) / 36e5;
 
                                   if (hoursDiff > 48) {
@@ -336,15 +340,14 @@ export default function NotificationDropdown() {
                                       <span>
                                         {format(
                                           it.createdAt,
-                                          "hh:mm dd-MM-yyyy"
+                                          "hh:mm dd-MM-yyyy",
                                         )}
                                       </span>
                                     );
                                   } else if (hoursDiff > 24) {
                                     return (
                                       <span>
-                                        Hôm qua{" "}
-                                        {format(it.createdAt, "hh:mm")}
+                                        Hôm qua {format(it.createdAt, "hh:mm")}
                                       </span>
                                     );
                                   } else {

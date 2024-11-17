@@ -184,7 +184,12 @@ export type Notification = {
 
 export type NotificationAttributes = {
   readonly id: string;
-  readonly orderStatus: string | "REJECTED" | "APPROVED" | "COMPLETED";
+  readonly orderStatus:
+    | string
+    | "REJECTED"
+    | "APPROVED"
+    | "COMPLETED"
+    | "DELIVERING";
 };
 
 export type Page<T> = {
