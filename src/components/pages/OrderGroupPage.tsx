@@ -8,13 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import OrderCard from "../molecules/OrderCard";
 import { ManagementLayout } from "../templates/ManagementLayout";
 import { ProductLoading } from "../atoms/ProductLoading";
-
-const ORDER_STATUSES = [
-  { label: "Chờ xác nhận", value: "PENDING" },
-  { label: "Chờ lấy hàng", value: "APPROVED" },
-  { label: "Đã giao", value: "COMPLETED" },
-  { label: "Bị từ chối", value: "REJECTED" },
-];
+import {ORDER_STATUSES} from "@/utils/common.ts";
 
 export const OrderGroupPage = () => {
   const dispatch = useDispatch();
@@ -64,8 +58,8 @@ export const OrderGroupPage = () => {
               <Badge
                 className="px-1"
                 count={
-                  item.value === "PENDING" &&
-                  item.value === status &&
+                  item.key === "PENDING" &&
+                  item.key === status &&
                   !isFetchLoading
                     ? page.totalElements
                     : 0
@@ -75,7 +69,7 @@ export const OrderGroupPage = () => {
                 {item.label}
               </Badge>
             ),
-            value: item.value,
+            value: item.key,
           }))}
         />
       </Space>

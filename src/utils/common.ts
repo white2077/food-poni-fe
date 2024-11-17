@@ -176,4 +176,5 @@ export const ORDER_STATUSES = [
   { label: "Đang giao", key: "DELIVERING" },
   { label: "Đã nhận hàng", key: "COMPLETED" },
   { label: "Đã hủy", key: "CANCELLED" },
+  { label: "Gặp sự cố", key: "FAILED" },
 ];

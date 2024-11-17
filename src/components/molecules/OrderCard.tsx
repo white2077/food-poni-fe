@@ -7,20 +7,24 @@ import { Link } from "react-router-dom";
 
 const statusText: Record<string, string> = {
   PENDING: "Chờ xác nhận",
-  APPROVED: "Chờ lấy hàng",
+  APPROVED: "Đang chế biến",
+  DELIVERING: "Đang giao",
   CANCELLED: "Đã hủy",
   REJECTED: "Bị từ chối",
   COMPLETED: "Hoàn thành",
   POST_PAID: "Ghi nợ",
+  FAILED: "Gặp sự cố",
 };
 
 const statusColors: Record<string, string> = {
   PENDING: "orange",
   APPROVED: "blue",
+  DELIVERING: "orange",
   CANCELLED: "red",
   REJECTED: "red",
   COMPLETED: "green",
   POST_PAID: "gray",
+  FAILED: "red",
 };
 
 const OrderCard = ({
@@ -68,7 +72,7 @@ const OrderCard = ({
                   <span>
                     {format(
                       new Date(order.createdAt ?? ""),
-                      "dd-MM-yyyy - HH:mm"
+                      "dd-MM-yyyy - HH:mm",
                     )}
                   </span>
                 </div>
