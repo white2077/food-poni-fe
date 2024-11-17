@@ -79,7 +79,7 @@ export const groupCartByUser = (
         username: string;
         avatar: string;
       };
-      kickingUserFromCartItemLoading: boolean;
+      kickingUserFromCartItemLoading?: boolean;
       items: Cart[];
     }
   >();
@@ -90,6 +90,7 @@ export const groupCartByUser = (
 
       if (!userMap.has(userId)) {
         userMap.set(userId, {
+          ...ci,
           user: {
             ...ci.user,
           },

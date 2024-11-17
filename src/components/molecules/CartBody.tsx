@@ -11,7 +11,10 @@ import TextArea from "antd/es/input/TextArea";
 import { useDispatch } from "react-redux";
 import { ProductLoading } from "../atoms/ProductLoading";
 import { QuantityInput } from "./QuantityInput";
-import { deleteCartItemAction } from "@/redux/modules/cartGroup.ts";
+import {
+  deleteCartItemAction,
+  updateCartItemNoteAction,
+} from "@/redux/modules/cartGroup.ts";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 export const CartBody = ({
@@ -115,12 +118,19 @@ export const CartBody = ({
                         <TextArea
                           defaultValue={it.note}
                           onChange={(e) =>
-                            dispatch(
-                              updateNoteAction({
-                                id: it.id,
-                                note: e.target.value,
-                              }),
-                            )
+                            enableCartGroup
+                              ? dispatch(
+                                  updateCartItemNoteAction({
+                                    id: it.id,
+                                    note: e.target.value,
+                                  }),
+                                )
+                              : dispatch(
+                                  updateNoteAction({
+                                    id: it.id,
+                                    note: e.target.value,
+                                  }),
+                                )
                           }
                           placeholder="Ghi chú"
                           className="h-[35px]"

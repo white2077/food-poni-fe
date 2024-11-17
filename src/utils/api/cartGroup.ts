@@ -14,7 +14,7 @@ export const joinCartGroup = (roomId: string): Promise<CartGroup> => {
         headers: {
           Authorization: "Bearer " + accessToken,
         },
-      }
+      },
     )
     .then((res: AxiosResponse<CartGroup>) => res.data);
 };
@@ -34,7 +34,7 @@ export const addCartItem = (
   productDetail: { id: string },
   toppings: Array<{ id: string }>,
   type: string | null,
-  quantity: number
+  quantity: number,
 ): Promise<string> => {
   return apiWithToken()
     .post(
@@ -50,14 +50,14 @@ export const addCartItem = (
         headers: {
           Authorization: "Bearer " + accessToken,
         },
-      }
+      },
     )
     .then((res: AxiosResponse<string>) => res.data);
 };
 
 export const updateCartItemQuantity = (
   id: string,
-  quantity: number
+  quantity: number,
 ): Promise<void> => {
   return apiWithToken().patch(
     "/cart-group/update-quantity",
@@ -66,7 +66,19 @@ export const updateCartItemQuantity = (
       headers: {
         Authorization: "Bearer " + accessToken,
       },
-    }
+    },
+  );
+};
+
+export const updateCartItemNote = (id: string, note: string): Promise<void> => {
+  return apiWithToken().patch(
+    "/cart-group/update-note",
+    { id, note },
+    {
+      headers: {
+        Authorization: "Bearer " + accessToken,
+      },
+    },
   );
 };
 
@@ -87,7 +99,7 @@ export const createCartGroup = (timeout: string): Promise<CartGroup> => {
         headers: {
           Authorization: "Bearer " + accessToken,
         },
-      }
+      },
     )
     .then((res: AxiosResponse<CartGroup>) => res.data);
 };
@@ -103,7 +115,7 @@ export const deleteCartGroup = (roomId: string): Promise<string> => {
 };
 
 export const leaveCartGroup = (
-  roomId: string
+  roomId: string,
 ): Promise<{ roomId: string; uid: string }> => {
   return apiWithToken()
     .delete("/cart-group/leave-room/" + roomId, {

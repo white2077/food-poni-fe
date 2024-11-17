@@ -10,6 +10,7 @@ import {
   joinCartGroup,
   kickUser,
   leaveCartGroup,
+  updateCartItemNote,
   updateCartItemQuantity,
 } from "@/utils/api/cartGroup";
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
@@ -38,12 +39,13 @@ export type CartGroupState = {
     };
     cartItems: Array<
       Cart & {
-        readonly updatingQuantityLoading: boolean;
-        readonly deletingCartItemLoading: boolean;
-        readonly kickingUserFromCartItemLoading: boolean;
+        readonly updatingQuantityLoading?: boolean;
+        readonly isUpdateNoteLoading?: boolean;
+        readonly deletingCartItemLoading?: boolean;
+        readonly kickingUserFromCartItemLoading?: boolean;
       }
     >;
-    readonly deletingCartGroupLoading: boolean;
+    readonly deletingCartGroupLoading?: boolean;
   }>;
   readonly cartGroupSelected: string;
   readonly roomCodeInputting: string;
@@ -81,19 +83,19 @@ const cartGroupSlide = createSlice({
     }),
     updateWindowSelectedSuccess: (
       state,
-      action: PayloadAction<{ window: "CART_GROUP" | "HOME" }>
+      action: PayloadAction<{ window: "CART_GROUP" | "HOME" }>,
     ) => ({
       ...state,
       windowSelected: action.payload.window,
     }),
     updateCartGroupSelectedSuccess: (
       state,
-      action: PayloadAction<{ roomId: string }>
+      action: PayloadAction<{ roomId: string }>,
     ) => ({
       ...state,
       cartGroupSelected: action.payload.roomId,
     }),
-    updateJoiningCartGroupLoading: (state) => ({
+    updateLoadingForJoiningCartGroupSuccess: (state) => ({
       ...state,
       joiningCartGroupLoading: true,
     }),
@@ -101,7 +103,7 @@ const cartGroupSlide = createSlice({
       state,
       action: PayloadAction<{
         cartGroup: CartGroupState["cartGroupsJoined"][number];
-      }>
+      }>,
     ) => ({
       ...state,
       cartGroupsJoined: [...state.cartGroupsJoined, action.payload.cartGroup],
@@ -114,19 +116,19 @@ const cartGroupSlide = createSlice({
     }),
     updateRoomCodeInputting: (
       state,
-      action: PayloadAction<{ value: string }>
+      action: PayloadAction<{ value: string }>,
     ) => ({
       ...state,
       roomCodeInputting: action.payload.value,
     }),
     updateRoomTimeOutInputtingSuccess: (
       state,
-      action: PayloadAction<{ value: string }>
+      action: PayloadAction<{ value: string }>,
     ) => ({
       ...state,
       roomTimeOutInputting: action.payload.value,
     }),
-    updateAddingToCartItemsLoadingSuccess: (state) => ({
+    updateLoadingForAddingToCartItemsSuccess: (state) => ({
       ...state,
       addingToCartItemLoading: true,
     }),
@@ -135,7 +137,7 @@ const cartGroupSlide = createSlice({
       action: PayloadAction<{
         cartItem: CartGroupState["cartGroupsJoined"][number]["cartItems"][number];
         roomId: string;
-      }>
+      }>,
     ) => ({
       ...state,
       cartGroupsJoined: state.cartGroupsJoined.map((it) => {
@@ -153,9 +155,9 @@ const cartGroupSlide = createSlice({
       ...state,
       addingToCartItemLoading: false,
     }),
-    updateCartItemQuantityLoadingSuccess: (
+    updateLoadingForCartItemQuantitySuccess: (
       state,
-      action: PayloadAction<{ id: string }>
+      action: PayloadAction<{ id: string }>,
     ) => ({
       ...state,
       cartGroupsJoined: state.cartGroupsJoined.map((group) => ({
@@ -176,7 +178,7 @@ const cartGroupSlide = createSlice({
       action: PayloadAction<{
         id: string;
         quantity: number;
-      }>
+      }>,
     ) => ({
       ...state,
       cartGroupsJoined: state.cartGroupsJoined.map((group) => ({
@@ -195,7 +197,7 @@ const cartGroupSlide = createSlice({
     }),
     updateCartItemQuantityFailure: (
       state,
-      action: PayloadAction<{ id: string }>
+      action: PayloadAction<{ id: string }>,
     ) => ({
       ...state,
       cartGroupsJoined: state.cartGroupsJoined.map((group) => ({
@@ -211,13 +213,68 @@ const cartGroupSlide = createSlice({
         }),
       })),
     }),
+    updateLoadingForCartItemNoteSuccess: (
+      state,
+      action: PayloadAction<{ id: string }>,
+    ) => ({
+      ...state,
+      cartGroupsJoined: state.cartGroupsJoined.map((group) => ({
+        ...group,
+        cartItems: group.cartItems.map((ci) => {
+          if (ci.id === action.payload.id) {
+            return {
+              ...ci,
+              isUpdateNoteLoading: true,
+            };
+          }
+          return ci;
+        }),
+      })),
+    }),
+    updateCartItemNoteSuccess: (
+      state,
+      action: PayloadAction<{ id: string; note: string }>,
+    ) => ({
+      ...state,
+      cartGroupsJoined: state.cartGroupsJoined.map((group) => ({
+        ...group,
+        cartItems: group.cartItems.map((ci) => {
+          if (ci.id === action.payload.id) {
+            return {
+              ...ci,
+              note: action.payload.note,
+              isUpdateNoteLoading: false,
+            };
+          }
+          return ci;
+        }),
+      })),
+    }),
+    updateCartItemNoteFailure: (
+      state,
+      action: PayloadAction<{ id: string }>,
+    ) => ({
+      ...state,
+      cartGroupsJoined: state.cartGroupsJoined.map((group) => ({
+        ...group,
+        cartItems: group.cartItems.map((ci) => {
+          if (ci.id === action.payload.id) {
+            return {
+              ...ci,
+              isUpdateNoteLoading: false,
+            };
+          }
+          return ci;
+        }),
+      })),
+    }),
     fetchCartGroupsRequest: (state) => ({
       ...state,
       fetchingCartGroupsLoading: true,
     }),
     fetchCartGroupsSuccess: (
       state,
-      action: PayloadAction<{ cartGroups: CartGroupState["cartGroupsJoined"] }>
+      action: PayloadAction<{ cartGroups: CartGroupState["cartGroupsJoined"] }>,
     ) => ({
       ...state,
       cartGroupsJoined: action.payload.cartGroups,
@@ -242,9 +299,9 @@ const cartGroupSlide = createSlice({
       ...state,
       creatingCartGroupLoading: false,
     }),
-    updateDeletingCartGroupLoadingSuccess: (
+    updateLoadingForDeletingCartGroupSuccess: (
       state,
-      action: PayloadAction<{ roomId: string }>
+      action: PayloadAction<{ roomId: string }>,
     ) => ({
       ...state,
       cartGroupsJoined: state.cartGroupsJoined.map((it) => {
@@ -259,17 +316,17 @@ const cartGroupSlide = createSlice({
     }),
     deleteCartGroupSuccess: (
       state,
-      action: PayloadAction<{ roomId: string }>
+      action: PayloadAction<{ roomId: string }>,
     ) => ({
       ...state,
       cartGroupsJoined: state.cartGroupsJoined.filter(
-        (it) => it.roomId !== action.payload.roomId
+        (it) => it.roomId !== action.payload.roomId,
       ),
       windowSelected: "HOME",
     }),
     deleteCartGroupFailure: (
       state,
-      action: PayloadAction<{ roomId: string }>
+      action: PayloadAction<{ roomId: string }>,
     ) => ({
       ...state,
       cartGroupsJoined: state.cartGroupsJoined.map((it) => {
@@ -284,7 +341,7 @@ const cartGroupSlide = createSlice({
     }),
     leaveCartGroupSuccess: (
       state,
-      action: PayloadAction<{ roomId: string; userId?: string }>
+      action: PayloadAction<{ roomId: string; userId?: string }>,
     ) => ({
       ...state,
       cartGroupsJoined: action.payload.userId
@@ -293,19 +350,19 @@ const cartGroupSlide = createSlice({
               return {
                 ...it,
                 cartItems: it.cartItems.filter(
-                  (ci) => ci.user && ci.user.id !== action.payload.userId
+                  (ci) => ci.user && ci.user.id !== action.payload.userId,
                 ),
               };
             }
             return it;
           })
         : state.cartGroupsJoined.filter(
-            (it) => it.roomId !== action.payload.roomId
+            (it) => it.roomId !== action.payload.roomId,
           ),
     }),
     updateLoadingForKickUserSuccess: (
       state,
-      action: PayloadAction<{ roomId: string; userId: string }>
+      action: PayloadAction<{ roomId: string; userId: string }>,
     ) => ({
       ...state,
       cartGroupsJoined: state.cartGroupsJoined.map((it) => {
@@ -328,7 +385,7 @@ const cartGroupSlide = createSlice({
     }),
     kickUserSuccess: (
       state,
-      action: PayloadAction<{ roomId: string; userId: string }>
+      action: PayloadAction<{ roomId: string; userId: string }>,
     ) => ({
       ...state,
       cartGroupsJoined: state.cartGroupsJoined.map((it) => {
@@ -336,7 +393,7 @@ const cartGroupSlide = createSlice({
           return {
             ...it,
             cartItems: it.cartItems.filter(
-              (ci) => ci.user && ci.user.id !== action.payload.userId
+              (ci) => ci.user && ci.user.id !== action.payload.userId,
             ),
           };
         }
@@ -345,7 +402,7 @@ const cartGroupSlide = createSlice({
     }),
     kickUserFailure: (
       state,
-      action: PayloadAction<{ roomId: string; userId: string }>
+      action: PayloadAction<{ roomId: string; userId: string }>,
     ) => ({
       ...state,
       cartGroupsJoined: state.cartGroupsJoined.map((it) => {
@@ -374,24 +431,27 @@ export const {
   updateVisible,
   updateWindowSelectedSuccess,
   updateCartGroupSelectedSuccess,
-  updateJoiningCartGroupLoading,
+  updateLoadingForJoiningCartGroupSuccess,
   joinCartGroupSuccess,
   joinCartGroupFailure,
   updateRoomCodeInputting,
   updateRoomTimeOutInputtingSuccess,
-  updateAddingToCartItemsLoadingSuccess,
+  updateLoadingForAddingToCartItemsSuccess,
   addToCartItemsSuccess,
   addToCartItemsFailure,
-  updateCartItemQuantityLoadingSuccess,
+  updateLoadingForCartItemQuantitySuccess,
   updateCartItemQuantitySuccess,
   updateCartItemQuantityFailure,
+  updateLoadingForCartItemNoteSuccess,
+  updateCartItemNoteSuccess,
+  updateCartItemNoteFailure,
   fetchCartGroupsRequest,
   fetchCartGroupsSuccess,
   fetchCartGroupsFailure,
   deleteCartItemSuccess,
   createCartGroupRequest,
   createCartGroupFailure,
-  updateDeletingCartGroupLoadingSuccess,
+  updateLoadingForDeletingCartGroupSuccess,
   deleteCartGroupSuccess,
   deleteCartGroupFailure,
   leaveCartGroupSuccess,
@@ -401,7 +461,7 @@ export const {
 } = cartGroupSlide.actions;
 
 export const joinCartGroupAction = createAction<{ roomId: string }>(
-  `${SLICE_NAME}/joinCartGroupRequest`
+  `${SLICE_NAME}/joinCartGroupRequest`,
 );
 
 export const addToCartGroupAction = createAction<{
@@ -412,6 +472,11 @@ export const updateCartItemQuantityAction = createAction<{
   id: string;
   quantity: number;
 }>(`${SLICE_NAME}/updateCartItemQuantityInputRequest`);
+
+export const updateCartItemNoteAction = createAction<{
+  id: string;
+  note: string;
+}>(`${SLICE_NAME}/updateCartItemNoteInputRequest`);
 
 export const deleteCartItemAction = createAction<{
   id: string;
@@ -425,11 +490,6 @@ export const leaveCartGroupAction = createAction<{
   roomId: string;
 }>(`${SLICE_NAME}/leaveCartGroupRequest`);
 
-export const createOrderGroupAction = createAction<{
-  roomId: string;
-  totalAmount: number;
-}>(`${SLICE_NAME}/createOrderGroupAction`);
-
 export const kickUserAction = createAction<{
   roomId: string;
   userId: string;
@@ -441,24 +501,11 @@ function* handleJoiningCartGroup() {
       payload: { roomId },
     }: ReturnType<typeof joinCartGroupAction> = yield take(joinCartGroupAction);
     try {
-      yield put(updateJoiningCartGroupLoading());
+      yield put(updateLoadingForJoiningCartGroupSuccess());
 
       const cartGroup: CartGroup = yield call(joinCartGroup, roomId);
 
-      yield put(
-        joinCartGroupSuccess({
-          cartGroup: {
-            ...cartGroup,
-            cartItems: cartGroup.cartItems.map((it) => ({
-              ...it,
-              updatingQuantityLoading: false,
-              deletingCartItemLoading: false,
-              kickingUserFromCartItemLoading: false,
-            })),
-            deletingCartGroupLoading: false,
-          },
-        })
-      );
+      yield put(joinCartGroupSuccess({ cartGroup }));
 
       yield put(updateCartGroupSelectedSuccess({ roomId: cartGroup.roomId }));
       yield put(updateWindowSelectedSuccess({ window: "CART_GROUP" }));
@@ -478,20 +525,7 @@ function* handleFetchingCartGroups() {
   yield take(fetchCartGroupsRequest);
   try {
     const cartGroups: Array<CartGroup> = yield call(getCartGroups);
-    yield put(
-      fetchCartGroupsSuccess({
-        cartGroups: cartGroups.map((it) => ({
-          ...it,
-          cartItems: it.cartItems.map((ci) => ({
-            ...ci,
-            updatingQuantityLoading: false,
-            deletingCartItemLoading: false,
-            kickingUserFromCartItemLoading: false,
-          })),
-          deletingCartGroupLoading: false,
-        })),
-      })
-    );
+    yield put(fetchCartGroupsSuccess({ cartGroups }));
   } catch (e) {
     notification.open({
       message: "Error",
@@ -510,14 +544,14 @@ function* handleAddingCartItem() {
     }: ReturnType<typeof addToCartGroupAction> =
       yield take(addToCartGroupAction);
     try {
-      yield put(updateAddingToCartItemsLoadingSuccess());
+      yield put(updateLoadingForAddingToCartItemsSuccess());
       const {
         productDetail,
         toppingsSelected,
         type,
         quantity,
       }: ProductState["itemsSelected"] = yield select(
-        (state: RootState) => state.product.itemsSelected
+        (state: RootState) => state.product.itemsSelected,
       );
 
       yield call(
@@ -526,7 +560,7 @@ function* handleAddingCartItem() {
         { id: productDetail.id },
         toppingsSelected.map((it) => ({ id: it.id })),
         type,
-        quantity
+        quantity,
       );
     } catch (e) {
       notification.open({
@@ -541,21 +575,9 @@ function* handleAddingCartItem() {
 }
 
 function* updateCartItemQuantityDelay(id: string, quantity: number) {
-  try {
-    yield delay(500);
-
-    //call api
-    yield put(updateCartItemQuantityLoadingSuccess({ id }));
-    yield call(updateCartItemQuantity, id, quantity);
-  } catch (e) {
-    notification.open({
-      message: "Error",
-      description: e.message,
-      type: "error",
-    });
-
-    yield put(updateCartItemQuantityFailure({ id }));
-  }
+  yield delay(500);
+  yield put(updateLoadingForCartItemQuantitySuccess({ id }));
+  yield call(updateCartItemQuantity, id, quantity);
 }
 
 function* handleUpdatingCartItemQuantity() {
@@ -564,7 +586,7 @@ function* handleUpdatingCartItemQuantity() {
     const {
       payload: { id, quantity },
     }: ReturnType<typeof updateCartItemQuantityAction> = yield take(
-      updateCartItemQuantityAction
+      updateCartItemQuantityAction,
     );
 
     try {
@@ -577,7 +599,7 @@ function* handleUpdatingCartItemQuantity() {
         updateCartItemQuantitySuccess({
           id,
           quantity,
-        })
+        }),
       );
     } catch (e) {
       notification.open({
@@ -587,6 +609,45 @@ function* handleUpdatingCartItemQuantity() {
       });
 
       yield put(updateCartItemQuantityFailure({ id }));
+    }
+  }
+}
+
+function* updateCartItemNoteDelay(id: string, note: string) {
+  yield delay(500);
+  yield put(updateLoadingForCartItemNoteSuccess({ id }));
+  yield call(updateCartItemNote, id, note);
+  yield put(
+    updateCartItemNoteSuccess({
+      id,
+      note,
+    }),
+  );
+}
+
+function* handleUpdatingCartItemNote() {
+  let typingTask: Task | null = null;
+  while (true) {
+    const {
+      payload: { id, note },
+    }: ReturnType<typeof updateCartItemNoteAction> = yield take(
+      updateCartItemNoteAction,
+    );
+
+    try {
+      if (typingTask) {
+        yield cancel(typingTask);
+        typingTask = null;
+      }
+      typingTask = yield fork(updateCartItemNoteDelay, id, note);
+    } catch (e) {
+      notification.open({
+        message: "Error",
+        description: e.message,
+        type: "error",
+      });
+
+      yield put(updateCartItemNoteFailure({ id }));
     }
   }
 }
@@ -614,28 +675,15 @@ function* handleCreatingCartGroup() {
   while (true) {
     yield take(createCartGroupRequest);
     const roomTimeOutInputting: string = yield select(
-      (state: RootState) => state.cartGroup.roomTimeOutInputting
+      (state: RootState) => state.cartGroup.roomTimeOutInputting,
     );
     try {
       const cartGroup: CartGroup = yield call(
         createCartGroup,
-        roomTimeOutInputting
+        roomTimeOutInputting,
       );
 
-      yield put(
-        joinCartGroupSuccess({
-          cartGroup: {
-            ...cartGroup,
-            cartItems: cartGroup.cartItems.map((it) => ({
-              ...it,
-              updatingQuantityLoading: false,
-              deletingCartItemLoading: false,
-              kickingUserFromCartItemLoading: false,
-            })),
-            deletingCartGroupLoading: false,
-          },
-        })
-      );
+      yield put(joinCartGroupSuccess({ cartGroup }));
 
       yield put(updateCartGroupSelectedSuccess({ roomId: cartGroup.roomId }));
       yield put(updateWindowSelectedSuccess({ window: "CART_GROUP" }));
@@ -656,10 +704,10 @@ function* handleDeletingCartGroup() {
     const {
       payload: { roomId },
     }: ReturnType<typeof deleteCartGroupAction> = yield take(
-      deleteCartGroupAction
+      deleteCartGroupAction,
     );
     try {
-      yield put(updateDeletingCartGroupLoadingSuccess({ roomId }));
+      yield put(updateLoadingForDeletingCartGroupSuccess({ roomId }));
       yield call(deleteCartGroup, roomId);
       yield put(deleteCartGroupSuccess({ roomId }));
     } catch (e) {
@@ -694,68 +742,6 @@ function* handleLeavingCartGroup() {
   }
 }
 
-// function* handleCreateOrderGroup() {
-//   while (true) {
-//     const {
-//       payload: { roomId, totalAmount },
-//     }: ReturnType<typeof createOrderGroupAction> = yield take(
-//       createOrderGroupAction
-//     );
-//     try {
-//       yield put(updateCreateLoading());
-
-//       const cartGroup: CartGroupState["cartGroupsJoined"][number] = yield select(
-//         (state: RootState) =>
-//           state.cartGroup.cartGroupsJoined.find((it) => it.roomId === roomId)
-//       );
-//       if (cartGroup) {
-//         const { shippingAddress, payment }: OrderState["form"] = yield select(
-//           (state: RootState) => state.order.form
-//         );
-//         const orderId: string = yield call(createOrder, {
-//           orderItems: cartGroup.cartItems.map((it) => ({
-//             user: { id: it.user && it.user.id },
-//             quantity: it.quantity,
-//             productDetail: {
-//               id: it.productDetail.id,
-//             },
-//             toppings: it.toppings,
-//             type: it.type,
-//           })),
-//           shippingAddress,
-//           payment,
-//           totalAmount,
-//         });
-
-//         if (payment.method === "VNPAY") {
-//           const vnpayUrl: string = yield call(
-//             createVNPayOrder,
-//             orderId,
-//             totalAmount,
-//             roomId
-//           );
-//           window.open(vnpayUrl, "_blank");
-//         }
-
-//         yield put(deleteCartGroupAction({ roomId }));
-//         yield put(createOrderSuccess());
-
-//         if (payment.method === "CASH") {
-//           window.location.href = `/don-hang-nhom/${orderId}`;
-//         }
-//       }
-//     } catch (e) {
-//       notification.open({
-//         message: "Error",
-//         description: e.message,
-//         type: "error",
-//       });
-
-//       yield put(createOrderFailure());
-//     }
-//   }
-// }
-
 function* handleKickingUser() {
   while (true) {
     const {
@@ -782,10 +768,10 @@ export const cartGroupSagas = [
   fork(handleFetchingCartGroups),
   fork(handleAddingCartItem),
   fork(handleUpdatingCartItemQuantity),
+  fork(handleUpdatingCartItemNote),
   fork(handleDeletingCartItem),
   fork(handleCreatingCartGroup),
   fork(handleDeletingCartGroup),
   fork(handleLeavingCartGroup),
-  // fork(handleCreateOrderGroup),
   fork(handleKickingUser),
 ];

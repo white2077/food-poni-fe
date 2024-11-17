@@ -22,7 +22,7 @@ import {
   deleteCartGroupSuccess,
   deleteCartItemSuccess,
   kickUserSuccess,
-  leaveCartGroupSuccess,
+  leaveCartGroupSuccess, updateCartItemNoteSuccess,
   updateCartItemQuantitySuccess,
 } from "@/redux/modules/cartGroup";
 import {
@@ -147,6 +147,18 @@ export default function NotificationDropdown() {
                 const { cartItemId, quantity } = cartGroupEvent.attributes;
                 dispatch(
                   updateCartItemQuantitySuccess({ id: cartItemId, quantity })
+                );
+              }
+
+              if (
+                  cartGroupEvent.type === "UPDATE_CART_ITEM_NOTE" &&
+                  cartGroupEvent.attributes &&
+                  "cartItemId" in cartGroupEvent.attributes &&
+                  "note" in cartGroupEvent.attributes
+              ) {
+                const { cartItemId, note } = cartGroupEvent.attributes;
+                dispatch(
+                    updateCartItemNoteSuccess({ id: cartItemId, note })
                 );
               }
 
