@@ -169,7 +169,7 @@ export const AdminOrderTablePage = () => {
           createdAt: format(new Date(it.createdAt), "HH:mm:ss - dd/MM/yyyy"),
           status: (
             <>
-              {["CANCELLED", "COMPLETED", "REJECTED"].includes(it.status) && (
+              {["CANCELLED", "COMPLETED", "REJECTED", "FAILED"].includes(it.status) && (
                 <div className="text-center italic">
                   <Tag
                     color={it.status === "COMPLETED" ? "success" : "error"}
