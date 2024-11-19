@@ -1,10 +1,10 @@
-import { Menu, Skeleton } from "antd";
-import { useNavigate } from "react-router-dom";
-import { RootState } from "@/redux/store.ts";
-import { useDispatch, useSelector } from "react-redux";
-import { server } from "@/utils/server.ts";
-import { useEffect } from "react";
 import { fetchProductCategoriesRequest } from "@/redux/modules/productCategory.ts";
+import { RootState } from "@/redux/store.ts";
+import { server } from "@/utils/server.ts";
+import { Menu, Spin } from "antd";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export default function ProductCategory() {
   const navigate = useNavigate();
@@ -12,22 +12,20 @@ export default function ProductCategory() {
   const dispatch = useDispatch();
 
   const { page, isFetchLoading } = useSelector(
-    (state: RootState) => state.productCategory,
+    (state: RootState) => state.productCategory
   );
 
   useEffect(() => {
     dispatch(fetchProductCategoriesRequest());
-  }, [dispatch]);
 
-  // const onClick: MenuProps['onClick'] = (e): void => {
-  //     navigate(`/danh-muc/${e.keyPath}`);
-  // };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="bg-white rounded-lg">
       <div className="px-4 pt-4 pb-2">Danh mục</div>
       {isFetchLoading ? (
-        <Skeleton className="px-4 py-2" />
+        <Spin />
       ) : (
         <Menu
           className="rounded-lg !border-none"

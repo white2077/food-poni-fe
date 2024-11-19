@@ -9,13 +9,12 @@ import {
 } from "@/redux/modules/product.ts";
 import { RootState } from "@/redux/store.ts";
 import { currencyFormat } from "@/utils/common.ts";
-import { Card, Checkbox, Radio, Rate } from "antd";
+import { Card, Checkbox, Radio, Rate, Spin } from "antd";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Params, useParams } from "react-router-dom";
 import ProductRate from "../organisms/ProductRate";
 import { DefaultLayout } from "../templates/DefaultLayout";
-import { LoadingPage } from "./LoadingPage";
 
 export const ProductDetailPage = () => {
   const { pathVariable } = useParams<Params<string>>();
@@ -26,6 +25,7 @@ export const ProductDetailPage = () => {
   const { productDetail, toppingsSelected } = useSelector(
     (state: RootState) => state.product.itemsSelected
   );
+  const { isFetchLoading } = useSelector((state: RootState) => state.product);
 
   useEffect(() => {
     if (pathVariable) {
@@ -33,8 +33,12 @@ export const ProductDetailPage = () => {
     }
   }, [dispatch, pathVariable]);
 
-  if (productDetails.length < 1) {
-    return <LoadingPage />;
+  if (productDetails.length < 1 || isFetchLoading) {
+    return (
+      <DefaultLayout>
+        <Spin />
+      </DefaultLayout>
+    );
   }
 
   return (

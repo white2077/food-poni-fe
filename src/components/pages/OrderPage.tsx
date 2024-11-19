@@ -2,13 +2,12 @@ import EmptyNotice from "@/components/atoms/EmptyNotice";
 import { fetchOrdersByCustomerAction } from "@/redux/modules/order";
 import { RootState } from "@/redux/store";
 import { Order } from "@/type/types";
-import { Badge, List, Segmented, Space } from "antd";
+import { ORDER_STATUSES } from "@/utils/common";
+import { Badge, List, Segmented, Space, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import OrderCard from "../molecules/OrderCard";
 import { ManagementLayout } from "../templates/ManagementLayout";
-import { LoadingPage } from "./LoadingPage";
-import { ORDER_STATUSES } from "@/utils/common";
 
 export const OrderPage = () => {
   const dispatch = useDispatch();
@@ -34,7 +33,11 @@ export const OrderPage = () => {
   }, [dispatch, status]);
 
   if (page.content.length < 0 || isFetchLoading) {
-    return <LoadingPage />;
+    return (
+      <ManagementLayout>
+        <Spin />
+      </ManagementLayout>
+    );
   }
 
   return (

@@ -15,7 +15,7 @@ export default function HeaderMain() {
     <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] px-2 mx-auto items-center py-2 gap-4 max-w-screen-xl">
       <div className="flex items-center justify-between md:justify-start">
         <div
-          onClick={() => (window.location.href = "/")}
+          onClick={() => navigate("/")}
           className="flex items-center gap-1 nunito text-3xl md:text-4xl text-orange-400 cursor-pointer hover:text-orange-500"
         >
           <img

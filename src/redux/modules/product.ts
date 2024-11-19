@@ -95,6 +95,10 @@ const productSlide = createSlice({
       ...state,
       isFetchLoading: false,
     }),
+    updateLoadingForFetchingProductSuccess: (state) => ({
+      ...state,
+      isFetchLoading: true,
+    }),
     fetchProductSuccess: (
       state,
       action: PayloadAction<{ product: Product }>
@@ -135,6 +139,7 @@ const productSlide = createSlice({
         ...state.itemsSelected,
         productDetail: action.payload.productDetail,
       },
+      isFetchLoading: false,
     }),
     updateTypeSelectedSuccess: (
       state,
@@ -224,7 +229,7 @@ const productSlide = createSlice({
       ...state,
       isUpdateLoading: false,
     }),
-    updateLoadingForProductUpdateStatusSuccess: (state) => ({
+    updateLoadingForUpdatingProductStatusSuccess: (state) => ({
       ...state,
       isUpdateLoading: true,
     }),
@@ -244,6 +249,7 @@ export const {
   updateFetchLoadingSuccess,
   fetchProductsSuccess,
   fetchProductsFailure,
+  updateLoadingForFetchingProductSuccess,
   fetchProductSuccess,
   fetchProductFailure,
   fetchProductDetailsSuccess,
@@ -259,8 +265,7 @@ export const {
   updateLoadingForProductUpdate,
   updateProductSuccess,
   updateProductFailure,
-  updateLoadingForProductUpdateStatusSuccess:
-    updateLoadingForProductUpdateStatus,
+  updateLoadingForUpdatingProductStatusSuccess,
   updateProductStatusSuccess,
   updateProductStatusFailure,
 } = productSlide.actions;
@@ -349,6 +354,7 @@ function* handleFetchProduct() {
       payload: { pathVariable },
     }: ReturnType<typeof fetchProductAction> = yield take(fetchProductAction);
     try {
+      yield put(updateLoadingForFetchingProductSuccess());
       const product: Product = yield call(getProductByIdOrSlug, pathVariable);
       yield fork(handleFetchProductDetails, product.id);
       yield put(fetchProductSuccess({ product }));
@@ -471,7 +477,7 @@ function* handleUpdateProductStatus() {
     );
 
     try {
-      yield put(updateLoadingForProductUpdateStatus());
+      yield put(updateLoadingForUpdatingProductStatusSuccess());
       yield call(updateProductStatus, pid, status);
       yield put(updateProductStatusSuccess());
 

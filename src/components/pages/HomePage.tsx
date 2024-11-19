@@ -17,8 +17,8 @@ export const HomePage = () => {
         />,
       ]}
     >
-      <div className="grid gap-4 h-fit">
-        <div className="overflow-auto relative">
+      <div className="w-full">
+        <div className="overflow-auto relative mb-4">
           {/* <CarouselBanner
             images={[
               "/public/7.webp",

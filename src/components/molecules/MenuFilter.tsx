@@ -8,7 +8,7 @@ export default function MenuFilter() {
 
   return (
     <Menu
-      className="block rounded-lg"
+      
       onSelect={({ key }: { key: string }) => {
         let sortOption = [""];
         switch (key) {
