@@ -1,10 +1,11 @@
 import { fetchProductCategoriesRequest } from "@/redux/modules/productCategory.ts";
 import { RootState } from "@/redux/store.ts";
 import { server } from "@/utils/server.ts";
-import { Menu, Spin } from "antd";
+import { Menu } from "antd";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { ProductLoading } from "../atoms/ProductLoading";
 
 export default function ProductCategory() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function ProductCategory() {
     <div className="bg-white rounded-lg">
       <div className="px-4 pt-4 pb-2">Danh mục</div>
       {isFetchLoading ? (
-        <Spin />
+        <ProductLoading />
       ) : (
         <Menu
           className="rounded-lg !border-none"

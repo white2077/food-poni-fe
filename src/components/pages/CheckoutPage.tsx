@@ -7,7 +7,7 @@ import { fetchCartsAction } from "@/redux/modules/cart.ts";
 import { createOrderAction } from "@/redux/modules/order.ts";
 import { RootState } from "@/redux/store.ts";
 import { calculateTotalAmount, currencyFormat } from "@/utils/common.ts";
-import { Card, Col, Divider, Row, Spin } from "antd";
+import { Card, Divider, Spin } from "antd";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -72,9 +72,9 @@ export const CheckoutPage = () => {
     <DefaultLayout>
       <div style={{ color: "black", textAlign: "left" }}>
         <p className="text-2xl mb-2">GIỎ HÀNG</p>
-        <Row gutter={16}>
+        <div className="flex gap-4">
           <CartItems />
-          <Col flex="400px">
+          <div className="w-[400px]">
             <Card style={{ marginBottom: "16px" }}>
               <div className="flex justify-between">
                 <div className="text-gray-500">Tạm tính</div>
@@ -129,8 +129,8 @@ export const CheckoutPage = () => {
                 }
               />
             )}
-          </Col>
-        </Row>
+          </div>
+        </div>
       </div>
     </DefaultLayout>
   );

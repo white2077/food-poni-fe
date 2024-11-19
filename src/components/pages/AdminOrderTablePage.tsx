@@ -79,7 +79,7 @@ export const AdminOrderTablePage = () => {
   const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const { page, isFetchLoading } = useSelector(
-    (state: RootState) => state.order,
+    (state: RootState) => state.order
   );
 
   useEffect(() => {
@@ -90,7 +90,7 @@ export const AdminOrderTablePage = () => {
           pageSize: 10,
           sort: ["createdAt,desc"],
         },
-      }),
+      })
     );
   }, [dispatch]);
 
@@ -109,7 +109,7 @@ export const AdminOrderTablePage = () => {
                   : [sorter]
                 ).map(
                   (it) =>
-                    `${it.field},${it.order === "ascend" ? "asc" : "desc"}`,
+                    `${it.field},${it.order === "ascend" ? "asc" : "desc"}`
                 )
               : []; // Nếu là đối tượng, biến thành mảng rỗng
 
@@ -124,7 +124,7 @@ export const AdminOrderTablePage = () => {
                     ? (filters["status"][0] as boolean)
                     : undefined,
               },
-            }),
+            })
           );
         }}
         pagination={{
@@ -156,12 +156,12 @@ export const AdminOrderTablePage = () => {
             />
           ),
           totalAmount: (
-            <div className="font-medium dark:text-white">
+            <div className="font-medium">
               <div>{currencyFormat(it.totalAmount + it.shippingFee)}</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">
+              <div className="text-xs text-gray-500">
                 Tổng tiền: {currencyFormat(it.totalAmount)}
               </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">
+              <div className="text-xs text-gray-500">
                 Phí giao hàng: {currencyFormat(it.shippingFee)}
               </div>
             </div>
@@ -169,7 +169,9 @@ export const AdminOrderTablePage = () => {
           createdAt: format(new Date(it.createdAt), "HH:mm:ss - dd/MM/yyyy"),
           status: (
             <>
-              {["CANCELLED", "COMPLETED", "REJECTED", "FAILED"].includes(it.status) && (
+              {["CANCELLED", "COMPLETED", "REJECTED", "FAILED"].includes(
+                it.status
+              ) && (
                 <div className="text-center italic">
                   <Tag
                     color={it.status === "COMPLETED" ? "success" : "error"}
@@ -210,16 +212,17 @@ export const AdminOrderTablePage = () => {
                             updateOrderStatusAction({
                               oid: it.id,
                               orderStatus: "APPROVED",
-                            }),
+                            })
                           )
                         }
                       >
                         <Button
                           type="info"
                           size="small"
+                          icon={<SyncOutlined spin />}
                           loading={it.isUpdateStatusLoading}
                         >
-                          <SyncOutlined spin /> Xác nhận
+                          Xác nhận
                         </Button>
                       </Popconfirm>
                       <Popconfirm
@@ -229,7 +232,7 @@ export const AdminOrderTablePage = () => {
                             updateOrderStatusAction({
                               oid: it.id,
                               orderStatus: "REJECTED",
-                            }),
+                            })
                           )
                         }
                       >
@@ -237,9 +240,10 @@ export const AdminOrderTablePage = () => {
                           type="primary"
                           danger
                           size="small"
+                          icon={<CloseCircleOutlined />}
                           loading={it.isUpdateStatusLoading}
                         >
-                          <CloseCircleOutlined /> Từ chối
+                          Từ chối
                         </Button>
                       </Popconfirm>
                     </>
@@ -254,16 +258,17 @@ export const AdminOrderTablePage = () => {
                               updateOrderStatusAction({
                                 oid: it.id,
                                 orderStatus: "DELIVERING",
-                              }),
+                              })
                             )
                           }
                         >
                           <Button
                             type="warning"
                             size="small"
+                            icon={<SendOutlined />}
                             loading={it.isUpdateStatusLoading}
                           >
-                            <SendOutlined /> Gửi giao hàng
+                            Gửi giao hàng
                           </Button>
                         </Popconfirm>
                       )}
@@ -275,16 +280,17 @@ export const AdminOrderTablePage = () => {
                               updateOrderStatusAction({
                                 oid: it.id,
                                 orderStatus: "COMPLETED",
-                              }),
+                              })
                             )
                           }
                         >
                           <Button
                             type="success"
                             size="small"
+                            icon={<CheckCircleOutlined />}
                             loading={it.isUpdateStatusLoading}
                           >
-                            <CheckCircleOutlined /> Đã giao
+                            Đã giao
                           </Button>
                         </Popconfirm>
                       )}
@@ -295,16 +301,17 @@ export const AdminOrderTablePage = () => {
                             updateOrderStatusAction({
                               oid: it.id,
                               orderStatus: "FAILED",
-                            }),
+                            })
                           )
                         }
                       >
                         <Button
                           size="small"
                           danger
+                          icon={<FrownOutlined />}
                           loading={it.isUpdateStatusLoading}
                         >
-                          <FrownOutlined /> Gặp sự cố
+                          Gặp sự cố
                         </Button>
                       </Popconfirm>
                     </>

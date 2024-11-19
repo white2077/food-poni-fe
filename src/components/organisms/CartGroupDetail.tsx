@@ -11,7 +11,7 @@ import {
   leaveCartGroupAction,
   updateCartGroupSelectedSuccess,
   updateRoomTimeOutInputtingSuccess,
-  updateWindowSelectedSuccess
+  updateWindowSelectedSuccess,
 } from "@/redux/modules/cartGroup.ts";
 import { createOrderGroupAction } from "@/redux/modules/order";
 import { RootState } from "@/redux/store";
@@ -153,8 +153,11 @@ export function CartGroupDetail({
   return (
     <>
       <div className="flex justify-between mb-4">
-        <Button onClick={() => updateWindowSelected("HOME")}>
-          <LeftOutlined /> Quay lai
+        <Button
+          icon={<LeftOutlined />}
+          onClick={() => updateWindowSelected("HOME")}
+        >
+          Quay lai
         </Button>
         <Popconfirm
           title={
@@ -173,8 +176,8 @@ export function CartGroupDetail({
             loading={creatingCartGroupLoading}
             type="primary"
             size="large"
+            icon={<PlusOutlined />}
           >
-            <PlusOutlined />
             Tạo đơn nhóm
           </Button>
         </Popconfirm>
@@ -254,6 +257,7 @@ export function CartGroupDetail({
                       currentUserRole={currentUser.role}
                       currentUserAddressId={currentUser.addressId}
                       isCreateLoading={isCreateLoading}
+                      enableCartGroup={true}
                       calculateShippingFee={(addressId: string) =>
                         calculateShippingFee(addressId)
                       }
@@ -271,8 +275,12 @@ export function CartGroupDetail({
                     okText="Đồng ý"
                     cancelText="Hủy"
                   >
-                    <Button className="mr-2" type="default" size="large">
-                      <LogoutOutlined />
+                    <Button
+                      icon={<LogoutOutlined />}
+                      className="mr-2"
+                      type="default"
+                      size="large"
+                    >
                       Thoát đơn nhóm
                     </Button>
                   </Popconfirm>
@@ -289,8 +297,8 @@ export function CartGroupDetail({
                       type="default"
                       size="large"
                       loading={it.deletingCartGroupLoading}
+                      icon={<DeleteOutlined />}
                     >
-                      <DeleteOutlined />
                       Xóa đơn nhóm
                     </Button>
                   </Popconfirm>

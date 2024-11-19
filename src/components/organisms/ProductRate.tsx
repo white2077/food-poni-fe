@@ -86,12 +86,7 @@ export default function ProductRate({ productDetail }: Props) {
         size="large"
         locale={{
           emptyText: (
-            <EmptyNotice
-              w="72"
-              h="60"
-              src="/no-comment.png"
-              message="Chưa có đánh giá nào"
-            />
+            <EmptyNotice h="40" w="48" src="/emty-3.png" message="Chưa có đánh giá" />
           ),
         }}
         pagination={

@@ -46,7 +46,7 @@ export default function Cart() {
           <EmptyNotice
             w="60"
             h="60"
-            src="/no-product.png"
+            src="/emty-2.png"
             message="Giỏ hàng trống"
           />
         ) : (

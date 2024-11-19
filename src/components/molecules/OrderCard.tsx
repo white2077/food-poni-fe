@@ -1,7 +1,7 @@
 import { Order } from "@/type/types";
 import { currencyFormat } from "@/utils/common.ts";
 import { EnvironmentOutlined, UserOutlined } from "@ant-design/icons";
-import { Badge, Card, Skeleton } from "antd";
+import { Badge, Card } from "antd";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
 
@@ -30,12 +30,10 @@ const statusColors: Record<string, string> = {
 const OrderCard = ({
   order,
   index,
-  isFetchLoading,
   orderGroup,
 }: {
   order: Order;
   index: number;
-  isFetchLoading: boolean;
   orderGroup: boolean;
 }) => {
   return (
@@ -50,40 +48,23 @@ const OrderCard = ({
         }
       >
         <Badge.Ribbon
-          text={
-            !isFetchLoading ? (
-              statusText[order.status]
-            ) : (
-              <Skeleton.Button active size="small" className="!w-28" />
-            )
-          }
-          color={!isFetchLoading ? statusColors[order.status] : "#f0f0f0"}
-          className={`font-sans ${!isFetchLoading ? "" : "!p-0"}`}
+          text={statusText[order.status]}
+          color={statusColors[order.status]}
         >
           <Card
             className="font-sans min-h-60 !border-orange-200"
             hoverable={true}
-            loading={isFetchLoading}
             title={
-              !isFetchLoading ? (
-                <div className="flex gap-2 items-center">
-                  <span>{`${index}. Đơn hàng #${order.id?.substring(0, 7).toUpperCase()} `}</span>
-                  <span className="text-primary font-bold">/</span>
-                  <span>
-                    {format(
-                      new Date(order.createdAt ?? ""),
-                      "dd-MM-yyyy - HH:mm"
-                    )}
-                  </span>
-                </div>
-              ) : (
-                <div className="flex gap-2 items-center">
-                  <Skeleton.Button active size="small" className="!w-32" />
-                  <span className="text-primary font-bold">/</span>
-                  <Skeleton.Button active size="small" className="!w-32" />
-                  <span className="text-primary font-bold">/</span>
-                </div>
-              )
+              <div className="flex gap-2 items-center">
+                <span>{`${index}. Đơn hàng #${order.id?.substring(0, 7).toUpperCase()} `}</span>
+                <span className="text-primary font-bold">/</span>
+                <span>
+                  {format(
+                    new Date(order.createdAt ?? ""),
+                    "dd-MM-yyyy - HH:mm"
+                  )}
+                </span>
+              </div>
             }
           >
             <h2 className="mb-2 text-lg font-semibold text-gray-900">

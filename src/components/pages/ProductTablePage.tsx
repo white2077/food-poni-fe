@@ -224,17 +224,12 @@ export const ProductTablePage = () => {
                       <Button
                         className="w-full justify-start"
                         type={it.status ? "primary" : "default"}
+                        icon={
+                          it.status ? <DeleteOutlined /> : <RollbackOutlined />
+                        }
                         loading={isUpdateLoading}
                       >
-                        {it.status ? (
-                          <>
-                            <DeleteOutlined /> Delete
-                          </>
-                        ) : (
-                          <>
-                            <RollbackOutlined /> Restore
-                          </>
-                        )}
+                        {it.status ? <>Delete</> : <>Restore</>}
                       </Button>
                     </Popconfirm>
                   </div>

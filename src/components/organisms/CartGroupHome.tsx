@@ -58,7 +58,7 @@ export function CartGroupHome({ currentUserId }: { currentUserId: string }) {
     <div className="flex justify-center">
       <div className="mx-auto max-w-md rounded-xl bg-white px-4 py-10 text-center shadow sm:px-8">
         <header className="mb-8">
-          <h1 className="mb-1 text-2xl font-bold">Tham gia đơn nhóm</h1>
+          <div className="mb-1 text-2xl font-bold">Tham gia đơn nhóm</div>
           <p className="text-[15px] text-slate-500">
             Nhập mã đơn nhóm gồm 6 chữ số
           </p>

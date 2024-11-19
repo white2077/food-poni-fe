@@ -14,7 +14,7 @@ export const CartItems = () => {
     useSelector((state: RootState) => state.cart);
 
   return (
-    <div>
+    <div className="w-full">
       <CartHeader
         enableCartGroup={false}
         enableDeleteAll={page.content.length > 0}

@@ -15,12 +15,14 @@ export const OrderForm = ({
   currentUserRole,
   currentUserAddressId,
   isCreateLoading,
+  enableCartGroup,
   calculateShippingFee,
   onSubmit,
 }: {
   currentUserRole: "VIP" | "CUSTOMER" | "RETAILER";
   currentUserAddressId: string;
   isCreateLoading: boolean;
+  enableCartGroup?: boolean;
   calculateShippingFee: (addressId: string) => void;
   onSubmit: (values: OrderRequest) => void;
 }) => {
@@ -35,7 +37,7 @@ export const OrderForm = ({
         shippingMethod: "FREE",
       }}
     >
-      <ScrollPane maxHeight="max-h-[333px]">
+      <ScrollPane maxHeight={`${enableCartGroup && "max-h-[333px]"}`}>
         <Form.Item name="addressId">
           <ShippingAddressSelector
             value={form.getFieldValue("addressId")}

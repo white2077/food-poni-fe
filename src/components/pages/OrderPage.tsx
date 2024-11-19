@@ -3,9 +3,10 @@ import { fetchOrdersByCustomerAction } from "@/redux/modules/order";
 import { RootState } from "@/redux/store";
 import { Order } from "@/type/types";
 import { ORDER_STATUSES } from "@/utils/common";
-import { Badge, List, Segmented, Space, Spin } from "antd";
+import { Badge, List, Segmented, Space } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { ProductLoading } from "../atoms/ProductLoading";
 import OrderCard from "../molecules/OrderCard";
 import { ManagementLayout } from "../templates/ManagementLayout";
 
@@ -32,13 +33,13 @@ export const OrderPage = () => {
     );
   }, [dispatch, status]);
 
-  if (page.content.length < 0 || isFetchLoading) {
-    return (
-      <ManagementLayout>
-        <Spin />
-      </ManagementLayout>
-    );
-  }
+  // if (isFetchLoading) {
+  //   return (
+  //     <ManagementLayout>
+  //       <ProductLoading />
+  //     </ManagementLayout>
+  //   );
+  // }
 
   return (
     <ManagementLayout>
@@ -70,67 +71,70 @@ export const OrderPage = () => {
           }))}
         />
       </Space>
-      <List
-        grid={{
-          gutter: 16,
-          column: 2,
-          xs: 1,
-          sm: 1,
-          md: 2,
-          lg: 2,
-          xl: 2,
-          xxl: 2,
-        }}
-        dataSource={page.content}
-        renderItem={(order: Order, index: number) => (
-          <List.Item>
-            <OrderCard
-              order={order}
-              index={(currentPage - 1) * 10 + index + 1}
-              isFetchLoading={isFetchLoading}
-              orderGroup={false}
-            />
-          </List.Item>
-        )}
-        locale={{
-          emptyText: (
-            <EmptyNotice
-              w="72"
-              h="60"
-              src="/no-order.png"
-              message="Chưa có đơn hàng"
-            />
-          ),
-        }}
-        pagination={
-          page.content.length === 0
-            ? false
-            : {
-                total: page.totalElements,
-                pageSize: 10,
-                current: currentPage,
-                onChange: (page: number) => {
-                  setCurrentPage(page);
-                  dispatch(
-                    fetchOrdersByCustomerAction({
-                      queryParams: {
-                        page: page - 1,
-                        sort: ["createdAt,desc"],
-                        pageSize: 10,
-                        orderStatus: status,
-                        orderGroup: false,
-                      },
-                    })
-                  );
-                },
-                showSizeChanger: false,
-                showQuickJumper: true,
-                showTotal: (total, range) =>
-                  `${range[0]}-${range[1]} của ${total} đơn hàng`,
-                style: { display: "flex", justifyContent: "center" },
-              }
-        }
-      />
+      {!isFetchLoading ? (
+        <List
+          grid={{
+            gutter: 16,
+            column: 2,
+            xs: 1,
+            sm: 1,
+            md: 2,
+            lg: 2,
+            xl: 2,
+            xxl: 2,
+          }}
+          dataSource={page.content}
+          renderItem={(order: Order, index: number) => (
+            <List.Item>
+              <OrderCard
+                order={order}
+                index={(currentPage - 1) * 10 + index + 1}
+                orderGroup={false}
+              />
+            </List.Item>
+          )}
+          locale={{
+            emptyText: (
+              <EmptyNotice
+                h="40"
+                w="48"
+                src="/emty-1.png"
+                message="Chưa có đơn hàng"
+              />
+            ),
+          }}
+          pagination={
+            page.content.length === 0
+              ? false
+              : {
+                  total: page.totalElements,
+                  pageSize: 10,
+                  current: currentPage,
+                  onChange: (page: number) => {
+                    setCurrentPage(page);
+                    dispatch(
+                      fetchOrdersByCustomerAction({
+                        queryParams: {
+                          page: page - 1,
+                          sort: ["createdAt,desc"],
+                          pageSize: 10,
+                          orderStatus: status,
+                          orderGroup: false,
+                        },
+                      })
+                    );
+                  },
+                  showSizeChanger: false,
+                  showQuickJumper: true,
+                  showTotal: (total, range) =>
+                    `${range[0]}-${range[1]} của ${total} đơn hàng`,
+                  style: { display: "flex", justifyContent: "center" },
+                }
+          }
+        />
+      ) : (
+        <ProductLoading />
+      )}
     </ManagementLayout>
   );
 };

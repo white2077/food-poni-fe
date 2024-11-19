@@ -1,6 +1,6 @@
 type Props = {
-  w: string;
-  h: string;
+  w?: string;
+  h?: string;
   src: string;
   message: string;
 };
@@ -16,7 +16,7 @@ export default function EmptyNotice({ w, h, src, message }: Props) {
             alt="No Product"
           />
         </div>
-        <div className="text-2xl text-center text-gray-500 font-medium">
+        <div className="text-2xl text-center text-gray-500 nunito">
           {message}
         </div>
       </div>

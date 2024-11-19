@@ -1,22 +1,32 @@
-import { fetchConsolidatedInvoiceAction } from "@/redux/modules/invoice";
+import {
+  createPostPaidOrdersAction,
+  fetchConsolidatedInvoiceAction,
+} from "@/redux/modules/invoice";
 import { fetchOrdersByRetailerAction } from "@/redux/modules/order";
 import { RootState } from "@/redux/store";
-import { currencyFormat, getThumbnail, ORDER_STATUSES } from "@/utils/common";
+import { currencyFormat, ORDER_STATUSES } from "@/utils/common";
 import {
-  CopyOutlined,
-  DashOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
   DownloadOutlined,
-  LineOutlined,
+  ExclamationCircleOutlined,
+  PoweroffOutlined,
 } from "@ant-design/icons";
-import { Button, Col, Dropdown, Flex, Table, TableColumnsType } from "antd";
+import {
+  Button,
+  Col,
+  Flex,
+  Popconfirm,
+  Table,
+  TableColumnsType,
+  Tag,
+} from "antd";
 import { format } from "date-fns";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AvatarInfo } from "../atoms/AvatarInfo";
-import { SalesLabel } from "../atoms/SalesLabel";
+import { Link } from "react-router-dom";
 import { ManagementLayout } from "../templates/ManagementLayout";
 import "./AdminOrderTablePage.scss";
-import { Link } from "react-router-dom";
 
 const TableToolbar = () => (
   <Flex className="mb-4" justify="space-between">
@@ -101,36 +111,60 @@ export const ConsolidatedInvoicePage = () => {
               {it.id.toUpperCase().substring(0, 6)}
             </Link>
           ),
-          name: (
-            <AvatarInfo
-              fullName={it.user.username}
-              avatar={getThumbnail(it.user.avatar)}
-              info={""}
-            />
-          ),
           totalAmount: (
             <div className="font-medium">
               <div>{currencyFormat(it.totalAmount)}</div>
             </div>
           ),
           createdAt: format(new Date(it.createdAt), "HH:mm:ss - dd/MM/yyyy"),
-          status: <>{it.payment.status}</>,
+          status: (
+            <Tag
+              icon={
+                it.payment.status === "PAID" ? (
+                  <CheckCircleOutlined />
+                ) : it.payment.status === "FAILED" ? (
+                  <CloseCircleOutlined />
+                ) : (
+                  <ExclamationCircleOutlined />
+                )
+              }
+              color={
+                it.payment.status === "PAID"
+                  ? "success"
+                  : it.payment.status === "FAILED"
+                    ? "error"
+                    : "warning"
+              }
+            >
+              {it.payment.status === "PAID"
+                ? "Đã thanh toán"
+                : it.payment.status === "FAILED"
+                  ? "Thanh toán thất bại"
+                  : "Chưa thanh toán"}
+            </Tag>
+          ),
           actions: (
-            <div className="overflow-hidden">
-              {it.id && <SalesLabel content="Nợ" />}
-              <Dropdown
-                trigger={["click"]}
-                placement="bottomLeft"
-                arrow={{ pointAtCenter: true }}
-                menu={{
-                  items: tableRowActions,
-                }}
+            <Popconfirm
+              title="Bạn có chắc chắn muốn thanh toán phiếu nợ này?"
+              onConfirm={() => {
+                dispatch(
+                  createPostPaidOrdersAction({
+                    ppid: it.id,
+                  })
+                );
+              }}
+              okText="Đồng ý"
+              cancelText="Hủy"
+            >
+              <Button
+                className="bg-primary text-white w-2/3 m-auto"
+                icon={<PoweroffOutlined />}
+                loading={it.isPaymentLoading}
+                disabled={it.payment.status === "PAID"}
               >
-                <div className="text-center">
-                  <DashOutlined />
-                </div>
-              </Dropdown>
-            </div>
+                {it.payment.status === "PAID" ? "Đã thanh toán" : "Thanh toán"}
+              </Button>
+            </Popconfirm>
           ),
         }))}
         size="small"
@@ -138,19 +172,6 @@ export const ConsolidatedInvoicePage = () => {
     </ManagementLayout>
   );
 };
-
-const tableRowActions = [
-  {
-    key: "1",
-    icon: <CopyOutlined />,
-    label: "Copy ID",
-  },
-  {
-    key: "2",
-    icon: <LineOutlined />,
-    label: "Copy Data Row",
-  },
-];
 
 const getColumns = () => {
   return [
@@ -174,10 +195,6 @@ const getColumns = () => {
       filterMultiple: true,
     },
     {
-      title: "__________Khách hàng",
-      dataIndex: "name",
-    },
-    {
       title: "Tổng tiền",
       dataIndex: "totalAmount",
       showSorterTooltip: { target: "full-header" },
@@ -190,7 +207,7 @@ const getColumns = () => {
       sorter: true,
     },
     {
-      title: "Actions",
+      title: "Hành động",
       dataIndex: "actions",
     },
   ] as TableColumnsType;

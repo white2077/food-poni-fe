@@ -9,10 +9,11 @@ import {
 } from "@/redux/modules/product.ts";
 import { RootState } from "@/redux/store.ts";
 import { currencyFormat } from "@/utils/common.ts";
-import { Card, Checkbox, Radio, Rate, Spin } from "antd";
+import { Card, Checkbox, Radio, Rate } from "antd";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Params, useParams } from "react-router-dom";
+import { ProductLoading } from "../atoms/ProductLoading";
 import ProductRate from "../organisms/ProductRate";
 import { DefaultLayout } from "../templates/DefaultLayout";
 
@@ -36,7 +37,7 @@ export const ProductDetailPage = () => {
   if (productDetails.length < 1 || isFetchLoading) {
     return (
       <DefaultLayout>
-        <Spin />
+        <ProductLoading />
       </DefaultLayout>
     );
   }

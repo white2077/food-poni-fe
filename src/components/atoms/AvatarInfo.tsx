@@ -33,9 +33,9 @@ export const AvatarInfo = ({
         </span>
       )}
     </div>
-    <div className="font-medium dark:text-white">
+    <div className="font-medium">
       <div>{fullName}</div>
-      <div className="text-sm text-gray-500 dark:text-gray-400">{info}</div>
+      <div className="text-sm text-gray-500">{info}</div>
     </div>
     {timeout && roomId && (
       <Countdown
