@@ -24,6 +24,7 @@ import { AdminProductTablePage } from "./components/pages/AdminProductTablePage"
 import { AdminProductDetailTablePage } from "./components/pages/AdminProductDetailTablePage";
 import { ConsolidatedInvoicePage } from "./components/pages/ConsolidatedInvoicePage";
 import { PostPaidDetailPage } from "./components/pages/PostPaidDetailPage";
+import { SupportPage } from "./components/pages/SupportPage";
 
 export const router = (currentRole: "RETAILER" | "CUSTOMER" | "VIP") =>
   createBrowserRouter([
@@ -51,6 +52,10 @@ export const router = (currentRole: "RETAILER" | "CUSTOMER" | "VIP") =>
     {
       path: "/san-pham/:pathVariable",
       element: <ProductDetailPage />,
+    },
+    {
+      path: "/ho-tro-khach-hang",
+      element: <SupportPage />,
     },
     {
       path: "/danh-muc/:pathVariable",
@@ -213,6 +218,6 @@ if (container) {
       <ConfigProvider theme={{ token: { colorPrimary: "#F36F24" } }}>
         <App />
       </ConfigProvider>
-    </Provider>,
+    </Provider>
   );
 }

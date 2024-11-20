@@ -177,3 +177,8 @@ export const ORDER_STATUSES = [
   { label: "Đã hủy", key: "CANCELLED" },
   { label: "Gặp sự cố", key: "FAILED" },
 ];
+export const POSTPAID_STATUSES = [
+  { label: "Đã thanh toán", key: "PAYING" },
+  { label: "Chưa thanh toán", key: "PAID" },
+  { label: "Thanh toán thất bại", key: "FAILED" },
+];

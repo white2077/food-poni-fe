@@ -2,15 +2,15 @@ import {
   createPostPaidOrdersAction,
   fetchConsolidatedInvoiceAction,
 } from "@/redux/modules/invoice";
-import { fetchOrdersByRetailerAction } from "@/redux/modules/order";
 import { RootState } from "@/redux/store";
-import { currencyFormat, ORDER_STATUSES } from "@/utils/common";
+import { currencyFormat, POSTPAID_STATUSES } from "@/utils/common";
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
   DownloadOutlined,
   ExclamationCircleOutlined,
-  PoweroffOutlined,
+  MoneyCollectOutlined,
+  SyncOutlined,
 } from "@ant-design/icons";
 import {
   Button,
@@ -78,7 +78,7 @@ export const ConsolidatedInvoicePage = () => {
               : []; // Nếu là đối tượng, biến thành mảng rỗng
 
           dispatch(
-            fetchOrdersByRetailerAction({
+            fetchConsolidatedInvoiceAction({
               queryParams: {
                 page: pagination.current ? pagination.current - 1 : 0,
                 pageSize: pagination.pageSize,
@@ -158,11 +158,23 @@ export const ConsolidatedInvoicePage = () => {
             >
               <Button
                 className="bg-primary text-white w-2/3 m-auto"
-                icon={<PoweroffOutlined />}
+                icon={
+                  it.payment.status === "PAID" ? (
+                    <CheckCircleOutlined />
+                  ) : it.payment.status === "FAILED" ? (
+                    <SyncOutlined />
+                  ) : (
+                    <MoneyCollectOutlined />
+                  )
+                }
                 loading={it.isPaymentLoading}
                 disabled={it.payment.status === "PAID"}
               >
-                {it.payment.status === "PAID" ? "Đã thanh toán" : "Thanh toán"}
+                {it.payment.status === "PAID"
+                  ? "Đã thanh toán"
+                  : it.payment.status === "FAILED"
+                    ? "Thanh toán lại"
+                    : "Thanh toán"}
               </Button>
             </Popconfirm>
           ),
@@ -188,7 +200,7 @@ const getColumns = () => {
     {
       title: "Trạng thái",
       dataIndex: "status",
-      filters: ORDER_STATUSES.map((it) => ({
+      filters: POSTPAID_STATUSES.map((it) => ({
         text: it.label,
         value: it.key,
       })),

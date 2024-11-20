@@ -70,7 +70,6 @@ const invoiceSlice = createSlice({
               isPaymentLoading: false,
               payment: {
                 ...invoice.payment,
-                status: "PAID",
               },
             };
           }
