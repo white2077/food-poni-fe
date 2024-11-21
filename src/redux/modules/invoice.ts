@@ -1,12 +1,12 @@
 import { Invoice, Page } from "@/type/types";
 import { QueryParams } from "@/utils/api/common";
 import {
-  getConsolidatedInvoices,
   createPostPaidOrders,
+  getConsolidatedInvoices,
 } from "@/utils/api/invoice";
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { notification } from "antd";
 import { call, fork, put, race, take } from "redux-saga/effects";
+import { addMessageSuccess } from "./message";
 
 export type InvoiceState = {
   readonly page: Page<Array<Invoice & { readonly isPaymentLoading: boolean }>>;
@@ -168,12 +168,7 @@ function* handleFetchInvoices() {
         );
       }
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(fetchInvoicesFailure());
     }
   }
@@ -193,11 +188,7 @@ function* handleCreatePostPaidOrders() {
 
       window.location.href = vnpayUrl;
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
       yield put(createPostPaidOrdersFailure({ ppid }));
     }
   }

@@ -1,10 +1,11 @@
-import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { call, put, fork, take, select } from "redux-saga/effects";
-import { notification } from "antd";
-import { FileUpload, Page } from "@/type/types";
-import { getFileUploads, uploadFile } from "@/utils/api/fileUploads";
 import { RootState } from "@/redux/store";
+import { FileUpload, Page } from "@/type/types";
 import { QueryParams } from "@/utils/api/common";
+import { getFileUploads, uploadFile } from "@/utils/api/fileUploads";
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { notification } from "antd";
+import { call, fork, put, select, take } from "redux-saga/effects";
+import { addMessageSuccess } from "./message";
 
 export type FileUploadsState = {
   readonly page: Page<FileUpload[]>;
@@ -122,17 +123,17 @@ export const uploadFileAction = createAction(`${SLICE_NAME}/uploadFileAction`);
 
 function* handleFetchFileUploads() {
   while (true) {
-    const {payload: { queryParams }} : ReturnType<typeof fetchFileUploadsAction> =  yield take(fetchFileUploadsAction);
+    const {
+      payload: { queryParams },
+    }: ReturnType<typeof fetchFileUploadsAction> = yield take(
+      fetchFileUploadsAction
+    );
     try {
       yield put(updateFetchLoadingSuccess());
       const page: Page<FileUpload[]> = yield call(getFileUploads, queryParams);
       yield put(fetchFileUploadsSuccess({ page }));
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
       yield put(fetchFileUploadsFailure());
     }
   }
@@ -154,11 +155,7 @@ function* handleUploadFile() {
         description: "File đã được tải lên thành công.",
       });
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
       yield put(uploadFileFailure());
     }
   }

@@ -1,13 +1,13 @@
-import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { call, fork, put, select, take } from "redux-saga/effects";
+import { RootState } from "@/redux/store.ts";
 import { Notification, Page } from "@/type/types.ts";
 import { QueryParams } from "@/utils/api/common.ts";
-import { notification } from "antd";
 import {
   getNotificationsPage,
   markIsReadNotification,
 } from "@/utils/api/notification.ts";
-import { RootState } from "@/redux/store.ts";
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { call, fork, put, select, take } from "redux-saga/effects";
+import { addMessageSuccess } from "./message";
 
 export type NotificationState = {
   readonly page: Page<Notification[]>;
@@ -40,7 +40,7 @@ export const notificationsSlice = createSlice({
     }),
     fetchNotificationsSuccess: (
       state,
-      action: PayloadAction<{ page: Page<Notification[]> }>,
+      action: PayloadAction<{ page: Page<Notification[]> }>
     ) => ({
       ...state,
       page: action.payload.page,
@@ -50,7 +50,10 @@ export const notificationsSlice = createSlice({
       ...state,
       isFetchLoading: false,
     }),
-    markReadNotificationSuccess: (state, action: PayloadAction<{ id: string }>) => ({
+    markReadNotificationSuccess: (
+      state,
+      action: PayloadAction<{ id: string }>
+    ) => ({
       ...state,
       page: {
         ...state.page,
@@ -59,7 +62,7 @@ export const notificationsSlice = createSlice({
             return {
               ...it,
               read: true,
-            }
+            };
           }
           return it;
         }),
@@ -67,7 +70,7 @@ export const notificationsSlice = createSlice({
     }),
     pushNotificationSuccess: (
       state,
-      action: PayloadAction<{ notification: Notification }>,
+      action: PayloadAction<{ notification: Notification }>
     ) => {
       return {
         ...state,
@@ -110,22 +113,17 @@ function* handleFetchingNotifications() {
     const {
       payload: { queryParams },
     }: ReturnType<typeof fetchNotificationsAction> = yield take(
-      fetchNotificationsAction,
+      fetchNotificationsAction
     );
     try {
       yield put(updateFetchLoading());
       const page: Page<Notification[]> = yield call(
         getNotificationsPage,
-        queryParams,
+        queryParams
       );
       yield put(fetchNotificationsSuccess({ page }));
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(fetchNotificationsFailure());
     }
   }
@@ -136,22 +134,18 @@ function* handleMarkIsReadNotification() {
     const {
       payload: { id },
     }: ReturnType<typeof markIsReadNotificationsAction> = yield take(
-      markIsReadNotificationsAction,
+      markIsReadNotificationsAction
     );
     try {
       const notification: Notification = yield select((state: RootState) =>
-        state.notification.page.content.find((it) => it.id === id),
+        state.notification.page.content.find((it) => it.id === id)
       );
       if (notification && !notification.read) {
         yield call(markIsReadNotification, id);
         yield put(markReadNotificationSuccess({ id }));
       }
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
     }
   }
 }

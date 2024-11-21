@@ -31,7 +31,6 @@ export const checkDirty = (
       !["lon", "lat"].includes(editingFields[i].field) &&
       editingFields[i].value !== savedFields[i].value
     ) {
-      console.log(editingFields[i].value, savedFields[i].value);
       return false;
     }
   }

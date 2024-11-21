@@ -1,14 +1,14 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { fetchProductRatePercentAction } from "@/redux/modules/product.ts";
+import { getRatesAction } from "@/redux/modules/rate";
+import { RootState } from "@/redux/store";
+import { ProductDetail } from "@/type/types";
+import { getThumbnail } from "@/utils/common.ts";
 import { CheckCircleFilled, UserOutlined } from "@ant-design/icons";
 import { Avatar, Card, Image, List, Progress, Rate } from "antd";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { RootState } from "@/redux/store";
-import { getRatesAction } from "@/redux/modules/rate";
-import { ProductDetail } from "@/type/types";
-import { server } from "@/utils/server";
 import EmptyNotice from "../atoms/EmptyNotice.tsx";
-import { fetchProductRatePercentAction } from "@/redux/modules/product.ts";
 
 const REVIEW_TEXTS = [
   "Rất không hài lòng",
@@ -42,7 +42,6 @@ export default function ProductRate({ productDetail }: Props) {
   }, [dispatch, productDetail.id]);
 
   const { ratePercents } = useSelector((state: RootState) => state.product);
-  console.log("ratePercents:", ratePercents);
 
   return (
     <Card size="small">
@@ -86,7 +85,12 @@ export default function ProductRate({ productDetail }: Props) {
         size="large"
         locale={{
           emptyText: (
-            <EmptyNotice h="40" w="48" src="/emty-3.png" message="Chưa có đánh giá" />
+            <EmptyNotice
+              h="40"
+              w="48"
+              src="/emty-3.png"
+              message="Chưa có đánh giá"
+            />
           ),
         }}
         pagination={
@@ -116,11 +120,7 @@ export default function ProductRate({ productDetail }: Props) {
                   <Avatar
                     src={
                       item.avatar ? (
-                        item.avatar.startsWith("http" || "https") ? (
-                          item.avatar
-                        ) : (
-                          server + item.avatar
-                        )
+                        getThumbnail(item.avatar)
                       ) : (
                         <Avatar icon={<UserOutlined />} />
                       )

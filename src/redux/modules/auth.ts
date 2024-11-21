@@ -18,11 +18,11 @@ import {
 import { setAccessToken } from "@/utils/axiosConfig";
 import { REFRESH_TOKEN, REMEMBER_ME } from "@/utils/server.ts";
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { notification } from "antd";
 import Cookies from "js-cookie";
 import jwtDecode from "jwt-decode";
 import { NavigateFunction } from "react-router-dom";
 import { call, fork, put, select, take } from "redux-saga/effects";
+import { addMessageSuccess } from "./message";
 
 export type AuthState = {
   readonly login: {
@@ -376,12 +376,7 @@ function* handleLogin() {
 
       window.location.href = "/";
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(loginFailure());
     }
   }
@@ -417,12 +412,7 @@ function* handleRegisterUser() {
 
       window.location.href = "/";
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(registerUserFailure(e.response?.data || {}));
     }
   }
@@ -439,11 +429,7 @@ function* handleUpdateCurrentUserAddress() {
       yield call(updateCurrentUserAddress, aid);
       yield put(updateCurrentUserAddressSuccess({ aid }));
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
     }
   }
 }
@@ -474,11 +460,7 @@ function* handleFetchUser() {
         })
       );
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
 
       yield put(updateCurrentUserFailure());
     }

@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Page, ProductCategory } from "@/type/types.ts";
 import { call, fork, put, take } from "redux-saga/effects";
-import { notification } from "antd";
 import { getProductCategoriesPage } from "@/utils/api/productCategory.ts";
+import { addMessageSuccess } from "./message";
 
 export type ProductCategoryState = {
   readonly page: Page<ProductCategory[]>;
@@ -36,7 +36,7 @@ const productCategorySlide = createSlice({
     }),
     fetchProductCategoriesSuccess: (
       state,
-      { payload }: { payload: Page<ProductCategory[]> },
+      { payload }: { payload: Page<ProductCategory[]> }
     ) => {
       state.page = payload;
       state.isFetchLoading = false;
@@ -61,16 +61,11 @@ function* handleFetchProductCategories() {
     try {
       const page: Page<ProductCategory[]> = yield call(
         getProductCategoriesPage,
-        {},
+        {}
       );
       yield put(fetchProductCategoriesSuccess(page));
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(fetchProductCategoriesFailure());
     }
   }

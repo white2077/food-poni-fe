@@ -54,8 +54,8 @@ export type CurrentUser = {
 
 export type Error = {
   readonly message: string;
-  readonly code: number;
-  readonly details: string[];
+  readonly code: string;
+  readonly details: Record<string, string>;
 };
 
 export type FileUpload = {

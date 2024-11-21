@@ -5,6 +5,7 @@ import { Rate, Page } from "@/type/types";
 import { getRatesByProductId, createRate } from "@/utils/api/rate";
 import { QueryParams } from "@/utils/api/common";
 import { RootState } from "@/redux/store";
+import { addMessageSuccess } from "./message";
 
 export type RateState = {
   readonly page: Page<Rate[]>;
@@ -150,11 +151,7 @@ function* handleGetRates() {
       );
       yield put(getRatesSuccess({ page }));
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
       yield put(getRatesFailure());
     }
   }
@@ -185,11 +182,7 @@ function* handleCreateRate() {
         description: "Đánh giá thành công!",
       });
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
       yield put(createRateFailure());
     }
   }

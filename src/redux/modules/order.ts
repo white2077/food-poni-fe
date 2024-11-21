@@ -15,6 +15,7 @@ import { notification } from "antd";
 import { NavigateFunction } from "react-router-dom";
 import { call, fork, put, race, take } from "redux-saga/effects";
 import { deleteCartGroupSuccess, updateVisible } from "./cartGroup";
+import { addMessageSuccess } from "./message";
 
 export type OrderState = {
   readonly page: Page<
@@ -272,12 +273,7 @@ function* handleFetchOrders() {
         );
       }
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(fetchOrdersFailure());
     }
   }
@@ -294,12 +290,7 @@ function* handleFetchOrder() {
       const order: Order = yield call(getOrderById, orderId);
       yield put(fetchOrderSuccess({ order }));
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(fetchOrderFailure());
     }
   }
@@ -385,11 +376,7 @@ function* handleCreateOrder() {
         yield put(deleteCartGroupSuccess({ roomId }));
       }
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
 
       yield put(createOrderFailure());
     }
@@ -407,12 +394,7 @@ function* handleUpdateOrderStatus() {
       yield put(updateLoadingForUpdatingStatus({ oid }));
       yield fork(updateOrderStatus, oid, orderStatus);
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(updateOrderStatusFailure({ oid }));
     }
   }

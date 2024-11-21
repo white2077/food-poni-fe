@@ -12,6 +12,7 @@ import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { notification } from "antd";
 import { call, fork, put, race, select, take } from "redux-saga/effects";
 import { RootState } from "../store";
+import { addMessageSuccess } from "./message";
 
 export type ProductDetailState = {
   readonly page: Page<ProductDetail[]>;
@@ -267,12 +268,7 @@ function* handleProductDetail() {
         );
       }
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(createProductDetailFailure());
       yield put(updateProductDetailFailure());
     }
@@ -302,12 +298,7 @@ function* handleDeleteProductDetail() {
         })
       );
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(deleteProductDetailFailure());
     }
   }
@@ -344,12 +335,7 @@ function* handleUpdateProductDetailStatus() {
         })
       );
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(updateProductDetailStatusFailure());
     }
   }

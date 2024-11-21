@@ -42,14 +42,6 @@ export const OrderSummary = ({
         className="text-primary"
         disabled={isAllItemsInCart || orderStatus !== "COMPLETED"}
         onClick={() => {
-          const cartItemsToAdd = orderItems.map((item) => ({
-            productDetailId: item.productDetail.id,
-            quantity: item.quantity,
-            toppings: item.toppings || [],
-            type: item.type,
-          }));
-          console.log(cartItemsToAdd);
-
           dispatch(buyAgainOrderAction({ orderItems }));
         }}
       >

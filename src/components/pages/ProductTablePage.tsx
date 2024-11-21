@@ -113,8 +113,6 @@ export const ProductTablePage = () => {
       />
       <Table
         onChange={(pagination, filters, sorter) => {
-          console.log(sorter);
-
           const sort =
             sorter && Object.keys(sorter).length > 0 // Kiểm tra nếu sorter không phải là đối tượng rỗng
               ? (Array.isArray(sorter) // Kiểm tra nếu sorter là một mảng

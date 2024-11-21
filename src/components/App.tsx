@@ -5,17 +5,19 @@ import { AuthResponse } from "@/type/types";
 import { refreshToken } from "@/utils/api/auth";
 import { persistToken } from "@/utils/axiosConfig";
 import { REFRESH_TOKEN } from "@/utils/server";
-import { Button, Result } from "antd";
+import { Button, notification, Result } from "antd";
 import Cookies from "js-cookie";
 import { ReactNode, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, RouterProvider } from "react-router-dom";
 import { LoadingPage } from "./pages/LoadingPage";
-import {fetchCartGroupsRequest} from "@/redux/modules/cartGroup.ts";
+import { fetchCartGroupsRequest } from "@/redux/modules/cartGroup.ts";
 
 export const App = () => {
   const dispatch = useDispatch();
+  const [api, contextHolder] = notification.useNotification();
   const { currentUser } = useSelector((state: RootState) => state.auth);
+  const { content } = useSelector((state: RootState) => state.message);
   const refresh_token = Cookies.get(REFRESH_TOKEN);
 
   useEffect(() => {
@@ -26,16 +28,36 @@ export const App = () => {
       });
     }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (content) {
+      api.open({
+        message:
+          content.type === "warning"
+            ? "Cảnh báo"
+            : content.type === "info"
+              ? "Thông báo"
+              : content.type === "success"
+                ? "Thành công"
+                : "Lỗi!",
+        description: content.message,
+        type: content.type,
+      });
+    }
+  }, [content, api]);
 
   if (refresh_token && !currentUser) {
     return <LoadingPage />;
   }
   return (
-    <RouterProvider
-      router={router(currentUser?.role as "RETAILER" | "CUSTOMER" | "VIP")}
-    />
+    <>
+      {contextHolder}
+      <RouterProvider
+        router={router(currentUser?.role as "RETAILER" | "CUSTOMER" | "VIP")}
+      />
+    </>
   );
 };
 

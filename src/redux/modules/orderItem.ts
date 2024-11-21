@@ -2,8 +2,8 @@ import { OrderItem, Page } from "@/type/types";
 import { QueryParams } from "@/utils/api/common";
 import { getOrderItemsPageByCustomer } from "@/utils/api/orderItem";
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { notification } from "antd";
 import { call, fork, put, take } from "redux-saga/effects";
+import { addMessageSuccess } from "./message";
 
 export type OrderItemState = {
   readonly page: Page<OrderItem[]>;
@@ -80,12 +80,7 @@ function* handleFetchOrderItemsByOrderId() {
       );
       yield put(fetchOrderItemsSuccess({ page }));
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(fetchOrderItemsFailure());
     }
   }

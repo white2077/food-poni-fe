@@ -22,6 +22,7 @@ import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { notification } from "antd";
 import { call, fork, put, race, select, take } from "redux-saga/effects";
 import { RootState } from "../store";
+import { addMessageSuccess } from "./message";
 
 export type ProductState = {
   readonly page: Page<Product[]>;
@@ -337,12 +338,7 @@ function* handleFetchProducts() {
         yield put(fetchProductsSuccess({ page }));
       }
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(fetchProductsFailure());
     }
   }
@@ -359,12 +355,7 @@ function* handleFetchProduct() {
       yield fork(handleFetchProductDetails, product.id);
       yield put(fetchProductSuccess({ product }));
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(fetchProductFailure());
     }
   }
@@ -405,11 +396,7 @@ function* handleFetchProductRatePercent() {
       );
       yield put(fetchProductRatePercentSuccess({ ratePercents }));
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
       yield put(fetchProductRatePercentFailure());
     }
   }
@@ -457,12 +444,7 @@ function* handleCreateProduct() {
         })
       );
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(createProductFailure());
     }
   }
@@ -495,12 +477,7 @@ function* handleUpdateProductStatus() {
         })
       );
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(updateProductStatusFailure());
     }
   }

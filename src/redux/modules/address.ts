@@ -12,7 +12,6 @@ import {
 } from "@/utils/api/address.ts";
 import { QueryParams } from "@/utils/api/common.ts";
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { notification } from "antd";
 import { Task } from "redux-saga";
 import {
   call,
@@ -24,6 +23,7 @@ import {
   take,
 } from "redux-saga/effects";
 import { AuthState } from "./auth";
+import { addMessageSuccess } from "./message";
 
 export type AddressState = {
   readonly page: Page<
@@ -301,11 +301,7 @@ function* handleFetchAddresses() {
         yield put(updateShippingAddressAction({ sid: currentUser.addressId }));
       }
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
       yield put(fetchAddressesFailure());
     }
   }
@@ -332,11 +328,7 @@ function* handleCreateAddress() {
         })
       );
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
 
       yield put(saveAddressFailure());
     }
@@ -354,11 +346,7 @@ function* handleDeleteAddress() {
       yield put(deleteAddressSuccess({ aid }));
       yield put(updateShippingAddressAction({ sid: null }));
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
 
       yield put(deleteAddressFailure({ aid }));
     }
@@ -401,11 +389,7 @@ function* handleCalculateShippingFee() {
       const shippingFee: number = yield call(calculateShippingFee, addressId);
       yield put(updateShippingFeeSuccess({ shippingFee }));
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
 
       yield put(updateShippingFeeFailure());
     }

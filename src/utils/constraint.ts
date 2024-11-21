@@ -16,3 +16,16 @@ export const getNotificationOrderMessage = (id: string, type: string) => {
       return `Không xác định được nội dung thông báo`;
   }
 };
+
+export const getMessage = (key: string) => {
+  switch (key.toLowerCase()) {
+    // message
+    case "cm02":
+      return "Vui lòng đăng nhập để có thể thao tác được chức năng này.";
+    case "cm03":
+      return "Vui lòng đăng nhập để có thể thao tác được chức năng này.";
+      
+    default:
+      return "Không xác định";
+  }
+};

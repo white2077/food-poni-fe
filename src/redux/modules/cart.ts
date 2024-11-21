@@ -1,17 +1,7 @@
-import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { updateOrderItemsAction } from "@/redux/modules/order.ts";
+import { ProductState } from "@/redux/modules/product.ts";
+import { RootState } from "@/redux/store.ts";
 import { Cart, OrderItem, Page } from "@/type/types.ts";
-import {
-  call,
-  cancel,
-  delay,
-  fork,
-  put,
-  race,
-  select,
-  take,
-} from "redux-saga/effects";
-import { notification } from "antd";
-import { QueryParams } from "@/utils/api/common.ts";
 import {
   createCart,
   deleteAllCart,
@@ -22,11 +12,21 @@ import {
   updateCartNote,
   updateCartQuantity,
 } from "@/utils/api/cart.ts";
-import { RootState } from "@/redux/store.ts";
-import { Task } from "redux-saga";
-import { updateOrderItemsAction } from "@/redux/modules/order.ts";
-import { ProductState } from "@/redux/modules/product.ts";
+import { QueryParams } from "@/utils/api/common.ts";
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { NavigateFunction } from "react-router-dom";
+import { Task } from "redux-saga";
+import {
+  call,
+  cancel,
+  delay,
+  fork,
+  put,
+  race,
+  select,
+  take,
+} from "redux-saga/effects";
+import { addMessageSuccess } from "./message";
 
 export type CartState = {
   readonly page: Page<
@@ -78,10 +78,10 @@ const cartListSlide = createSlice({
     }),
     fetchCartsSuccess: (
       state,
-      action: PayloadAction<{ page: CartState["page"] }>,
+      action: PayloadAction<{ page: CartState["page"] }>
     ) => {
       const isAnyChecked = action.payload.page.content.every(
-        (cart) => cart.checked,
+        (cart) => cart.checked
       );
       return {
         ...state,
@@ -100,7 +100,7 @@ const cartListSlide = createSlice({
     }),
     createCartSuccess: (
       state,
-      action: PayloadAction<{ cart: CartState["page"]["content"][0] }>,
+      action: PayloadAction<{ cart: CartState["page"]["content"][0] }>
     ) => ({
       ...state,
       page: {
@@ -116,7 +116,7 @@ const cartListSlide = createSlice({
     }),
     updateQuantityLoadingSuccess: (
       state,
-      action: PayloadAction<{ id: string }>,
+      action: PayloadAction<{ id: string }>
     ) => ({
       ...state,
       page: {
@@ -134,7 +134,7 @@ const cartListSlide = createSlice({
     }),
     updateQuantitySuccess: (
       state,
-      action: PayloadAction<{ id: string; quantity: number }>,
+      action: PayloadAction<{ id: string; quantity: number }>
     ) => ({
       ...state,
       page: {
@@ -168,7 +168,7 @@ const cartListSlide = createSlice({
     }),
     updateNoteLoadingSuccess: (
       state,
-      action: PayloadAction<{ id: string }>,
+      action: PayloadAction<{ id: string }>
     ) => ({
       ...state,
       page: {
@@ -186,7 +186,7 @@ const cartListSlide = createSlice({
     }),
     updateNoteSuccess: (
       state,
-      action: PayloadAction<{ id: string; note: string }>,
+      action: PayloadAction<{ id: string; note: string }>
     ) => ({
       ...state,
       page: {
@@ -220,7 +220,7 @@ const cartListSlide = createSlice({
     }),
     updateCartCheckedLoadingSuccess: (
       state,
-      action: PayloadAction<{ id: string }>,
+      action: PayloadAction<{ id: string }>
     ) => ({
       ...state,
       page: {
@@ -237,7 +237,7 @@ const cartListSlide = createSlice({
     }),
     updateCheckedSuccess: (
       state,
-      action: PayloadAction<{ id: string; checked: boolean }>,
+      action: PayloadAction<{ id: string; checked: boolean }>
     ) => {
       const updatedContent = state.page.content.map((it) => {
         if (it.id === action.payload.id) {
@@ -277,7 +277,7 @@ const cartListSlide = createSlice({
     }),
     updateAllCheckedSuccess: (
       state,
-      action: PayloadAction<{ checked: boolean }>,
+      action: PayloadAction<{ checked: boolean }>
     ) => {
       const updatedContent = state.page.content.map((it) => {
         return {
@@ -406,13 +406,13 @@ export const {
 } = cartListSlide.actions;
 
 export const fetchCartsAction = createAction<{ queryParams: QueryParams }>(
-  `${SLICE_NAME}/fetchCartsRequest`,
+  `${SLICE_NAME}/fetchCartsRequest`
 );
 export const createCartAction = createAction<{
   navigate: NavigateFunction | null;
 }>(`${SLICE_NAME}/createCartRequest`);
 export const buyBackCartAction = createAction<{ orderItem: OrderItem }>(
-  `${SLICE_NAME}/buyBackCartRequest`,
+  `${SLICE_NAME}/buyBackCartRequest`
 );
 export const updateQuantityButtonAction = createAction<{
   type: "INCREASE" | "DECREASE";
@@ -431,7 +431,7 @@ export const updateCheckedAction = createAction<{
   checked: boolean;
 }>(`${SLICE_NAME}/updateCheckedRequest`);
 export const buyAgainOrderAction = createAction<{ orderItems: OrderItem[] }>(
-  `${SLICE_NAME}/buyAgainOrderRequest`,
+  `${SLICE_NAME}/buyAgainOrderRequest`
 );
 
 function* handleFetchCart() {
@@ -445,16 +445,11 @@ function* handleFetchCart() {
       yield put(
         fetchCartsSuccess({
           page,
-        }),
+        })
       );
       yield put(updateOrderItemsAction());
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(fetchCartFailure());
     }
   }
@@ -473,10 +468,10 @@ function* handleCreateCart() {
         type,
         quantity,
       }: ProductState["itemsSelected"] = yield select(
-        (state: RootState) => state.product.itemsSelected,
+        (state: RootState) => state.product.itemsSelected
       );
       const { product }: ProductState["productSelected"] = yield select(
-        (state: RootState) => state.product.productSelected,
+        (state: RootState) => state.product.productSelected
       );
 
       const { id }: { id: string } = yield call(
@@ -484,7 +479,7 @@ function* handleCreateCart() {
         quantity,
         productDetail.id,
         toppingsSelected.map((it) => it.id),
-        type,
+        type
       );
       const cart = {
         id,
@@ -507,12 +502,7 @@ function* handleCreateCart() {
         navigate("/checkout");
       }
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(createCartFailure());
     }
   }
@@ -532,7 +522,7 @@ function* handleBuyBackCart() {
         quantity,
         productDetail.id,
         toppings.map((it) => it.id),
-        type,
+        type
       );
       const cart = {
         id,
@@ -552,12 +542,7 @@ function* handleBuyBackCart() {
       };
       yield put(createCartSuccess({ cart }));
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(createCartFailure());
     }
   }
@@ -586,7 +571,7 @@ function* handleUpdateQuantityCart() {
       if (updateQuantityButton) {
         const { type, id } = updateQuantityButton.payload;
         const content: CartState["page"]["content"] = yield select(
-          (state: RootState) => state.cart.page.content,
+          (state: RootState) => state.cart.page.content
         );
         const cart = content.find((it) => it.id === id);
 
@@ -599,7 +584,7 @@ function* handleUpdateQuantityCart() {
               updateQuantitySuccess({
                 id,
                 quantity: cart.quantity - 1,
-              }),
+              })
             );
           }
 
@@ -611,7 +596,7 @@ function* handleUpdateQuantityCart() {
               updateQuantitySuccess({
                 id,
                 quantity: cart.quantity + 1,
-              }),
+              })
             );
           }
         }
@@ -627,16 +612,12 @@ function* handleUpdateQuantityCart() {
           updateQuantitySuccess({
             id,
             quantity,
-          }),
+          })
         );
       }
       yield put(updateOrderItemsAction());
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
 
       if (updateQuantityInput) {
         const id = updateQuantityInput.payload.id;
@@ -658,7 +639,7 @@ function* handleDelayUpdateNoteCart(id: string, note: string) {
     updateNoteSuccess({
       id,
       note,
-    }),
+    })
   );
 }
 
@@ -676,11 +657,7 @@ function* handleUpdateNoteCart() {
       }
       typingTask = yield fork(handleDelayUpdateNoteCart, id, note);
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
 
       yield put(updateNoteFailure({ id }));
     }
@@ -701,12 +678,7 @@ function* handleUpdateCheckedCart() {
       yield put(updateCheckedSuccess({ id, checked }));
       yield put(updateOrderItemsAction());
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(updateCheckedFailure());
     }
   }
@@ -719,16 +691,12 @@ function* handleUpdateAllCheckedCart() {
       yield call(updateCartAllChecked);
       const isAnyChecked: CartState["isAllChecked"] = yield select(
         (state: RootState) =>
-          state.cart.page.content.every((cart) => cart.checked),
+          state.cart.page.content.every((cart) => cart.checked)
       );
       yield put(updateAllCheckedSuccess({ checked: isAnyChecked }));
       yield put(updateOrderItemsAction());
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
       yield put(updateAllCheckedFailure());
     }
   }
@@ -745,18 +713,13 @@ function* handleDeleteCart() {
 
       const isAnyChecked: CartState["isAllChecked"] = yield select(
         (state: RootState) =>
-          state.cart.page.content.every((cart) => cart.checked),
+          state.cart.page.content.every((cart) => cart.checked)
       );
       yield put(updateAllCheckedSuccess({ checked: !isAnyChecked }));
 
       yield put(updateOrderItemsAction());
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
-
+      yield put(addMessageSuccess({ error: e }));
       yield put(deleteCartFailure({ id }));
     }
   }
@@ -770,11 +733,7 @@ function* handleDeleteAllCart() {
       yield put(deleteAllCartSuccess());
       yield put(updateOrderItemsAction());
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
       yield put(deleteAllCartFailure());
     }
   }
@@ -795,15 +754,11 @@ function* handleBuyAgainOrder() {
         type: item.type,
       }));
 
-      console.log("danh sach don hàng này:", cartItemsToAdd);
+      console.log("cartItemsToAdd", cartItemsToAdd);
 
       yield put(buyAgainSuccess());
     } catch (e) {
-      notification.open({
-        message: "Error",
-        description: e.message,
-        type: "error",
-      });
+      yield put(addMessageSuccess({ error: e }));
       yield put(buyAgainFailure());
     }
   }
