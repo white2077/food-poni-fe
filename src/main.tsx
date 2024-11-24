@@ -26,6 +26,7 @@ import { ConsolidatedInvoicePage } from "./components/pages/ConsolidatedInvoiceP
 import { PostPaidDetailPage } from "./components/pages/PostPaidDetailPage";
 import { SupportPage } from "./components/pages/SupportPage";
 import { AdminToppingTablePage } from "./components/pages/AdminToppingTablePage";
+import { AdminProductCategoriesTablePage } from "./components/pages/AdminProductCategoriesTablePage";
 
 export const router = (currentRole?: "RETAILER" | "CUSTOMER" | "VIP" | null) =>
   createBrowserRouter([
@@ -196,7 +197,7 @@ export const router = (currentRole?: "RETAILER" | "CUSTOMER" | "VIP" | null) =>
           path: "product-categories-table",
           element: (
             <SecuredRoute currentRole={currentRole} role={["RETAILER"]}>
-              <div>Product Categories</div>
+              <AdminProductCategoriesTablePage />
             </SecuredRoute>
           ),
         },

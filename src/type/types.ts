@@ -241,6 +241,8 @@ export type ProductCategory = {
   readonly thumbnail: string;
   readonly level: number;
   readonly parentProductCategory: ProductCategory | null;
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
 };
 
 export type ProductDetail = {

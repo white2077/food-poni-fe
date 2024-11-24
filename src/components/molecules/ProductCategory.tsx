@@ -1,11 +1,11 @@
-import { fetchProductCategoriesRequest } from "@/redux/modules/productCategory.ts";
+import { fetchProductCategoriesAction } from "@/redux/modules/productCategory.ts";
 import { RootState } from "@/redux/store.ts";
-import { server } from "@/utils/server.ts";
 import { Menu } from "antd";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ProductLoading } from "../atoms/ProductLoading";
+import { getThumbnail } from "@/utils/common";
 
 export default function ProductCategory() {
   const navigate = useNavigate();
@@ -17,8 +17,7 @@ export default function ProductCategory() {
   );
 
   useEffect(() => {
-    dispatch(fetchProductCategoriesRequest());
-
+    dispatch(fetchProductCategoriesAction({}));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -40,7 +39,10 @@ export default function ProductCategory() {
                   className="flex items-center"
                   onClick={() => navigate(`/danh-muc/${it.slug}`)}
                 >
-                  <img src={server + it.thumbnail} className="w-4 h-4 mr-2" />
+                  <img
+                    src={getThumbnail(it.thumbnail)}
+                    className="w-4 h-4 mr-2"
+                  />
                   <span
                     className={`${it.parentProductCategory === null ? "font-bold uppercase" : ""}`}
                   >

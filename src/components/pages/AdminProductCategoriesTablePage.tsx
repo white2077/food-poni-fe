@@ -1,11 +1,9 @@
 import {
-  deleteToppingAction,
-  fetchToppingsAction,
-} from "@/redux/modules/topping";
+  deleteProductCategoryAction,
+  fetchProductCategoriesAction,
+} from "@/redux/modules/productCategory";
 import { RootState } from "@/redux/store";
-import { formatCurrency } from "@/utils/common";
-
-import { fetchProductsAction } from "@/redux/modules/product";
+import { getThumbnail } from "@/utils/common";
 import {
   CloseCircleOutlined,
   CopyOutlined,
@@ -30,14 +28,13 @@ import {
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ToppingModalCreate } from "../organisms/ToppingModalCreate";
-import { ToppingModalEdit } from "../organisms/ToppingModalEdit";
+import { AvatarInfo } from "../atoms/AvatarInfo";
+import { ProductCategoriesModalCreate } from "../organisms/ProductCategoriesModalCreate";
+import { ProductCategoriesModalEdit } from "../organisms/ProductCategoriesModalEdit";
 import { AdminLayout } from "../templates/AdminLayout";
-
 const { useToken } = theme;
 
 const TableToolbar = ({
-  isFetchLoading,
   selectedRowKeys,
 }: {
   isFetchLoading: boolean;
@@ -53,7 +50,6 @@ const TableToolbar = ({
             type="default"
             icon={<CloseCircleOutlined />}
             style={{ marginRight: "10px" }}
-            disabled={isFetchLoading}
           >
             Delete All
             <Badge
@@ -70,40 +66,41 @@ const TableToolbar = ({
         icon={<DownloadOutlined />}
         style={{ marginRight: "10px" }}
       >
-        Download
+        Tải xuống
       </Button>
       <Button
         type="default"
         icon={<ImportOutlined />}
         style={{ marginRight: "10px" }}
       >
-        Import
+        Nhập dữ liệu
       </Button>
 
-      <ToppingModalCreate />
+      <ProductCategoriesModalCreate />
     </Col>
   </Flex>
 );
 
-export const AdminToppingTablePage = () => {
+export const AdminProductCategoriesTablePage = () => {
   const dispatch = useDispatch();
   const { token } = useToken();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const { page, isFetchLoading, isUpdateLoading } = useSelector(
-    (state: RootState) => state.topping
+    (state: RootState) => state.productCategory,
   );
 
   useEffect(() => {
     dispatch(
-      fetchToppingsAction({
+      fetchProductCategoriesAction({
         queryParams: {
           page: 0,
           pageSize: 10,
           sort: ["createdAt,desc"],
         },
-      })
+      }),
     );
-  }, [dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <AdminLayout>
@@ -118,12 +115,12 @@ export const AdminToppingTablePage = () => {
             sorter && Object.keys(sorter).length > 0
               ? (Array.isArray(sorter) ? sorter : [sorter]).map(
                   (it) =>
-                    `${it.field},${it.order === "ascend" ? "asc" : "desc"}`
+                    `${it.field},${it.order === "ascend" ? "asc" : "desc"}`,
                 )
-              : ["createdAt,desc"];
+              : ["createdAt,desc"]; // Default sort by createdAt desc
 
           dispatch(
-            fetchProductsAction({
+            fetchProductCategoriesAction({
               queryParams: {
                 page: pagination.current ? pagination.current - 1 : 0,
                 pageSize: pagination.pageSize,
@@ -133,7 +130,7 @@ export const AdminToppingTablePage = () => {
                     ? (filters["status"][0] as boolean)
                     : undefined,
               },
-            })
+            }),
           );
         }}
         pagination={{
@@ -156,10 +153,26 @@ export const AdminToppingTablePage = () => {
           ...it,
           key: it.id,
           no: page.number * page.size + index + 1,
-          name: it.name,
-          price: formatCurrency(it.price),
+          name: it.parentProductCategory ? (
+            <AvatarInfo
+              fullName={"-".repeat(it.level) + it.name}
+              avatar={getThumbnail(it.thumbnail)}
+              info={""}
+            />
+          ) : (
+            <div className="text-primary">
+              <AvatarInfo
+                fullName={it.name}
+                avatar={getThumbnail(it.thumbnail)}
+                info={""}
+              />
+            </div>
+          ),
+          slug: `/${it.slug}`,
           createdAt: format(new Date(it.createdAt), "HH:mm:ss - dd/MM/yyyy"),
-          updatedAt: format(new Date(it.updatedAt), "HH:mm:ss - dd/MM/yyyy"),
+          updatedAt: it.updatedAt
+            ? format(new Date(it.updatedAt), "HH:mm:ss - dd/MM/yyyy")
+            : "",
           actions: (
             <Dropdown
               trigger={["click"]}
@@ -170,7 +183,9 @@ export const AdminToppingTablePage = () => {
                   if (item.key === "1") {
                     return {
                       ...item,
-                      label: <ToppingModalEdit topping={it} />,
+                      label: (
+                        <ProductCategoriesModalEdit productCategorie={it} />
+                      ),
                     };
                   }
                   return item;
@@ -194,7 +209,7 @@ export const AdminToppingTablePage = () => {
                     <Popconfirm
                       title="Bạn có muốn xóa?"
                       onConfirm={() =>
-                        dispatch(deleteToppingAction({ tid: it.id }))
+                        dispatch(deleteProductCategoryAction({ pcid: it.id }))
                       }
                     >
                       <Button
@@ -238,41 +253,30 @@ const tableRowActions = [
 const getColumns = () => {
   return [
     {
-      title: "STT",
+      title: "STT.",
       dataIndex: "no",
     },
     {
-      title: "Tên toppping",
+      title: "__________Tên danh mục",
       dataIndex: "name",
       showSorterTooltip: { target: "full-header" },
       sorter: {
         multiple: 2,
       },
     },
-
     {
-      title: "Giá",
-      dataIndex: "price",
+      title: "Slug",
+      dataIndex: "slug",
       showSorterTooltip: { target: "full-header" },
-      sorter: {
-        multiple: 1,
-      },
+      sorter: true,
     },
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
-      showSorterTooltip: { target: "full-header" },
-      sorter: {
-        multiple: 1,
-      },
     },
     {
       title: "Ngày cập nhật",
       dataIndex: "updatedAt",
-      showSorterTooltip: { target: "full-header" },
-      sorter: {
-        multiple: 1,
-      },
     },
     {
       title: "Hành động",

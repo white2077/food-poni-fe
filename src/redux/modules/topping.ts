@@ -1,17 +1,17 @@
+import { ToppingFormState } from "@/components/molecules/ToppingForm";
 import { Page, Topping } from "@/type/types.ts";
 import { QueryParams } from "@/utils/api/common";
 import {
   createTopping,
+  deleteTopping,
   getToppingsPage,
   updateTopping,
-  deleteTopping,
 } from "@/utils/api/topping";
 import { createAction, createSlice } from "@reduxjs/toolkit";
-import { addMessageSuccess } from "./message";
 import { notification } from "antd";
 import { call, fork, put, race, select, take } from "redux-saga/effects";
 import { RootState } from "../store";
-import { ToppingFormState } from "@/components/molecules/ToppingForm";
+import { addMessageSuccess } from "./message";
 
 export type ToppingState = {
   readonly page: Page<Topping[]>;
