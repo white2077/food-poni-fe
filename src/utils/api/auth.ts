@@ -1,32 +1,30 @@
 import { AxiosResponse } from "axios";
-import { AuthRequest, AuthResponse, CurrentUser, User } from "@/type/types.ts";
+import { AuthResponse, CurrentUser } from "@/type/types.ts";
 import { accessToken, api, apiWithToken } from "@/utils/axiosConfig.ts";
 import generateQueryString from "./common";
 import { REFRESH_TOKEN } from "../server";
 import Cookies from "js-cookie";
+import { SignUpRequest } from "@/components/pages/SignUpPage.tsx";
 
-export const login = (user: AuthRequest): Promise<AuthResponse> => {
+export const login = (values: {
+  [x: string]: string;
+  password: string;
+}): Promise<AuthResponse> => {
   return api
-    .post("/auth/login", user)
+    .post("/auth/login", values)
     .then((res: AxiosResponse<AuthResponse>) => res.data);
 };
 
 export const refreshToken = (): Promise<AuthResponse> => {
   return api
-    .post("/auth/refresh-token", {refreshToken: Cookies.get(REFRESH_TOKEN)})
+    .post("/auth/refresh-token", { refreshToken: Cookies.get(REFRESH_TOKEN) })
     .then((res: AxiosResponse<AuthResponse>) => res.data);
 };
 
-export const registerUser = (user: AuthRequest): Promise<CurrentUser> => {
+export const registerUser = (values: SignUpRequest): Promise<CurrentUser> => {
   return api
-    .post("/users", user)
+    .post("/users", values)
     .then((res: AxiosResponse<CurrentUser>) => res.data);
-};
-
-export const getUserById = (uid: string): Promise<User> => {
-  return api
-    .get(generateQueryString(`/users/${uid}`))
-    .then((res: AxiosResponse<User>) => res.data);
 };
 
 export const updateCurrentUserAddress = (aid: string): Promise<void> => {
@@ -37,6 +35,6 @@ export const updateCurrentUserAddress = (aid: string): Promise<void> => {
       headers: {
         Authorization: "Bearer " + accessToken,
       },
-    }
+    },
   );
 };

@@ -26,7 +26,9 @@ export const getMessage = (key: string) => {
       return "Vui lòng đăng nhập để có thể thao tác được chức năng này.";
     case "cm03":
       return "Vui lòng đăng nhập để có thể thao tác được chức năng này.";
-      
+    case "u07":
+      return "Bạn không thể tạo tài khoản với email này. Do Email đã tồn tại trong hệ thống.";
+
     default:
       return "Không xác định";
   }

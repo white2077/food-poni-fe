@@ -55,7 +55,9 @@ export const App = () => {
     <>
       {contextHolder}
       <RouterProvider
-        router={router(currentUser?.role as "RETAILER" | "CUSTOMER" | "VIP")}
+        router={router(
+          currentUser && (currentUser.role as "RETAILER" | "CUSTOMER" | "VIP"),
+        )}
       />
     </>
   );
@@ -67,10 +69,10 @@ export const SecuredRoute = ({
   role,
 }: {
   children: ReactNode;
-  currentRole: "RETAILER" | "CUSTOMER" | "VIP";
+  currentRole?: "RETAILER" | "CUSTOMER" | "VIP" | null;
   role: ("RETAILER" | "CUSTOMER" | "VIP")[];
 }) => {
-  if (role.includes(currentRole)) return <>{children}</>;
+  if (currentRole && role.includes(currentRole)) return <>{children}</>;
   return (
     <Result
       status="404"

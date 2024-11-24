@@ -9,12 +9,12 @@ export type MessageState = {
     readonly type: IconType;
     readonly message: string;
   } | null;
-  readonly validate: Record<string, string> | null;
+  readonly validate: Record<string, string>;
 };
 
 const initialState: MessageState = {
   content: null,
-  validate: null,
+  validate: {},
 };
 
 const SLICE_NAME = "message";

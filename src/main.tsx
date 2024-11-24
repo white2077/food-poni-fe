@@ -15,7 +15,7 @@ import { OrderDetailPage } from "./components/pages/OrderDetailPage";
 import { OrderPage } from "./components/pages/OrderPage";
 import { ProductCategoryPage } from "./components/pages/ProductCategoryPage";
 import { ProductDetailPage } from "./components/pages/ProductDetailPage";
-import { SignupPage } from "./components/pages/SignupPage";
+import { SignUpPage } from "./components/pages/SignUpPage.tsx";
 import { OrderGroupPage } from "./components/pages/OrderGroupPage";
 import { OrderGroupDetailPage } from "./components/pages/OrderGroupDetailPage";
 import { OrderPostPaidDetailPage } from "./components/pages/OrderPostPaidDetailPage";
@@ -26,16 +26,16 @@ import { ConsolidatedInvoicePage } from "./components/pages/ConsolidatedInvoiceP
 import { PostPaidDetailPage } from "./components/pages/PostPaidDetailPage";
 import { SupportPage } from "./components/pages/SupportPage";
 
-export const router = (currentRole: "RETAILER" | "CUSTOMER" | "VIP") =>
+export const router = (currentRole?: "RETAILER" | "CUSTOMER" | "VIP" | null) =>
   createBrowserRouter([
     // Shop routes
     {
       path: "/login",
-      element: <LoginPage />,
+      element: currentRole ? <Navigate to="/" /> : <LoginPage />,
     },
     {
       path: "/signup",
-      element: <SignupPage />,
+      element: currentRole ? <Navigate to="/" /> : <SignUpPage />,
     },
     // {
     //   path: '/forgot-password',
@@ -218,6 +218,6 @@ if (container) {
       <ConfigProvider theme={{ token: { colorPrimary: "#F36F24" } }}>
         <App />
       </ConfigProvider>
-    </Provider>
+    </Provider>,
   );
 }
