@@ -20,6 +20,8 @@ export const getNotificationOrderMessage = (id: string, type: string) => {
 export const getMessage = (key: string) => {
   switch (key.toLowerCase()) {
     // message
+    case "a12":
+      return "Địa chỉ không hợp lệ. Cửa hàng chỉ nhận giao hàng địa chỉ dưới 5km.";
     case "cm02":
       return "Vui lòng đăng nhập để có thể thao tác được chức năng này.";
     case "cm03":

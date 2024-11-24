@@ -166,12 +166,6 @@ export const {
 export const updateOrderItemsAction = createAction<void>(
   `${SLICE_NAME}/updateOrderItemsRequest`
 );
-export const updateShippingAddressAction = createAction<{ sid: string | null }>(
-  `${SLICE_NAME}/updateShippingAddressRequest`
-);
-export const checkCartItemsAction = createAction<void>(
-  `${SLICE_NAME}/checkCartItemsRequest`
-);
 export const fetchOrdersByCustomerAction = createAction<{
   queryParams: QueryParams;
 }>(`${SLICE_NAME}/fetchOrdersByCustomerRequest`);

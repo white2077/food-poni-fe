@@ -9,7 +9,7 @@ import { useForm } from "antd/es/form/Form";
 import { useDispatch, useSelector } from "react-redux";
 
 export type AddressRequest = {
-  id?: string;
+  id: string;
   fullName: string;
   phoneNumber: string;
   address: string;
@@ -24,7 +24,7 @@ export default function ShippingAddressInfo({
 }) {
   const dispatch = useDispatch();
   const { isUpdateLoading, addressesSearched } = useSelector(
-    (state: RootState) => state.address
+    (state: RootState) => state.address,
   );
 
   const [form] = useForm<AddressRequest>();
@@ -33,28 +33,48 @@ export default function ShippingAddressInfo({
     <Form
       form={form}
       className="mt-4"
-      initialValues={
-        address && {
-          id: address.id,
-          fullName: address.fullName,
-          phoneNumber: address.phoneNumber,
-          address: address.address,
-          lon: address.lon,
-          lat: address.lat,
-        }
-      }
+      initialValues={address ?? undefined}
       onFinish={(values) => dispatch(saveAddressAction({ values }))}
     >
+      <Form.Item name="id" hidden={true} noStyle />
       {/*Full name*/}
-      <Form.Item name="fullName">
+      <Form.Item
+        name="fullName"
+        rules={[
+          { required: true, message: "Vui lòng nhập tên người nhận hàng." },
+        ]}
+      >
         <Input placeholder="Họ tên" />
       </Form.Item>
       {/*Phone number*/}
-      <Form.Item name="phoneNumber">
+      <Form.Item
+        name="phoneNumber"
+        rules={[
+          { required: true, message: "Vui lòng nhập số điện thoại nhận hàng." },
+        ]}
+      >
         <Input placeholder="Số điện thoại" />
       </Form.Item>
       {/*Address*/}
-      <Form.Item name="address">
+      <Form.Item
+        name="address"
+        rules={[
+          ({ getFieldValue }) => ({
+            validator() {
+              if (
+                getFieldValue("address") &&
+                getFieldValue("lon") &&
+                getFieldValue("lat")
+              ) {
+                return Promise.resolve();
+              }
+              return Promise.reject(
+                new Error("Vui lòng chọn địa chỉ nhận hàng."),
+              );
+            },
+          }),
+        ]}
+      >
         <AutoComplete
           options={addressesSearched.map(
             (result: SearchResult, index: number) => ({
@@ -62,7 +82,7 @@ export default function ShippingAddressInfo({
               label: result.display_name,
               data: result,
               key: index,
-            })
+            }),
           )}
           onSelect={(_: string, option: { data: SearchResult }): void => {
             if (option.data.display_name) {

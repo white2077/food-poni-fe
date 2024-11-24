@@ -1,6 +1,4 @@
 import { AddressRequest } from "@/components/organisms/ShippingAddressInfo.tsx";
-import { updateShippingAddressAction } from "@/redux/modules/order.ts";
-import { RootState } from "@/redux/store.ts";
 import { Address, Page, SearchResult } from "@/type/types.ts";
 import {
   calculateShippingFee,
@@ -13,16 +11,7 @@ import {
 import { QueryParams } from "@/utils/api/common.ts";
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Task } from "redux-saga";
-import {
-  call,
-  cancel,
-  delay,
-  fork,
-  put,
-  select,
-  take,
-} from "redux-saga/effects";
-import { AuthState } from "./auth";
+import { call, cancel, delay, fork, put, take } from "redux-saga/effects";
 import { addMessageSuccess } from "./message";
 
 export type AddressState = {
@@ -38,7 +27,6 @@ export type AddressState = {
   readonly isShowAddForm: boolean;
   readonly isFetchLoading: boolean;
   readonly isUpdateLoading: boolean;
-  readonly isDeleteLoading: boolean;
   readonly isCalculateShippingFeeLoading: boolean;
 };
 
@@ -59,7 +47,6 @@ const initialState: AddressState = {
   isShowAddForm: false,
   isFetchLoading: false,
   isUpdateLoading: false,
-  isDeleteLoading: false,
   isCalculateShippingFeeLoading: false,
 };
 
@@ -77,7 +64,7 @@ const addressSlide = createSlice({
       state,
       action: PayloadAction<{
         page: AddressState["page"];
-      }>
+      }>,
     ) => ({
       ...state,
       page: {
@@ -100,10 +87,10 @@ const addressSlide = createSlice({
     }),
     saveAddressSuccess: (
       state,
-      action: PayloadAction<AddressState["page"]["content"][0]>
+      action: PayloadAction<AddressState["page"]["content"][0]>,
     ) => {
       const address = state.page.content.find(
-        (it) => it.id === action.payload.id
+        (it) => it.id === action.payload.id,
       );
 
       if (address) {
@@ -133,13 +120,7 @@ const addressSlide = createSlice({
             content: [
               ...state.page.content,
               {
-                id: action.payload.id,
-                address: action.payload.address,
-                lat: action.payload.lat,
-                lon: action.payload.lon,
-                fullName: action.payload.fullName,
-                phoneNumber: action.payload.phoneNumber,
-                isDeleteLoading: action.payload.isDeleteLoading,
+                ...action.payload,
               },
             ],
           },
@@ -155,7 +136,7 @@ const addressSlide = createSlice({
     }),
     updateLoadingForAddressDeleteSuccess: (
       state,
-      action: PayloadAction<{ aid: string }>
+      action: PayloadAction<{ aid: string }>,
     ) => ({
       ...state,
       page: {
@@ -206,7 +187,7 @@ const addressSlide = createSlice({
     }),
     updateAddressesSearchedSuccess: (
       state,
-      action: PayloadAction<{ addresses: Array<SearchResult> }>
+      action: PayloadAction<{ addresses: Array<SearchResult> }>,
     ) => ({
       ...state,
       addressesSearched: action.payload.addresses,
@@ -217,7 +198,7 @@ const addressSlide = createSlice({
     }),
     updateShippingFeeSuccess: (
       state,
-      action: PayloadAction<{ shippingFee: number }>
+      action: PayloadAction<{ shippingFee: number }>,
     ) => ({
       ...state,
       shippingFee: action.payload.shippingFee,
@@ -226,6 +207,13 @@ const addressSlide = createSlice({
     updateShippingFeeFailure: (state) => ({
       ...state,
       isCalculateShippingFeeLoading: false,
+    }),
+    updateShowFormAdding: (
+      state,
+      action: PayloadAction<{ value: boolean }>,
+    ) => ({
+      ...state,
+      isShowAddForm: action.payload.value,
     }),
   },
 });
@@ -245,13 +233,14 @@ export const {
   updateLoadingForCalculatingShippingFeeSuccess,
   updateShippingFeeSuccess,
   updateShippingFeeFailure,
+  updateShowFormAdding,
 } = addressSlide.actions;
 
 export const fetchAddressesAction = createAction<{ queryParams: QueryParams }>(
-  `${SLICE_NAME}/fetchAddressesRequest`
+  `${SLICE_NAME}/fetchAddressesRequest`,
 );
 export const saveAddressAction = createAction<{ values: AddressRequest }>(
-  `${SLICE_NAME}/createAddressRequest`
+  `${SLICE_NAME}/saveAddressRequest`,
 );
 export const deleteAddressAction = createAction<{
   aid: string;
@@ -274,7 +263,7 @@ function* handleFetchAddresses() {
 
       const page: Page<Array<Address>> = yield call(
         getAddressesPage,
-        queryParams
+        queryParams,
       );
       yield put(
         fetchAddressesSuccess({
@@ -291,15 +280,8 @@ function* handleFetchAddresses() {
             first: page.first,
             last: page.last,
           },
-        })
+        }),
       );
-
-      const { currentUser }: { currentUser: AuthState["currentUser"] } =
-        yield select((state: RootState) => state.auth);
-
-      if (currentUser) {
-        yield put(updateShippingAddressAction({ sid: currentUser.addressId }));
-      }
     } catch (e) {
       yield put(addMessageSuccess({ error: e }));
       yield put(fetchAddressesFailure());
@@ -315,24 +297,31 @@ function* handleCreateAddress() {
 
     try {
       yield put(updateLoadingForSavingSuccess());
+      console.log(values.id);
+      console.log(values);
       if (values.id) {
+        console.log("??")
         yield call(updateAddress, values);
       } else {
-        yield call(createAddress, values);
+        values.id = yield call(createAddress, values);
       }
       yield put(
         saveAddressSuccess({
           ...values,
-          id: values.id ?? "",
           isDeleteLoading: false,
-        })
+        }),
       );
+      yield put(updateShowFormAdding({ value: false }));
     } catch (e) {
       yield put(addMessageSuccess({ error: e }));
-
       yield put(saveAddressFailure());
     }
   }
+}
+
+function* deleteAddress(aid: string) {
+  yield call(deleteAddressById, aid);
+  yield put(deleteAddressSuccess({ aid }));
 }
 
 function* handleDeleteAddress() {
@@ -342,12 +331,9 @@ function* handleDeleteAddress() {
     }: ReturnType<typeof deleteAddressAction> = yield take(deleteAddressAction);
     try {
       yield put(updateLoadingForAddressDeleteSuccess({ aid }));
-      yield fork(deleteAddressById, aid);
-      yield put(deleteAddressSuccess({ aid }));
-      yield put(updateShippingAddressAction({ sid: null }));
+      yield fork(deleteAddress, aid);
     } catch (e) {
       yield put(addMessageSuccess({ error: e }));
-
       yield put(deleteAddressFailure({ aid }));
     }
   }
@@ -359,7 +345,7 @@ function* handleStartSearchAddress() {
     const {
       payload: { value },
     }: ReturnType<typeof startSearchAddressAction> = yield take(
-      startSearchAddressAction
+      startSearchAddressAction,
     );
 
     if (searchTask) {
@@ -382,7 +368,7 @@ function* handleCalculateShippingFee() {
     const {
       payload: { addressId },
     }: ReturnType<typeof calculateShippingFeeAction> = yield take(
-      calculateShippingFeeAction
+      calculateShippingFeeAction,
     );
     try {
       yield put(updateLoadingForCalculatingShippingFeeSuccess());

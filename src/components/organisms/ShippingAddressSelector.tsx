@@ -1,6 +1,9 @@
 import CardHome from "@/components/atoms/CardHome";
 import ShippingAddressInfo from "@/components/organisms/ShippingAddressInfo";
-import { deleteAddressAction } from "@/redux/modules/address.ts";
+import {
+  deleteAddressAction,
+  updateShowFormAdding,
+} from "@/redux/modules/address.ts";
 import { updateCurrentUserAddressAction } from "@/redux/modules/auth";
 import { RootState } from "@/redux/store.ts";
 import { CheckCircleOutlined, DeleteOutlined } from "@ant-design/icons";
@@ -17,16 +20,15 @@ export const ShippingAddressSelector = ({
 }) => {
   const dispatch = useDispatch();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const { page, isDeleteLoading } = useSelector(
-    (state: RootState) => state.address
+  const { isShowAddForm, page } = useSelector(
+    (state: RootState) => state.address,
   );
   const { currentUser } = useSelector((state: RootState) => state.auth);
   const [addressIdSelected, setAddressIdSelected] = useState<string>(value);
-  const [isShowAddForm, setIsShowAddForm] = useState<boolean>(false);
 
   const addressDisplay = useMemo(
     () => page.content.find((it) => it.id === value),
-    [value, page.content]
+    [value, page.content],
   );
 
   return (
@@ -84,7 +86,11 @@ export const ShippingAddressSelector = ({
           )
         }
       >
-        <Button onClick={() => setIsShowAddForm(!isShowAddForm)}>
+        <Button
+          onClick={() =>
+            dispatch(updateShowFormAdding({ value: !isShowAddForm }))
+          }
+        >
           {isShowAddForm ? "Quay lại" : "Thêm địa chỉ"}
         </Button>
         {isShowAddForm && <ShippingAddressInfo />}
@@ -121,7 +127,7 @@ export const ShippingAddressSelector = ({
                                 dispatch(
                                   updateCurrentUserAddressAction({
                                     aid: it.id,
-                                  })
+                                  }),
                                 )
                               }
                             >
@@ -139,9 +145,8 @@ export const ShippingAddressSelector = ({
                         }
                         okText="Đồng ý"
                         cancelText="Hủy"
-                        okButtonProps={{ loading: it.isDeleteLoading }}
                       >
-                        {isDeleteLoading ? (
+                        {it.isDeleteLoading ? (
                           <Spin />
                         ) : (
                           <DeleteOutlined
