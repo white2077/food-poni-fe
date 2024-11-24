@@ -308,4 +308,6 @@ export type Topping = {
   readonly id: string;
   readonly name: string;
   readonly price: number;
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
 };

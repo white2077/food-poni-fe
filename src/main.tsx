@@ -1,9 +1,9 @@
 import store from "@/redux/store.ts";
+import "../styles/globals.scss";
 import { ConfigProvider } from "antd";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import "../styles/globals.scss";
 import { App, SecuredRoute } from "./components/App";
 import { AccountInformationPage } from "./components/pages/AccountInformationPage";
 import { CheckoutPage } from "./components/pages/CheckoutPage";
@@ -25,6 +25,7 @@ import { AdminProductDetailTablePage } from "./components/pages/AdminProductDeta
 import { ConsolidatedInvoicePage } from "./components/pages/ConsolidatedInvoicePage";
 import { PostPaidDetailPage } from "./components/pages/PostPaidDetailPage";
 import { SupportPage } from "./components/pages/SupportPage";
+import { AdminToppingTablePage } from "./components/pages/AdminToppingTablePage";
 
 export const router = (currentRole?: "RETAILER" | "CUSTOMER" | "VIP" | null) =>
   createBrowserRouter([
@@ -203,7 +204,7 @@ export const router = (currentRole?: "RETAILER" | "CUSTOMER" | "VIP" | null) =>
           path: "toppings-table",
           element: (
             <SecuredRoute currentRole={currentRole} role={["RETAILER"]}>
-              <div>Topping</div>
+              <AdminToppingTablePage />
             </SecuredRoute>
           ),
         },
