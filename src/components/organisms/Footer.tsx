@@ -14,7 +14,7 @@ export default function Footer() {
     <div className="bg-[#f5f5fa]">
       <CatBackground />
       <footer>
-        <div className="container">
+        <div className="container m-auto">
           <div className="content">
             <div className="col">
               <div className="in-col">

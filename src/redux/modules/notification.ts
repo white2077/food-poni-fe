@@ -6,11 +6,13 @@ import {
   markIsReadNotification,
 } from "@/utils/api/notification.ts";
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { call, fork, put, select, take } from "redux-saga/effects";
+import { call, fork, put, select, take, race } from "redux-saga/effects";
 import { addMessageSuccess } from "./message";
 
 export type NotificationState = {
-  readonly page: Page<Notification[]>;
+  readonly page: Page<
+    Array<Notification & { readonly isMarkLoading: boolean }>
+  >;
   readonly isFetchLoading: boolean;
 };
 
@@ -40,7 +42,7 @@ export const notificationsSlice = createSlice({
     }),
     fetchNotificationsSuccess: (
       state,
-      action: PayloadAction<{ page: Page<Notification[]> }>
+      action: PayloadAction<{ page: NotificationState["page"] }>
     ) => ({
       ...state,
       page: action.payload.page,
@@ -49,6 +51,24 @@ export const notificationsSlice = createSlice({
     fetchNotificationsFailure: (state) => ({
       ...state,
       isFetchLoading: false,
+    }),
+    updateLoadingForMarkingReadSuccess: (
+      state,
+      action: PayloadAction<{ id: string }>
+    ) => ({
+      ...state,
+      page: {
+        ...state.page,
+        content: state.page.content.map((it) => {
+          if (it.id === action.payload.id) {
+            return {
+              ...it,
+              isMarkLoading: true,
+            };
+          }
+          return it;
+        }),
+      },
     }),
     markReadNotificationSuccess: (
       state,
@@ -62,6 +82,25 @@ export const notificationsSlice = createSlice({
             return {
               ...it,
               read: true,
+              isMarkLoading: false,
+            };
+          }
+          return it;
+        }),
+      },
+    }),
+    markReadNotificationFailure: (
+      state,
+      action: PayloadAction<{ id: string }>
+    ) => ({
+      ...state,
+      page: {
+        ...state.page,
+        content: state.page.content.map((it) => {
+          if (it.id === action.payload.id) {
+            return {
+              ...it,
+              isMarkLoading: false,
             };
           }
           return it;
@@ -70,7 +109,9 @@ export const notificationsSlice = createSlice({
     }),
     pushNotificationSuccess: (
       state,
-      action: PayloadAction<{ notification: Notification }>
+      action: PayloadAction<{
+        notification: NotificationState["page"]["content"][0];
+      }>
     ) => {
       return {
         ...state,
@@ -88,6 +129,23 @@ export const notificationsSlice = createSlice({
         },
       };
     },
+    pushNotificationsSuccess: (
+      state,
+      action: PayloadAction<{ page: NotificationState["page"] }>
+    ) => ({
+      ...state,
+      page: {
+        ...state.page,
+        content: [...state.page.content, ...action.payload.page.content],
+        number: action.payload.page.number,
+        last: action.payload.page.last,
+      },
+      isFetchLoading: false,
+    }),
+    pushNotificationsFailure: (state) => ({
+      ...state,
+      isFetchLoading: false,
+    }),
   },
 });
 
@@ -97,8 +155,12 @@ export const {
   updateFetchLoading,
   fetchNotificationsSuccess,
   fetchNotificationsFailure,
+  updateLoadingForMarkingReadSuccess,
   markReadNotificationSuccess,
+  markReadNotificationFailure,
   pushNotificationSuccess,
+  pushNotificationsSuccess,
+  pushNotificationsFailure,
 } = notificationsSlice.actions;
 
 export const fetchNotificationsAction = createAction<{
@@ -107,25 +169,73 @@ export const fetchNotificationsAction = createAction<{
 export const markIsReadNotificationsAction = createAction<{
   id: string;
 }>(`${SLIDE_NAME}/markIsReadNotificationsRequest`);
+export const pushNotificationsAction = createAction<{
+  queryParams: QueryParams;
+}>(`${SLIDE_NAME}/pushNotificationsRequest`);
 
 function* handleFetchingNotifications() {
   while (true) {
     const {
-      payload: { queryParams },
-    }: ReturnType<typeof fetchNotificationsAction> = yield take(
-      fetchNotificationsAction
-    );
+      fetchNotification,
+      pushNotifications,
+    }: {
+      fetchNotification: ReturnType<typeof fetchNotificationsAction>;
+      pushNotifications: ReturnType<typeof pushNotificationsAction>;
+    } = yield race({
+      fetchNotification: take(fetchNotificationsAction),
+      pushNotifications: take(pushNotificationsAction),
+    });
     try {
       yield put(updateFetchLoading());
-      const page: Page<Notification[]> = yield call(
-        getNotificationsPage,
-        queryParams
-      );
-      yield put(fetchNotificationsSuccess({ page }));
+      if (fetchNotification) {
+        const page: Page<Notification[]> = yield call(
+          getNotificationsPage,
+          fetchNotification.payload.queryParams
+        );
+        yield put(
+          fetchNotificationsSuccess({
+            page: {
+              ...page,
+              content: page.content.map((it) => ({
+                ...it,
+                isMarkLoading: false,
+              })),
+            },
+          })
+        );
+      }
+
+      if (pushNotifications) {
+        const page: Page<Notification[]> = yield call(
+          getNotificationsPage,
+          pushNotifications.payload.queryParams
+        );
+        yield put(
+          pushNotificationsSuccess({
+            page: {
+              ...page,
+              content: page.content.map((it) => ({
+                ...it,
+                isMarkLoading: false,
+              })),
+            },
+          })
+        );
+      }
     } catch (e) {
       yield put(addMessageSuccess({ error: e }));
       yield put(fetchNotificationsFailure());
     }
+  }
+}
+
+function* markIsRead(id: string) {
+  const notification: Notification = yield select((state: RootState) =>
+    state.notification.page.content.find((it) => it.id === id)
+  );
+  if (notification && !notification.read) {
+    yield call(markIsReadNotification, id);
+    yield put(markReadNotificationSuccess({ id }));
   }
 }
 
@@ -137,15 +247,11 @@ function* handleMarkIsReadNotification() {
       markIsReadNotificationsAction
     );
     try {
-      const notification: Notification = yield select((state: RootState) =>
-        state.notification.page.content.find((it) => it.id === id)
-      );
-      if (notification && !notification.read) {
-        yield call(markIsReadNotification, id);
-        yield put(markReadNotificationSuccess({ id }));
-      }
+      yield put(updateLoadingForMarkingReadSuccess({ id }));
+      yield fork(markIsRead, id);
     } catch (e) {
       yield put(addMessageSuccess({ error: e }));
+      yield put(markReadNotificationFailure({ id }));
     }
   }
 }

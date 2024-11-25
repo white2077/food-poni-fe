@@ -29,6 +29,7 @@ import {
 import {
   fetchNotificationsAction,
   markIsReadNotificationsAction,
+  pushNotificationsAction,
   pushNotificationSuccess,
 } from "@/redux/modules/notification.ts";
 import { RootState } from "@/redux/store.ts";
@@ -46,7 +47,7 @@ import SockJS from "sockjs-client/dist/sockjs";
 export default function NotificationDropdown() {
   const dispatch = useDispatch();
   const { page, isFetchLoading } = useSelector(
-    (state: RootState) => state.notification,
+    (state: RootState) => state.notification
   );
   const { currentUser } = useSelector((state: RootState) => state.auth);
   const [tab, setTab] = useState<string>("all");
@@ -55,7 +56,7 @@ export default function NotificationDropdown() {
     dispatch(
       fetchNotificationsAction({
         queryParams: { page: 0, pageSize: 10, sort: ["createdAt,desc"] },
-      }),
+      })
     );
   }, [dispatch]);
 
@@ -72,12 +73,17 @@ export default function NotificationDropdown() {
             const notificationEvent: Notification = JSON.parse(message.body);
 
             const attributes = JSON.parse(
-              notificationEvent.attributes,
+              notificationEvent.attributes
             ) as NotificationAttributes;
 
             if (notificationEvent.toUser.id === currentUser.id) {
               dispatch(
-                pushNotificationSuccess({ notification: notificationEvent }),
+                pushNotificationSuccess({
+                  notification: {
+                    ...notificationEvent,
+                    isMarkLoading: false,
+                  },
+                })
               );
               notification.open({
                 type: [
@@ -92,7 +98,7 @@ export default function NotificationDropdown() {
                 message: notificationEvent.createdAt.toString(),
                 description: getNotificationOrderMessage(
                   attributes.id,
-                  attributes.orderStatus,
+                  attributes.orderStatus
                 ),
                 duration: 10,
                 btn: (
@@ -138,7 +144,7 @@ export default function NotificationDropdown() {
                       kickingUserFromCartItemLoading: false,
                     },
                     roomId: cartGroupEvent.roomId,
-                  }),
+                  })
                 );
               }
 
@@ -151,7 +157,7 @@ export default function NotificationDropdown() {
                 ) {
                   const { cartItemId, quantity } = cartGroupEvent.attributes;
                   dispatch(
-                    updateCartItemQuantitySuccess({ id: cartItemId, quantity }),
+                    updateCartItemQuantitySuccess({ id: cartItemId, quantity })
                   );
                 }
 
@@ -179,7 +185,7 @@ export default function NotificationDropdown() {
                     leaveCartGroupSuccess({
                       roomId: cartGroupEvent.roomId,
                       userId: cartGroupEvent.user.id,
-                    }),
+                    })
                   );
                 }
 
@@ -187,7 +193,7 @@ export default function NotificationDropdown() {
                   dispatch(
                     deleteCartGroupSuccess({
                       roomId: cartGroupEvent.roomId,
-                    }),
+                    })
                   );
                 }
 
@@ -199,14 +205,14 @@ export default function NotificationDropdown() {
                     dispatch(
                       deleteCartGroupSuccess({
                         roomId: cartGroupEvent.roomId,
-                      }),
+                      })
                     );
                   } else {
                     dispatch(
                       kickUserSuccess({
                         roomId: cartGroupEvent.roomId,
                         userId: cartGroupEvent.attributes.userId,
-                      }),
+                      })
                     );
                   }
                 }
@@ -255,7 +261,7 @@ export default function NotificationDropdown() {
                             pageSize: 10,
                             sort: ["createdAt,desc"],
                           },
-                        }),
+                        })
                       );
                     }
                     if (e.target.value === "unread") {
@@ -267,7 +273,7 @@ export default function NotificationDropdown() {
                             sort: ["createdAt,desc"],
                             read: "false",
                           },
-                        }),
+                        })
                       );
                     }
                     if (e.target.value === "read") {
@@ -279,7 +285,7 @@ export default function NotificationDropdown() {
                             sort: ["createdAt,desc"],
                             read: "true",
                           },
-                        }),
+                        })
                       );
                     }
                   }}
@@ -289,12 +295,33 @@ export default function NotificationDropdown() {
                   <Radio.Button value="read">Đã đọc</Radio.Button>
                 </Radio.Group>
               </div>
-              <ScrollPane maxHeight="max-h-[480px]">
+              <ScrollPane
+                maxHeight="max-h-[480px]"
+                onScroll={(event) => {
+                  const { scrollTop, scrollHeight, clientHeight } =
+                    event.currentTarget;
+                  if (scrollTop + clientHeight >= scrollHeight - 20) {
+                    if (!isFetchLoading) {
+                      if (!page.last) {
+                        dispatch(
+                          pushNotificationsAction({
+                            queryParams: {
+                              page: page.number + 1,
+                              pageSize: 10,
+                              sort: ["createdAt,desc"],
+                            },
+                          })
+                        );
+                      }
+                    }
+                  }
+                }}
+              >
                 {page.size > 0 ? (
                   <div className="flex flex-col gap-1">
                     {page.content.map((it, index) => {
                       const attributes = JSON.parse(
-                        it.attributes,
+                        it.attributes
                       ) as NotificationAttributes;
                       return (
                         <div
@@ -304,7 +331,7 @@ export default function NotificationDropdown() {
                               dispatch(
                                 markIsReadNotificationsAction({
                                   id: it.id,
-                                }),
+                                })
                               );
                             }
                           }}
@@ -324,7 +351,7 @@ export default function NotificationDropdown() {
                               <div className="text-2sm font-medium">
                                 {getNotificationOrderMessage(
                                   attributes.id,
-                                  attributes.orderStatus,
+                                  attributes.orderStatus
                                 )}
                               </div>
                               <span className="flex items-center text-2xs font-medium text-gray-500">
@@ -332,7 +359,7 @@ export default function NotificationDropdown() {
                                   const hoursDiff =
                                     Math.abs(
                                       new Date().getTime() -
-                                        new Date(it.createdAt).getTime(),
+                                        new Date(it.createdAt).getTime()
                                     ) / 36e5;
 
                                   if (hoursDiff > 48) {
@@ -340,7 +367,7 @@ export default function NotificationDropdown() {
                                       <span>
                                         {format(
                                           it.createdAt,
-                                          "hh:mm dd-MM-yyyy",
+                                          "hh:mm dd-MM-yyyy"
                                         )}
                                       </span>
                                     );
@@ -365,10 +392,14 @@ export default function NotificationDropdown() {
                             </div>
                           </div>
                           <div className="w-5 h-5 flex items-center justify-center">
-                            <div
-                              hidden={it.read}
-                              className="w-2 h-2 bg-primary rounded-full"
-                            ></div>
+                            {it.isMarkLoading ? (
+                              <Spin />
+                            ) : (
+                              <div
+                                hidden={it.read}
+                                className="w-2 h-2 bg-primary rounded-full"
+                              />
+                            )}
                           </div>
                         </div>
                       );
