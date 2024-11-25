@@ -1,7 +1,6 @@
 import EmptyNotice from "@/components/atoms/EmptyNotice";
 import { fetchOrdersByCustomerAction } from "@/redux/modules/order";
 import { RootState } from "@/redux/store";
-import { Order } from "@/type/types";
 import { ORDER_STATUSES } from "@/utils/common";
 import { Badge, List, Segmented, Space } from "antd";
 import { useEffect, useState } from "react";
@@ -84,7 +83,7 @@ export const OrderPage = () => {
             xxl: 2,
           }}
           dataSource={page.content}
-          renderItem={(order: Order, index: number) => (
+          renderItem={(order, index) => (
             <List.Item>
               <OrderCard
                 order={order}

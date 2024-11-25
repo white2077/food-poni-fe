@@ -27,6 +27,7 @@ import { PostPaidDetailPage } from "./components/pages/PostPaidDetailPage";
 import { SupportPage } from "./components/pages/SupportPage";
 import { AdminToppingTablePage } from "./components/pages/AdminToppingTablePage";
 import { AdminProductCategoriesTablePage } from "./components/pages/AdminProductCategoriesTablePage";
+import { AdminRefundTablePage } from "./components/pages/AdminRefundTablePage.tsx";
 
 export const router = (currentRole?: "RETAILER" | "CUSTOMER" | "VIP" | null) =>
   createBrowserRouter([
@@ -149,7 +150,7 @@ export const router = (currentRole?: "RETAILER" | "CUSTOMER" | "VIP" | null) =>
           path: "dashboard",
           element: (
             // <SecuredRoute currentRole={currentRole} role={["RETAILER"]}>
-              <AdminDashboardPage />
+            <AdminDashboardPage />
             // </SecuredRoute>
           ),
         },
@@ -174,6 +175,14 @@ export const router = (currentRole?: "RETAILER" | "CUSTOMER" | "VIP" | null) =>
           element: (
             <SecuredRoute currentRole={currentRole} role={["RETAILER"]}>
               <AdminOrderTablePage />
+            </SecuredRoute>
+          ),
+        },
+        {
+          path: "refund",
+          element: (
+            <SecuredRoute currentRole={currentRole} role={["RETAILER"]}>
+              <AdminRefundTablePage />
             </SecuredRoute>
           ),
         },
@@ -220,6 +229,6 @@ if (container) {
       <ConfigProvider theme={{ token: { colorPrimary: "#F36F24" } }}>
         <App />
       </ConfigProvider>
-    </Provider>,
+    </Provider>
   );
 }

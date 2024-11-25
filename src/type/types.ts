@@ -206,7 +206,7 @@ export type Page<T> = {
 
 export type PaymentInfo = {
   readonly method: "CASH" | "VNPAY" | "POSTPAID";
-  readonly status: "PAYING" | "PAID" | "FAILED";
+  readonly status: "PAYING" | "PAID" | "FAILED" | "REFUNDING" | "REFUNDED";
   readonly paymentUrl: string;
 };
 

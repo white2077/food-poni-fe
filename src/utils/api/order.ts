@@ -69,6 +69,18 @@ export const getPostPaidOrders = (
     .then((res: AxiosResponse<Page<Order[]>>) => res.data);
 };
 
+export const getRefundPageByRetailer = (
+  queryParams: QueryParams
+): Promise<Page<Order[]>> => {
+  return apiWithToken()
+    .get(generateQueryString("retailer/orders-refunding", queryParams), {
+      headers: {
+        Authorization: "Bearer " + accessToken,
+      },
+    })
+    .then((res: AxiosResponse<Page<Order[]>>) => res.data);
+};
+
 export const createOrderByCashOrPostPaid = (
   addressId: string,
   note: string,
@@ -144,6 +156,34 @@ export const updateStatus = (
       generateQueryString(`/retailer/orders/${oid}`, {
         orderStatus,
       }),
+      {},
+      {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+        },
+      }
+    )
+    .then((res: AxiosResponse<void>) => res.data);
+};
+
+export const refund = (oid: string): Promise<void> => {
+  return apiWithToken()
+    .patch(
+      generateQueryString(`/customer/orders/refund/${oid}`),
+      {},
+      {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+        },
+      }
+    )
+    .then((res: AxiosResponse<void>) => res.data);
+};
+
+export const refundConfirmationrefund = (oid: string): Promise<void> => {
+  return apiWithToken()
+    .patch(
+      generateQueryString(`/retailer/orders/confirm-refund/${oid}`),
       {},
       {
         headers: {

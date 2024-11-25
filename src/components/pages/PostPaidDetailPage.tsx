@@ -1,15 +1,14 @@
 import EmptyNotice from "@/components/atoms/EmptyNotice";
 import { fetchPostPaidOrdersAction } from "@/redux/modules/order";
 import { RootState } from "@/redux/store";
-import { Order } from "@/type/types";
+import { ORDER_STATUSES } from "@/utils/common";
 import { Badge, List, Segmented, Space } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import OrderCard from "../molecules/OrderCard";
-import { ManagementLayout } from "../templates/ManagementLayout";
-import { ORDER_STATUSES } from "@/utils/common";
 import { useLocation } from "react-router-dom";
 import { ProductLoading } from "../atoms/ProductLoading";
+import OrderCard from "../molecules/OrderCard";
+import { ManagementLayout } from "../templates/ManagementLayout";
 
 export const PostPaidDetailPage = () => {
   const dispatch = useDispatch();
@@ -109,7 +108,7 @@ export const PostPaidDetailPage = () => {
             xxl: 2,
           }}
           dataSource={page.content}
-          renderItem={(order: Order, index: number) => (
+          renderItem={(order, index) => (
             <List.Item>
               <OrderCard
                 order={order}

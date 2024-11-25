@@ -8,6 +8,9 @@ import {
   getOrdersPageByCustomer,
   getOrdersPageByRetailer,
   getPostPaidOrders,
+  getRefundPageByRetailer,
+  refund,
+  refundConfirmationrefund,
   updateStatus,
 } from "@/utils/api/order";
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
@@ -19,7 +22,12 @@ import { addMessageSuccess } from "./message";
 
 export type OrderState = {
   readonly page: Page<
-    Array<Order & { readonly isUpdateStatusLoading: boolean }>
+    Array<
+      Order & {
+        readonly isUpdateStatusLoading: boolean;
+        readonly isUpdatePaymentStatusLoading: boolean;
+      }
+    >
   >;
   readonly selectedOrder: Order | null;
   readonly isFetchLoading: boolean;
@@ -145,6 +153,81 @@ const orderSlice = createSlice({
         }),
       },
     }),
+    updateLoadingForRefunding: (
+      state,
+      action: PayloadAction<{ oid: string }>
+    ) => ({
+      ...state,
+      page: {
+        ...state.page,
+        content: state.page.content.map((order) => {
+          if (order.id === action.payload.oid) {
+            return {
+              ...order,
+              isUpdatePaymentStatusLoading: true,
+            };
+          }
+          return order;
+        }),
+      },
+    }),
+    refundSuccess: (state, action: PayloadAction<{ oid: string }>) => ({
+      ...state,
+      page: {
+        ...state.page,
+        content: state.page.content.map((order) => {
+          if (order.id === action.payload.oid) {
+            return {
+              ...order,
+              isUpdatePaymentStatusLoading: false,
+              payment: {
+                ...order.payment,
+                status: "REFUNDING",
+              },
+            };
+          }
+          return order;
+        }),
+      },
+    }),
+    refundFailure: (state, action: PayloadAction<{ oid: string }>) => ({
+      ...state,
+      page: {
+        ...state.page,
+        content: state.page.content.map((order) => {
+          if (order.id === action.payload.oid) {
+            return {
+              ...order,
+              isUpdatePaymentStatusLoading: false,
+            };
+          }
+          return order;
+        }),
+      },
+    }),
+    refundConfirmationSuccess: (
+      state,
+      action: PayloadAction<{ oid: string }>
+    ) => ({
+      ...state,
+      page: {
+        ...state.page,
+        content: state.page.content.map((order) => {
+          if (order.id === action.payload.oid) {
+            return {
+              ...order,
+              isUpdateStatusLoading: false,
+              payment: {
+                ...order.payment,
+                status: "REFUNDED",
+              },
+              status: "FAILED",
+            };
+          }
+          return order;
+        }),
+      },
+    }),
   },
 });
 
@@ -162,6 +245,10 @@ export const {
   updateLoadingForUpdatingStatus,
   updateOrderStatusSuccess,
   updateOrderStatusFailure,
+  updateLoadingForRefunding,
+  refundSuccess,
+  refundFailure,
+  refundConfirmationSuccess,
 } = orderSlice.actions;
 export const updateOrderItemsAction = createAction<void>(
   `${SLICE_NAME}/updateOrderItemsRequest`
@@ -172,6 +259,9 @@ export const fetchOrdersByCustomerAction = createAction<{
 export const fetchOrdersByRetailerAction = createAction<{
   queryParams: QueryParams;
 }>(`${SLICE_NAME}/fetchOrdersByRetailerRequest`);
+export const fetchRefundByRetailerAction = createAction<{
+  queryParams: QueryParams;
+}>(`${SLICE_NAME}/fetchRefundByRetailerRequest`);
 export const fetchOrderAction = createAction<{ orderId: string }>(
   `${SLICE_NAME}/fetchOrderRequest`
 );
@@ -192,6 +282,12 @@ export const updateOrderStatusAction = createAction<{
   oid: string;
   orderStatus: OrderStatus;
 }>(`${SLICE_NAME}/updateOrderStatusRequest`);
+export const refundAction = createAction<{
+  oid: string;
+}>(`${SLICE_NAME}/refundRequest`);
+export const refundConfirmationAction = createAction<{
+  oid: string;
+}>(`${SLICE_NAME}/refundConfirmationRequest`);
 
 function* handleFetchOrders() {
   while (true) {
@@ -199,14 +295,17 @@ function* handleFetchOrders() {
       fetchOrdersByCustomer,
       fetOrdersByRetailer,
       fetPostPaidOrders,
+      fetRefund,
     }: {
       fetchOrdersByCustomer: ReturnType<typeof fetchOrdersByCustomerAction>;
       fetOrdersByRetailer: ReturnType<typeof fetchOrdersByRetailerAction>;
       fetPostPaidOrders: ReturnType<typeof fetchPostPaidOrdersAction>;
+      fetRefund: ReturnType<typeof fetchRefundByRetailerAction>;
     } = yield race({
       fetchOrdersByCustomer: take(fetchOrdersByCustomerAction),
       fetOrdersByRetailer: take(fetchOrdersByRetailerAction),
       fetPostPaidOrders: take(fetchPostPaidOrdersAction),
+      fetRefund: take(fetchRefundByRetailerAction),
     });
 
     try {
@@ -223,6 +322,7 @@ function* handleFetchOrders() {
               content: page.content.map((order) => ({
                 ...order,
                 isUpdateStatusLoading: false,
+                isUpdatePaymentStatusLoading: false,
               })),
             },
           })
@@ -242,6 +342,7 @@ function* handleFetchOrders() {
               content: page.content.map((order) => ({
                 ...order,
                 isUpdateStatusLoading: false,
+                isUpdatePaymentStatusLoading: false,
               })),
             },
           })
@@ -261,6 +362,26 @@ function* handleFetchOrders() {
               content: page.content.map((order) => ({
                 ...order,
                 isUpdateStatusLoading: false,
+                isUpdatePaymentStatusLoading: false,
+              })),
+            },
+          })
+        );
+      }
+      if (fetRefund) {
+        yield put(updateFetchLoading());
+        const page: Page<Order[]> = yield call(
+          getRefundPageByRetailer,
+          fetRefund.payload.queryParams
+        );
+        yield put(
+          fetchOrdersSuccess({
+            page: {
+              ...page,
+              content: page.content.map((order) => ({
+                ...order,
+                isUpdateStatusLoading: false,
+                isUpdatePaymentStatusLoading: false,
               })),
             },
           })
@@ -399,9 +520,51 @@ function* updateOrderStatus(oid: string, orderStatus: OrderStatus) {
   yield put(updateOrderStatusSuccess({ oid, orderStatus }));
 }
 
+function* handleRefundOperations() {
+  while (true) {
+    const {
+      refundNormal,
+      refundConfirmation,
+    }: {
+      refundNormal: ReturnType<typeof refundAction>;
+      refundConfirmation: ReturnType<typeof refundConfirmationAction>;
+    } = yield race({
+      refundNormal: take(refundAction),
+      refundConfirmation: take(refundConfirmationAction),
+    });
+
+    try {
+      if (refundNormal) {
+        yield put(updateLoadingForRefunding({ oid: refundNormal.payload.oid }));
+        yield call(refund, refundNormal.payload.oid);
+        yield put(refundSuccess({ oid: refundNormal.payload.oid }));
+      }
+
+      if (refundConfirmation) {
+        yield put(
+          updateLoadingForUpdatingStatus({
+            oid: refundConfirmation.payload.oid,
+          })
+        );
+        yield call(refundConfirmationrefund, refundConfirmation.payload.oid);
+        yield put(
+          refundConfirmationSuccess({ oid: refundConfirmation.payload.oid })
+        );
+      }
+    } catch (e) {
+      yield put(addMessageSuccess({ error: e }));
+
+      yield put(
+        updateOrderStatusFailure({ oid: refundConfirmation.payload.oid })
+      );
+    }
+  }
+}
+
 export const orderSagas = [
   fork(handleFetchOrders),
   fork(handleFetchOrder),
   fork(handleCreateOrder),
   fork(handleUpdateOrderStatus),
+  fork(handleRefundOperations),
 ];
