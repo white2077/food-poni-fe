@@ -290,7 +290,7 @@ export const AdminOrderTablePage = () => {
                             icon={<CheckCircleOutlined />}
                             loading={it.isUpdateStatusLoading}
                           >
-                            Đã giao
+                            Xác nhận đã giao
                           </Button>
                         </Popconfirm>
                       )}
