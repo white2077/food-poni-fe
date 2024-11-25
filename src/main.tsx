@@ -7,7 +7,7 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import { App, SecuredRoute } from "./components/App";
 import { AccountInformationPage } from "./components/pages/AccountInformationPage";
 import { CheckoutPage } from "./components/pages/CheckoutPage";
-import { DashboardPage } from "./components/pages/Dashboard";
+import { AdminDashboardPage } from "./components/pages/AdminDashboard.tsx";
 import { FileManagementPage } from "./components/pages/FileManagementPage";
 import { HomePage } from "./components/pages/HomePage";
 import { LoginPage } from "./components/pages/LoginPage";
@@ -148,9 +148,9 @@ export const router = (currentRole?: "RETAILER" | "CUSTOMER" | "VIP" | null) =>
         {
           path: "dashboard",
           element: (
-            <SecuredRoute currentRole={currentRole} role={["RETAILER"]}>
-              <DashboardPage />
-            </SecuredRoute>
+            // <SecuredRoute currentRole={currentRole} role={["RETAILER"]}>
+              <AdminDashboardPage />
+            // </SecuredRoute>
           ),
         },
         {
