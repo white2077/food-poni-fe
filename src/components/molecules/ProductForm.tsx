@@ -1,4 +1,4 @@
-import { fetchProductCategoriesRequest } from "@/redux/modules/productCategory";
+import { fetchProductCategoriesAction } from "@/redux/modules/productCategory";
 import { fetchToppingsAction } from "@/redux/modules/topping";
 import { RootState } from "@/redux/store";
 import { Product } from "@/type/types";
@@ -55,7 +55,7 @@ export const ProductForm = ({ product }: { product?: Product }) => {
   const [error, setError] = useState<boolean | null>(true);
 
   useEffect(() => {
-    dispatch(fetchProductCategoriesRequest());
+    dispatch(fetchProductCategoriesAction({ queryParams: {} }));
     dispatch(fetchToppingsAction({ queryParams: {} }));
   }, [dispatch]);
 
