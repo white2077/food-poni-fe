@@ -4,7 +4,8 @@ import { QueryParams } from "@/utils/api/common";
 import {
   createOrderByCashOrPostPaid,
   createOrderByVNPay,
-  getOrderById,
+  getOrderByCustomer,
+  getOrderByRetailer,
   getOrdersPageByCustomer,
   getOrdersPageByRetailer,
   getPostPaidOrders,
@@ -63,7 +64,7 @@ const orderSlice = createSlice({
     }),
     fetchOrdersSuccess: (
       state,
-      action: PayloadAction<{ page: OrderState["page"] }>
+      action: PayloadAction<{ page: OrderState["page"] }>,
     ) => ({
       ...state,
       page: action.payload.page,
@@ -100,7 +101,7 @@ const orderSlice = createSlice({
     }),
     updateLoadingForUpdatingStatus: (
       state,
-      action: PayloadAction<{ oid: string }>
+      action: PayloadAction<{ oid: string }>,
     ) => ({
       ...state,
       page: {
@@ -118,7 +119,7 @@ const orderSlice = createSlice({
     }),
     updateOrderStatusSuccess: (
       state,
-      action: PayloadAction<{ oid: string; orderStatus: OrderStatus }>
+      action: PayloadAction<{ oid: string; orderStatus: OrderStatus }>,
     ) => ({
       ...state,
       page: {
@@ -137,7 +138,7 @@ const orderSlice = createSlice({
     }),
     updateOrderStatusFailure: (
       state,
-      action: PayloadAction<{ oid: string }>
+      action: PayloadAction<{ oid: string }>,
     ) => ({
       ...state,
       page: {
@@ -155,7 +156,7 @@ const orderSlice = createSlice({
     }),
     updateLoadingForRefunding: (
       state,
-      action: PayloadAction<{ oid: string }>
+      action: PayloadAction<{ oid: string }>,
     ) => ({
       ...state,
       page: {
@@ -207,7 +208,7 @@ const orderSlice = createSlice({
     }),
     refundConfirmationSuccess: (
       state,
-      action: PayloadAction<{ oid: string }>
+      action: PayloadAction<{ oid: string }>,
     ) => ({
       ...state,
       page: {
@@ -251,7 +252,7 @@ export const {
   refundConfirmationSuccess,
 } = orderSlice.actions;
 export const updateOrderItemsAction = createAction<void>(
-  `${SLICE_NAME}/updateOrderItemsRequest`
+  `${SLICE_NAME}/updateOrderItemsRequest`,
 );
 export const fetchOrdersByCustomerAction = createAction<{
   queryParams: QueryParams;
@@ -262,8 +263,11 @@ export const fetchOrdersByRetailerAction = createAction<{
 export const fetchRefundByRetailerAction = createAction<{
   queryParams: QueryParams;
 }>(`${SLICE_NAME}/fetchRefundByRetailerRequest`);
-export const fetchOrderAction = createAction<{ orderId: string }>(
-  `${SLICE_NAME}/fetchOrderRequest`
+export const fetchOrderByCustomerAction = createAction<{ orderId: string }>(
+  `${SLICE_NAME}/fetchOrderByCustomerRequest`,
+);
+export const fetchOrderByRetailerAction = createAction<{ orderId: string }>(
+  `${SLICE_NAME}/fetchOrderByRetailerRequest`,
 );
 export const fetchPostPaidOrdersAction = createAction<{
   ppid: string;
@@ -313,7 +317,7 @@ function* handleFetchOrders() {
         yield put(updateFetchLoading());
         const page: Page<Order[]> = yield call(
           getOrdersPageByCustomer,
-          fetchOrdersByCustomer.payload.queryParams
+          fetchOrdersByCustomer.payload.queryParams,
         );
         yield put(
           fetchOrdersSuccess({
@@ -325,7 +329,7 @@ function* handleFetchOrders() {
                 isUpdatePaymentStatusLoading: false,
               })),
             },
-          })
+          }),
         );
       }
 
@@ -333,7 +337,7 @@ function* handleFetchOrders() {
         yield put(updateFetchLoading());
         const page: Page<Order[]> = yield call(
           getOrdersPageByRetailer,
-          fetOrdersByRetailer.payload.queryParams
+          fetOrdersByRetailer.payload.queryParams,
         );
         yield put(
           fetchOrdersSuccess({
@@ -345,7 +349,7 @@ function* handleFetchOrders() {
                 isUpdatePaymentStatusLoading: false,
               })),
             },
-          })
+          }),
         );
       }
       if (fetPostPaidOrders) {
@@ -353,7 +357,7 @@ function* handleFetchOrders() {
         const page: Page<Order[]> = yield call(
           getPostPaidOrders,
           fetPostPaidOrders.payload.ppid,
-          fetPostPaidOrders.payload.queryParams
+          fetPostPaidOrders.payload.queryParams,
         );
         yield put(
           fetchOrdersSuccess({
@@ -365,14 +369,14 @@ function* handleFetchOrders() {
                 isUpdatePaymentStatusLoading: false,
               })),
             },
-          })
+          }),
         );
       }
       if (fetRefund) {
         yield put(updateFetchLoading());
         const page: Page<Order[]> = yield call(
           getRefundPageByRetailer,
-          fetRefund.payload.queryParams
+          fetRefund.payload.queryParams,
         );
         yield put(
           fetchOrdersSuccess({
@@ -384,7 +388,7 @@ function* handleFetchOrders() {
                 isUpdatePaymentStatusLoading: false,
               })),
             },
-          })
+          }),
         );
       }
     } catch (e) {
@@ -397,12 +401,24 @@ function* handleFetchOrders() {
 function* handleFetchOrder() {
   while (true) {
     const {
-      payload: { orderId },
-    }: ReturnType<typeof fetchOrderAction> = yield take(fetchOrderAction);
+      fetchOrderByCustomer,
+      fetchOrderByRetailer,
+    }: {
+      fetchOrderByCustomer: ReturnType<typeof fetchOrderByCustomerAction>;
+      fetchOrderByRetailer: ReturnType<typeof fetchOrderByRetailerAction>;
+    } = yield race({
+      fetchOrderByCustomer: take(fetchOrderByCustomerAction),
+      fetchOrderByRetailer: take(fetchOrderByRetailerAction),
+    });
 
     try {
       yield put(updateFetchLoading());
-      const order: Order = yield call(getOrderById, orderId);
+      const order: Order = yield call(
+        fetchOrderByCustomer ? getOrderByCustomer : getOrderByRetailer,
+        fetchOrderByCustomer
+          ? fetchOrderByCustomer.payload.orderId
+          : fetchOrderByRetailer.payload.orderId,
+      );
       yield put(fetchOrderSuccess({ order }));
     } catch (e) {
       yield put(addMessageSuccess({ error: e }));
@@ -434,7 +450,7 @@ function* handleCreateOrder() {
           const vnpayUrl: string = yield call(
             createOrderByVNPay,
             values.addressId,
-            values.note
+            values.note,
           );
           window.location.href = vnpayUrl;
         } else {
@@ -442,7 +458,7 @@ function* handleCreateOrder() {
             createOrderByCashOrPostPaid,
             values.addressId,
             values.note,
-            values.paymentMethod === "POSTPAID"
+            values.paymentMethod === "POSTPAID",
           );
 
           yield put(createOrderSuccess());
@@ -466,7 +482,7 @@ function* handleCreateOrder() {
             createOrderByVNPay,
             values.addressId,
             values.note,
-            roomId
+            roomId,
           );
           window.open(vnpayUrl, "_blank");
         } else {
@@ -475,7 +491,7 @@ function* handleCreateOrder() {
             values.addressId,
             values.note,
             values.paymentMethod === "POSTPAID",
-            roomId
+            roomId,
           );
 
           yield put(createOrderSuccess());
@@ -503,7 +519,7 @@ function* handleUpdateOrderStatus() {
     const {
       payload: { oid, orderStatus },
     }: ReturnType<typeof updateOrderStatusAction> = yield take(
-      updateOrderStatusAction
+      updateOrderStatusAction,
     );
     try {
       yield put(updateLoadingForUpdatingStatus({ oid }));
@@ -544,18 +560,18 @@ function* handleRefundOperations() {
         yield put(
           updateLoadingForUpdatingStatus({
             oid: refundConfirmation.payload.oid,
-          })
+          }),
         );
         yield call(refundConfirmationrefund, refundConfirmation.payload.oid);
         yield put(
-          refundConfirmationSuccess({ oid: refundConfirmation.payload.oid })
+          refundConfirmationSuccess({ oid: refundConfirmation.payload.oid }),
         );
       }
     } catch (e) {
       yield put(addMessageSuccess({ error: e }));
 
       yield put(
-        updateOrderStatusFailure({ oid: refundConfirmation.payload.oid })
+        updateOrderStatusFailure({ oid: refundConfirmation.payload.oid }),
       );
     }
   }

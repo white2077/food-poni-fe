@@ -1,5 +1,5 @@
 import { ProductLoading } from "@/components/atoms/ProductLoading.tsx";
-import { fetchOrderAction } from "@/redux/modules/order.ts";
+import { fetchOrderByCustomerAction } from "@/redux/modules/order.ts";
 import { RootState } from "@/redux/store";
 import { LeftOutlined } from "@ant-design/icons";
 import { Button, Card, Divider } from "antd";
@@ -30,7 +30,7 @@ export const OrderDetailPage = () => {
           queryParams: { page: 0, pageSize: 10, sort: ["createdAt,desc"] },
         })
       );
-      dispatch(fetchOrderAction({ orderId }));
+      dispatch(fetchOrderByCustomerAction({ orderId }));
     }
   }, [orderId, dispatch]);
 

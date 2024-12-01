@@ -9,7 +9,7 @@ import { Link, useParams } from "react-router-dom";
 import { OrderHeader } from "../molecules/OrderHeader.tsx";
 import { OrderInfoCard } from "../molecules/OrderInfoCard.tsx";
 import { ManagementLayout } from "../templates/ManagementLayout.tsx";
-import { fetchOrderAction } from "@/redux/modules/order.ts";
+import { fetchOrderByCustomerAction } from "@/redux/modules/order.ts";
 import { OrderPostPaidDetailCard } from "../molecules/OrderPostPaidDetailCard.tsx";
 
 export const OrderPostPaidDetailPage = () => {
@@ -35,7 +35,7 @@ export const OrderPostPaidDetailPage = () => {
           },
         })
       );
-      dispatch(fetchOrderAction({ orderId }));
+      dispatch(fetchOrderByCustomerAction({ orderId }));
     }
   }, [orderId, dispatch]);
 

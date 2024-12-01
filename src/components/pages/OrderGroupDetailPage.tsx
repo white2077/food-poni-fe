@@ -1,5 +1,5 @@
 import { ProductLoading } from "@/components/atoms/ProductLoading.tsx";
-import { fetchOrderAction } from "@/redux/modules/order";
+import { fetchOrderByCustomerAction } from "@/redux/modules/order";
 import { RootState } from "@/redux/store";
 import { LeftOutlined } from "@ant-design/icons";
 import { Button, Card, Divider } from "antd";
@@ -36,7 +36,7 @@ export const OrderGroupDetailPage = () => {
           },
         })
       );
-      dispatch(fetchOrderAction({ orderId }));
+      dispatch(fetchOrderByCustomerAction({ orderId }));
     }
   }, [orderId, dispatch]);
 

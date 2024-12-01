@@ -35,7 +35,7 @@ export const AvatarInfo = ({
     </div>
     <div className="font-medium">
       <div>{fullName}</div>
-      <div className="text-sm text-gray-500">{info}</div>
+      <div className="text-[12px] text-gray-500">{info}</div>
     </div>
     {timeout && roomId && (
       <Countdown

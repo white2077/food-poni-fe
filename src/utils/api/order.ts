@@ -27,7 +27,7 @@ export const getOrdersPageByRetailer = (
     .then((res: AxiosResponse<Page<Order[]>>) => res.data);
 };
 
-export const getOrderById = (oid: string): Promise<Order> => {
+export const getOrderByCustomer = (oid: string): Promise<Order> => {
   return apiWithToken()
     .get(generateQueryString(`/customer/orders/${oid}`), {
       headers: {
@@ -35,6 +35,16 @@ export const getOrderById = (oid: string): Promise<Order> => {
       },
     })
     .then((res: AxiosResponse<Order>) => res.data);
+};
+
+export const getOrderByRetailer = (oid: string): Promise<Order> => {
+    return apiWithToken()
+        .get(generateQueryString(`/retailer/orders/${oid}`), {
+            headers: {
+                Authorization: "Bearer " + accessToken,
+            },
+        })
+        .then((res: AxiosResponse<Order>) => res.data);
 };
 
 export const getOrdersPageByStatus = (

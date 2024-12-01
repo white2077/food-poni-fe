@@ -11,6 +11,7 @@ import {
   CopyOutlined,
   DashOutlined,
   DownloadOutlined,
+  EyeOutlined,
   FrownOutlined,
   LineOutlined,
   SendOutlined,
@@ -35,6 +36,7 @@ import { AdminLayout } from "../templates/AdminLayout";
 import "./AdminOrderTablePage.scss";
 import { SalesLabel } from "@/components/atoms/SalesLabel.tsx";
 import Button from "antd-button-color";
+import { InvoiceModal } from "../organisms/InvoiceModal";
 
 const TableToolbar = ({
   isFetchLoading,
@@ -328,7 +330,23 @@ export const AdminOrderTablePage = () => {
                 placement="bottomLeft"
                 arrow={{ pointAtCenter: true }}
                 menu={{
-                  items: tableRowActions,
+                  items: [
+                    {
+                      key: "1",
+                      icon: <CopyOutlined />,
+                      label: "Copy ID",
+                    },
+                    {
+                      key: "2",
+                      icon: <LineOutlined />,
+                      label: "Copy Data Row",
+                    },
+                    {
+                      key: "3",
+                      icon: <EyeOutlined />,
+                      label: <InvoiceModal id={it.id} />,
+                    },
+                  ],
                 }}
               >
                 <div className="text-center">
@@ -343,19 +361,6 @@ export const AdminOrderTablePage = () => {
     </AdminLayout>
   );
 };
-
-const tableRowActions = [
-  {
-    key: "1",
-    icon: <CopyOutlined />,
-    label: "Copy ID",
-  },
-  {
-    key: "2",
-    icon: <LineOutlined />,
-    label: "Copy Data Row",
-  },
-];
 
 const getColumns = () => {
   return [

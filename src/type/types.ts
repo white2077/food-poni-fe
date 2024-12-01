@@ -87,6 +87,7 @@ export type Order = {
   readonly note: string;
   readonly payment: PaymentInfo;
   readonly createdAt: Date;
+  readonly updatedAt: Date;
   readonly paymentStatus: PaymentInfo;
   readonly shippingFee: number;
 };
