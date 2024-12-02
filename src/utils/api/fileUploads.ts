@@ -29,12 +29,11 @@ export const uploadFile = (file: File): Promise<FileUpload> => {
     .then((res: AxiosResponse<FileUpload>) => res.data);
 };
 
-export const getFileById = (fileId: string): Promise<FileUpload> => {
+export const deleteFileById = (fileId: string): Promise<void> => {
   return apiWithToken()
-    .get(`/file-uploads/${fileId}`, {
+    .delete(`/file-uploads/${fileId}`, {
       headers: {
         Authorization: "Bearer " + accessToken,
       },
     })
-    .then((res: AxiosResponse<FileUpload>) => res.data);
 };

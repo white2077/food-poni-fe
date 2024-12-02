@@ -1,28 +1,18 @@
-import { useEffect } from "react";
-import { Button, Image, Input, Modal, Rate } from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
 import {
-  setShowModalAddRate,
-  setShowModalFileUpload,
   createRateAction,
+  setShowModalAddRate,
   updateRateForm,
 } from "@/redux/modules/rate";
-import { unSelectedMultiFile } from "@/redux/modules/fileUploads";
-import FileUploads from "./FileUploads";
+import { RootState } from "@/redux/store";
+import { Button, Input, Modal, Rate } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { ImagesSelector } from "../molecules/ImagesSelector";
 
 const RateAdd = () => {
   const dispatch = useDispatch();
-  const { showModalAddRate, form } = useSelector(
+  const { showModalAddRate, form,isLoading } = useSelector(
     (state: RootState) => state.rate
   );
-  const selectedImages = useSelector(
-    (state: RootState) => state.fileUpload.selectedMultiFile
-  );
-
-  useEffect(() => {
-    dispatch(updateRateForm({ images: selectedImages }));
-  }, [selectedImages, dispatch]);
 
   return (
     <Modal
@@ -31,7 +21,6 @@ const RateAdd = () => {
       footer={null}
       onCancel={() => {
         dispatch(setShowModalAddRate(false));
-        dispatch(unSelectedMultiFile());
         dispatch(updateRateForm({ rate: 0, message: "", images: [] }));
       }}
     >
@@ -45,32 +34,25 @@ const RateAdd = () => {
         />
         <Input.TextArea
           showCount
-          maxLength={100}
+          maxLength={100} 
           placeholder="Nhập tin nhắn đánh giá"
           onChange={(e) => {
             dispatch(updateRateForm({ message: e.target.value }));
           }}
           value={form.message}
         />
-        <div className="grid grid-cols-4 gap-4 mt-2 overflow-y-scroll scrollbar-rounded max-h-64">
-          {form.images.map((url: string, index: number) => (
-            <Image
-              className="rounded-lg !h-32 object-cover !w-28"
-              key={index}
-              src={url}
-              alt={`Image ${index}`}
-            />
-          ))}
-        </div>
-        <div className="flex gap-2 my-3">
-          <Button
-            onClick={() => {
-              dispatch(setShowModalFileUpload(true));
+        <div className="my-3">
+          <ImagesSelector
+            className="w-[80px] h-[80px]"
+            value={form.images}
+            onOke={(values) => {
+              dispatch(updateRateForm({ images: values }));
             }}
-          >
-            Chọn ảnh
-          </Button>
+          />
+        </div>
+        <div className="flex justify-end mt-3">
           <Button
+          loading={isLoading}
             disabled={form.rate === 0}
             type="primary"
             onClick={() => {
@@ -81,7 +63,6 @@ const RateAdd = () => {
           </Button>
         </div>
       </div>
-      <FileUploads />
     </Modal>
   );
 };

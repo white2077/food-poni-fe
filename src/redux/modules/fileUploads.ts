@@ -1,14 +1,18 @@
 import { RootState } from "@/redux/store";
 import { FileUpload, Page } from "@/type/types";
 import { QueryParams } from "@/utils/api/common";
-import { getFileUploads, uploadFile } from "@/utils/api/fileUploads";
+import {
+  deleteFileById,
+  getFileUploads,
+  uploadFile,
+} from "@/utils/api/fileUploads";
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { notification } from "antd";
 import { call, fork, put, select, take } from "redux-saga/effects";
 import { addMessageSuccess } from "./message";
 
 export type FileUploadsState = {
-  readonly page: Page<FileUpload[]>;
+  readonly page: Page<Array<FileUpload & { isDeleteLoading: boolean }>>;
   readonly isFetchLoading: boolean;
   readonly isUploadLoading: boolean;
   readonly selectedMultiFile: string[];
@@ -51,7 +55,7 @@ const fileUploadsSlice = createSlice({
     }),
     fetchFileUploadsSuccess: (
       state,
-      action: PayloadAction<{ page: Page<FileUpload[]> }>
+      action: PayloadAction<{ page: FileUploadsState["page"] }>
     ) => ({
       ...state,
       page: action.payload.page,
@@ -61,17 +65,25 @@ const fileUploadsSlice = createSlice({
       ...state,
       isFetchLoading: false,
     }),
-    uploadFileRequest: (state) => ({
+    updateLoadingForUploadingSuccess: (state) => ({
       ...state,
       isUploadLoading: true,
     }),
-    uploadFileSuccess: (state, action: PayloadAction<FileUpload>) => ({
+    uploadFileSuccess: (
+      state,
+      action: PayloadAction<{
+        fileUpload: FileUploadsState["page"]["content"][0];
+      }>
+    ) => ({
       ...state,
       page: {
         ...state.page,
-        content: [...state.page.content, action.payload],
+        content: [...state.page.content, action.payload.fileUpload],
       },
-      selectedMultiFile: [...state.selectedMultiFile, action.payload.url],
+      selectedMultiFile: [
+        ...state.selectedMultiFile,
+        action.payload.fileUpload.url,
+      ],
       isUploadLoading: false,
       form: { file: null },
     }),
@@ -98,6 +110,42 @@ const fileUploadsSlice = createSlice({
       ...state,
       form: { ...state.form, ...action.payload },
     }),
+    updateLoadingForDeleting: (
+      state,
+      action: PayloadAction<{ fileId: string }>
+    ) => ({
+      ...state,
+      page: {
+        ...state.page,
+        content: state.page.content.map((item) => {
+          if (item.id === action.payload.fileId) {
+            return { ...item, isDeleteLoading: true };
+          }
+          return item;
+        }),
+      },
+    }),
+    deleteFileSuccess: (state, action: PayloadAction<{ fileId: string }>) => ({
+      ...state,
+      page: {
+        ...state.page,
+        content: state.page.content.filter(
+          (file) => file.id !== action.payload.fileId
+        ),
+      },
+    }),
+    deleteFileFailure: (state, action: PayloadAction<{ fileId: string }>) => ({
+      ...state,
+      page: {
+        ...state.page,
+        content: state.page.content.map((item) => {
+          if (item.id === action.payload.fileId) {
+            return { ...item, isDeleteLoading: false };
+          }
+          return item;
+        }),
+      },
+    }),
   },
 });
 
@@ -105,13 +153,16 @@ export const {
   updateFetchLoadingSuccess,
   fetchFileUploadsSuccess,
   fetchFileUploadsFailure,
-  uploadFileRequest,
+  updateLoadingForUploadingSuccess,
   uploadFileSuccess,
   uploadFileFailure,
   setSelectedMultiFile,
   unSelectedMultiFile,
   setShowModalFileUpload,
   updateFileUploadForm,
+  updateLoadingForDeleting,
+  deleteFileSuccess,
+  deleteFileFailure,
 } = fileUploadsSlice.actions;
 
 export default fileUploadsSlice.reducer;
@@ -120,6 +171,9 @@ export const fetchFileUploadsAction = createAction<{
   queryParams: QueryParams;
 }>(`${SLICE_NAME}/fetchFileUploadsAction`);
 export const uploadFileAction = createAction(`${SLICE_NAME}/uploadFileAction`);
+export const deleteFileAction = createAction<string>(
+  `${SLICE_NAME}/deleteFileAction`
+);
 
 function* handleFetchFileUploads() {
   while (true) {
@@ -131,7 +185,17 @@ function* handleFetchFileUploads() {
     try {
       yield put(updateFetchLoadingSuccess());
       const page: Page<FileUpload[]> = yield call(getFileUploads, queryParams);
-      yield put(fetchFileUploadsSuccess({ page }));
+      yield put(
+        fetchFileUploadsSuccess({
+          page: {
+            ...page,
+            content: page.content.map((item) => ({
+              ...item,
+              isDeleteLoading: false,
+            })),
+          },
+        })
+      );
     } catch (e) {
       yield put(addMessageSuccess({ error: e }));
       yield put(fetchFileUploadsFailure());
@@ -143,13 +207,14 @@ function* handleUploadFile() {
   while (true) {
     yield take(uploadFileAction);
     try {
-      yield put(uploadFileRequest());
+      yield put(updateLoadingForUploadingSuccess());
       const { form } = yield select((state: RootState) => state.fileUpload);
-      if (!form.file) {
-        throw new Error("No file selected");
-      }
       const response: FileUpload = yield call(uploadFile, form.file);
-      yield put(uploadFileSuccess(response));
+      yield put(
+        uploadFileSuccess({
+          fileUpload: { ...response, isDeleteLoading: false },
+        })
+      );
       notification.success({
         message: "Upload thành công",
         description: "File đã được tải lên thành công.",
@@ -161,7 +226,31 @@ function* handleUploadFile() {
   }
 }
 
+function* deleteFile(fileId: string) {
+  yield call(deleteFileById, fileId);
+  yield put(deleteFileSuccess({ fileId }));
+  notification.success({
+    message: "Xóa thành công",
+    description: "File đã được xóa thành công.",
+  });
+}
+
+function* handleDeleteFile() {
+  while (true) {
+    const { payload: fileId }: ReturnType<typeof deleteFileAction> =
+      yield take(deleteFileAction);
+    try {
+      yield put(updateLoadingForDeleting({ fileId }));
+      yield fork(deleteFile, fileId);
+    } catch (e) {
+      yield put(addMessageSuccess({ error: e }));
+      yield put(deleteFileFailure({ fileId }));
+    }
+  }
+}
+
 export const fileUploadsSagas = [
   fork(handleFetchFileUploads),
   fork(handleUploadFile),
+  fork(handleDeleteFile),
 ];
