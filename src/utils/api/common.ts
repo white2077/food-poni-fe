@@ -14,7 +14,9 @@ export type QueryParams = {
   slug?: string | null;
   pid?: string | null;
   orderGroup?: boolean | null;
-  // body?: z.infer<typeof productSchema>;
+  startDate?: string | null;
+  endDate?: string | null;
+  year?: string | null;
 };
 
 export default function generateQueryString(
@@ -31,6 +33,9 @@ export default function generateQueryString(
     slug,
     pid,
     orderGroup,
+    startDate,
+    endDate,
+    year
   } = params ?? ({} as QueryParams);
   let queryString = "";
 
@@ -43,7 +48,10 @@ export default function generateQueryString(
     read ||
     slug ||
     pid ||
-    orderGroup
+    orderGroup ||
+    startDate ||
+    endDate ||
+    year
   ) {
     queryString += "?";
 
@@ -98,6 +106,26 @@ export default function generateQueryString(
         queryString += "&";
       }
       queryString += `pid=${pid}`;
+    }
+
+    if (startDate) {
+      if (queryString.length > 1) {
+        queryString += "&";
+      }
+      queryString += `startDate=${startDate}`;
+    }
+
+    if (endDate) {
+      if (queryString.length > 1) {
+        queryString += "&";
+      }
+      queryString += `endDate=${endDate}`;
+    }
+    if (year) {
+      if (queryString.length > 1) {
+        queryString += "&";
+      }
+      queryString += `year=${year}`;
     }
   }
 

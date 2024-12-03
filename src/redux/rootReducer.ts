@@ -13,6 +13,7 @@ import rateReducer from "@/redux/modules/rate.ts";
 import toppingReducer from "@/redux/modules/topping.ts";
 import invoiceReducer from "@/redux/modules/invoice.ts";
 import messageReducer from "@/redux/modules/message.ts";
+import statisticReducer from "@/redux/modules/statistic.ts";
 import { combineReducers } from "@reduxjs/toolkit";
 
 export const rootReducer = combineReducers({
@@ -21,6 +22,7 @@ export const rootReducer = combineReducers({
   cart: cartReducer,
   fileUpload: fileUploadsReducer,
   invoice: invoiceReducer,
+  statistic:statisticReducer,
   message: messageReducer,
   order: orderReducer,
   orderItem: orderItemReducer,

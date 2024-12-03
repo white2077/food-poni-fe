@@ -13,6 +13,7 @@ import { rateSagas } from "./modules/rate.ts";
 import { orderItemSagas } from "./modules/orderItem.ts";
 import { productDetailSagas } from "./modules/productDetail.ts";
 import { invoiceSagas } from "./modules/invoice.ts";
+import { statisticSagas } from "./modules/statistic.ts";
 
 export default function* rootSaga() {
   yield all([
@@ -28,6 +29,7 @@ export default function* rootSaga() {
     ...orderSagas,
     ...orderItemSagas,
     ...shippingAddressSagas,
+    ...statisticSagas,
     ...toppingSagas,
     ...rateSagas,
   ]);
