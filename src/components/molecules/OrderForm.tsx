@@ -16,6 +16,7 @@ export const OrderForm = ({
   currentUserAddressId,
   isCreateLoading,
   enableCartGroup,
+  enableOnSubmit,
   calculateShippingFee,
   onSubmit,
 }: {
@@ -23,6 +24,7 @@ export const OrderForm = ({
   currentUserAddressId: string;
   isCreateLoading: boolean;
   enableCartGroup?: boolean;
+  enableOnSubmit?: boolean;
   calculateShippingFee: (addressId: string) => void;
   onSubmit: (values: OrderRequest) => void;
 }) => {
@@ -70,6 +72,7 @@ export const OrderForm = ({
             htmlType="button"
             danger
             block
+            disabled={!enableOnSubmit && form.getFieldValue("addressId")}
             loading={isCreateLoading}
           >
             Thanh toán

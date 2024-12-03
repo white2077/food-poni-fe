@@ -22,7 +22,7 @@ export function QuantityInput({
       <Button
         type="text"
         icon={<MinusOutlined />}
-        loading={item.isUpdateLoading}
+        loading={item.isUpdateQuantityLoading}
         disabled={item.quantity <= 1}
         onClick={() => {
           dispatch(
@@ -65,7 +65,7 @@ export function QuantityInput({
       <Button
         type="text"
         icon={<PlusOutlined />}
-        loading={item.isUpdateLoading}
+        loading={item.isUpdateQuantityLoading}
         disabled={item.quantity >= 100}
         onClick={() =>
           dispatch(

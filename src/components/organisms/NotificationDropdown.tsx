@@ -139,9 +139,6 @@ export default function NotificationDropdown() {
                       user: cartGroupEvent.user,
                       toppings,
                       type,
-                      updatingQuantityLoading: false,
-                      deletingCartItemLoading: false,
-                      kickingUserFromCartItemLoading: false,
                     },
                     roomId: cartGroupEvent.roomId,
                   })

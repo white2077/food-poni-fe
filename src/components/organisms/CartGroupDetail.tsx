@@ -208,56 +208,59 @@ export function CartGroupDetail({
                 currentUserId={currentUser.id}
                 it={it}
               />
-              <Col flex="300">
-                <Card style={{ marginBottom: "16px" }}>
-                  <div className="flex justify-between">
-                    <div className="text-gray-500">Tạm tính</div>
-                    <span style={{ float: "right" }}>
-                      {currencyFormat(calculateTotalAmount(it.cartItems, true))}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <div className="text-gray-500">Phí vận chuyển</div>
-                    <span className="float-right">
-                      {isCalculateShippingFeeLoading ? (
-                        <Spin />
-                      ) : (
-                        currencyFormat(
-                          currentUser.id === it.user.id ? shippingFee : 0
-                        )
-                      )}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <div className="text-gray-500">Giảm giá</div>
-                    <span className="float-right">0 ₫</span>
-                  </div>
-                  <Divider />
-                  <div className="flex justify-between">
-                    <div className="text-gray-500">Tổng tiền</div>
-                    <div className="grid">
-                      <div className="text-2xl text-red-500 text-right float-right">
-                        {currencyFormat(
-                          currentUser.id === it.user.id
-                            ? calculateTotalAmount(it.cartItems, true) +
-                                shippingFee
-                            : calculateTotalAmount(it.cartItems, true)
-                        )}
+              {currentUser &&
+                it.user.id === currentUser.id &&
+                it.cartItems.length > 0 && (
+                  <Col flex="300">
+                    <Card style={{ marginBottom: "16px" }}>
+                      <div className="flex justify-between">
+                        <div className="text-gray-500">Tạm tính</div>
+                        <span style={{ float: "right" }}>
+                          {currencyFormat(
+                            calculateTotalAmount(it.cartItems, true)
+                          )}
+                        </span>
                       </div>
-                      <div className="right-0 text-gray-400">
-                        (Đã bao gồm VAT nếu có)
+                      <div className="flex justify-between">
+                        <div className="text-gray-500">Phí vận chuyển</div>
+                        <span className="float-right">
+                          {isCalculateShippingFeeLoading ? (
+                            <Spin />
+                          ) : (
+                            currencyFormat(
+                              currentUser.id === it.user.id ? shippingFee : 0
+                            )
+                          )}
+                        </span>
                       </div>
-                    </div>
-                  </div>
-                </Card>
-                {currentUser &&
-                  it.user.id === currentUser.id &&
-                  it.cartItems.length > 0 && (
+                      <div className="flex justify-between">
+                        <div className="text-gray-500">Giảm giá</div>
+                        <span className="float-right">0 ₫</span>
+                      </div>
+                      <Divider />
+                      <div className="flex justify-between">
+                        <div className="text-gray-500">Tổng tiền</div>
+                        <div className="grid">
+                          <div className="text-2xl text-red-500 text-right float-right">
+                            {currencyFormat(
+                              currentUser.id === it.user.id
+                                ? calculateTotalAmount(it.cartItems, true) +
+                                    shippingFee
+                                : calculateTotalAmount(it.cartItems, true)
+                            )}
+                          </div>
+                          <div className="right-0 text-gray-400">
+                            (Đã bao gồm VAT nếu có)
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
                     <OrderForm
                       currentUserRole={currentUser.role}
                       currentUserAddressId={currentUser.addressId}
                       isCreateLoading={isCreateLoading}
                       enableCartGroup={true}
+                      enableOnSubmit={it.cartItems.length > 0}
                       calculateShippingFee={(addressId: string) =>
                         calculateShippingFee(addressId)
                       }
@@ -265,8 +268,8 @@ export function CartGroupDetail({
                         createOrderGroup(values, it.roomId)
                       }
                     />
-                  )}
-              </Col>
+                  </Col>
+                )}
               <div className="absolute bottom-0 left-0">
                 {it.user.id !== currentUser.id && (
                   <Popconfirm

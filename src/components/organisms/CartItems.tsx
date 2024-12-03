@@ -10,8 +10,13 @@ import { CartHeader } from "../molecules/CartHeader.tsx";
 export const CartItems = () => {
   const dispatch = useDispatch();
 
-  const { page, isFetchLoading, isAllChecked, isDeleteAllLoading } =
-    useSelector((state: RootState) => state.cart);
+  const {
+    page,
+    isFetchLoading,
+    isAllChecked,
+    isDeleteAllLoading,
+    isCheckAllLoading,
+  } = useSelector((state: RootState) => state.cart);
 
   return (
     <div className="w-full">
@@ -20,6 +25,7 @@ export const CartItems = () => {
         enableDeleteAll={page.content.length > 0}
         isAllChecked={isAllChecked}
         isDeleteAllLoading={isDeleteAllLoading}
+        isCheckAllLoading={isCheckAllLoading}
         isDisableCheckbox={page.content.length < 1}
         updateAllCheckedRequest={() => dispatch(updateAllCheckedRequest())}
         deleteAllCartRequest={() => dispatch(deleteAllCartRequest())}

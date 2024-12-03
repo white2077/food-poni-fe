@@ -116,6 +116,9 @@ export const CheckoutPage = () => {
                 currentUserRole={currentUser.role}
                 currentUserAddressId={currentUser.addressId}
                 isCreateLoading={isCreateLoading}
+                enableOnSubmit={
+                  page.content.filter((it) => it.checked).length > 0
+                }
                 calculateShippingFee={(addressId: string) =>
                   calculateShippingFee(addressId)
                 }

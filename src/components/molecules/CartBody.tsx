@@ -41,18 +41,22 @@ export const CartBody = ({
                 <Row className=" my-[16px] items-center">
                   {!enableCartGroup && (
                     <Col flex="2%">
-                      <Checkbox
-                        className="pl-2"
-                        onClick={() =>
-                          dispatch(
-                            updateCheckedAction({
-                              id: it.id,
-                              checked: !it.checked,
-                            }),
-                          )
-                        }
-                        checked={it.checked}
-                      />
+                      {it.isCheckedLoading ? (
+                        <Spin />
+                      ) : (
+                        <Checkbox
+                          className="pl-2"
+                          onClick={() =>
+                            dispatch(
+                              updateCheckedAction({
+                                id: it.id,
+                                checked: !it.checked,
+                              })
+                            )
+                          }
+                          checked={it.checked}
+                        />
+                      )}
                     </Col>
                   )}
                   <Col flex="40%">
@@ -109,7 +113,7 @@ export const CartBody = ({
                     {currencyFormat(
                       (it.productDetail.price +
                         it.toppings.reduce((sum, tp) => sum + tp.price, 0)) *
-                        it.quantity,
+                        it.quantity
                     )}
                   </Col>
                   <Col flex="20%">
@@ -123,13 +127,13 @@ export const CartBody = ({
                                   updateCartItemNoteAction({
                                     id: it.id,
                                     note: e.target.value,
-                                  }),
+                                  })
                                 )
                               : dispatch(
                                   updateNoteAction({
                                     id: it.id,
                                     note: e.target.value,
-                                  }),
+                                  })
                                 )
                           }
                           placeholder="Ghi chú"
@@ -154,7 +158,7 @@ export const CartBody = ({
                           dispatch(
                             !enableCartGroup
                               ? deleteCartRequest({ id: it.id })
-                              : deleteCartItemAction({ id: it.id }),
+                              : deleteCartItemAction({ id: it.id })
                           )
                         }
                         okText="Đồng ý"

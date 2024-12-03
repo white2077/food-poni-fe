@@ -40,9 +40,9 @@ export type CartGroupState = {
     };
     cartItems: Array<
       Cart & {
-        readonly updatingQuantityLoading?: boolean;
+        readonly isUpdateQuantityLoading?: boolean;
         readonly isUpdateNoteLoading?: boolean;
-        readonly deletingCartItemLoading?: boolean;
+        readonly isDeleteLoading?: boolean;
         readonly kickingUserFromCartItemLoading?: boolean;
       }
     >;
@@ -167,7 +167,7 @@ const cartGroupSlide = createSlice({
           if (ci.id === action.payload.id) {
             return {
               ...ci,
-              updatingQuantityLoading: true,
+              isUpdateQuantityLoading: true,
             };
           }
           return ci;
@@ -189,7 +189,7 @@ const cartGroupSlide = createSlice({
             return {
               ...ci,
               quantity: action.payload.quantity,
-              updatingQuantityLoading: false,
+              isUpdateQuantityLoading: false,
             };
           }
           return ci;
@@ -207,7 +207,7 @@ const cartGroupSlide = createSlice({
           if (ci.id === action.payload.id) {
             return {
               ...ci,
-              updatingQuantityLoading: false,
+              isUpdateQuantityLoading: false,
             };
           }
           return ci;
@@ -285,11 +285,44 @@ const cartGroupSlide = createSlice({
       ...state,
       fetchingCartGroupsLoading: false,
     }),
+    updateLoadingForDeletingCartItemSuccess: (
+      state,
+      action: PayloadAction<{ id: string }>
+    ) => ({
+      ...state,
+      cartGroupsJoined: state.cartGroupsJoined.map((group) => ({
+        ...group,
+        cartItems: group.cartItems.map((ci) => {
+          if (ci.id === action.payload.id) {
+            return {
+              ...ci,
+              isDeleteLoading: true,
+            };
+          }
+          return ci;
+        }),
+      })),
+    }),
     deleteCartItemSuccess: (state, action: PayloadAction<{ id: string }>) => ({
       ...state,
       cartGroupsJoined: state.cartGroupsJoined.map((group) => ({
         ...group,
         cartItems: group.cartItems.filter((ci) => ci.id !== action.payload.id),
+      })),
+    }),
+    deleteCartItemFailure: (state, action: PayloadAction<{ id: string }>) => ({
+      ...state,
+      cartGroupsJoined: state.cartGroupsJoined.map((group) => ({
+        ...group,
+        cartItems: group.cartItems.map((ci) => {
+          if (ci.id === action.payload.id) {
+            return {
+              ...ci,
+              isDeleteLoading: false,
+            };
+          }
+          return ci;
+        }),
       })),
     }),
     createCartGroupRequest: (state) => ({
@@ -449,7 +482,9 @@ export const {
   fetchCartGroupsRequest,
   fetchCartGroupsSuccess,
   fetchCartGroupsFailure,
+  updateLoadingForDeletingCartItemSuccess,
   deleteCartItemSuccess,
+  deleteCartItemFailure,
   createCartGroupRequest,
   createCartGroupFailure,
   updateLoadingForDeletingCartGroupSuccess,
@@ -572,13 +607,25 @@ function* handleAddingCartItem() {
 }
 
 function* updateCartItemQuantityDelay(id: string, quantity: number) {
+  yield put(
+    updateCartItemQuantitySuccess({
+      id,
+      quantity,
+    })
+  );
   yield delay(500);
   yield put(updateLoadingForCartItemQuantitySuccess({ id }));
   yield call(updateCartItemQuantity, id, quantity);
+  yield put(
+    updateCartItemQuantitySuccess({
+      id,
+      quantity,
+    })
+  );
 }
 
 function* handleUpdatingCartItemQuantity() {
-  let typingTask: Task | null = null;
+  const typingTasks: Map<string, Task> = new Map();
   while (true) {
     const {
       payload: { id, quantity },
@@ -587,16 +634,14 @@ function* handleUpdatingCartItemQuantity() {
     );
 
     try {
-      if (typingTask) {
-        yield cancel(typingTask);
-        typingTask = null;
+      const task = typingTasks.get(id);
+      if (task) {
+        yield cancel(task);
+        typingTasks.delete(id);
       }
-      typingTask = yield fork(updateCartItemQuantityDelay, id, quantity);
-      yield put(
-        updateCartItemQuantitySuccess({
-          id,
-          quantity,
-        })
+      typingTasks.set(
+        id,
+        yield fork(updateCartItemQuantityDelay, id, quantity)
       );
     } catch (e) {
       yield put(addMessageSuccess({ error: e }));
@@ -618,7 +663,7 @@ function* updateCartItemNoteDelay(id: string, note: string) {
 }
 
 function* handleUpdatingCartItemNote() {
-  let typingTask: Task | null = null;
+  const typingTasks: Map<string, Task> = new Map();
   while (true) {
     const {
       payload: { id, note },
@@ -627,16 +672,23 @@ function* handleUpdatingCartItemNote() {
     );
 
     try {
-      if (typingTask) {
-        yield cancel(typingTask);
-        typingTask = null;
+      const task = typingTasks.get(id);
+      if (task) {
+        yield cancel(task);
+        typingTasks.delete(id);
       }
-      typingTask = yield fork(updateCartItemNoteDelay, id, note);
+      typingTasks.set(id, yield fork(updateCartItemNoteDelay, id, note));
     } catch (e) {
       yield put(addMessageSuccess({ error: e }));
       yield put(updateCartItemNoteFailure({ id }));
     }
   }
+}
+
+function* deleteCartItemDelay(id: string) {
+  yield delay(500);
+  yield call(deleteCartItem, id);
+  yield put(deleteCartItemSuccess({ id }));
 }
 
 function* handleDeletingCartItem() {
@@ -646,8 +698,8 @@ function* handleDeletingCartItem() {
     }: ReturnType<typeof deleteCartItemAction> =
       yield take(deleteCartItemAction);
     try {
-      yield call(deleteCartItem, id);
-      yield put(deleteCartItemSuccess({ id }));
+      yield put(updateLoadingForDeletingCartItemSuccess({ id }));
+      yield fork(deleteCartItemDelay, id);
     } catch (e) {
       yield put(addMessageSuccess({ error: e }));
     }

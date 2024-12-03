@@ -1,4 +1,4 @@
-import { Checkbox, Col, Popconfirm, Row } from "antd";
+import { Checkbox, Col, Popconfirm, Row, Spin } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 
 export const CartHeader = ({
@@ -6,6 +6,7 @@ export const CartHeader = ({
   enableDeleteAll,
   isAllChecked,
   isDeleteAllLoading,
+  isCheckAllLoading,
   isDisableCheckbox,
   updateAllCheckedRequest,
   deleteAllCartRequest,
@@ -13,6 +14,7 @@ export const CartHeader = ({
   enableCartGroup: boolean;
   enableDeleteAll?: boolean;
   isDeleteAllLoading?: boolean;
+  isCheckAllLoading?: boolean;
   isAllChecked?: boolean;
   isDisableCheckbox?: boolean;
   updateAllCheckedRequest?: () => void;
@@ -21,19 +23,23 @@ export const CartHeader = ({
   <div className="p-2 bg-white border-[1px] rounded-lg ">
     <Row>
       {!enableCartGroup && (
-        <Col flex="2%">
-          <Checkbox
-            disabled={isDisableCheckbox}
-            checked={isAllChecked}
-            onClick={updateAllCheckedRequest}
-          />
+        <Col flex="3%">
+          {isCheckAllLoading ? (
+            <Spin size="small" />
+          ) : (
+            <Checkbox
+              disabled={isDisableCheckbox}
+              checked={isAllChecked}
+              onClick={updateAllCheckedRequest}
+            />
+          )}
         </Col>
       )}
       <Col flex="40%">Tất cả</Col>
       <Col flex="10%">Đơn giá</Col>
       <Col flex="12%">Số lượng</Col>
       <Col flex="14%">Thành tiền</Col>
-      <Col flex="19%">Ghi chú</Col>
+      <Col flex="18%">Ghi chú</Col>
       <Col flex="3%" className="text-center">
         {!enableCartGroup && enableDeleteAll && (
           <Popconfirm
@@ -41,9 +47,12 @@ export const CartHeader = ({
             onConfirm={deleteAllCartRequest}
             okText="Đồng ý"
             cancelText="Hủy"
-            okButtonProps={{ loading: isDeleteAllLoading }}
           >
-            <DeleteOutlined className="cursor-pointer " />
+            {isDeleteAllLoading ? (
+              <Spin size="small" />
+            ) : (
+              <DeleteOutlined className="cursor-pointer " />
+            )}
           </Popconfirm>
         )}
       </Col>
