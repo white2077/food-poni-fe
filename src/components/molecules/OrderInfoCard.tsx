@@ -63,11 +63,24 @@ export function OrderInfoCard({ selectedOrder }: { selectedOrder: Order }) {
             </Text>
 
             <span className="mx-2">/</span>
-            {selectedOrder.payment.status === "PAID" && (
-              <span className="text-green-500">Đã thanh toán</span>
+            {selectedOrder.payment.method === "VNPAY" && (
+              <>
+                {selectedOrder.payment.status === "PAID" && (
+                  <span className="text-green-500">Đã thanh toán</span>
+                )}
+                {selectedOrder.payment.status === "PAYING" && (
+                  <span className="text-yellow-500">Đang thanh toán</span>
+                )}
+              </>
             )}
-            {selectedOrder.payment.status === "PAYING" && (
-              <span className="text-yellow-500">Đang thanh toán</span>
+            {selectedOrder.payment.method === "CASH" && (
+              <span
+                className={`${selectedOrder.status === "COMPLETED" ? "text-green-500" : "text-yellow-500"}`}
+              >
+                {selectedOrder.status === "COMPLETED"
+                  ? "Đã thanh toán"
+                  : "Chưa thanh toán"}
+              </span>
             )}
             {selectedOrder.payment.status === "FAILED" && (
               <span className="text-red-500">Thanh toán thất bại</span>

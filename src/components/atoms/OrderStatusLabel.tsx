@@ -7,11 +7,17 @@ export const OrderStatusLabel = ({ status }: { status: string }) => (
           ? "Chờ giao hàng"
           : status === "POST_PAID"
             ? "Ghi nợ"
-            : status === "REJECTED"
-              ? "Đáng nghi"
-              : status === "CANCELLED"
-                ? "Đã hủy"
-                : status === "COMPLETED" && "Đơn hoàn tất"}
+            : status === "DELIVERING"
+              ? "Đang giao"
+              : status === "REJECTED"
+                ? "Đáng nghi"
+                : status === "CANCELLED"
+                  ? "Đã hủy"
+                  : status === "FAILED"
+                    ? "Gặp sự cố"
+                    : status === "COMPLETED"
+                      ? "Đơn hoàn tất"
+                      : "Trạng thái không xác định"}
     </h3>
   </div>
 );
